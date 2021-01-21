@@ -9,6 +9,8 @@ const Discord = require("discord.js");
   client.user.setPresence({ activity: { name: 'Watching RDL' }, status: 'idle' });
  })
  
+ require("./bot.js");
+ 
 mongoose.connect(process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 
@@ -23,10 +25,12 @@ var express = require("express");
 var compression = require("compression");
 var app = express();
 app.use(compression());
-module.exports = {app, rovel};
+
 require("./app.js");
 
 app.listen(port, () => {
   console.log(`[SERVER] Started on PORT:${port}`)
 })
 client.login(process.env.TOKEN);
+
+module.exports = {app, rovel, client};
