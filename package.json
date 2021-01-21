@@ -3,10 +3,11 @@
   "description": "Rovel Discord List",
   "version": "1.0.0",
   "scripts": {
-   "start": "node src/index.js"
+   "start": "node src/index.js --logs --webhook --hosting"
   },
   "engines":{"node":"^14.x"},
   "dependencies": {
+   "express-rate-limit": "5.2.3",
    "compression": "1.7.4",
     "mongodb": "3.6.3",
     "mongoose": "5.11.12",

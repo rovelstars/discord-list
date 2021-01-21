@@ -15,7 +15,7 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
 db.once('open', function() {
-  console.log("[DB] We're connected! to "+process.env.DB);
+  console.log("[DB] We're connected to database!");
 });
 
 const port = process.env.PORT || 3000;
@@ -23,6 +23,7 @@ var express = require("express");
 var compression = require("compression");
 var app = express();
 app.use(compression());
+module.exports = {app, rovel};
 app.get("*", (req, res)=>{
  res.send("RDL under Development (⌐■-■) Please come back later. Until then, join our discord server https://discord.gg/953XCpHbKF");
 });
