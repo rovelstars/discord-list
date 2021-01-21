@@ -1,0 +1,23 @@
+{
+  "name": "RDL",
+  "description": "Rovel Discord List",
+  "version": "1.0.0",
+  "scripts": {
+   "start": "node src/index.js"
+  },
+  "engines":{"node":"^14.x"},
+  "dependencies": {
+    "mongodb": "3.6.3",
+    "mongoose": "5.11.12",
+    "express": "4.17.1",
+    "ejs": "3.1.5",
+    "rovel.js": "1.1.6",
+    "discord.js": "12.5.1",
+    "express-session": "1.17.1",
+    "express-fileupload": "1.2.1",
+    "passport": "0.4.1",
+    "marked": "1.2.7",
+    "@sentry/node": "6.0.0",
+    "@sentry/tracing": "6.0.0"
+  }
+}
