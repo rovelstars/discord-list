@@ -1,4 +1,4 @@
-const rovel = require("rovel.js");
+let rovel = require("rovel.js");
 rovel.env.config();
 const mongoose = require('mongoose');
 const Discord = require("discord.js");
@@ -27,4 +27,4 @@ app.listen(port, () => {
 })
 client.login(process.env.TOKEN);
 
-module.exports = {app, rovel, Discord};
+module.exports = {app, rovel};
