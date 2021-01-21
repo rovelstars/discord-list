@@ -19,15 +19,10 @@ var express = require("express");
 var compression = require("compression");
 var app = express();
 app.use(compression());
-
+module.exports = {app};
 require("./app.js");
 
 app.listen(port, () => {
   console.log(`[SERVER] Started on PORT:${port}`)
 })
 client.login(process.env.TOKEN);
-
-module.exports = {
- app: app,
-rovel: rovel,
-};
