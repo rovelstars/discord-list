@@ -1,7 +1,5 @@
 const rovel = require("rovel.js");
-if(process.args.includes("--nocolors")){
 rovel.text.enabled = false;
-}
 rovel.env.config();
 const mongoose = require('mongoose');
 const Discord = require("discord.js");
