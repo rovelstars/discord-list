@@ -25,9 +25,6 @@ var app = express();
 app.use(compression());
 module.exports = {app, rovel};
 require("./app.js");
-app.get("*", (req, res)=>{
- res.send("RDL under Development (⌐■-■) Please come back later. Until then, join our discord server https://discord.gg/953XCpHbKF");
-});
 
 app.listen(port, () => {
   console.log(`[SERVER] Started on PORT:${port}`)

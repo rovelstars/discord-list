@@ -62,3 +62,7 @@ app.use(weblog);
 log(logs("Using webhooks"));
 }
 log(warn("[SERVER] ")+error("Started!\n")+ans("At Time: ")+logs(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
+
+app.get("*", (req, res)=>{
+ res.send("RDL under Development (⌐■-■) Please come back later. Until then, join our discord server https://discord.gg/953XCpHbKF");
+});
