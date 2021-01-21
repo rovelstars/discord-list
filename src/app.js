@@ -51,7 +51,7 @@ if(process.argv.includes("--webhook")){
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-                "username": "Rovel API logging",
+                "username": "RDL logging",
                 "content": logweb
         })
     });
@@ -60,4 +60,4 @@ if(process.argv.includes("--webhook")){
 app.use(weblog);
 log(logs("Using webhooks"));
 }
-log(warn("[SERVER] ")+error("started!\n")+ans("At Time: ")+logs(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
+log(warn("[SERVER] ")+error("Started!\n")+ans("At Time: ")+logs(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
