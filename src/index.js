@@ -3,7 +3,7 @@ console.clear();
 rovel.env.config();
 const mongoose = require('mongoose');
 const Discord = require("discord.js");
- let client = new Discord.client();
+ let client = new Discord.Client();
  
  client.once("ready", () => {
   console.log("[BOT] online"+` as ${client.user.username+"#"+client.user.tag}`);
