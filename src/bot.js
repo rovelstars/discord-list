@@ -1,4 +1,11 @@
-const {client, rovel} = require("./index.js");
+const {Discord, rovel} = require("./index.js");
+let client = new Discord.Client();
+ 
+ client.once("ready", () => {
+  console.log("[BOT] online"+` as ${client.user.tag}`);
+  client.user.setPresence({ activity: { name: 'Watching RDL' }, status: 'idle' });
+ });
+ 
 client.on("message", message => {
  if(!message.author.bot && !message.content.startsWith("."))
  return;
