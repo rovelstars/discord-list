@@ -25,4 +25,3 @@ require("./app.js");
 app.listen(port, () => {
   console.log(`[SERVER] Started on PORT:${port}`)
 })
-client.login(process.env.TOKEN);

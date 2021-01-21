@@ -18,3 +18,5 @@ client.on("message", message => {
  if(message.content.includes("<@!602902050677981224>") || message.content.includes("<@602902050677981224>"))
  message.channel.send("Don't ping him, he reads every message of this server...");
 });
+
+client.login(process.env.TOKEN);
