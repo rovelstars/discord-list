@@ -1,4 +1,5 @@
-const {Discord, rovel} = require("./index.js");
+const {rovel} = require("./index.js");
+let Discord = require("discord.js");
 let client = new Discord.Client();
  
  client.once("ready", () => {
