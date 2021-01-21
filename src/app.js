@@ -1,4 +1,5 @@
-let {app,rovel} = require("./index.js");
+let rovel = require("./index.js").rovel;
+let app = require("./index.js").app;
 let log = console.log;
 const fetch = rovel.fetch;
 const error = rovel.text.bold.red;
