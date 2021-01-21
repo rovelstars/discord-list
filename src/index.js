@@ -21,8 +21,9 @@ db.once('open', function() {
 
 const port = process.env.PORT || 3000;
 var express = require("express");
+var compression = require("compression");
 var app = express();
-
+app.use(compression());
 app.get("*", (req, res)=>{
  res.send("RDL under Development (⌐■-■)\nPlease come back later. Until then, join our discord server https://discord.gg/953XCpHbKF");
 });
