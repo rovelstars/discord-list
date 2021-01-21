@@ -1,5 +1,5 @@
 const rovel = require("rovel.js");
-rovel.text.enabled = false;
+console.clear();
 rovel.env.config();
 const mongoose = require('mongoose');
 const Discord = require("discord.js");
