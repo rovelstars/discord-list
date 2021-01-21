@@ -5,7 +5,7 @@
   "scripts": {
    "start": "npm run main && npm run all",
    "main": "node src/index.js --webhook --hosting",
-   "all": "node src/bot.js && node src/app.js"
+   "all": "node src/bot/index.js && node src/app.js"
   },
   "engines":{"node":"^14.x"},
   "dependencies": {

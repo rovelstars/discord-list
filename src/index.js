@@ -1,8 +1,6 @@
 var rovel = require("rovel.js");
 rovel.env.config();
 const mongoose = require('mongoose');
-//rovel.execarg("node","bot.js");
- 
 mongoose.connect(process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 
@@ -18,8 +16,6 @@ var compression = require("compression");
 var app = express();
 app.use(compression());
 module.exports = {app};
-//rovel.execarg("node","app.js");
-
 app.listen(port, () => {
   console.log(`[SERVER] Started on PORT:${port}`)
 });
