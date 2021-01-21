@@ -19,3 +19,4 @@ module.exports = {app};
 app.listen(port, () => {
   console.log(`[SERVER] Started on PORT:${port}`)
 });
+require("./bot/index.js");
