@@ -1,8 +1,6 @@
 var rovel = require("rovel.js");
 rovel.env.config();
 const mongoose = require('mongoose');
-const Discord = require("discord.js");
- 
 //rovel.execarg("node","bot.js");
  
 mongoose.connect(process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true});

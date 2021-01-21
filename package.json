@@ -3,10 +3,9 @@
   "description": "Rovel Discord List",
   "version": "1.0.0",
   "scripts": {
-   "start": "npm run main && npm run bot",
-   "main": "node src/index.js --webhook --hosting && npm run server",
-   "bot": "node src/bot.js",
-   "server":"node src/app.js"
+   "start": "npm run main && npm run all",
+   "main": "node src/index.js --webhook --hosting",
+   "all": "node src/bot.js && node src/app.js"
   },
   "engines":{"node":"^14.x"},
   "dependencies": {
