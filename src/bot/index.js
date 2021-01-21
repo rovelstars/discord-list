@@ -1,7 +1,5 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
-
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
@@ -18,3 +16,5 @@ client.once("ready", ()=>{
  console.log("[BOT] Logined as "+client.user.tag);
  
 })
+
+client.login(process.env.TOKEN);
