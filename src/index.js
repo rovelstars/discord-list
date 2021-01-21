@@ -27,4 +27,7 @@ app.listen(port, () => {
 })
 client.login(process.env.TOKEN);
 
-module.exports = {app, rovel};
+module.exports = {
+ app: app,
+rovel: rovel,
+};
