@@ -20,4 +20,14 @@ db.once('open', function() {
 });
 
 const port = process.env.PORT || 3000;
+var express = require("express");
+var app = express();
+
+app.get("*", (req, res)=>{
+ res.send("RDL under Development (⌐■-■)\nPlease come back later. Until then, join our discord server https://discord.gg/953XCpHbKF");
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
+})
 client.login(process.env.TOKEN);
