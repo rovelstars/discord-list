@@ -3,7 +3,6 @@ console.clear();
 rovel.env.config();
 const mongoose = require('mongoose');
 const Discord = require("discord.js");
-(async () => {
  let client = new Discord.client();
  
  client.once("ready", () => {
@@ -22,4 +21,3 @@ db.once('open', function() {
 
 const port = process.env.PORT || 3000;
 client.login(process.env.TOKEN);
-});
