@@ -1,5 +1,6 @@
 let {app,rovel} = require("./index.js");
 let log = console.log;
+const fetch = rovel.fetch;
 const error = rovel.text.bold.red;
 const warn= rovel.text.yellow;
 const dayjs = rovel.time;
