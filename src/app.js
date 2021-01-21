@@ -19,7 +19,7 @@ const limiter = rateLimit({
 });
 
 if(process.argv.includes("--hosting")){
-app.set('trust proxy', 1);
+//app.set('trust proxy', 1);
 app.use(limiter);
 }
 if(process.argv.includes("--logs")){
