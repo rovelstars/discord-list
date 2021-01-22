@@ -1,6 +1,5 @@
 const fs = require('fs');
-let sentry = require("../index.js");
-sentry = sentry.Sentry;
+let {Sentry} = require("../index.js");
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -93,7 +92,7 @@ const transaction = Sentry.startTransaction({
   console.error(error);
   message.reply('There was an error trying to execute that command! ☹️\nPlease tell the devs about it. Moreover, I have sent a detailed log to them already. 📨\n'+`If you can send this log to them, it would be great!\n\`\`\`\n${error}\n\`\`\``);
   
-  sentry.captureException(error);
+  Sentry.captureException(error);
  } finally {
   transaction.finish();
  }
