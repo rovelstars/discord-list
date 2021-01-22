@@ -16,7 +16,7 @@ for (const file of commandFiles) {
 const cooldowns = new Discord.Collection();
 
 client.once('ready', () => {
- console.log(`[BOT] Logined as ${client.user.tag}`);
+ console.log(`[BOT] Logined as ${client.user.tag}\nPing:${client.ws.ping} ms`);
 });
 
 client.on('message', message => {
@@ -24,13 +24,13 @@ client.on('message', message => {
   if(message.author.bot) return;
 if(message.content == ".")
  message.channel.send("...");
- if(message.content.includes("pro gamer move"))
+ if(message.content.toLowerCase.includes("pro gamer move"))
  message.channel.send("(⌐■-■)");
  if(message.content.includes("<@!602902050677981224>") || message.content.includes("<@602902050677981224>"))
  message.channel.send("Don't ping him, he reads every message of this server...");
- if(message.content.includes("good night"))
+ if(message.content.toLowerCase.includes("good night"))
  message.reply("Sleep tight 😴");
- if(message.content.includes("RDL"))
+ if(message.content.toLowerCase.includes("RDL"))
  message.channel.send("RDL is the best Discord Listing Service by Rovel, and you can add bots, servers, or yourself!\nMake sure to come here if you want your bots, servers, and yourself to be discoverable and popular! (⌐■-■)");
 //end of fun
  if (!message.content.startsWith(prefix)) return;
