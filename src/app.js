@@ -1,4 +1,8 @@
-let {app} = require("./index.js");
+const port = process.env.PORT || 3000;
+var express = require("express");
+var compression = require("compression");
+var app = express();
+app.use(compression());
 let log = console.log;
 const rovel = require("rovel.js")
 const fetch = rovel.fetch;
@@ -66,4 +70,7 @@ log(warn("[SERVER] ")+error("Started!\n")+ans("At Time: ")+logs(dayjs().format("
 
 app.get("/", (req, res)=>{
  res.send("RDL under Development (⌐■-■) Please come back later. Until then, join our discord server https://discord.gg/953XCpHbKF");
+});
+app.listen(port, () => {
+  console.log(`[SERVER] Started on PORT:${port}`)
 });
