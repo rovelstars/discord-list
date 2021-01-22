@@ -22,12 +22,13 @@ Sentry.init({
   dsn: process.env.SENTRY,
   tracesSampleRate: 1.0,
 });
-
+/*
 const transaction = Sentry.startTransaction({
   op: "test",
   name: "My First Test Transaction",
-});
+});*/
 console.log("[SENTRY] Initialized!\nAll issues and performance are being sent!");
+/*
 setTimeout(() => {
   try {
     foo();
@@ -36,4 +37,4 @@ setTimeout(() => {
   } finally {
     transaction.finish();
   }
-}, 99);
+}, 99);*/
