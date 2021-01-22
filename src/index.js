@@ -22,6 +22,7 @@ Sentry.init({
   dsn: process.env.SENTRY,
   tracesSampleRate: 1.0,
 });
+module.exports = {Sentry};
 /*
 const transaction = Sentry.startTransaction({
   op: "test",
