@@ -9,5 +9,5 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("[DB] We're connected to database!");
 });
-const {api} = require("./server/index.js");
+const {api} = require("./server/app.js");
 const {client} = require("./bot/index.js");
