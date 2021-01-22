@@ -35,7 +35,6 @@ if(message.content == ".")
  message.reply("Sleep tight 😴");
  if(message.content.includes("RDL"))
  message.channel.send("RDL is the best Discord Listing Service by Rovel, and you can add bots, servers, or yourself!\nMake sure to come here if you want your bots, servers, and yourself to be discoverable and popular! (⌐■-■)");
-});
 //end of fun
  const command = client.commands.get(commandName) ||
   client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
