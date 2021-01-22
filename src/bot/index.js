@@ -1,5 +1,6 @@
 const fs = require('fs');
-let {Sentry} = require("../index.js");
+let sentry = require("../index.js");
+sentry = sentry.Sentry; //fix v14 bug i think.
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
