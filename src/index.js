@@ -11,7 +11,10 @@ await db.on('error', console.error.bind(console, 'connection error:'));
 await db.once('open', function() {
   console.log("[DB] We're connected to database!");
 });
-const {api} = require("@server/app.js");
+const {app, port} = require("@server/app.js");
 const {client} = require("@bot/index.js");
 await client.login(process.env.TOKEN);
+await app.listen(port, () => {
+ console.log(`[SERVER] Started on port:${port}`);
+})
 });

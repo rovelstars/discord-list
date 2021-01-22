@@ -2,7 +2,7 @@ const port = process.env.PORT || 3000;
 var express = require("express");
 var compression = require("compression");
 var app = express();
-module.exports = {app};
+module.exports = {app, port};
 app.use(compression());
 let log = console.log;
 const rovel = require("rovel.js")
