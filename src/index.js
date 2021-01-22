@@ -28,6 +28,8 @@ const transaction = Sentry.startTransaction({
   name: "My First Test Transaction",
 });*/
 console.log("[SENTRY] Initialized!\nAll issues and performance are being sent!");
+process.on('unhandledRejection', error =>{ console.warn('An Error Occurred!\n' + error);
+ });
 /*
 setTimeout(() => {
   try {
