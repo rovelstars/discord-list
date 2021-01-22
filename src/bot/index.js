@@ -1,7 +1,6 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const client = new Discord.Client();
-module.exports = {client};
 client.commands = new Discord.Collection();
 const prefix = process.env.PREFIX;
 const commandFiles = fs.readdirSync(__dirname+'/commands').filter(file => file.endsWith('.js'));
@@ -90,5 +89,5 @@ if(message.content == ".")
   message.reply('There was an error trying to execute that command! ☹️\nPlease tell the devs about it. Moreover, I have sent a detailed log to them already. 📨');
  }
 });
-
-client.login(process.env.TOKEN);
+//client.login(process.env.TOKEN);
+module.exports = {client};

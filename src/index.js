@@ -1,13 +1,17 @@
+require("module-alias/register");
 var rovel = require("rovel.js");
 rovel.env.config();
 const mongoose = require('mongoose');
-mongoose.connect(process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true});
+(async () => {
+await mongoose.connect(process.env.DB, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 
-db.on('error', console.error.bind(console, 'connection error:'));
+await db.on('error', console.error.bind(console, 'connection error:'));
 
-db.once('open', function() {
+await db.once('open', function() {
   console.log("[DB] We're connected to database!");
 });
-const {api} = require("./server/app.js");
-const {client} = require("./bot/index.js");
+const {api} = require("@server/app.js");
+const {client} = require("@bot/index.js");
+await client.login(process.env.TOKEN);
+});
