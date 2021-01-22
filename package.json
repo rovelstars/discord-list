@@ -3,9 +3,10 @@
   "description": "Rovel Discord List",
   "version": "1.0.0",
   "scripts": {
+   "post-install": "npm i pm2 -g",
    "start": "npm run main && npm run server",
-   "main": "node src/index.js",
-   "server": "node src/server/app.js"
+   "main": "pm2 src/index.js",
+   "server": "pm2 src/server/app.js"
   },
   "engines":{"node":"^14.x"},
   "dependencies": {
