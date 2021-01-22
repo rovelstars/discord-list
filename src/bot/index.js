@@ -24,7 +24,19 @@ client.on('message', message => {
 
  const args = message.content.slice(prefix.length).trim().split(/ +/);
  const commandName = args.shift().toLowerCase();
-
+ //start of fun
+if(message.content == ".")
+ message.channel.send("...");
+ if(message.content.includes("pro gamer move"))
+ message.channel.send("(⌐■-■)");
+ if(message.content.includes("<@!602902050677981224>") || message.content.includes("<@602902050677981224>"))
+ message.channel.send("Don't ping him, he reads every message of this server...");
+ if(message.content.includes("good night"))
+ message.reply("Sleep tight 😴");
+ if(message.content.includes("RDL"))
+ message.channel.send("RDL is the best Discord Listing Service by Rovel, and you can add bots, servers, or yourself!\nMake sure to come here if you want your bots, servers, and yourself to be discoverable and popular! (⌐■-■)");
+});
+//end of fun
  const command = client.commands.get(commandName) ||
   client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
