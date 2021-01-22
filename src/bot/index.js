@@ -1,6 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const client = new Discord.Client();
+module.exports = {client};
 client.commands = new Discord.Collection();
 const prefix = process.env.PREFIX;
 const commandFiles = fs.readdirSync(__dirname+'/commands').filter(file => file.endsWith('.js'));
