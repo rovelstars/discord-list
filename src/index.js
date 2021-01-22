@@ -15,3 +15,25 @@ client.login(process.env.TOKEN);
 app.listen(port, () => {
  console.log(`[SERVER] Started on port:${port}`);
 });
+
+const Sentry = require("@sentry/node");
+const Tracing = require("@sentry/tracing");
+Sentry.init({
+  dsn: process.env.SENTRY,
+  tracesSampleRate: 1.0,
+});
+
+const transaction = Sentry.startTransaction({
+  op: "test",
+  name: "My First Test Transaction",
+});
+console.log("[SENTRY] Initialized!\nAll issues and performance are being sent!");
+setTimeout(() => {
+  try {
+    foo();
+  } catch (e) {
+    Sentry.captureException(e);
+  } finally {
+    transaction.finish();
+  }
+}, 99);
