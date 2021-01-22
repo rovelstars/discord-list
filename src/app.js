@@ -22,7 +22,7 @@ const limiter = rateLimit({
   max: 1000 // limit each IP to 1000 requests per windowMs
 });
 
-//app.set('trust proxy', 1);
+app.set('trust proxy', 1);
 app.use(limiter);
 
  process.on('unhandledRejection', err =>{
@@ -66,7 +66,4 @@ log(warn("[SERVER] ")+error("Started!\n")+ans("At Time: ")+logs(dayjs().format("
 
 app.get("/", (req, res)=>{
  res.send("RDL under Development (⌐■-■) Please come back later. Until then, join our discord server https://discord.gg/953XCpHbKF");
-});
-app.listen(port, () => {
-  console.log(`[SERVER] Started on PORT:${port}`)
 });
