@@ -22,11 +22,8 @@ const limiter = rateLimit({
   max: 1000 // limit each IP to 1000 requests per windowMs
 });
 
-if(process.argv.includes("--hosting")){
 //app.set('trust proxy', 1);
 app.use(limiter);
-}
-if(process.argv.includes("--logs")){
 
  process.on('unhandledRejection', err =>{
         var unre = function (req, res, next) {
@@ -34,7 +31,7 @@ if(process.argv.includes("--logs")){
         next(err);
         app.use(unre);
         }});
-
+/*
 var logger = function (req, res, next) {
         log();
         log(logs("Time: ") + ans(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
@@ -46,8 +43,7 @@ var logger = function (req, res, next) {
 }
 app.use(logger);
 log(logs("Using console logging"));
-}
-if(process.argv.includes("--webhook")){
+*/
         var weblog = function (req, res, next) {
         const weburl = process.env.WEBHOOK;
         const logweb = `              **New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.ip || req.ips}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\``;
@@ -65,7 +61,7 @@ if(process.argv.includes("--webhook")){
 }
 app.use(weblog);
 log(logs("Using webhooks"));
-}
+
 log(warn("[SERVER] ")+error("Started!\n")+ans("At Time: ")+logs(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
 
 app.get("/", (req, res)=>{

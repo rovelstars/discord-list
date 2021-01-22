@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
    "start": "npm run main && npm run server",
-   "main": "node src/index.js --webhook --hosting",
+   "main": "node src/index.js",
    "server": "node src/app.js"
   },
   "engines":{"node":"^14.x"},
