@@ -1,6 +1,6 @@
 const fs = require('fs');
 let sentry = require("../index.js");
-sentry = sentry.Sentry; //fix v14 bug i think.
+sentry = sentry.Sentry;
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -89,7 +89,7 @@ if(message.content == ".")
  } catch (error) {
   console.error(error);
   message.reply('There was an error trying to execute that command! ☹️\nPlease tell the devs about it. Moreover, I have sent a detailed log to them already. 📨\n'+`If you can send this log to them, it would be great!\n\`\`\`\n${error}\n\`\`\``);
-  Sentry.captureException(error);
+  sentry.captureException(error);
  } finally {
   transaction.finish();
  }
