@@ -14,10 +14,9 @@ const logs = rovel.text.blue;
 const ans = rovel.text.green;
 const rateLimit = require("express-rate-limit");
 
-// Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
-// see https://expressjs.com/en/guide/behind-proxies.html
-// app.set('trust proxy', 1);
-
+// ejs setting
+app.set('view engine', 'ejs');
+app.set('view options', {delimiter: '::'});
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 60 minutes
   max: 1000 // limit each IP to 1000 requests per windowMs
@@ -65,6 +64,10 @@ log(logs("Using webhooks"));
 
 log(warn("[SERVER] ")+error("Started!\n")+ans("At Time: ")+logs(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
 
-app.get("/", (req, res)=>{
+app.get("/assets/:file", (req, res)=>{
+ res.sendFile(__dirname+"/../../assets/"+file);
+})
+
+app.get("*", (req, res)=>{
  res.send("RDL under Development (⌐■-■) Please come back later. Until then, join our discord server https://discord.gg/953XCpHbKF");
 });

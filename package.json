@@ -27,6 +27,8 @@
   },
   "_moduleAliases": {
    "@root": "src",
+   "@models": "src/models",
+   "@views": "src/views",
    "@assets": "assets",
    "@bot": "src/bot",
    "@server": "src/server"
