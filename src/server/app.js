@@ -70,7 +70,7 @@ app.get("/favicon.ico", (req, res) => {
 });
 
 app.get("/arc-sw.js", (req, res) => {
- res.redirect("/assets/arc-sw.js");
+ res.redirect("https://arc.io/arc-sw.js");
 });
 
 app.get("/assets/:file", (req, res) => {
