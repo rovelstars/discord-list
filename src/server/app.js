@@ -78,5 +78,5 @@ app.get("/assets/:file", (req, res) => {
 });
 
 app.get("*", (req, res) => {
- res.send("RDL under Development (⌐■-■) Please come back later. Until then, join our discord server https://discord.gg/953XCpHbKF");
-});
+ res.sendFile(path.resolve("assets/index.html"));
+ });
