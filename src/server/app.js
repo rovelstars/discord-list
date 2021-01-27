@@ -65,7 +65,7 @@ log(logs("Using webhooks"));
 log(warn("[SERVER] ")+error("Started!\n")+ans("At Time: ")+logs(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
 
 app.get("/assets/:file", (req, res)=>{
- res.sendFile(__dirname+"/../../assets/"+file);
+ res.sendFile(__dirname+"/../../assets/"+req.params.file);
 })
 
 app.get("*", (req, res)=>{
