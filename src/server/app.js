@@ -13,7 +13,7 @@ const dayjs = rovel.time;
 const logs = rovel.text.blue;
 const ans = rovel.text.green;
 const rateLimit = require("express-rate-limit");
-
+let path = require("path");
 // ejs setting
 app.set('view engine', 'ejs');
 app.set('view options', {delimiter: '::'});
@@ -65,7 +65,7 @@ log(logs("Using webhooks"));
 log(warn("[SERVER] ")+error("Started!\n")+ans("At Time: ")+logs(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
 
 app.get("/assets/:file", (req, res)=>{
- res.sendFile(__dirname+"/../../assets/"+req.params.file);
+ res.sendFile(path.resolve("assets/"+req.params.file));
 })
 
 app.get("*", (req, res)=>{
