@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
   const Users = new Schema({
    _id: Number,
    bal: Number,
-   desc: String,
+   bio: String,
    connections: [{name: String, type: String, id: Number}],
    voted: [{botid: Number, at: {type: Date, default: Date.now}}],
    badges: [{type: String}],

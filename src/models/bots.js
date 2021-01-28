@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 const Bots = new Schema({
  _id: Number,
  owners: [{ id: Number }],
+ short: String,
  desc: String,
  verified: { type: Boolean, default: false },
  support: Number,

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
   const Emojis = new Schema({
    _id: Number,
    desc: String,
-   format: String,
+   gif: {type: Boolean, default: false},
   });
   
   console.log("[DB] Compiling Schema into Model - Emojis");

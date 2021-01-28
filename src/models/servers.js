@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
   const Servers = new Schema({
    _id: Number,
+   short: String,
    desc: String,
    owner: Number,
    invite: String,

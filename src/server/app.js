@@ -65,16 +65,14 @@ log(logs("Using webhooks"));
 
 log(warn("[SERVER] ") + error("Started!\n") + ans("At Time: ") + logs(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
 
+app.use('/assets', express.static(path.resolve("src/public/assets")));
+
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/favicon.ico");
 });
 
 app.get("/arc-sw.js", (req, res) => {
  res.redirect("https://arc.io/arc-sw.js");
-});
-
-app.get("/assets/:file", (req, res) => {
- res.sendFile(path.resolve("assets/" + req.params.file));
 });
 
 app.get("*", (req, res) => {
