@@ -67,6 +67,9 @@ log(warn("[SERVER] ") + error("Started!\n") + ans("At Time: ") + logs(dayjs().fo
 
 app.use('/assets', express.static(path.resolve("src/public/assets")));
 
+app.get("/", (req, res) => {
+ res.sendFile(path.resolve("src/public/assets/index.html"));
+})
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/favicon.ico");
 });

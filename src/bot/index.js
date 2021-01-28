@@ -20,7 +20,7 @@ client.once('ready', () => {
  //send logs
  console.log(`[BOT] Started sending logs!`);
  
-const loggy = "./logs/loggy.log";
+const loggy = "./logs/loggy.txt";
 const readLastLines = require('read-last-lines');
   fs.watchFile(loggy, (curr, prev) => {
 readLastLines.read(loggy, 15)
