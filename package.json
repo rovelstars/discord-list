@@ -5,7 +5,7 @@
   "scripts": {
    "start": "npm run main && npm run server",
    "main": "node src/index.js > src/public/assets/logs.txt",
-   "server": "node src/server/app.js > src/logs/loggy.log"
+   "server": "node src/server/app.js > src/public/assets/logs.txt"
   },
   "engines":{"node":"^14.x"},
   "dependencies": {
