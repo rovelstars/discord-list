@@ -16,7 +16,17 @@ for (const file of commandFiles) {
 const cooldowns = new Discord.Collection();
 
 client.once('ready', () => {
- console.log(`[BOT] Logined as ${client.user.tag}\nPing:${client.ws.ping} ms`);
+ console.log(`[BOT] Logined as ${client.user.tag}`);
+ //send logs
+ console.log(`[BOT] Started sending logs!`);
+ const {channels} = require("@utils/discordlog.js");
+const loggy = "./logs/loggy.log";
+fs.watchFile(loggy, { interval: 1000 }, (curr, prev) => {
+ let msg = curr.replace(prev);
+  client.channels.cache.get(channels.priv).send("```\n"+msg+"\n```");
+  
+});
+
 });
 
 client.on('message', message => {

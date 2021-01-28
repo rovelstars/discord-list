@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "scripts": {
    "start": "npm run main && npm run server",
-   "main": "node src/index.js",
-   "server": "node src/server/app.js"
+   "main": "node src/index.js > src/logs/loggy.log",
+   "server": "node src/server/app.js > src/logs/loggy.log"
   },
   "engines":{"node":"^14.x"},
   "dependencies": {
@@ -27,9 +27,10 @@
   },
   "_moduleAliases": {
    "@root": "src",
+   "@utils": "src/utils",
    "@models": "src/models",
    "@views": "src/views",
-   "@assets": "assets",
+   "@assets": "src/public/assets",
    "@bot": "src/bot",
    "@server": "src/server"
   }
