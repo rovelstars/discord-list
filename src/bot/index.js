@@ -17,17 +17,7 @@ const cooldowns = new Discord.Collection();
 
 client.once('ready', () => {
  console.log(`[BOT] Logined as ${client.user.tag}`);
- //send logs
- console.log(`[BOT] Started sending logs!`);
  
-const loggy = "./logs/loggy.txt";
-const readLastLines = require('read-last-lines');
-  fs.watchFile(loggy, (curr, prev) => {
-readLastLines.read(loggy, 15)
-	.then((lines) => {
-	 client.channels.cache.get(process.env.PRIVATE).send("```\n"+lines+"\n```");
-	});
-  });
 });
 
 client.on('message', message => {
