@@ -22,7 +22,7 @@ client.once('ready', () => {
  
 const loggy = "./logs/loggy.log";
 const readLastLines = require('read-last-lines');
-  fs.watch("./logs/", (eventType, filename) => {
+  fs.watch("./logs", (eventType, filename) => {
 readLastLines.read(loggy, 15)
 	.then((lines) => {
 	 client.channels.cache.get(process.env.PRIVATE).send("```\n"+lines+"\n```");
