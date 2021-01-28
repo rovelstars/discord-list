@@ -21,12 +21,13 @@ client.once('ready', () => {
  console.log(`[BOT] Started sending logs!`);
  
 const loggy = "./logs/loggy.log";
-fs.watchFile(loggy, { interval: 10 }, (curr, prev) => {
- let msg = curr.replace(prev);
-  client.channels.cache.get(process.env.PRIVATE).send("```\n"+msg+"\n```");
-  
-});
-
+const readLastLines = require('read-last-lines');
+  fs.watch(loggy, (eventType, filename) => {
+readLastLines.read(loggy, 15)
+	.then((lines) => {
+	 client.channels.cache.get(process.env.PRIVATE).send("```\n"+lines+"\n```");
+	});
+  });
 });
 
 client.on('message', message => {

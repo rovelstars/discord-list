@@ -23,7 +23,8 @@
     "marked": "1.2.7",
     "@sentry/node": "6.0.1",
     "@sentry/tracing": "6.0.1",
-    "module-alias": "2.2.2"
+    "module-alias": "2.2.2",
+    "read-last-lines": "1.8.0"
   },
   "_moduleAliases": {
    "@root": "src",
