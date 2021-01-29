@@ -10,6 +10,7 @@ const fetch = rovel.fetch;
 const dayjs = rovel.time;
 const rateLimit = require("express-rate-limit");
 let path = require("path");
+const bots = require('@routes/bots.js');
 // ejs setting
 app.set('view engine', 'ejs');
 app.set('view options', { delimiter: '::' });
@@ -43,7 +44,7 @@ log(logs("Using console logging"));
 */
 var weblog = function(req, res, next) {
  const weburl = process.env.WEBHOOK;
- const logweb = `              **New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.ip || req.ips}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\``;
+ const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.ip || req.ips}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\``;
  fetch(weburl, {
   method: "POST",
   headers: {
@@ -57,12 +58,10 @@ var weblog = function(req, res, next) {
  next();
 }
 app.use(weblog);
-log("Using webhooks");
-
-log("[SERVER] Started!\nAt Time: "+(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
+log("[SERVER] Started!");
 
 app.use('/assets', express.static(path.resolve("src/public/assets")));
-
+app.use('/bots', bots);
 app.get("/", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/index.html"));
 });

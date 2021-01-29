@@ -1,7 +1,7 @@
 let Bots = require("@models/bots.js");
 let {client} = require("@bot/index.js");
 let router = require("express").Router;
-router.post("/", (req, res)=>{
+router.post("/new", (req, res)=>{
  const bot = new Bots({
   _id: req.body.id,
  owners: req.body.owners,
@@ -29,4 +29,5 @@ router.post("/", (req, res)=>{
   res.send(msg);
   client.channels.cache.get("804250610571673600").send(`**New Bot Added!**\nBot: <@!${bot._id}>`);
  })
-})
+});
+module.exports = router;

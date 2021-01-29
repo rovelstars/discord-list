@@ -29,6 +29,7 @@
   "_moduleAliases": {
    "@root": "src",
    "@utils": "src/utils",
+   "@routes": "src/server/routes",
    "@models": "src/models",
    "@views": "src/views",
    "@assets": "src/public/assets",
