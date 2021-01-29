@@ -4,9 +4,13 @@ let {client} = require("@bot/index.js");
 let router = require("express").Router();
 router.use(bodyParser.json());
 router.get("/", (req, res)=>{
- res.send(Bots);
+ Bots.find(function (err, bots){
+  if (err) return console.error(err);
+  res.send(bots);
+ })
 })
 router.post("/new", (req, res)=>{
+ console.log(req);
  const bot = new Bots({
   _id: req.body.id,
  owners: req.body.owners,
@@ -18,18 +22,8 @@ router.post("/new", (req, res)=>{
  github: req.body.github,
  website: req.body.website,
  donate: req.body.donate,
- invite: req.body.invite,
- servers: undefined,
- ramUsed: undefined,
- ramLeft: undefined,
- msgGot: undefined,
- cmdGot: undefined,
- msgSent: undefined,
- promoted: false,
- votes: 0
- });
- 
- bot.save((err, bot)=>{
+ invite: req.body.invite
+ }).save((err, bot)=>{
   if(err) res.send(err);
   if(!err){ 
    res.send(bot);
