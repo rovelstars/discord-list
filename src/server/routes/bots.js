@@ -33,7 +33,17 @@ router.post("/new", (req, res)=>{
   if(err) return res.send(err);
   if(!err){ 
    res.send(bot);
-  client.channels.cache.find(c=> c.id == "804250610571673600").send(`**New Bot Added!**\nBot: <@!${bot.id}>\nOwner: <@!${bot.owners[0]}>`);
+  fetch(process.env.WEBHOOK, {
+  method: "POST",
+  headers: {
+   "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+   "username": "RDL New Bot Added!",
+   "content": `Bot <@!${bot.id}> has been added by <@!${bot.owner[0]}>`
+  })
+ });
+ 
   }
  });
 });
