@@ -20,6 +20,7 @@ router.post("/new", (req, res)=>{
  console.log(req.body);
  const bot = new Bots({
  id: req.body.id,
+ _id: req.body.id,
  owners: req.body.owners,
  short: req.body.short,
  desc: req.body.desc,
