@@ -30,7 +30,7 @@ router.post("/new", (req, res)=>{
  donate: req.body.donate,
  invite: req.body.invite
  }).save((err, bot)=>{
-  if(err) res.send(err);
+  if(err) return res.send(err);
   if(!err){ 
    res.send(bot);
   client.channels.cache.find(c=> c.id == "804250610571673600").send(`**New Bot Added!**\nBot: <@!${bot.id}>\nOwner: <@!${bot.owners[0]}>`);

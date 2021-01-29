@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const tjs = require('@meanie/mongoose-to-json');
 const Bots = new Schema({
- _id: Number, //botid
+ id: Number, //botid
  owners: [Number], //owners
  short: String, //short desc
  desc: String, //description
@@ -28,6 +27,5 @@ const Bots = new Schema({
     }],
  badges: [{ type: String }],
 });
-Bots.plugin(tjs);
 console.log("[DB] Compiling Schema into Model - Bots");
 module.exports = mongoose.model('Bots', Bots);
