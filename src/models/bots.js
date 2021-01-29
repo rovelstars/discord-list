@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 const tjs = require('@meanie/mongoose-to-json');
 const Bots = new Schema({
  _id: Number, //botid
- owners: [{ _id: Number }], //owners
+ owners: [Number], //owners
  short: String, //short desc
  desc: String, //description
  verified: { type: Boolean, default: false }, //verified bot or not
@@ -29,6 +29,5 @@ const Bots = new Schema({
  badges: [{ type: String }],
 });
 Bots.plugin(tjs);
-
 console.log("[DB] Compiling Schema into Model - Bots");
 module.exports = mongoose.model('Bots', Bots);
