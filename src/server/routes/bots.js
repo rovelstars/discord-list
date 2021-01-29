@@ -41,7 +41,7 @@ router.post("/new", (req, res)=>{
   },
   body: JSON.stringify({
    "username": "RDL New Bot Added!",
-   "content": `Bot <@!${bot.id}> has been added by <@!${bot.owner[0]}>`
+   "content": `Bot <@!${bot.id}> has been added by <@!${bot.owners[0]}>`
   })
  });
  
