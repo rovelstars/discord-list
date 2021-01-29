@@ -8,11 +8,17 @@ router.get("/", (req, res)=>{
   if (err) return console.error(err);
   res.send(bots);
  })
+});
+router.delete("/:id", (req, res)=>{
+ Bots.deleteOne({id: req.params.id}, function (err) {
+  if (err) return res.send(err);
+  res.send(`${req.params.id} deleted`);
+ })
 })
 router.post("/new", (req, res)=>{
  console.log(req.body);
  const bot = new Bots({
-  _id: req.body.id,
+ id: req.body.id,
  owners: req.body.owners,
  short: req.body.short,
  desc: req.body.desc,
