@@ -29,19 +29,7 @@ process.on('unhandledRejection', err => {
   app.use(unre);
  }
 });
-/*
-var logger = function (req, res, next) {
-        log();
-        log(logs("Time: ") + ans(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
-        const ip = req.ip || req.ips;
-        log(logs('IP: ') + ans(ip));
-        log(logs('Path requested: ') + ans(req.originalUrl));
-        log(logs('Request.type: ') + ans(req.method));
-        next();
-}
-app.use(logger);
-log(logs("Using console logging"));
-*/
+
 var weblog = function(req, res, next) {
  const weburl = process.env.WEBHOOK;
  const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.ip || req.ips}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\``;
@@ -58,7 +46,7 @@ var weblog = function(req, res, next) {
  next();
 }
 app.use(weblog);
-log("[SERVER] Started!");
+log("[SERVER] Started!\n[SERVER] Webhooks started!");
 
 app.use('/assets', express.static(path.resolve("src/public/assets")));
 app.use('/bots', bots);
