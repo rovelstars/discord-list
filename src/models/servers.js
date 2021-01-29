@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-  const { Schema } = mongoose;
-
-  const Servers = new Schema({
+const { Schema } = mongoose;
+const tjs = require('@meanie/mongoose-to-json');
+const Servers = new Schema({
    _id: Number,
    short: String,
    desc: String,
@@ -10,6 +10,6 @@ const mongoose = require('mongoose');
    promoted: {type: Boolean, default: false},
    badges: [{type: String}],
   });
-  
+  Servers.plugin(tjs);
   console.log("[DB] Compiling Schema into Model - Servers");
   module.exports = mongoose.model('Servers', Servers);
