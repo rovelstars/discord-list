@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 const Bots = new Schema({
  id: Number, //botid
  _id: Number,
- owners: [{_id: Number}], //owners
+ owners: [{id: Number}], //owners
  short: String, //short desc
  desc: String, //description
  verified: { type: Boolean, default: false }, //verified bot or not
