@@ -57,7 +57,7 @@ var weblog = function(req, res, next) {
  next();
 }
 app.use(weblog);
-log(logs("Using webhooks"));
+log("Using webhooks");
 
 log("[SERVER] Started!\nAt Time: "+(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
 
