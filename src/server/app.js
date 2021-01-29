@@ -65,8 +65,6 @@ app.use('/bots', bots);
 app.get("/", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/index.html"));
 });
-
-app.post()
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/favicon.ico");
 });
