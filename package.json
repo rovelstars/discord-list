@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "scripts": {
    "start": "npm run main && npm run server",
-   "main": "node src/index.js > src/public/assets/logs.txt",
-   "server": "node src/server/app.js > src/public/assets/logs.txt"
+   "main": "node src/index.js",
+   "server": "node src/server/app.js"
   },
   "engines":{"node":"^14.x"},
   "dependencies": {

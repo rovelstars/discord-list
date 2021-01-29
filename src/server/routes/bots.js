@@ -3,6 +3,9 @@ const bodyParser = require('body-parser');
 let {client} = require("@bot/index.js");
 let router = require("express").Router();
 router.use(bodyParser.json());
+roter.get("/", (req, res)=>{
+ res.send(Bots);
+})
 router.post("/new", (req, res)=>{
  const bot = new Bots({
   _id: req.body.id,
