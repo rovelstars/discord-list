@@ -1,6 +1,6 @@
 let Bots = require("@models/bots.js");
 let {client} = require("@bot/index.js");
-let router = require("express").Router;
+let router = require("express").Router();
 router.get("/new", (req, res)=>{
  const bot = new Bots({
   _id: 603213294265958400,
