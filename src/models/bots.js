@@ -2,18 +2,18 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const Bots = new Schema({
- _id: Number,
- owners: [{ id: Number }],
- short: String,
- desc: String,
- verified: { type: Boolean, default: false },
- support: Number,
- bg: String,
- github: String,
- website: String,
- donate: String,
- invite: String,
- servers: Number,
+ _id: Number, //botid
+ owners: [{ id: Number }], //owners
+ short: String, //short desc
+ desc: String, //description
+ verified: { type: Boolean, default: false }, //verified bot or not
+ support: Number, //support server id
+ bg: String, // background image link
+ github: String, //github link
+ website: String, //website link
+ donate: String, //donate account link
+ invite: String, // invite link
+ servers: Number, //servers number
  ramUsed: { type: Number, default: 0 },
  ramLeft: { type: Number, default: 0 },
  msgGot: { type: Number, default: 0 },

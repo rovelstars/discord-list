@@ -30,7 +30,7 @@ router.post("/new", (req, res)=>{
   if(err) res.send(err);
   if(!err) res.send(bot);
   
-  client.channels.cache.get("804250610571673600").send(`**New Bot Added!**\nBot: <@!${bot._id}>\nOwner: <@!${bot.owners[0]}>`);
- })
+  client.channels.cache.get("804250610571673600").send(`**New Bot Added!**\nBot: <@!${bot._id}>\nOwner: <@!${bot.owners[0].id}>`);
+ });
 });
 module.exports = router;
