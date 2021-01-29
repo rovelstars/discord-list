@@ -19,7 +19,6 @@ const Bots = new Schema({
  msgGot: { type: Number, default: 0 },
  cmdGot: { type: Number, default: 0 },
  msgSent: { type: Number, default: 0 },
- servers: Number,
  promoted: { type: Boolean, default: false },
  votes: { type: Number, default: 0 },
  voted: [{

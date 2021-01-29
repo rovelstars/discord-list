@@ -11,7 +11,6 @@ db.once('open', function() {
 });
 const {app, port} = require("@server/app.js");
 const {client} = require("@bot/index.js");
-client.login(process.env.TOKEN);
 app.listen(port, () => {
  console.log(`[SERVER] Started on port:${port}`);
 });

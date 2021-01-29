@@ -7,11 +7,7 @@ app.use(compression());
 let log = console.log;
 const rovel = require("rovel.js")
 const fetch = rovel.fetch;
-const error = rovel.text.bold.red;
-const warn = rovel.text.yellow;
 const dayjs = rovel.time;
-const logs = rovel.text.blue;
-const ans = rovel.text.green;
 const rateLimit = require("express-rate-limit");
 let path = require("path");
 // ejs setting
@@ -63,13 +59,15 @@ var weblog = function(req, res, next) {
 app.use(weblog);
 log(logs("Using webhooks"));
 
-log(warn("[SERVER] ") + error("Started!\n") + ans("At Time: ") + logs(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
+log("[SERVER] Started!\nAt Time: "+(dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")));
 
 app.use('/assets', express.static(path.resolve("src/public/assets")));
 
 app.get("/", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/index.html"));
-})
+});
+
+app.post()
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/favicon.ico");
 });
