@@ -1,4 +1,5 @@
 let Bots = require("@models/bots.js");
+let {fetch} = require("rovel.js");
 const bodyParser = require('body-parser');
 let {client} = require("@bot/index.js");
 let router = require("express").Router();
