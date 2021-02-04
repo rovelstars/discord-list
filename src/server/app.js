@@ -58,9 +58,9 @@ app.get("/favicon.ico", (req, res) => {
 });
 
 app.get("/arc-sw.js", (req, res) => {
- res.redirect("https://arc.io/arc-sw.js");
+ res.sendFile(path.resolve("src/public/assets/arc-sw.js"));
 });
 
 app.get("*", (req, res) => {
- res.sendFile(path.resolve("assets/index.html"));
+ res.sendFile(path.resolve("src/public/assets/index.html"));
  });
