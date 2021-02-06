@@ -61,9 +61,7 @@ app.get("/arc-sw.js", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/arc-sw.js"));
 });
 
-app.get("/botdash", (req, res)=>{
- res.sendFile(path.resolve("panel/index.html"));
-})
+app.get("/botdash", express.static(path.resolve("panel")));
 
 app.get("*", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/index.html"));
