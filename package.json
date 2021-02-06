@@ -3,15 +3,17 @@
   "description": "Rovel Discord List",
   "version": "1.0.0",
   "scripts": {
-   "postinstall": "npm i npm@latest -g",
-   "start": "npm run main && npm run server",
-   "main": "node src/index.js",
-   "server": "node src/server/app.js"
+    "postinstall": "npm i npm@latest -g",
+    "start": "npm run main && npm run server",
+    "main": "node src/index.js",
+    "server": "node src/server/app.js"
   },
-  "engines":{"node":"^14.x"},
+  "engines": {
+    "node": "^14.x"
+  },
   "dependencies": {
-   "express-rate-limit": "5.2.3",
-   "compression": "1.7.4",
+    "express-rate-limit": "5.2.3",
+    "compression": "1.7.4",
     "mongodb": "3.6.3",
     "mongoose": "5.11.12",
     "express": "4.17.1",
@@ -22,20 +24,20 @@
     "express-fileupload": "1.2.1",
     "passport": "0.4.1",
     "marked": "1.2.7",
-    "@sentry/node": "6.0.1",
+    "@sentry/node": "6.1.0",
     "@sentry/tracing": "6.0.1",
     "module-alias": "2.2.2",
     "body-parser": "1.19.0",
     "@meanie/mongoose-to-json": "2.5.0"
   },
   "_moduleAliases": {
-   "@root": "src",
-   "@utils": "src/utils",
-   "@routes": "src/server/routes",
-   "@models": "src/models",
-   "@views": "src/views",
-   "@assets": "src/public/assets",
-   "@bot": "src/bot",
-   "@server": "src/server"
+    "@root": "src",
+    "@utils": "src/utils",
+    "@routes": "src/server/routes",
+    "@models": "src/models",
+    "@views": "src/views",
+    "@assets": "src/public/assets",
+    "@bot": "src/bot",
+    "@server": "src/server"
   }
 }
