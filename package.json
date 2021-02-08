@@ -23,7 +23,7 @@
     "express-session": "1.17.1",
     "express-fileupload": "1.2.1",
     "passport": "0.4.1",
-    "marked": "1.2.9",
+    "marked": "2.0.0",
     "@sentry/node": "6.1.0",
     "@sentry/tracing": "6.0.1",
     "module-alias": "2.2.2",
