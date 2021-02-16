@@ -1,2 +1,2 @@
 let client = require("./index.js");
-console.log(client);
+console.log(client.user.id);
