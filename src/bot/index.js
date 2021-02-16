@@ -94,7 +94,6 @@ if(message.content == ".")
 //client.login(process.env.TOKEN);
 const token = process.env.TOKEN;
 module.exports.init = async (token) => {
-    client.userBaseDirectory = __dirname;
     await client.login(token);
     return client;
 }
