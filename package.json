@@ -3,7 +3,7 @@
   "description": "Rovel Discord List",
   "version": "1.0.0",
   "scripts": {
-    "postinstall": "npm i npm@latest -g",
+    "postinstall": "npm i npm@latest -g && npm i rovelstars/rovel.js#master -g",
     "start": "npm run main && npm run server",
     "main": "node src/index.js",
     "server": "node src/server/app.js"
@@ -12,6 +12,7 @@
     "node": "^14.x"
   },
   "dependencies": {
+   "puppeteer": "7.1.0",
     "express-rate-limit": "5.2.5",
     "compression": "1.7.4",
     "mongodb": "3.6.4",
