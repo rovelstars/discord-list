@@ -1,5 +1,6 @@
 const port = process.env.PORT || 3000;
-const {client} = require("@bot/index.js");
+const bot = require("@bot/index.js");
+ let client = bot.init(process.env.TOKEN);
 var express = require("express");
 var compression = require("compression");
 var app = express();
@@ -12,6 +13,9 @@ const dayjs = rovel.time;
 const rateLimit = require("express-rate-limit");
 let path = require("path");
 const bots = require('@routes/bots.js');
+setTimeout(()=>{
+ console.log(rovel.text.green(`Logined as ${client.user.tag} !\n Everything Started! RDL is ready to go!`))
+}, 5000);
 // ejs setting
 app.set('view engine', 'ejs');
 app.set('view options', { delimiter: '::' });
