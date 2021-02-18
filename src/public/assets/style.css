@@ -2,6 +2,7 @@ body{
   margin:0;
   padding:0;
   height:100%;
+  font-family: Sans;
 }
 
 .swal-modal {
@@ -12,9 +13,11 @@ body{
   border-radius: 2px;
   background-color: #43b581;
   font-size: 20px;
+  font-family: Sans;
 }
 .swal-text , .swal-title {
  color: #ffffff;
+ font-family: Sans;
 }
 
 @font-face {
