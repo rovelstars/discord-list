@@ -2,9 +2,10 @@ body{
   margin:0;
   padding:0;
   height:100%;
-  font-family: Sans;
 }
-
+p{
+ font-family: Sans;
+}
 .swal-modal {
   background-color: #36393f;
 }
