@@ -8,6 +8,9 @@ body{
 .swal-modal {
   background-color: #36393f;
 }
+.swal-overlay {
+ background-color: #2f3136;
+}
 .swal-button {
   padding: 7px 19px;
   border-radius: 2px;
