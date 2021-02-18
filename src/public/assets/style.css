@@ -4,7 +4,7 @@ body{
   height:100%;
 }
 p{
- font-family: Sans;
+ font-family: sans;
 }
 .swal-modal {
   background-color: #36393f;
@@ -17,16 +17,16 @@ p{
   border-radius: 2px;
   background-color: #43b581;
   font-size: 20px;
-  font-family: Sans;
+  font-family: sans;
 }
 .swal-text , .swal-title {
  color: #ffffff;
- font-family: Sans;
+ font-family: sans;
 }
 
 @font-face {
-  font-family: Sans;
-  src: url(https://cdn.discordapp.com/attachments/775220204699385886/811822442821058600/UniSansDemo-HeavyCAPS.otf);
+  font-family: sans;
+  src: url(https://bots.rovelstars.ga/assets/sans.otf);
 }
 
 #loading {
