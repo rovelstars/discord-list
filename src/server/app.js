@@ -3,7 +3,7 @@ const bot = require("@bot/index.js");
 (async()=>{
  let client = await bot.init(process.env.TOKEN);
  const OAuthClient = await require('disco-oauth');
- const client = await new OAuthClient(client.user.id, client.secret);
+ const authclient = await new OAuthClient(client.user.id, client.secret);
  await console.log(client);
 });
 var express = require("express");
