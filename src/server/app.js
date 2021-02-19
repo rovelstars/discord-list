@@ -4,7 +4,6 @@ const bot = require("@bot/index.js");
  let client = await bot.init(process.env.TOKEN);
  const OAuthClient = await require('disco-oauth');
  const authclient = await new OAuthClient(client.user.id, client.secret);
- await console.log(client);
 });
 var express = require("express");
 var compression = require("compression");
