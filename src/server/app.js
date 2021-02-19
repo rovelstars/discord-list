@@ -1,10 +1,7 @@
 const port = process.env.PORT || 3000;
-const bot = require("@bot/index.js");
-(async()=>{
- let client = await bot.init(process.env.TOKEN);
- const OAuthClient = await require('disco-oauth');
- const authclient = await new OAuthClient(client.user.id, client.secret);
-});
+let client = require("@bot/index.js");
+ const OAuthClient = require('disco-oauth');
+ const authclient = new OAuthClient(client.user.id, client.secret);
 var express = require("express");
 var compression = require("compression");
 var app = express();
