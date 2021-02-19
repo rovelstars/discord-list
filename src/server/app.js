@@ -66,6 +66,10 @@ app.get("/arc-sw.js", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/arc-sw.js"));
 });
 
+app.get("/beta", (req, res)=>{
+ res.sendFile(path.resolve("src/public/assets/join.html"));
+});
+
 app.get("*", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/index.html"));
  });
