@@ -1,5 +1,4 @@
 const port = process.env.PORT || 3000;
-require("@bot/index.js");
 var express = require("express");
 var compression = require("compression");
 var app = express();

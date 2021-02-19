@@ -92,3 +92,7 @@ if(message.content == ".")
   message.reply('There was an error trying to execute that command! ☹️\nPlease tell the devs about it. Moreover, I have sent a detailed log to them already. 📨\n'+`If you can send this log to them, it would be great!\n\`\`\`\n${error}\n\`\`\``);
  }
 });
+const {app, port} = require("@server/app.js");
+app.listen(port, () => {
+ console.log(`[SERVER] Started on port:${port}`);
+});

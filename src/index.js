@@ -9,10 +9,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("[DB] We're connected to database!");
 });
-const {app, port} = require("@server/app.js");
-app.listen(port, () => {
- console.log(`[SERVER] Started on port:${port}`);
-});
+require("@bot/index.js");
 
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
