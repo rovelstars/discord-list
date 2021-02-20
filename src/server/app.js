@@ -22,7 +22,7 @@ setTimeout(()=>{
 }, 5000);
 // ejs setting
 app.set('view engine', 'ejs');
-app.set('view options', { delimiter: '::' });
+app.set('views', path.join(__dirname, "pages"));
 const limiter = rateLimit({
  windowMs: 60 * 60 * 1000, // 60 minutes
  max: 1000 // limit each IP to 1000 requests per windowMs
@@ -60,7 +60,10 @@ log("[SERVER] Started!\n[SERVER] Webhooks started!");
 app.use('/assets', express.static(path.resolve("src/public/assets")));
 app.use('/bots', bots);
 app.get("/", (req, res) => {
- res.sendFile(path.resolve("src/public/assets/index.html"));
+ if(req.cookies.key)
+ const User = auth.getUser(req.cookies.key);
+ 
+ res.render('index.html', {user: User || null});
 });
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/favicon.ico");
