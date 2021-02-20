@@ -7,6 +7,8 @@ const authclient = new OAuthClient(process.env.ID, process.env.SECRET);
 authclient.scopes = ['identify', 'guilds'];
 authclient.redirectURI = "https://bots.rovelstars.ga/auth";
 module.exports = { app, port };
+var cookieParser = require("cookie-parser");
+app.use(cookieParser());
 app.use(compression());
 let log = console.log;
 const rovel = require("rovel.js")
@@ -77,18 +79,9 @@ app.get("/beta", (req, res)=>{
 });
 
 app.get("/auth", async (req, res)=>{
- try {
-
-    const code = req.query.code?.toString();
-
-    if (!code){
-      res.send({"error": "no_code"});
-      return;
-    }
-    
-    const key = await auth.getAccess(code);
-    res.redirect(process.env.DOMAIN);
-  } catch (error) { await res.send({"error": "no_code"}); }
+    const {userKey, expiryInfo} = await auth.getAccess(code);
+    await console.log(userKey, expiryInfo);
+    await res.redirect(process.env.DOMAIN);
 });
 
 app.get("*", (req, res) => {
