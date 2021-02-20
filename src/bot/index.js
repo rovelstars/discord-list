@@ -4,7 +4,7 @@ const client = new Discord.Client();
 client.login(process.env.TOKEN);
 client.secret = process.env.SECRET;
 const OAuthClient = require('disco-oauth');
-const authclient = new OAuthClient(client.user.id, client.secret);
+const authclient = new OAuthClient(process.env.ID, client.secret);
 authclient.scopes = ['identify', 'guilds'];
 authclient.redirectURI = "https://bots.rovelstars.ga/auth";
 client.commands = new Discord.Collection();
