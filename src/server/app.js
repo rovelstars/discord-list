@@ -5,7 +5,7 @@ var app = express();
 const OAuthClient = require('disco-oauth');
 const authclient = new OAuthClient(process.env.ID, process.env.SECRET);
 authclient.scopes = ['identify', 'guilds'];
-authclient.redirectURI = encodeURI("https://bots.rovelstars.ga/auth");
+authclient.redirectURI = "https://bots.rovelstars.ga/auth";
 module.exports = { app, port };
 app.use(compression());
 let log = console.log;
