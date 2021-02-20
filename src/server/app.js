@@ -80,7 +80,10 @@ app.get("/beta", (req, res)=>{
 
 app.get("/auth", async (req, res)=>{
     const key = await auth.getAccess(req.query.code);
-    await console.log(key);
+    res.cookie('key', key, {
+     maxAge: 86400 * 1000 * 90,
+     secure: true
+    });
     await res.redirect(process.env.DOMAIN);
 });
 
