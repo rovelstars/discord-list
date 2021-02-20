@@ -2,6 +2,10 @@ const port = process.env.PORT || 3000;
 var express = require("express");
 var compression = require("compression");
 var app = express();
+const OAuthClient = require('disco-oauth');
+const authclient = new OAuthClient(process.env.ID, process.env.SECRET);
+authclient.scopes = ['identify', 'guilds'];
+authclient.redirectURI = "https://bots.rovelstars.ga/auth";
 module.exports = { app, port };
 app.use(compression());
 let log = console.log;
@@ -66,6 +70,25 @@ app.get("/arc-sw.js", (req, res) => {
 
 app.get("/beta", (req, res)=>{
  res.sendFile(path.resolve("src/public/assets/join.html"));
+});
+
+ app.get("/login", (req, res)=>{
+ res.redirect(authclient.authCodeLink);
+});
+
+app.get("/auth", async (req, res)=>{
+ try {
+
+    const code = req.query.code?.toString();
+
+    if (!code){
+      res.send({"error": "no_code"});
+      return;
+    }
+    
+    const key = await auth.getAccess(code);
+    res.redirect(process.env.DOMAIN);
+  } catch (error) { await res.send({"error": "no_code"}); }
 });
 
 app.get("*", (req, res) => {

@@ -2,11 +2,6 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.login(process.env.TOKEN);
-client.secret = process.env.SECRET;
-const OAuthClient = require('disco-oauth');
-const authclient = new OAuthClient(process.env.ID, client.secret);
-authclient.scopes = ['identify', 'guilds'];
-authclient.redirectURI = "https://bots.rovelstars.ga/auth";
 client.commands = new Discord.Collection();
 const prefix = process.env.PREFIX;
 const commandFiles = fs.readdirSync(__dirname+'/commands').filter(file => file.endsWith('.js'));
@@ -97,24 +92,8 @@ if(message.content == ".")
   message.reply('There was an error trying to execute that command! ☹️\nPlease tell the devs about it. Moreover, I have sent a detailed log to them already. 📨\n'+`If you can send this log to them, it would be great!\n\`\`\`\n${error}\n\`\`\``);
  }
 });
+
 const {app, port} = require("@server/app.js");
-app.get("/login", (req, res)=>{
- res.redirect(authclient.authCodeLink);
-});
-app.get("/auth", async (req, res)=>{
- try {
-
-    const code = req.query.code?.toString();
-
-    if (!code){
-      res.send({"error": "no_code"});
-      return;
-    }
-    
-    const key = await auth.getAccess(code);
-    res.redirect(process.env.DOMAIN);
-  } catch (error) { await res.send({"error": "no_code"}); }
-})
 app.listen(port, () => {
  console.log(`[SERVER] Started on port:${port}`);
 });
