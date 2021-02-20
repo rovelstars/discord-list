@@ -79,8 +79,8 @@ app.get("/beta", (req, res)=>{
 });
 
 app.get("/auth", async (req, res)=>{
-    const {userKey, expiryInfo} = await auth.getAccess(req.query.code);
-    await console.log(userKey, expiryInfo);
+    const key = await auth.getAccess(req.query.code);
+    await console.log(key);
     await res.redirect(process.env.DOMAIN);
 });
 
