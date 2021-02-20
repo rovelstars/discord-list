@@ -3,9 +3,9 @@ var express = require("express");
 var compression = require("compression");
 var app = express();
 const OAuthClient = require('disco-oauth');
-const authclient = new OAuthClient(process.env.ID, process.env.SECRET);
-authclient.scopes = ['identify', 'guilds'];
-authclient.redirectURI = "https://bots.rovelstars.ga/auth";
+const auth = new OAuthClient(process.env.ID, process.env.SECRET);
+auth.scopes = ['identify', 'guilds'];
+auth.redirectURI = "https://bots.rovelstars.ga/auth";
 module.exports = { app, port };
 var cookieParser = require("cookie-parser");
 app.use(cookieParser());
@@ -75,7 +75,7 @@ app.get("/beta", (req, res)=>{
 });
 
  app.get("/login", (req, res)=>{
- res.redirect(authclient.authCodeLink);
+ res.redirect(auth.authCodeLink);
 });
 
 app.get("/auth", async (req, res)=>{
