@@ -63,7 +63,7 @@ app.get("/", (req, res) => {
  if(req.cookies.key)
  const User = auth.getUser(req.cookies.key);
  
- res.render('index.html', {user: User || null});
+ res.render('index.ejs', {user: User || null});
 });
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/favicon.ico");
