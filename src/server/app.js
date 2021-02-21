@@ -61,6 +61,7 @@ app.use('/assets', express.static(path.resolve("src/public/assets")));
 app.use('/bots', bots);
 app.get("/", (req, res) => {
  var user = (req.cookies['key'])? auth.getUser(req.cookies['key']) : undefined;
+ console.log(user);
  res.render('index.ejs', {user: user});
 });
 app.get("/favicon.ico", (req, res) => {
