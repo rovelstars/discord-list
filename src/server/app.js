@@ -62,7 +62,7 @@ app.use('/bots', bots);
 app.get("/", async (req, res) => {
  let key = await req.cookies['key'];
  var user = await auth.getUser(key);
- await console.log(user);
+ await console.log(user.User);
  await res.render('index.ejs', {user: (user||null)});
 });
 app.get("/favicon.ico", (req, res) => {
