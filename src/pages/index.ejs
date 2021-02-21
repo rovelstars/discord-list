@@ -41,11 +41,7 @@
 </div>
 <!-- Starting -->
 <img src="https://cdn.discordapp.com/attachments/775220204699385886/811849450641162280/unknown.jpeg" width="100%" />
-<%if(user._username != undefined){%>
-<h3>Hello <%user._username%> !</h3>
-<% }else{ %>
-<h3>Hello!</h3>
-<% } %>
+<h3>Hello <%(user._username || '')%> !</h3>
 <p>A new Discord List is coming out soon! Stay tuned on our discord server:</p><a href="https://discord.gg/953XCpHbKF">here</a>
 <p>Until it comes out, check out our docs!</p><a href="https://rovelstars.ga">link</a>
 <p>Or join the beta for RDL!</p>
