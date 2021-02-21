@@ -93,6 +93,11 @@ app.get("/auth", async (req, res)=>{
     await res.redirect("/");
 });
 
+app.get("/logout", async (req, res)=>{
+ if(req.cookies['key']) res.cookie('key', req.cookies['key'], {maxAge: 0});
+ res.redirect("/");
+});
+
 app.get("*", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/index.html"));
  });
