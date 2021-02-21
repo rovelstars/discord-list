@@ -60,13 +60,13 @@ log("[SERVER] Started!\n[SERVER] Webhooks started!");
 app.use('/assets', express.static(path.resolve("src/public/assets")));
 app.use('/bots', bots);
 app.get("/", async (req, res) => {
- if(req.cookie['key']!=undefined){
+ try{
  let key = await req.cookies['key'];
  var user = await auth.getUser(key);
  await console.log(user._username);
  await res.render('index.ejs', {user: user});
  }
- else{
+ catch{
   res.sendFile(path.resolve("src/public/assets/index.html"));
  }
 });
