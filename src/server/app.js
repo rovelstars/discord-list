@@ -60,10 +60,8 @@ log("[SERVER] Started!\n[SERVER] Webhooks started!");
 app.use('/assets', express.static(path.resolve("src/public/assets")));
 app.use('/bots', bots);
 app.get("/", (req, res) => {
- if(req.cookies['key']){
- const User = auth.getUser(req.cookies['key']);
- }
- res.render('index.ejs', {user: User || null});
+ let user = (req.cookies['key'])? auth.getUser(req.cookies['key']) : undefined;
+ res.render('index.ejs', {user: user});
 });
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/favicon.ico");
@@ -85,6 +83,7 @@ app.get("/auth", async (req, res)=>{
     const key = await auth.getAccess(req.query.code);
     res.cookie('key', key, {
      maxAge: 86400 * 1000 * 90,
+     httpOnly: true,
      secure: true
     });
     await res.redirect(process.env.DOMAIN);
