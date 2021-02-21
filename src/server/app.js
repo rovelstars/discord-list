@@ -60,9 +60,9 @@ log("[SERVER] Started!\n[SERVER] Webhooks started!");
 app.use('/assets', express.static(path.resolve("src/public/assets")));
 app.use('/bots', bots);
 app.get("/", (req, res) => {
- if(req.cookies.key)
+ if(req.cookies['key']){
  const User = auth.getUser(req.cookies['key']);
- 
+ }
  res.render('index.ejs', {user: User || null});
 });
 app.get("/favicon.ico", (req, res) => {
