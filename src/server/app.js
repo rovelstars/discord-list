@@ -59,6 +59,7 @@ log("[SERVER] Started!\n[SERVER] Webhooks started!");
 
 app.use('/assets', express.static(path.resolve("src/public/assets")));
 app.use('/bots', bots);
+
 app.get("/", async (req, res) => {
  if(!req.cookies['key']) res.sendFile(path.resolve("src/public/assets/index.html"));
  else {
