@@ -1,10 +1,3 @@
-const menu = document.querySelector('#mobile-menu');
-const menuLinks = document.querySelector('.nav-menu');
-
-menu.addEventListener('click', function() {
-    menu.classList.toggle('is-active');
-    menuLinks.classList.toggle('active')
-})
 //makes sure the whole site is loaded
   $(window).load(function() {
     // will first fade out the loading animation
