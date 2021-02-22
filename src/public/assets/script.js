@@ -1,3 +1,10 @@
+const menu = document.querySelector('#mobile-menu');
+const menuLinks = document.querySelector('.nav-menu');
+
+menu.addEventListener('click', function() {
+    menu.classList.toggle('is-active');
+    menuLinks.classList.toggle('active')
+})
 //makes sure the whole site is loaded
   $(window).load(function() {
     // will first fade out the loading animation
@@ -5,14 +12,6 @@
     // will fade out the whole DIV that covers the website.
     $("#loading").delay(100).fadeOut("slow");
     
-    const menu = document.querySelector('#mobile-menu');
-const menuLinks = document.querySelector('.nav-menu');
-
-menu.addEventListener('click', function() {
-    menu.classList.toggle('is-active');
-    menuLinks.classList.toggle('active')
-})
-
     if (typeof(Storage) !== "undefined") {
      if(localStorage.allowcookies!="yes"){
   swal({

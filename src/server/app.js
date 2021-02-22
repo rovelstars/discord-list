@@ -64,7 +64,6 @@ app.get("/", async (req, res) => {
  if(!req.cookies['key']) res.sendFile(path.resolve("src/public/assets/index.html"));
  else {
  var user = await auth.getUser(req.cookies['key']);
- await console.log(user.username);
  await res.render('index.ejs', {user});
  }
 });
