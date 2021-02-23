@@ -5,6 +5,5 @@ desc: "The next gen all-in-one Discord List coming up!"
 </head>
 <body>
  <%- include('partials/load'); %>
- <%- include('partials/navbar'); %>
- <p>Hello <%= user.username %> !</p>
+ <%- include('partials/navbar', {user}); %>
 </body>

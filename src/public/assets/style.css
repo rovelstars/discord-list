@@ -2,6 +2,9 @@
 p{
  font-family: discord, sans-serif;
 }
+.navbar-brand {
+ font-family: bangers;
+}
 .swal-modal {
   background-color: #36393f;
 }
