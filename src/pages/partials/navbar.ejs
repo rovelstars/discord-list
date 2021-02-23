@@ -20,12 +20,12 @@
         </li>
       </ul>
       <span class="navbar-text">
-        Welcome back <%= user.username || '' %> !
+        Welcome back <%= user.username || '' %> !   
       </span>
       <% if(!user) {%>
-      <button class="btn btn-outline-success me-2" type="button">Login</button>
+      <button onclick="window.location.pathname='/login'" class="btn btn-outline-success me-2" type="button">Login</button>
       <% } else { %>
-      <button class="btn btn-outline-success me-2" type="button">Logout</button>
+      <button onclick="window.location.pathname='/logout" class="btn btn-outline-success me-2" type="button">Logout</button>
       <% } %>
       <form class="d-flex">
       <input class="form-control me-2" type="search" placeholder="Search for E-USB..." aria-label="Search">
