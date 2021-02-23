@@ -65,7 +65,7 @@ app.get("/", async (req, res) => {
  var user = await auth.getUser(req.cookies['key']);
  await res.render('index.ejs', {user});
 }
-else res.render('index.ejs');
+else res.render('index.ejs', {user: null});
 });
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/favicon.ico");
