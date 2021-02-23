@@ -1,36 +1,44 @@
-<nav class="navbar navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <img src="https://bots.rovelstars.ga/assets/img/robot.svg" alt="" width="30" height="24" class="d-inline-block align-top">
-      RDL
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Users</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Bots</a>
-        </li>
+<nav class="navbar navbar-dark sticky-top" style="background-color: #36393f;">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#"><img src="/assets/img/robot.svg">RDL</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><span>Welcome back <%= user.username || '' %> !</span></li>
+        <li class="active"><a href="/">Home</a></li>
+        <li><a href="/emojis">Emojis</a></li>
+        <li><a href="/users">Users</a></li>
+        <li><a href="/servers">Servers</a></li>
+        <li><a href="/bots">Bots</a></li>
+        <!--<li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li class="dropdown-header">Nav header</li>
+            <li><a href="#">Separated link</a></li>
+            <li><a href="#">One more separated link</a></li>
+          </ul>
+        </li>-->
+        <nav class="navbar navbar-light bg-light">
+  <form class="container-fluid justify-content-start">
+   <% if(user) { %>
+    <button class="btn me-2" type="button" style="background-color: #f04747"><a href="/logout">Logout</a></button>
+    <% } else { %>
+     <button class="btn me-2" type="button" style="background-color: #4385b1"><a href="/logout">Login</a></button>
+     <% } %>
+  </form>
+</nav>
       </ul>
-      <span class="navbar-text">
-        Welcome back <%= user.username || '' %> !   
-      </span>
-      <% if(!user) {%>
-      <button onclick="window.location.pathname='/login'" class="btn btn-outline-success me-2" type="button">Login</button>
-      <% } else { %>
-      <button onclick="window.location.pathname='/logout" class="btn btn-outline-success me-2" type="button">Logout</button>
-      <% } %>
-      <form class="d-flex">
-      <input class="form-control me-2" type="search" placeholder="Search for E-USB..." aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search</button>
-    </form>
     </div>
   </div>
 </nav>

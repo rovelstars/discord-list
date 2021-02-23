@@ -61,8 +61,11 @@ app.use('/assets', express.static(path.resolve("src/public/assets")));
 app.use('/bots', bots);
 
 app.get("/", async (req, res) => {
- if(req.cookies['key']) var user = await auth.getUser(req.cookies['key']);
+ if(req.cookies['key']){
+ var user = await auth.getUser(req.cookies['key']);
  await res.render('index.ejs', {user});
+}
+else res.render('index.ejs');
 });
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/favicon.ico");
