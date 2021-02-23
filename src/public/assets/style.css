@@ -15,22 +15,29 @@ p{
   font-size: 20px;
   font-family: discord;
 }
-.swal-text , .swal-title {
+.swal-text {
  color: #ffffff;
  font-family: discord;
 }
-
+.swal-title {
+ color: #ffffff;
+ font-family: burbank;
+}
 @font-face {
   font-family: discord;
   src: url(https://bots.rovelstars.ga/assets/font/sans.otf);
 }
 @font-face {
  font-family: burbank;
- src: url(https://bots.rovelstars.ga/assets/font/burbank.otf);
+ src: url(https://bots.rovelstars.ga/assets/font/Burbank.otf);
 }
 @font-face {
  font-family: angrybirds;
  src: url(https://bots.rovelstars.ga/assets/angrybirds.ttf);
+}
+@font-face {
+ font-family: bangers;
+ src: url(https://bots.rovelstars.ga/assets/Bangers.ttf);
 }
 
 #loading {
