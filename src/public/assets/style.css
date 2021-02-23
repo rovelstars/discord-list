@@ -1,6 +1,6 @@
 
 p{
- font-family: sans;
+ font-family: discord, sans-serif;
 }
 .swal-modal {
   background-color: #36393f;
@@ -13,16 +13,24 @@ p{
   border-radius: 2px;
   background-color: #43b581;
   font-size: 20px;
-  font-family: sans;
+  font-family: discord;
 }
 .swal-text , .swal-title {
  color: #ffffff;
- font-family: sans;
+ font-family: discord;
 }
 
 @font-face {
-  font-family: sans;
+  font-family: discord;
   src: url(https://bots.rovelstars.ga/assets/font/sans.otf);
+}
+@font-face {
+ font-family: burbank;
+ src: url(https://bots.rovelstars.ga/assets/font/burbank.otf);
+}
+@font-face {
+ font-family: angrybirds;
+ src: url(https://bots.rovelstars.ga/assets/angrybirds.ttf);
 }
 
 #loading {
