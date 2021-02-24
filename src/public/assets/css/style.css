@@ -1,10 +1,12 @@
 p{
  font-family: discord, sans-serif;
 }
+.dropdown-item, .nav-link {
+ font-family: bangers;
+}
 .navbar-brand {
  font-family: discord;
  font-weight: 15%;
- font-size: 150%;
 }
 .swal-modal {
   background-color: #36393f;
