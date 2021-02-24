@@ -9,26 +9,31 @@
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link active" aria-current="page" href="#"><i class="bx bxs-home"></i>Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Users</a>
+          <a class="nav-link" href="#"><i class="bx bxs-wink-smile"></i>Emojis</a>
+        <li class="nav-item">
+          <a class="nav-link" href="#"><i class="bx bxs-user-account"></i>Users</a>
+        <li class="nav-item">
+          <a class="nav-link" href="#"><i class="bx bxs-server"></i>Servers</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Bots</a>
+          <a class="nav-link" href="#"><i class="bx bxs-bot"></i>Bots</a>
         </li>
       </ul>
       <span class="navbar-text">
-        Welcome back <% if(user){ %><img src="<%= user.avatarUrl(64) %>" style="border-radius: 50%; width: 10%"><%= user.username %><% } %> !
+        Welcome back <% if(user){ %><img src="<%= user.avatarUrl(64) %>" style="border-radius: 50%; width: 10%">&nbsp;&nbsp;&nbsp;<%= user.username %><% } %> !
       </span>
       <% if(!user) {%><br>
-      <button class="btn btn-outline-success me-2" type="button" onclick="login()">Login</button><br>
+      <button class="btn btn-outline-success me-2" type="button" onclick="login()"><i class="bx bxs-log-in-circle"></i>Login</button><br>
       <% } else { %><br>
-      <button class="btn btn-outline-danger me-2" type="button" onclick="logout()">Logout</button><br>
+      <button class="btn btn-outline-danger me-2" type="button" onclick="logout()"><i class="bx bxs-log-out-circle"></i>Logout</button><br>
       <% } %>
+      <br>
       <form class="d-flex">
       <input class="form-control me-2" type="search" placeholder="Search for E-USB..." aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search</button>
+      <button class="btn btn-outline-success" type="submit"><i class="bx bx-search-alt"></i>Search</button>
     </form>
     </div>
   </div>
