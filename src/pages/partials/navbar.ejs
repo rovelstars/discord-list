@@ -19,7 +19,7 @@
         </li>
       </ul>
       <span class="navbar-text">
-        Welcome back <% if(user){ %><img src="<%= user.avatarUrl(64) %>" style="border-radius: 50%;"><%= user.username %><% } %> !
+        Welcome back <% if(user){ %><img src="<%= user.avatarUrl(64) %>" style="border-radius: 50%; width: 10%"><%= user.username %><% } %> !
       </span>
       <% if(!user) {%>
       <button class="btn btn-outline-success me-2" type="button">Login</button>
