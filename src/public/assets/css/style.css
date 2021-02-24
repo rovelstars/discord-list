@@ -7,7 +7,7 @@ p{
 }
 .navbar-brand {
  font-family: discord;
- font-weight: 15%;
+ font-weight: 15px;
 }
 .swal-modal {
   background-color: #36393f;
