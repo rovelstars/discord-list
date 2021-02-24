@@ -21,10 +21,10 @@
       <span class="navbar-text">
         Welcome back <% if(user){ %><img src="<%= user.avatarUrl(64) %>" style="border-radius: 50%; width: 10%"><%= user.username %><% } %> !
       </span>
-      <% if(!user) {%>
-      <button class="btn btn-outline-success me-2" type="button">Login</button>
-      <% } else { %>
-      <button class="btn btn-outline-success me-2" type="button">Logout</button>
+      <% if(!user) {%><br>
+      <button class="btn btn-outline-success me-2" type="button" onclick="login()">Login</button><br>
+      <% } else { %><br>
+      <button class="btn btn-outline-danger me-2" type="button" onclick="logout()">Logout</button><br>
       <% } %>
       <form class="d-flex">
       <input class="form-control me-2" type="search" placeholder="Search for E-USB..." aria-label="Search">
@@ -33,3 +33,11 @@
     </div>
   </div>
 </nav>
+<script>
+ function login(){
+  window.location.href = "https://bots.rovelstars.ga/login";
+ }
+ function logout(){
+  window.location.href = "https://bots.rovelstars.ga/logout";
+ }
+</script>
