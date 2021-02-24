@@ -1,5 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 p{
- font-family: discord, sans-serif;
+ font-family: 'Fredoka One', sans-serif;
 }
 .dropdown-item, .nav-link {
  font-family: bangers;
