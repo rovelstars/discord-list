@@ -21,6 +21,14 @@ h3.subtitle {
  font-family: discord;
  font-weight: 15px;
 }
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+.sticky + d.container {
+  padding-top: 60px;
+}
 .swal-modal {
   background-color: #36393f;
 }

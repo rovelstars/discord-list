@@ -57,4 +57,15 @@
  function logout(){
   window.location.href = "https://bots.rovelstars.ga/logout";
  }
+ 
+ window.onscroll = function() {nav()};
+var navbar = document.getElementById("navbar");
+var sticky = navbar.offsetTop;
+function nav() {
+  if (window.pageYOffset >= sticky) {
+    navbar.classList.add("sticky")
+  } else {
+    navbar.classList.remove("sticky");
+  }
+}
 </script>
