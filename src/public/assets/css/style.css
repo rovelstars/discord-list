@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-*{
+.container{
  background-color: #36393f;
 }
 p{
@@ -8,7 +8,8 @@ p{
 h3.header {
  font-family: burbank;
  text-align: center;
- word-spacing: 20px;
+ word-spacing: 5px;
+ color: white;
 }
 .dropdown-item, .nav-link {
  font-family: bangers;
@@ -16,7 +17,6 @@ h3.header {
 .navbar-brand {
  font-family: discord;
  font-weight: 15px;
- word-spacing: 20px;
 }
 .swal-modal {
   background-color: #36393f;
