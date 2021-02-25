@@ -5,11 +5,14 @@ div.container{
 p{
  font-family: 'Fredoka One', sans-serif;
 }
-h3.header {
+h1.header , h3.subtitle {
  font-family: burbank;
  text-align: center;
  word-spacing: 5px;
  color: white;
+}
+h3.subtitle {
+ color: #8E8E8E;
 }
 .dropdown-item, .nav-link {
  font-family: bangers;
