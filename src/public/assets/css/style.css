@@ -6,6 +6,8 @@ p{
  font-family: 'Fredoka One', sans-serif;
  color: white;
 }
+.text-focus-in{-webkit-animation:text-focus-in 1s cubic-bezier(.55,.085,.68,.53) both;animation:text-focus-in 1s cubic-bezier(.55,.085,.68,.53) both}
+.tracking-in-expand{-webkit-animation:tracking-in-expand .7s cubic-bezier(.215,.61,.355,1.000) both;animation:tracking-in-expand .7s cubic-bezier(.215,.61,.355,1.000) both}
 h1.header , h3.subtitle {
  font-family: burbank;
  text-align: center;
@@ -66,6 +68,19 @@ h3.subtitle {
 @font-face {
  font-family: bangers;
  src: url(https://bots.rovelstars.ga/assets/Bangers.ttf);
+}
+
+img.vert-move {
+    -webkit-animation: mover 1s infinite  alternate;
+    animation: mover 1s infinite  alternate;
+}
+@-webkit-keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+@keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
 }
 
 #loading {
@@ -135,11 +150,15 @@ h3.subtitle {
   }
 }
 
+@-webkit-keyframes tracking-in-expand{0%{letter-spacing:-.5em;opacity:0}40%{opacity:.6}100%{opacity:1}}@keyframes tracking-in-expand{0%{letter-spacing:-.5em;opacity:0}40%{opacity:.6}100%{opacity:1}}
+
+@-webkit-keyframes text-focus-in{0%{-webkit-filter:blur(12px);filter:blur(12px);opacity:0}100%{-webkit-filter:blur(0);filter:blur(0);opacity:1}}@keyframes text-focus-in{0%{-webkit-filter:blur(12px);filter:blur(12px);opacity:0}100%{-webkit-filter:blur(0);filter:blur(0);opacity:1}}
+
 #scroll {
     position:fixed;
     right:10px;
     bottom:10px;
-    cursor:pointer;
+    cursor: pointer;
     width:50px;
     height:50px;
     background-color:#7289da;
