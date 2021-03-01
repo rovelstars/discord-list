@@ -2,9 +2,11 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.login(process.env.TOKEN);
-const {owners} = require("../data.js");
+const {owners, emojiapprovers, mods} = require("../data.js");
 client.commands = new Discord.Collection();
 client.owners = owners;
+client.emojiapprovers = emojiapprovers;
+client.mods = mods;
 const prefix = process.env.PREFIX;
 const commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
 let i = 0;
@@ -111,5 +113,26 @@ router.get("/owner/:id", (req, res)=>{
   res.json({condition});
  }
  else res.json({error: "id_not_sent"});
-})
+});
+router.get("/emojiapprovers", (req, res) => {
+ res.json({emojiapprovers: client.emojiapprovers});
+});
+router.get("/emojiapprovers/:id", (req, res)=>{
+ if(req.params.id){
+  var condition = client.emojiapprovers.includes(req.params.id);
+  res.json({condition});
+ }
+ else res.json({error: "id_not_sent"});
+});
+router.get("/mods", (req, res) => {
+ res.json({mods: client.mods});
+});
+router.get("/mod/:id", (req, res)=>{
+ if(req.params.id){
+  var condition = client.mods.includes(req.params.id);
+  res.json({condition});
+ }
+ else res.json({error: "id_not_sent"});
+});
+
 module.exports = router;
