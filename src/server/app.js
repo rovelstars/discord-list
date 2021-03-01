@@ -80,7 +80,7 @@ app.get("/beta", (req, res)=>{
 });
 
  app.get("/login", (req, res)=>{
- res.redirect(auth.authCodeLink);
+ res.redirect(auth.auth.link);
 });
 
 app.get("/auth", async (req, res)=>{
