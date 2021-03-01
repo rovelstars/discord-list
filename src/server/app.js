@@ -1,7 +1,7 @@
 const port = process.env.PORT || 3000;
 var express = require("express");
 var compression = require("compression");
-let client = require("@bot/index.js").router;
+let client = require("@bot/index.js");
 var app = express();
 const OAuthClient = require('disco-oauth');
 const auth = new OAuthClient(process.env.ID, process.env.SECRET);
@@ -70,7 +70,7 @@ app.get("/", async (req, res) => {
 else res.render('index.ejs', {user: null});
 });
 app.get("/favicon.ico", (req, res) => {
- res.redirect("/assets/favicon.ico");
+ res.redirect("/assets/img/robot.png");
 });
 
 app.get("/arc-sw.js", (req, res) => {
