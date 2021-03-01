@@ -9,8 +9,10 @@ auth.scopes = ['identify', 'guilds'];
 auth.redirectURI = "https://bots.rovelstars.ga/auth";
 module.exports = { app, port };
 var cookieParser = require("cookie-parser");
+const helmet = require("helmet");
 app.use(cookieParser());
 app.use(compression());
+app.use(helmet());
 let log = console.log;
 const rovel = require("rovel.js")
 const fetch = rovel.fetch;

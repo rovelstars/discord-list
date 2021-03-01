@@ -12,6 +12,7 @@
     "node": "^14.x"
   },
   "dependencies": {
+    "helmet": "4.4.1",
     "cookie-parser": "1.4.5",
     "disco-oauth": "5.0.1",
     "express-rate-limit": "5.2.6",
