@@ -62,7 +62,7 @@ app.use('/bots', bots);
 
 app.get("/", async (req, res) => {
  if(req.cookies['key']){
- var user = await auth.getUser(req.cookies['key']);
+ var user = await auth.user.fetch(req.cookies['key']);
  await res.render('index.ejs', {user});
 }
 else res.render('index.ejs', {user: null});
