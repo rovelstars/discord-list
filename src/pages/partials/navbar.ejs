@@ -23,7 +23,7 @@
         </li>
       </ul>
       <span class="navbar-text">
-        Welcome back <% if(user){ %><img src="<%= user.avatarUrl(64) %>" style="border-radius: 50%; width: 10%">&nbsp;&nbsp;&nbsp;<%= user.username %><% } %> !
+        Welcome back <% if(user){ %><img src="<%= user.avatarUrl(64) %>" style="border-radius: 50%; width: 10%" alt="<%= user.username %>">&nbsp;&nbsp;&nbsp;<%= user.username %><% } %> !
       </span>
       <% if(!user) {%><br>
       <button class="btn btn-outline-success me-2" type="button" onclick="login()"><i class="bx bxs-log-in-circle"></i>&nbsp;Login</button><br>
@@ -68,9 +68,6 @@ function nav() {
     navbar.classList.remove("sticky");
   }
 }
-
-twemoji.parse(document.body);
-
 $(document).ready(function(){ 
     $(window).scroll(function(){ 
         if ($(this).scrollTop() > 100) { 
