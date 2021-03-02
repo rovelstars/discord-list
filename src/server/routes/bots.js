@@ -1,8 +1,7 @@
 let Bots = require("@models/bots.js");
 let {fetch} = require("rovel.js");
-const bodyParser = require('body-parser');
 let router = require("express").Router();
-router.use(bodyParser.json());
+router.use(require("express").json())
 router.get("/", (req, res)=>{
  Bots.find(function (err, bots){
   if (err) return console.error(err);
