@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const Bots = new Schema({
- id: Number, //botId
- owners: [{_id: Number}], //owners
+ id: String , //botId
+ owners: [{_id: String}], //owners
  short: String, //short desc
  desc: String, //description
  verified: { type: Boolean, default: false }, //verified bot or not
- support: Number, //support server id
+ support: String, //support server id
  bg: String, // background image link
  github: String, //github link
  website: String, //website link
