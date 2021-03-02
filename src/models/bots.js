@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const Bots = new Schema({
  id: String , //botId
- owners: [{_id: String}], //owners
+ owners: [{id: String}], //owners
  short: String, //short desc
  desc: String, //description
  verified: { type: Boolean, default: false }, //verified bot or not
