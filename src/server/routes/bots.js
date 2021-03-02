@@ -17,8 +17,7 @@ router.delete("/:id", (req, res)=>{
 })
 router.post("/new", (req, res)=>{
  console.log(req.body);
- const bot = new Bots({
- id: req.body.id,
+ /*const bot = new Bots({
  _id: req.body.id,
  owners: req.body.owners,
  short: req.body.short,
@@ -46,6 +45,7 @@ router.post("/new", (req, res)=>{
  });
  
   }
- });
+ });*/
+ res.send(req.body);
 });
 module.exports = router;
