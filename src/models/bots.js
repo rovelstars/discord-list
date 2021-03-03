@@ -32,6 +32,7 @@ Bots.set('toObject', {
     ret.id = ret._id
     delete ret._id
     delete ret.__v
+    return ret
   }
 })
 console.log("[DB] Compiling Schema into Model - Bots");
