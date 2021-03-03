@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const Bots = new Schema({
  _id: String , //botId
- owners: [{id: String}], //owners
+ owners: [{_id: String}], //owners
  short: String, //short desc
  desc: String, //description
  verified: { type: Boolean, default: false }, //verified bot or not
@@ -26,12 +26,15 @@ const Bots = new Schema({
   votes: { type: Number, default: 1 },
     }],
  badges: [{ type: String }],
+},{
+ versionKey: false
 });
 Bots.set('toObject', {
   transform: function (doc, ret) {
     ret.id = ret._id
+    ret.owners.id = ret.owners._id
     delete ret._id
-    delete ret.__v
+    delete ret.owners._id
     return ret
   }
 })
