@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const Bots = new Schema({
- id: String , //botId
+ _id: String , //botId
  owners: [{id: String}], //owners
  short: String, //short desc
  desc: String, //description
@@ -27,5 +27,12 @@ const Bots = new Schema({
     }],
  badges: [{ type: String }],
 });
+Bots.set('toObject', {
+  transform: function (doc, ret) {
+    ret.id = ret._id
+    delete ret._id
+    delete ret.__v
+  }
+})
 console.log("[DB] Compiling Schema into Model - Bots");
 module.exports = mongoose.model('Bots', Bots);
