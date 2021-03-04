@@ -30,11 +30,11 @@ const Bots = new Schema({
  versionKey: false
 });
 Bots.set('toObject', {
-  transform: function (doc, ret) {
-    ret.id = ret._id
-    ret.owners.id = ret.owners._id
-    delete ret._id
-    delete ret.owners._id
+  transform: async function (doc, ret) {
+    ret.id = await ret._id
+    ret.owners.id = await ret.owners._id
+    await delete ret._id
+    await delete ret.owners._id
     return ret
   }
 })
