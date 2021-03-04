@@ -35,6 +35,7 @@ Bots.set('toObject', {
     ret.owners.id = await ret.owners._id
     await delete ret._id
     await delete ret.owners._id
+    await delete ret.__v
     return ret
   }
 })
