@@ -25,7 +25,7 @@ router.delete("/:id", (req, res)=>{
    "color": "#ff0000",
    "url": `https://bots.rovelstars.ga/`
   })
- }).then(r=>r.json()).then(d=>console.log(d));
+ }).then(r=>r.text()).then(d=>console.log(d));
  })
 })
 
@@ -59,7 +59,7 @@ router.post("/new", (req, res)=>{
    "color": "#31CB00",
    "url": `https://bots.rovelstars.ga/bots/${bot.id}`
   })
- }).then(r=>r.json()).then(d=>console.log(d));
+ }).then(r=>r.text()).then(d=>console.log(d));
   }
  });
 });
