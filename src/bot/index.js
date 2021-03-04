@@ -99,6 +99,7 @@ client.on('message', message => {
 });
 
 let router = require("express").Router();
+router.use(require("express").json());
 router.get("/", (req, res) => {
  res.send("hmm");
 });
@@ -145,5 +146,20 @@ router.get("/contributors/:id", (req, res)=>{
  }
  else res.json({error: "id_not_sent"});
 });
-
+router.post("/log", (req, res)=>{
+ if(req.body.secret === process.env.SECRET){
+  const msg = new Discord.MessageEmbed()
+  .setTitle(req.body.title || "RDL Logging")
+  .setColor(req.body.color || "#7289DA")
+  .setDescription(req.body.desc || "No description provided.\n:/&&")
+  .setURL(req.body.url || "https://bots.rovelstars.ga")
+  .setTimestamp()
+  .setThumbnail(req.body.img || "https://bots.rovelstars.ga/favicon.ico");
+ 
+  client.guilds.cache.get("602906543356379156").channels.get("775231877433917440").send(msg)
+ }
+ else{
+  res.json({error: "wrong_or_no_key"});
+ }
+})
 module.exports = router;

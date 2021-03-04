@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const Bots = new Schema({
  _id: String , //botId
- owners: [{_id: String}], //owners
+ owners: [{id: String}], //owners
  short: String, //short desc
  desc: String, //description
  verified: { type: Boolean, default: false }, //verified bot or not
@@ -30,12 +30,12 @@ const Bots = new Schema({
  versionKey: false
 });
 Bots.set('toObject', {
-  transform: async function (doc, ret) {
-    ret.id = await ret._id
-    ret.owners.id = await ret.owners._id
-    await delete ret._id
-    await delete ret.owners._id
-    await delete ret.__v
+  transform: function (doc, ret) {
+    ret.id = ret._id
+    delete ret.owners._id
+    delete ret._id
+    delete ret.owners._id
+    delete ret.__v
     return ret
   }
 })
