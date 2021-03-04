@@ -20,7 +20,7 @@ router.delete("/:id", (req, res)=>{
   },
   body: JSON.stringify({
    "secret": process.env.SECRET,
-   "desc": `Bot <@!${bot.id}> has been deleted`,
+   "desc": `Bot <@!${req.params.id}> has been deleted`,
    "title": "Bot Deleted!",
    "color": "#ff0000",
    "url": `https://bots.rovelstars.ga/`
