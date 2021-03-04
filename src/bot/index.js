@@ -106,6 +106,10 @@ router.get("/", (req, res) => {
 router.get("/id", (req, res) => {
  res.json({ id: client.user.id });
 });
+router.get("/users/:id", (req, res)=>{
+ const user = client.users.cache.get(req.params.id);
+ res.send(user);
+});
 router.get("/owners", (req, res) => {
  res.json({owners: client.owners});
 });
