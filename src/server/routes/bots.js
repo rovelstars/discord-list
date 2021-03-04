@@ -8,12 +8,27 @@ router.get("/", (req, res)=>{
   res.send(bots);
  })
 });
+
 router.delete("/:id", (req, res)=>{
  Bots.deleteOne({_id: req.params.id}, function (err) {
   if (err) return res.send(err);
   res.send(`${req.params.id} deleted`);
+  fetch("https://bots.rovelstars.ga/client/log", {
+  method: "POST",
+  headers: {
+   "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+   "secret": process.env.SECRET,
+   "desc": `Bot <@!${bot.id}> has been deleted`,
+   "title": "Bot Deleted!",
+   "color": "#ff0000",
+   "url": `https://bots.rovelstars.ga/`
+  })
+ });
  })
 })
+
 router.post("/new", (req, res)=>{
  console.log(req.body);
  const bot = new Bots({
@@ -32,17 +47,19 @@ router.post("/new", (req, res)=>{
   if(err) return res.send(err);
   if(!err){ 
    res.send(bot);
-  fetch(process.env.WEBHOOK, {
+  fetch("https://bots.rovelstars.ga/client/log", {
   method: "POST",
   headers: {
    "Content-Type": "application/json"
   },
   body: JSON.stringify({
-   "username": "RDL New Bot Added!",
-   "content": `Bot <@!${bot.id}> has been added by <@!${bot.owners[0].id}>`
+   "secret": process.env.SECRET,
+   "desc": `Bot <@!${bot.id}> has been added by <@!${bot.owners[0].id}>`,
+   "title": "New Bot Added!",
+   "color": "#31CB00",
+   "url": `https://bots.rovelstars.ga/bots/${bot.id}`
   })
  });
- 
   }
  });
 });
