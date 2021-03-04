@@ -9,7 +9,7 @@ router.get("/", (req, res)=>{
  })
 });
 router.delete("/:id", (req, res)=>{
- Bots.deleteOne({id: req.params.id}, function (err) {
+ Bots.deleteOne({_id: req.params.id}, function (err) {
   if (err) return res.send(err);
   res.send(`${req.params.id} deleted`);
  })
