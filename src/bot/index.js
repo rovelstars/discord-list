@@ -156,7 +156,7 @@ router.post("/log", (req, res)=>{
   .setTimestamp()
   .setThumbnail(req.body.img || "https://bots.rovelstars.ga/favicon.ico");
  
-  client.guilds.cache.get("602906543356379156").channels.get("775231877433917440").send(msg)
+  client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
   res.json({code: "worked"});
  }
  else{
