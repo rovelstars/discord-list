@@ -2,6 +2,7 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.login(process.env.TOKEN);
+const {fetch} = require("rovel.js");
 const {owners, emojiapprovers, mods, contributors} = require("../data.js");
 client.commands = new Discord.Collection();
 client.owners = owners;
@@ -166,5 +167,5 @@ router.post("/log", (req, res)=>{
  else{
   res.json({error: "wrong_or_no_key"});
  }
-})
+});
 module.exports = router;

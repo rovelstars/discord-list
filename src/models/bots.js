@@ -5,6 +5,7 @@ const Bots = new Schema({
  owners: [{id: String}], //owners
  short: String, //short desc
  desc: String, //description
+ prefix: String, //bot prefix
  verified: { type: Boolean, default: false }, //verified bot or not
  support: String, //support server id
  bg: String, // background image link

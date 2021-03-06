@@ -8,7 +8,12 @@ router.get("/", (req, res)=>{
   res.send(bots);
  })
 });
-
+router("/:id", (req, res)=>{
+ Bots.findById(req.params.id, (err, doc)=>{
+  if(err) return res.json({err});
+  res.json({prefix: doc.prefix});
+ });
+});
 router.delete("/:id", (req, res)=>{
  Bots.deleteOne({_id: req.params.id}, function (err) {
   if (err) return res.send(err);
@@ -36,6 +41,7 @@ router.post("/new", (req, res)=>{
  owners: req.body.owners,
  short: req.body.short,
  desc: req.body.desc,
+ prefix: req.body.prefix,
  verified: false,
  support: req.body.support,
  bg: req.body.bg,
