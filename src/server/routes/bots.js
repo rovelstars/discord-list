@@ -8,7 +8,7 @@ router.get("/", (req, res)=>{
   res.send(bots);
  })
 });
-router("/:id", (req, res)=>{
+router.get("/:id", (req, res)=>{
  Bots.findById(req.params.id, (err, doc)=>{
   if(err) return res.json({err});
   res.json({prefix: doc.prefix});
