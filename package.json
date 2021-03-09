@@ -3,7 +3,6 @@
   "description": "Rovel Discord List",
   "version": "1.0.0",
   "scripts": {
-    "postinstall": "npm i npm@latest -g && npm i rovelstars/rovel.js#master -g",
     "start": "npm run main && npm run sass",
     "main": "node src/index.js",
     "server": "node src/server/app.js",
