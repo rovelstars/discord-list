@@ -4,12 +4,13 @@
   "version": "1.0.0",
   "scripts": {
     "postinstall": "npm i npm@latest -g && npm i rovelstars/rovel.js#master -g",
-    "start": "npm run main",
+    "start": "npm run main && npm run sass",
     "main": "node src/index.js",
-    "server": "node src/server/app.js"
+    "server": "node src/server/app.js",
+    "sass": "node-sass --omit-source-map-url src/sass/default.scss src/public/assets/css/default.css"
   },
   "engines": {
-    "node": "^14.x"
+    "node": "^15.x"
   },
   "dependencies": {
     "helmet": "4.4.1",
@@ -31,6 +32,10 @@
     "@sentry/tracing": "6.1.0",
     "module-alias": "2.2.2",
     "@meanie/mongoose-to-json": "2.5.0"
+  },
+  "devDependencies": {
+    "bulma": "0.9.2",
+    "node-sass": "5.0.0"
   },
   "_moduleAliases": {
     "@root": "src",
