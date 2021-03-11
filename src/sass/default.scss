@@ -22,6 +22,10 @@ $primary: $blurple;
 $family-sans-serif: discord, sans-serif;
 $grey-dark: #36393f;
 $background: $grey-dark;
-$text: $white;
+
+*{
+ background-color: $background;
+ color: $white;
+}
 
 @import "../../node_modules/bulma/bulma.sass";
