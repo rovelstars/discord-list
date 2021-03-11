@@ -24,4 +24,7 @@ $family-sans-serif: discord, sans-serif;
 $grey-dark: #36393f;
 $body-background-color: $grey-dark;
 $text: $white;
+h1, strong {
+ color: $text;
+}
 @import "../../node_modules/bulma/bulma.sass";
