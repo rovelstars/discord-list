@@ -33,9 +33,12 @@ const Bots = new Schema({
 Bots.set('toObject', {
   transform: function (doc, ret) {
     ret.id = ret._id
-    delete ret.owners._id
+    ret.owners.forEach(delid);
+    function delid(owner){
+     delete owner._id;
+     return owner;
+    }
     delete ret._id
-    delete ret.owners._id
     delete ret.__v
     return ret
   }
