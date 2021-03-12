@@ -38,9 +38,8 @@ Bots.set('toObject', {
      delete owner._id;
      return owner;
     }
-    delete ret._id
-    delete ret.__v
-    return ret
+    delete ret._id;
+    delete ret.__v;
   }
 })
 console.log("[DB] Compiling Schema into Model - Bots");
