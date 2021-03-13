@@ -1,4 +1,4 @@
-let router = require("expressjs").Router();
+let router = require("express").Router();
 let auth = require("@utils/auth.js");
 router.use(require("expressjs").json());
 router.get("/user", async (req, res)=>{
