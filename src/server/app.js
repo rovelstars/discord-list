@@ -3,10 +3,8 @@ var express = require("express");
 var compression = require("compression");
 let client = require("@bot/index.js");
 var app = express();
-const OAuthClient = require('disco-oauth');
-const auth = new OAuthClient(process.env.ID, process.env.SECRET);
-auth.scopes = ['identify', 'guilds'];
-auth.redirectURI = "https://bots.rovelstars.ga/auth";
+let auth = require("@utils/auth.js");
+const authRoute = require("@routes/authclient.js");
 module.exports = { app, port };
 var cookieParser = require("cookie-parser");
 const helmet = require("helmet");
@@ -62,6 +60,7 @@ log("[SERVER] Started!\n[SERVER] Webhooks started!");
 
 app.use('/assets', express.static(path.resolve("src/public/assets")));
 app.use('/bots', bots);
+app.use('/auth', authRoute);
 app.use('/client', client);
 
 app.get("/", async (req, res) => {
