@@ -7,7 +7,7 @@
     "main": "node src/index.js",
     "server": "node src/server/app.js",
     "css-compile": "node-sass src/sass/ -o src/public/assets/css/ --output-style compressed",
-    "css-prefix": "postcss --replace assets/css/default.css --use autoprefixer --map",
+    "css-prefix": "postcss --replace src/public/assets/css/default.css --use autoprefixer --map",
     "postinstall": "npm-run-all css-compile css-prefix"
   },
   "engines": {
