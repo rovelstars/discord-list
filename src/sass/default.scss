@@ -1,4 +1,4 @@
-@charset "utf-8";
+@import "bootstrap/scss/bootstrap";
 @font-face {
   font-family: discord;
   src: url(https://bots.rovelstars.ga/assets/font/sans.otf);
@@ -18,13 +18,11 @@
 
 $blurple: #7289da;
 $white: #FFFFFF;
-$link: $blurple;
-$primary: $blurple;
-$family-sans-serif: discord, sans-serif;
 $grey-dark: #36393f;
-$body-background-color: $grey-dark;
 $text: $white;
-h1, p strong {
- color: $white;
+$body-color: #
+// start
+
+body {
+ background-color: $grey-dark;
 }
-@import "../../node_modules/bulma/bulma.sass";

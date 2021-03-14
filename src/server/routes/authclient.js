@@ -1,6 +1,6 @@
 let router = require("express").Router();
 let auth = require("@utils/auth.js");
-router.use(require("expressjs").json());
+router.use(require("express").json());
 router.get("/user", async (req, res)=>{
  if(req.query.key){
   try {
