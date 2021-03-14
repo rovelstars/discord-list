@@ -6,7 +6,7 @@
     "start": "npm run main && npm run sass",
     "main": "node src/index.js",
     "server": "node src/server/app.js",
-    "css-compile": "node-sass --include-path node_modules --output-style compressed --source-map true --source-map-contents true --precision 6 src/scss -o src/public/assets/css/",
+    "css-compile": "node-sass src/sass/ -o src/public/assets/css/ --output-style compressed",
     "css-prefix": "postcss --replace assets/css/default.css --use autoprefixer --map",
     "postinstall": "npm-run-all css-compile css-prefix"
   },
