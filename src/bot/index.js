@@ -170,9 +170,9 @@ router.post("/log", (req, res)=>{
   .setTitle(req.body.title || "RDL Logging")
   .setColor(req.body.color || "#7289DA")
   .setDescription(req.body.desc || "No description provided.\n:/&&")
-  .setURL(req.body.url || "https://bots.rovelstars.ga")
+  .setURL(req.body.url || "https://discord.rovelstars.com")
   .setTimestamp()
-  .setThumbnail(req.body.img || "https://bots.rovelstars.ga/favicon.ico");
+  .setThumbnail(req.body.img || "https://discord.rovelstars.com/favicon.ico");
  
   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
   res.json({code: "worked"});

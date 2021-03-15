@@ -6,7 +6,7 @@ module.exports = {
 	 
 if(args){
 	 let id = getMention(args[0]);
-		fetch("https://bots.rovelstars.ga/bots/"+id).then(r=>r.json()).then(d=>{
+		fetch("https://discord.rovelstars.com/bots/"+id).then(r=>r.json()).then(d=>{
 		 if(d.err) return message.reply("An Error Occurred!");
 		 message.reply(`${args[0]}'s prefix is: \`${d.prefix}\``)})
 }

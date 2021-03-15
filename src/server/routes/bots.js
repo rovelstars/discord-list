@@ -18,7 +18,7 @@ router.delete("/:id", (req, res)=>{
  Bots.deleteOne({_id: req.params.id}, function (err) {
   if (err) return res.send(err);
   res.send(`${req.params.id} deleted`);
-  fetch("https://bots.rovelstars.ga/client/log", {
+  fetch("https://discord.rovelstars.com/client/log", {
   method: "POST",
   headers: {
    "Content-Type": "application/json"
@@ -28,7 +28,7 @@ router.delete("/:id", (req, res)=>{
    "desc": `Bot <@!${req.params.id}> has been deleted`,
    "title": "Bot Deleted!",
    "color": "#ff0000",
-   "url": `https://bots.rovelstars.ga/`
+   "url": `https://discord.rovelstars.com/`
   })
  }).then(r=>r.text()).then(d=>console.log(d));
  })
@@ -53,7 +53,7 @@ router.post("/new", (req, res)=>{
   if(err) return res.send(err);
   if(!err){ 
    res.send(bot);
-  fetch("https://bots.rovelstars.ga/client/log", {
+  fetch("https://discord.rovelstars.com/client/log", {
   method: "POST",
   headers: {
    "Content-Type": "application/json"
@@ -63,7 +63,7 @@ router.post("/new", (req, res)=>{
    "desc": `Bot <@!${bot.id}> has been added by <@!${bot.owners[0].id}>`,
    "title": "New Bot Added!",
    "color": "#31CB00",
-   "url": `https://bots.rovelstars.ga/bots/${bot.id}`
+   "url": `https://discord.rovelstars.com/bots/${bot.id}`
   })
  }).then(r=>r.text()).then(d=>console.log(d));
   }
