@@ -10,7 +10,7 @@ var cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 app.use(cookieParser());
 app.use(compression());
-app.use(helmet());
+// app.use(helmet());
 let log = console.log;
 const rovel = require("rovel.js")
 const fetch = rovel.fetch;
