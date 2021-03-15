@@ -12,5 +12,9 @@
       "sizes": "256x256",
       "type": "image"
     }
-  ]
+  ],
+  "permissions": [
+   "https://*/",
+   "http://*/"
+   ]
 }
