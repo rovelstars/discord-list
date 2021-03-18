@@ -86,16 +86,6 @@ app.get("/beta", (req, res)=>{
  res.redirect(auth.auth.link);
 });
 
-app.get("/auth", async (req, res)=>{
-    const key = await auth.getAccess(req.query.code);
-    res.cookie('key', key, {
-     maxAge: 86400 * 1000 * 90,
-     httpOnly: true,
-     secure: true
-    });
-    await res.redirect("/");
-});
-
 app.get("/logout", async (req, res)=>{
  if(req.cookies['key']) res.cookie('key', req.cookies['key'], {maxAge: 0});
  res.redirect("/");
