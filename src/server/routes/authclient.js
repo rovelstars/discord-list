@@ -2,9 +2,9 @@ let router = require("express").Router();
 let auth = require("@utils/auth.js");
 router.use(require("express").json());
 router.get("/user", async (req, res)=>{
- if(req.query.key){
+ if(req.query.key || req.cookies['key']){
   try {
-  const user = await auth.getUser(req.query.key);
+  const user = await auth.getUser(req.query.key || req.cookies['key']);
   await res.json(user);
  }
   catch(e){
