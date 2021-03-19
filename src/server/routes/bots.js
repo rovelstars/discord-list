@@ -7,14 +7,14 @@ router.use(require("express").json());
 const rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = 5;
 rule.hour = 22;
-rule.minute = 42;
+rule.minute = 48;
 
 const job = schedule.scheduleJob(rule, function(){
  Bots.find(async function (err, bots){
   for(let bot of bots){
    bot.votes = 1;
+  await bot.push();
   }
-  await bots.push();
  })
   fetch(`${process.env.DOMAIN}/api/client/log`, {
    method: "POST",
