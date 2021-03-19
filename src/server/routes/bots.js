@@ -36,12 +36,12 @@ router.get("/:id/added", async (req, res)=>{
   })
  }
 });
-router.delete("/:id", async (req, res)=>{
+router.delete("/:id", (req, res)=>{
  if(!req.query.key) return res.json({err: "no_key"});
  
  fetch(`${process.env.DOMAIN}/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
   if(d.err) return res.json({err: "invalid_key"});
-  const bot = await Bots.findOne({id: req.params.id});
+  const bot = Bots.findOne({id: req.params.id});
   if(bot.owners.includes(d.id)){
    Bots.deleteOne({id: req.params.id}, function (err) {
   if (err) return res.json(err);
