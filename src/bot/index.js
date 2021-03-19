@@ -126,6 +126,10 @@ router.get("/", (req, res) => {
 router.get("/id", (req, res) => {
  res.json({ id: client.user.id });
 });
+router.get("/mainserver", (req, res)=>{
+ const guild = client.guilds.cache.get("602906543356379156");
+ res.json(guild);
+});
 router.get("/users/:id", (req, res)=>{
  const user = client.users.cache.get(req.params.id);
  res.send(user);

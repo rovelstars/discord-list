@@ -68,7 +68,9 @@ router.delete("/:id", (req, res)=>{
 })
 
 router.post("/new", (req, res)=>{
- console.log(req.body);
+ for(const owner of req.body.owners){
+  fetch(`${process.env.DOMAIN}/client/mainserver`)
+ }
  const bot = new Bots({
  id: req.body.id,
  owners: req.body.owners,
