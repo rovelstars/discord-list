@@ -113,9 +113,9 @@ client.on('message', message => {
 });
 client.on("guildMemberAdd", user =>{
  if(user.bot){
-  fetch(`${process.env.DOMAIN}/bots/${user.id}`).then(r=>r.json()).then(bot=>{ //check if bot is there in db
-   //fetch(`${process.env.DOMAIN}/bots/${bot.id}/added`)
-  });
+  fetch(`${process.env.DOMAIN}/bots/${user.id}`).then(r=>r.json()).then(bot=>{ if(bot){//check if bot is there in db
+   fetch(`${process.env.DOMAIN}/bots/${bot.id}/added?secret=${process.env.SECRET}`); //list the bot in rdl from now on
+  }});
  }
 });
 let router = require("express").Router();
