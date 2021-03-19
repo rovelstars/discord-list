@@ -9,9 +9,8 @@ router.get("/", (req, res)=>{
  })
 });
 router.get("/:id", (req, res)=>{
- Bots.findById(req.params.id, (err, doc)=>{
-  if(err) return res.json({err});
-  res.json({prefix: doc.prefix});
+ Bots.findOne({id: req.params.id}).then(bot=>{
+  res.json(bot);
  });
 });
 router.get("/:id/added", async (req, res)=>{

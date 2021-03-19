@@ -111,7 +111,13 @@ client.on('message', message => {
   message.reply('There was an error trying to execute that command! ☹️\nPlease tell the devs about it. Moreover, I have sent a detailed log to them already. 📨\n' + `If you can send this log to them, it would be great!\n\`\`\`\n${error}\n\`\`\``);
  }
 });
-
+client.on("guildMemberAdd", user =>{
+ if(user.bot){
+  fetch(`${process.env.DOMAIN}/bots/${user.id}`).then(r=>r.json()).then(bot=>{ //check if bot is there in db
+   //fetch(`${process.env.DOMAIN}/bots/${bot.id}/added`)
+  });
+ }
+});
 let router = require("express").Router();
 router.use(require("express").json());
 router.get("/", (req, res) => {
