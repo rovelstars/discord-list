@@ -30,14 +30,21 @@ router.get("/:id/added", async (req, res)=>{
     "desc": `Bot <@!${req.params.id}> has been added to this server and is getting listed on RDL!`,
     "title": "Bot Listed!",
     "color": "#FEF40E",
+    "owner": bot.owners[0],
     "url": `${process.env.DOMAIN}/bots/${bot.id}`
    })
   })
  }
 });
-router.delete("/:id", (req, res)=>{
- Bots.deleteOne({_id: req.params.id}, function (err) {
-  if (err) return res.send(err);
+router.delete("/:id", async (req, res)=>{
+ if(!req.query.key) return res.json({err: "no_key"});
+ 
+ fetch(`${process.env.DOMAIN}/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
+  if(d.err) return res.json({err: "invalid_key"});
+  const bot = await Bots.findOne({id: req.params.id});
+  if(bot.owners.includes(d.id)){
+   Bots.deleteOne({id: req.params.id}, function (err) {
+  if (err) return res.json(err);
   res.send(`${req.params.id} deleted`);
   fetch("https://discord.rovelstars.com/client/log", {
   method: "POST",
@@ -46,13 +53,16 @@ router.delete("/:id", (req, res)=>{
   },
   body: JSON.stringify({
    "secret": process.env.SECRET,
-   "desc": `Bot <@!${req.params.id}> has been deleted`,
+   "desc": `Bot <@!${req.params.id}> has been deleted by <@!${d.id}>`,
    "title": "Bot Deleted!",
    "color": "#ff0000",
+   "owner": d.id,
    "url": `https://discord.rovelstars.com/`
   })
  }).then(r=>r.text()).then(d=>console.log(d));
  })
+  }
+ });
 })
 
 router.post("/new", (req, res)=>{
@@ -81,9 +91,10 @@ router.post("/new", (req, res)=>{
   },
   body: JSON.stringify({
    "secret": process.env.SECRET,
-   "desc": `Bot <@!${bot.id}> has been added by <@!${bot.owners[0].id}>`,
+   "desc": `Bot <@!${bot.id}> has been added by <@!${bot.owners[0]}>`,
    "title": "New Bot Added!",
    "color": "#31CB00",
+   "owner": bot.owners[0],
    "url": `https://discord.rovelstars.com/bots/${bot.id}`
   })
  }).then(r=>r.text()).then(d=>console.log(d));

@@ -11,6 +11,9 @@ router.get("/", async (req, res)=>{
     });
     await res.redirect(process.env.DOMAIN);
 });
+router.get("/key", async (req, res)=>{
+ res.json({key: req.cookies['key'] || null});
+});
 router.get("/user", async (req, res)=>{
  if(req.query.key || req.cookies['key']){
   try {
