@@ -126,18 +126,10 @@ router.get("/", (req, res) => {
 router.get("/id", (req, res) => {
  res.json({ id: client.user.id });
 });
-router.get("/mainserver", (req, res)=>{
- const guild = client.guilds.cache.get("602906543356379156");
- res.json(guild);
-});
-router.get("/mainserver/members", (req, res)=>{
- const guild = client.guilds.cache.get("602906543356379156");
- res.json({members: guild.members});
-});
 router.get("/mainserver/members/:id", (req, res)=>{
  const user = client.guilds.cache.get("602906543356379156").members.cache.get(req.params.id).user;
  const condition = (user.id)? true : false;
- res.json(condition);
+ res.json({condition});
 });
 router.get("/users/:id", (req, res)=>{
  const user = client.users.cache.get(req.params.id);
