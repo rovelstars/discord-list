@@ -41,11 +41,12 @@ router.delete("/:id", (req, res)=>{
  
  fetch(`${process.env.DOMAIN}/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
   if(d.err) return res.json({err: "invalid_key"});
-  const bot = Bots.findOne({id: req.params.id});
-  if(bot.owners.includes(d.id)){
+  
+  Bots.findOne({id: req.params.id}).then(bot=>{
+   if(bot.owners.includes(d.id)){
    Bots.deleteOne({id: req.params.id}, function (err) {
   if (err) return res.json(err);
-  res.send(`${req.params.id} deleted`);
+  res.json({deleted: true});
   fetch("https://discord.rovelstars.com/client/log", {
   method: "POST",
   headers: {
@@ -59,9 +60,11 @@ router.delete("/:id", (req, res)=>{
    "owner": d.id,
    "url": `https://discord.rovelstars.com/`
   })
- }).then(r=>r.text()).then(d=>console.log(d));
+ });
  })
   }
+  else return res.json({err: "unauth"});
+  });
  });
 })
 
@@ -97,7 +100,7 @@ router.post("/new", (req, res)=>{
    "owner": bot.owners[0],
    "url": `https://discord.rovelstars.com/bots/${bot.id}`
   })
- }).then(r=>r.text()).then(d=>console.log(d));
+ });
   }
  });
 });
