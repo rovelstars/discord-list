@@ -69,7 +69,9 @@ router.delete("/:id", (req, res)=>{
 
 router.post("/new", (req, res)=>{
  for(const owner of req.body.owners){
-  fetch(`${process.env.DOMAIN}/client/mainserver`)
+  fetch(`${process.env.DOMAIN}/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
+   if(!d.condition) return res.json({err: "owner_not_in_server"});
+  })
  }
  const bot = new Bots({
  id: req.body.id,
