@@ -30,7 +30,7 @@ router.get("/:id/added", async (req, res)=>{
     "desc": `Bot <@!${req.params.id}> has been added to this server and is getting listed on RDL!`,
     "title": "Bot Listed!",
     "color": "#FEF40E",
-    "owner": bot.owners[0],
+    "owners": bot.owners,
     "url": `${process.env.DOMAIN}/bots/${bot.id}`
    })
   })
@@ -57,7 +57,7 @@ router.delete("/:id", (req, res)=>{
    "desc": `Bot <@!${req.params.id}> has been deleted by <@!${d.id}>`,
    "title": "Bot Deleted!",
    "color": "#ff0000",
-   "owner": d.id,
+   "owners": bot.owners,
    "url": `https://discord.rovelstars.com/`
   })
  });
@@ -97,7 +97,7 @@ router.post("/new", (req, res)=>{
    "desc": `Bot <@!${bot.id}> has been added by <@!${bot.owners[0]}>`,
    "title": "New Bot Added!",
    "color": "#31CB00",
-   "owner": bot.owners[0],
+   "owners": bot.owners,
    "url": `https://discord.rovelstars.com/bots/${bot.id}`
   })
  });

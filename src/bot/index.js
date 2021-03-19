@@ -175,8 +175,10 @@ router.post("/log", (req, res)=>{
   .setThumbnail(req.body.img || "https://discord.rovelstars.com/favicon.ico");
  
   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
-  if(req.body.owner){
-   client.users.cache.get(req.body.owner).send(msg)
+  if(req.body.owners){
+   for (const owner of req.body.owners){
+   client.users.cache.get(owner).send(msg);
+   }
   }
   res.json({code: "worked"});
  }
