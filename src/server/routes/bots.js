@@ -1,7 +1,29 @@
 let Bots = require("@models/bots.js");
 let {fetch} = require("rovel.js");
+const schedule = require("node-schedule");
 let router = require("express").Router();
-router.use(require("express").json())
+router.use(require("express").json());
+
+const rule = new schedule.RecurrenceRule();
+rule.dayOfWeek = 5;
+rule.hour = 22;
+rule.minute = 0;
+
+const job = schedule.scheduleJob(rule, function(){
+  fetch(`${process.env.DOMAIN}/api/client/log`, {
+   method: "POST",
+   headers: {
+    "Content-Type": "application/json"
+   },
+   body: JSON.stringify({
+    "secret": process.env.SECRET,
+    "desc": "It is now the Scheduled Time!\nThe Votes of all bots will now be **RESETED**!\nStart voting your bots again to reach the top of the Leaderboard!",
+    "title": "Votes Reseted!",
+    "color": "#ff0000"
+   })
+  });
+});
+
 router.get("/", (req, res)=>{
  Bots.find(function (err, bots){
   if (err) return console.error(err);

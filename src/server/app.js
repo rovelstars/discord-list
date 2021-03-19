@@ -28,7 +28,17 @@ const limiter = rateLimit({
  windowMs: 60 * 60 * 1000, // 60 minutes
  max: 1000 // limit each IP to 1000 requests per windowMs
 });
+/*
+const WebSocket = require('ws');
+const ws = new WebSocket('ws://discord.rovelstars.com');
+ws.on('open', function open() {
+  ws.send('something');
+});
 
+ws.on('message', function incoming(data) {
+  console.log(data);
+});
+*/
 app.set('trust proxy', 1);
 app.use(limiter);
 
