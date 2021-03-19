@@ -30,11 +30,7 @@ const Bots = new Schema({
  msgSent: { type: Number, default: 0 },
  promoted: { type: Boolean, default: false },
  votes: { type: Number, default: 0 },
- voted: [{
-  voter: Number,
-  at: { type: Date, default: Date.now },
-  votes: { type: Number, default: 1 },
-    }],
+ voted: Number,
  badges: [{ type: String }],
 },{
  versionKey: false

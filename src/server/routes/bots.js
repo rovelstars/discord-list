@@ -14,6 +14,27 @@ router.get("/:id", (req, res)=>{
   res.json({prefix: doc.prefix});
  });
 });
+router.get("/:id/added", async (req, res)=>{
+ if(req.query.secret === process.env.SECRET){
+  const bot = await Bots.findOne({id: req.params.id});
+  bot.added = true;
+  await bot.save();
+  res.send(`${bot.added}`);
+  fetch("https://discord.rovelstars.com/client/log", {
+   method: "POST",
+   headers: {
+    "Content-Type": "application/json"
+   },
+   body: JSON.stringify({
+    "secret": process.env.SECRET,
+    "desc": `Bot <@!${req.params.id}> has been added to this server and is getting listed on RDL!`,
+    "title": "Bot Listed!",
+    "color": "#FEF40E",
+    "url": `${process.env.DOMAIN}/bots/${bot.id}`
+   })
+  })
+ }
+});
 router.delete("/:id", (req, res)=>{
  Bots.deleteOne({_id: req.params.id}, function (err) {
   if (err) return res.send(err);
@@ -37,7 +58,7 @@ router.delete("/:id", (req, res)=>{
 router.post("/new", (req, res)=>{
  console.log(req.body);
  const bot = new Bots({
- _id: req.body.id,
+ id: req.body.id,
  owners: req.body.owners,
  short: req.body.short,
  desc: req.body.desc,
