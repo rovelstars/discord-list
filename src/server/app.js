@@ -59,9 +59,9 @@ app.use(weblog);
 log("[SERVER] Started!\n[SERVER] Webhooks started!");
 
 app.use('/assets', express.static(path.resolve("src/public/assets")));
-app.use('/bots', bots);
-app.use('/auth', authRoute);
-app.use('/client', client);
+app.use('/api/bots', bots);
+app.use('/api/auth', authRoute);
+app.use('/api/client', client);
 
 app.get("/", async (req, res) => {
  if(req.cookies['key']){

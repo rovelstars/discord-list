@@ -19,7 +19,7 @@ router.get("/:id/added", async (req, res)=>{
   bot.added = true;
   await bot.save();
   res.send(`${bot.added}`);
-  fetch("https://discord.rovelstars.com/client/log", {
+  fetch("https://discord.rovelstars.com/api/client/log", {
    method: "POST",
    headers: {
     "Content-Type": "application/json"
@@ -30,7 +30,7 @@ router.get("/:id/added", async (req, res)=>{
     "title": "Bot Listed!",
     "color": "#FEF40E",
     "owners": bot.owners,
-    "url": `${process.env.DOMAIN}/bots/${bot.id}`
+    "url": `${process.env.DOMAIN}/api/bots/${bot.id}`
    })
   })
  }
@@ -38,7 +38,7 @@ router.get("/:id/added", async (req, res)=>{
 router.delete("/:id", (req, res)=>{
  if(!req.query.key) return res.json({err: "no_key"});
  
- fetch(`${process.env.DOMAIN}/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
+ fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
   if(d.err) return res.json({err: "invalid_key"});
   
   Bots.findOne({id: req.params.id}).then(bot=>{
@@ -46,7 +46,7 @@ router.delete("/:id", (req, res)=>{
    Bots.deleteOne({id: req.params.id}, function (err) {
   if (err) return res.json(err);
   res.json({deleted: true});
-  fetch("https://discord.rovelstars.com/client/log", {
+  fetch("https://discord.rovelstars.com/api/client/log", {
   method: "POST",
   headers: {
    "Content-Type": "application/json"
@@ -69,7 +69,7 @@ router.delete("/:id", (req, res)=>{
 
 router.post("/new", (req, res)=>{
  for(const owner of req.body.owners){
-  fetch(`${process.env.DOMAIN}/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
+  fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
    if(!d.condition) return res.json({err: "owner_not_in_server"});
   })
  }
@@ -90,7 +90,7 @@ router.post("/new", (req, res)=>{
   if(err) return res.send(err);
   if(!err){ 
    res.send(bot);
-  fetch("https://discord.rovelstars.com/client/log", {
+  fetch("https://discord.rovelstars.com/api/client/log", {
   method: "POST",
   headers: {
    "Content-Type": "application/json"
@@ -101,7 +101,7 @@ router.post("/new", (req, res)=>{
    "title": "New Bot Added!",
    "color": "#31CB00",
    "owners": bot.owners,
-   "url": `https://discord.rovelstars.com/bots/${bot.id}`
+   "url": `https://discord.rovelstars.com/api/bots/${bot.id}`
   })
  });
   }
