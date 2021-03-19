@@ -7,7 +7,7 @@ router.use(require("express").json());
 const rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = 5;
 rule.hour = 22;
-rule.minute = 40;
+rule.minute = 42;
 
 const job = schedule.scheduleJob(rule, function(){
  Bots.find(async function (err, bots){
