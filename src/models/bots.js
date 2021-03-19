@@ -10,7 +10,7 @@ const Bots = new Schema({
   unique: true,
   required: true
   }, //botId
- owners: [{id: String}], //owners
+ owners: [{type: String}], //owners
  short: String, //short desc
  desc: String, //description
  prefix: String, //bot prefix
