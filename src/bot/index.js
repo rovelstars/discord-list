@@ -127,8 +127,13 @@ router.get("/id", (req, res) => {
  res.json({ id: client.user.id });
 });
 router.get("/mainserver/members/:id", (req, res)=>{
- const user = client.guilds.cache.get("602906543356379156").members.cache.get(req.params.id).user;
- const condition = (user.id)? true : false;
+ let user;
+ try {
+  user = client.guilds.cache.get("602906543356379156").members.cache.get(req.params.id).user;
+ } catch {
+  user = null;
+ }
+ const condition = (user)? true : false;
  res.json({condition});
 });
 router.get("/users/:id", (req, res)=>{
