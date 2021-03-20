@@ -31,7 +31,7 @@ router.get("/", (req, res)=>{
   const q = decodeURI(req.query.q);
   Bots.find({$text: {$search: q}}).exec((err, doc)=>{
    if(err) return res.json({err});
-   res.json({doc});
+   res.json(doc);
   })
  }
  else {
