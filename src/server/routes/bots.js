@@ -64,11 +64,11 @@ router.get("/:id/key", (req, res)=>{
     })
 }});
 });
-router.get("/:id/stats", async (req, res)=>{
+router.get("/:id/stats", (req, res)=>{
  if(req.query.secret == process.env.SECRET){
   Bots.findOne({id: req.params.id}).then(bot=>{
    bot.servers = req.query.servers;
-   await bot.save();
+   bot.save();
    res.json({status: "updated"});
   })
  }
