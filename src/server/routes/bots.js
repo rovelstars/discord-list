@@ -5,12 +5,12 @@ let router = require("express").Router();
 router.use(require("express").json());
 const coronaSanitizer = require("sanitize-html");
 const rule = new schedule.RecurrenceRule();
-rule.dayOfWeek = 6;
-rule.hour = 7;
-rule.minute = 56;
+rule.dayOfWeek = 0;
+rule.hour = 12;
+rule.minute = 0;
 
 const job = schedule.scheduleJob(rule, async function(){
- const hmm = await Bots.updateMany({}, {votes: 100});
+ const hmm = await Bots.updateMany({}, {votes: 0});
   fetch(`${process.env.DOMAIN}/api/client/log`, {
    method: "POST",
    headers: {
@@ -149,7 +149,7 @@ router.post("/new", async (req, res)=>{
   },
   body: JSON.stringify({
    "secret": process.env.SECRET,
-   "desc": `Bot <@!${bot.id}> has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\\n${bot.short}\n\`\`\``,
+   "desc": `Bot <@!${bot.id}> has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\``,
    "title": "New Bot Added!",
    "color": "#31CB00",
    "owners": bot.owners,
