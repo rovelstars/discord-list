@@ -100,15 +100,15 @@ router.delete("/:id", (req, res)=>{
  });
 })
 
-router.post("/new", (req, res)=>{
- var cond = [];
+router.post("/new", async (req, res)=>{
+ var cond = true;
  for(const owner of req.body.owners){
-  fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
-   cond.push(d.condition);
+  await fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
+   cond = await d.condition;
   })
  }
- if(!cond.includes(false)){
- const bot = new Bots({
+ if(state){
+ const bot = await new Bots({
  id: req.body.id,
  owners: req.body.owners,
  short: req.body.short,
