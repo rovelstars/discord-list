@@ -60,7 +60,7 @@ router.get("/:id/key", (req, res)=>{
        res.json({key});
       })
      }
-     res.json({auth});
+     else res.json({auth}); //not there and we made one
     })
 }});
 });
