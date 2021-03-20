@@ -14,7 +14,6 @@
     "node": "^15.x"
   },
   "dependencies": {
-    "mongoosastic": "4.6.0",
     "node-schedule": "2.0.0",
     "ws": "7.4.4",
     "helmet": "4.4.1",

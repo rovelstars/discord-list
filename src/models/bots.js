@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const mongoosastic = require("mongoosastic");
 const Bots = new Schema({
  _id: {
     default: () => new Date(),
@@ -36,9 +35,5 @@ const Bots = new Schema({
 },{
  versionKey: false
 });
-Bots.plugin(mongoosastic, {
- hosts: [
-  `discord.rovelstars.com`
-  ]});
 console.log("[DB] Compiling Schema into Model - Bots");
 module.exports = mongoose.model('Bots', Bots);
