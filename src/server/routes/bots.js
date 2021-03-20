@@ -69,11 +69,12 @@ router.get("/:id/apikey", (req, res)=>{
      code: passgen()
     }).save((err, auth)=>{
      if(err){//already there
-      BotAuth.findOne({id: req.params.id}).then(async function(key){
+      BotAuth.findOne({id: req.params.id}).then(key=>{
        if(req.query.regen){
-        var botauth = await BotAuth.findOne({id: req.params.id});
-       botauth = passgen();
-       await botauth.save();
+        BotAuth.findOne({id: req.params.id}).then(botauth=>{
+         botauth = passgen();
+         botauth.save();
+        })
        }
        res.json({key});
       })
