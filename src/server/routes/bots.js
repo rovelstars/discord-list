@@ -5,17 +5,12 @@ let router = require("express").Router();
 router.use(require("express").json());
 
 const rule = new schedule.RecurrenceRule();
-rule.dayOfWeek = 5;
-rule.hour = 22;
-rule.minute = 48;
+rule.dayOfWeek = 6;
+rule.hour = 7;
+rule.minute = 56;
 
-const job = schedule.scheduleJob(rule, function(){
- Bots.find(async function (err, bots){
-  for(let bot of bots){
-   bot.votes = 1;
-  await bot.push();
-  }
- })
+const job = schedule.scheduleJob(rule, async function(){
+ const hmm = await Bots.updateMany({}, {votes: 100});
   fetch(`${process.env.DOMAIN}/api/client/log`, {
    method: "POST",
    headers: {
@@ -23,7 +18,7 @@ const job = schedule.scheduleJob(rule, function(){
    },
    body: JSON.stringify({
     "secret": process.env.SECRET,
-    "desc": "It is now the Scheduled Time!\nThe Votes of all bots will now be **RESETED**!\nStart voting your bots again to reach the top of the Leaderboard!",
+    "desc": `It is now the Scheduled Time!\nThe Votes of all (${hmm.nModified}) bots will now be **RESETED**!\nStart voting your bots again to reach the top of the Leaderboard!`,
     "title": "Votes Reseted!",
     "color": "#ff0000"
    })
