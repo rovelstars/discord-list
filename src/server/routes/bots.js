@@ -71,7 +71,7 @@ router.get("/:id/apikey", (req, res)=>{
      if(err){//already there
       BotAuth.findOne({id: req.params.id}).then(async function(key){
        if(req.query.regen){
-        const botauth = await BotAuth.findOne({id: req.params.id});
+        var botauth = await BotAuth.findOne({id: req.params.id});
        botauth = passgen();
        await botauth.save();
        }
@@ -100,7 +100,7 @@ router.get("/:id", (req, res)=>{
 });
 router.get("/:id/added", async (req, res)=>{
  if(req.query.secret === process.env.SECRET){
-  const bot = await Bots.findOne({id: req.params.id});
+  var bot = await Bots.findOne({id: req.params.id});
   bot.added = true;
   await bot.save();
   res.send(`${bot.added}`);
