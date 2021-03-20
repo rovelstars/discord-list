@@ -101,11 +101,13 @@ router.delete("/:id", (req, res)=>{
 })
 
 router.post("/new", (req, res)=>{
+ var cond = [];
  for(const owner of req.body.owners){
   fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
-   if(!d.condition) return res.json({err: "owner_not_in_server"});
+   cond.push(d.condition);
   })
  }
+ if(!cond.includes(false)){
  const bot = new Bots({
  id: req.body.id,
  owners: req.body.owners,
@@ -122,7 +124,7 @@ router.post("/new", (req, res)=>{
  }).save((err, bot)=>{
   if(err) return res.send(err);
   if(!err){ 
-   res.send(bot);
+   res.send({botAdded: true});
   fetch("https://discord.rovelstars.com/api/client/log", {
   method: "POST",
   headers: {
@@ -139,5 +141,7 @@ router.post("/new", (req, res)=>{
  });
   }
  });
+ }
+ else res.json({err: "owner_not_in_server"});
 });
 module.exports = router;
