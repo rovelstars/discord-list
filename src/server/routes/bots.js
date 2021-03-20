@@ -49,7 +49,10 @@ router.post("/evaldb", (req, res)=>{
   fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
   if(d.err) return res.json({err: "invalid_key"});
   if(!owners.includes(d.id)) return res.json({err: "unauth"});
-  eval(req.body.code);
+  try{
+   eval(req.body.code);
+  }
+  catch(e){res.json({e})};
   });
 });
 
