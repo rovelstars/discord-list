@@ -10,10 +10,9 @@ let auth = require("@utils/auth.js");
 const authRoute = require("@routes/authclient.js");
 module.exports = { httpServer, port };
 var cookieParser = require("cookie-parser");
-const helmet = require("helmet");
+app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(compression());
-// app.use(helmet());
 let log = console.log;
 const rovel = require("rovel.js")
 const fetch = rovel.fetch;
