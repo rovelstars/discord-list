@@ -104,7 +104,7 @@ router.post("/new", async (req, res)=>{
  var cond = true;
  for(const owner of req.body.owners){
   await fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
-   cond = await d.condition;
+   cond = d.condition;
   })
  }
  if(state){
