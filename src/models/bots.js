@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const mongoosastic = require("mongoosastic");
 const Bots = new Schema({
  _id: {
     default: () => new Date(),
@@ -35,13 +36,6 @@ const Bots = new Schema({
 },{
  versionKey: false
 });
-Bots.set('toObject', {
-  transform: function (doc, ret) {
-    ret.owners.forEach(delid);
-    function delid(owner){
-     delete owner._id;
-    }
-  }
-})
+Bots.plugin(mongoosastic);
 console.log("[DB] Compiling Schema into Model - Bots");
 module.exports = mongoose.model('Bots', Bots);

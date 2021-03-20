@@ -26,10 +26,23 @@ const job = schedule.scheduleJob(rule, async function(){
 });
 
 router.get("/", (req, res)=>{
+ if(req.query.q){
+  Bots.search({
+   query_string: {
+    query: req.query.q
+   }
+  },
+   function (err, results){
+    if(err) return res.json({err});
+    else res.json({results});
+   })
+ }
+ else {
  Bots.find(function (err, bots){
   if (err) return console.error(err);
   res.send(bots);
  })
+ }
 });
 router.get("/:id", (req, res)=>{
  Bots.findOne({id: req.params.id}).then(bot=>{
