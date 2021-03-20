@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const Auth = new Schema({
+const BotAuth = new Schema({
  id: Number,
  _id: {
     default: () => new Date(),
