@@ -3,7 +3,7 @@ let {fetch} = require("rovel.js");
 const schedule = require("node-schedule");
 let router = require("express").Router();
 router.use(require("express").json());
-
+const coronaSanitizer = require("sanitize-html");
 const rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = 6;
 rule.hour = 7;
@@ -69,6 +69,7 @@ router.get("/:id/added", async (req, res)=>{
  }
 });
 router.delete("/:id", (req, res)=>{
+ try{
  if(!req.query.key) return res.json({err: "no_key"});
  
  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
@@ -98,15 +99,31 @@ router.delete("/:id", (req, res)=>{
   else return res.json({err: "unauth"});
   });
  });
+ } catch {
+  res.json({err: "bot_already_deleted"});
+ }
 })
 
 router.post("/new", async (req, res)=>{
+ //validator start
+ if(!req.body.id) return res.json({err: "no_id"});
+ if(!req.body.owners) return res.json({err: "no_owners"});
+ if(!req.body.short) return res.json({err: "no_short"});
+ if(req.body.short.length > 50 || req.body.short.length < 10) return res.json({err: "invalid_short"});
+ if(!req.body.desc) return res.json({err: "no_desc"});
+ if(req.body.desc.length < 200) return res.json({err: "invalid_short"});
+ if(!req.body.prefix) return res.json({err: "no_prefix"});
+ if(!req.body.invite) return res.json({err: "no_invite"});
+ req.body.desc = coronaSanitizer(req.body.desc, {
+  allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'iframe', 'style'])
+ });
  var cond = true;
  for(const owner of req.body.owners){
   await fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
    cond = d.condition;
   })
  }
+ //end of validation
  if(cond){
  const bot = await new Bots({
  id: req.body.id,
