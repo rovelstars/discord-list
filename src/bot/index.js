@@ -138,7 +138,8 @@ router.get("/mainserver/members/:id", (req, res)=>{
 });
 router.get("/users/:id", (req, res)=>{
  const user = client.users.cache.get(req.params.id);
- res.send(user);
+ if(user=="" || user==undefined || user==null) user = {err: "not_there"};
+ res.json({user});
 });
 router.get("/owners", (req, res) => {
  res.json({owners: client.owners});

@@ -111,7 +111,7 @@ router.post("/new", async (req, res)=>{
  if(!req.body.short) return res.json({err: "no_short"});
  if(req.body.short.length > 50 || req.body.short.length < 10) return res.json({err: "invalid_short"});
  if(!req.body.desc) return res.json({err: "no_desc"});
- if(req.body.desc.length < 200) return res.json({err: "invalid_short"});
+ if(req.body.desc.split(" ").join("").split("\n").join("").length < 200) return res.json({err: "invalid_desc"});
  if(!req.body.prefix) return res.json({err: "no_prefix"});
  if(!req.body.invite) return res.json({err: "no_invite"});
  req.body.desc = coronaSanitizer(req.body.desc, {
