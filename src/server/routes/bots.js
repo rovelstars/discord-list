@@ -107,7 +107,7 @@ router.post("/new", async (req, res)=>{
    cond = d.condition;
   })
  }
- if(state){
+ if(cond){
  const bot = await new Bots({
  id: req.body.id,
  owners: req.body.owners,
