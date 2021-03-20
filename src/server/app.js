@@ -76,6 +76,14 @@ app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/img/robot.png");
 });
 
+app.get("/server", (req, res)=>{
+ res.redirect("https://discord.gg/953XCpHbKF");
+});
+
+app.get("/email", (req, res)=>{
+ res.redirect("mailto: support@rovelstars.com");
+});
+
 app.get("/arc-sw.js", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/arc-sw.js"));
 });
