@@ -70,7 +70,7 @@ router.get("/:id/apikey", (req, res)=>{
     }).save((err, auth)=>{
      if(err){//already there
       BotAuth.findOne({id: req.params.id}).then(key=>{
-       if(req.query.regen){
+       if(req.query.regen=="true"){
         BotAuth.updateOne({ id: req.params.id }, { $set: { code: passgen() } });
        }
        res.json({key});
@@ -155,6 +155,7 @@ router.delete("/:id", (req, res)=>{
 })
 
 router.post("/new", async (req, res)=>{
+ try{
  //validator start
  if(!req.body.id) return res.json({err: "no_id"});
  if(!req.body.owners) return res.json({err: "no_owners"});
@@ -210,5 +211,9 @@ router.post("/new", async (req, res)=>{
  });
  }
  else res.json({err: "owner_not_in_server"});
+ }
+ catch{
+  res.json({err: "bot_already_added"});
+ }
 });
 module.exports = router;
