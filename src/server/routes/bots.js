@@ -43,7 +43,7 @@ router.get("/", (req, res)=>{
  })
  }
 });
-router.get("/:id/key", async (req, res)=>{
+router.get("/:id/key", (req, res)=>{
   if(!req.query.key) return res.json({err: "no_key"});
  
  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
@@ -51,7 +51,7 @@ router.get("/:id/key", async (req, res)=>{
   
   Bots.findOne({id: req.params.id}).then(bot=>{
    if(bot.owners.includes(d.id)){
-    const botauth = await new BotAuth({
+    const botauth = new BotAuth({
      id: req.params.id,
      code: passgen()
     }).save((err, auth)=>{
