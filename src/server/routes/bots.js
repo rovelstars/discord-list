@@ -64,6 +64,7 @@ router.get("/:id/key", (req, res)=>{
     })
 }});
 });
+});
 router.get("/:id/stats", (req, res)=>{
  if(req.query.secret == process.env.SECRET){
   Bots.findOne({id: req.params.id}).then(bot=>{
