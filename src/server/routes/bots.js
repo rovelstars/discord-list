@@ -18,6 +18,7 @@ const job = schedule.scheduleJob(rule, async function(){
    },
    body: JSON.stringify({
     "secret": process.env.SECRET,
+    "channel": "775225719743053844",
     "desc": `It is now the Scheduled Time!\nThe Votes of all (${hmm.nModified}) bots will now be **RESETED**!\nStart voting your bots again to reach the top of the Leaderboard!`,
     "title": "Votes Reseted!",
     "color": "#ff0000"

@@ -36,6 +36,9 @@ const Bots = new Schema({
 },{
  versionKey: false
 });
-Bots.plugin(mongoosastic);
+Bots.plugin(mongoosastic, {
+ hosts: [
+  `${process.env.DOMAIN}`
+  ]});
 console.log("[DB] Compiling Schema into Model - Bots");
 module.exports = mongoose.model('Bots', Bots);

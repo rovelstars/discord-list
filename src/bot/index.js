@@ -181,6 +181,7 @@ router.get("/contributors/:id", (req, res)=>{
  else res.json({error: "id_not_sent"});
 });
 router.post("/log", (req, res)=>{
+ try {
  if(req.body.secret === process.env.SECRET){
   const msg = new Discord.MessageEmbed()
   .setTitle(req.body.title || "RDL Logging")
@@ -190,7 +191,7 @@ router.post("/log", (req, res)=>{
   .setTimestamp()
   .setThumbnail(req.body.img || "https://discord.rovelstars.com/favicon.ico");
  
-  client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
+  client.guilds.cache.get("602906543356379156").channels.cache.get(req.body.channels || "775231877433917440").send(msg)
   if(req.body.owners){
    for (const owner of req.body.owners){
    client.users.cache.get(owner).send(msg);
@@ -201,5 +202,7 @@ router.post("/log", (req, res)=>{
  else{
   res.json({error: "wrong_or_no_key"});
  }
+ }
+ catch {}
 });
 module.exports = router;
