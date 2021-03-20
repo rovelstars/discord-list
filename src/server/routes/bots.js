@@ -56,7 +56,7 @@ router.post("/evaldb", (req, res)=>{
   });
 });
 
-router.get("/:id/key", (req, res)=>{
+router.get("/:id/apikey", (req, res)=>{
   if(!req.query.key) return res.json({err: "no_key"});
  
  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
@@ -69,7 +69,12 @@ router.get("/:id/key", (req, res)=>{
      code: passgen()
     }).save((err, auth)=>{
      if(err){//already there
-      BotAuth.findOne({id: req.params.id}).then(key=>{
+      BotAuth.findOne({id: req.params.id}).then(async function(key){
+       if(req.query.regen){
+        const botauth = await BotAuth.findOne({id: req.params.id});
+       botauth = passgen();
+       await botauth.save();
+       }
        res.json({key});
       })
      }
