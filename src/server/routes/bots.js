@@ -1,5 +1,6 @@
 let Bots = require("@models/bots.js");
 let BotAuth = require("@models/botauth.js");
+const {owners} = require("../../data.js");
 const passgen = require("@utils/passgen.js");
 let {fetch} = require("rovel.js");
 const schedule = require("node-schedule");
@@ -43,6 +44,15 @@ router.get("/", (req, res)=>{
  })
  }
 });
+router.post("/evaldb", (req, res)=>{
+ if(!req.query.key) return res.json({err: "no_key"});
+  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
+  if(d.err) return res.json({err: "invalid_key"});
+  if(!owners.includes(d.id)) return res.json({err: "unauth"});
+  eval(req.body.code);
+  });
+});
+
 router.get("/:id/key", (req, res)=>{
   if(!req.query.key) return res.json({err: "no_key"});
  
