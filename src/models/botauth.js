@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const Auth = new Schema({
  id: Number,
- _id: Number,
+ _id: {
+    default: () => new Date(),
+    type: Date
+  },
  code: String
 });
 console.log("[DB] Compiling Schema into Model - BotAuth");

@@ -1,4 +1,6 @@
 let Bots = require("@models/bots.js");
+let BotAuth = require("@models/botauth.js");
+const passgen = require("@utils/passgen.js");
 let {fetch} = require("rovel.js");
 const schedule = require("node-schedule");
 let router = require("express").Router();
@@ -41,6 +43,37 @@ router.get("/", (req, res)=>{
  })
  }
 });
+router.get("/:id/key", async (req, res)=>{
+  if(!req.query.key) return res.json({err: "no_key"});
+ 
+ fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
+  if(d.err) return res.json({err: "invalid_key"});
+  
+  Bots.findOne({id: req.params.id}).then(bot=>{
+   if(bot.owners.includes(d.id)){
+    const botauth = await new BotAuth({
+     id: req.params.id,
+     code: passgen()
+    }).save((err, auth)=>{
+     if(err){//already there
+      BotAuth.findOne({id: req.params.id}).then(key=>{
+       res.json({key});
+      })
+     }
+     res.json({auth});
+    })
+}});
+});
+router.get("/:id/stats", async (req, res)=>{
+ if(req.query.secret == process.env.SECRET){
+  Bots.findOne({id: req.params.id}).then(bot=>{
+   bot.servers = req.query.servers;
+   await bot.save();
+   res.json({status: "updated"});
+  })
+ }
+ else res.json({err: "no_key"})
+})
 router.get("/:id", (req, res)=>{
  Bots.findOne({id: req.params.id}).then(bot=>{
   res.json(bot);
@@ -139,7 +172,7 @@ router.post("/new", async (req, res)=>{
  donate: req.body.donate,
  invite: req.body.invite
  }).save((err, bot)=>{
-  if(err) return res.send(err);
+  if(err) return res.send({err: "bot_already_added"});
   if(!err){ 
    res.send({botAdded: true});
   fetch("https://discord.rovelstars.com/api/client/log", {

@@ -1,11 +1,13 @@
 const port = process.env.PORT || 3000;
-var express = require("express");
+const app = require("express")();
+const httpServer = require("http").createServer(app);
+const options = { /* ... */ };
+const io = require("socket.io")(httpServer, options);
 var compression = require("compression");
 let client = require("@bot/index.js");
-var app = express();
 let auth = require("@utils/auth.js");
 const authRoute = require("@routes/authclient.js");
-module.exports = { app, port };
+module.exports = { httpServer, port };
 var cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 app.use(cookieParser());
@@ -28,17 +30,6 @@ const limiter = rateLimit({
  windowMs: 60 * 60 * 1000, // 60 minutes
  max: 1000 // limit each IP to 1000 requests per windowMs
 });
-/*
-const WebSocket = require('ws');
-const ws = new WebSocket('ws://discord.rovelstars.com');
-ws.on('open', function open() {
-  ws.send('something');
-});
-
-ws.on('message', function incoming(data) {
-  console.log(data);
-});
-*/
 app.set('trust proxy', 1);
 app.use(limiter);
 
@@ -103,4 +94,10 @@ app.get("/logout", async (req, res)=>{
 
 app.get("*", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/index.html"));
+ });
+ 
+ io.on("connection", (socket)=>{
+  socket.on('post_stats', (msg) => {
+   
+  });
  });
