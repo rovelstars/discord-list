@@ -35,5 +35,6 @@ const Bots = new Schema({
 },{
  versionKey: false
 });
+schema.index({'$**': 'text'});
 console.log("[DB] Compiling Schema into Model - Bots");
 module.exports = mongoose.model('Bots', Bots);
