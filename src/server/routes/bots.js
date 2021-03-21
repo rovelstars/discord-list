@@ -158,8 +158,13 @@ router.post("/new", async (req, res)=>{
  try{
  //validator start
  if(!req.body.id) return res.json({err: "no_id"});
- fetch(`${process.env.DOMAIN}/api/client/users/${req.body.id}`).then(r=>r.json()).then(d=>{
-  if(!d.user.err && d.user.bot) return res.json({err: "cannot_add_user"});
+ fetch(`https://discord.com/api/v7/users/${req.body.id}`,{
+  headers: {
+   "Authorization": `Bot ${process.env.TOKEN}`
+  }
+ }).then(r=>r.json()).then(user=>{
+  if(user.bot) return res.json({err: "cannot_add_user"});
+  if(user.code == 10013) return res.json({err: "cannot_add_invalid_user"});
  })
  if(!req.body.owners) return res.json({err: "no_owners"});
  if(!req.body.short) return res.json({err: "no_short"});
