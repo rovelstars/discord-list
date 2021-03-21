@@ -158,6 +158,9 @@ router.post("/new", async (req, res)=>{
  try{
  //validator start
  if(!req.body.id) return res.json({err: "no_id"});
+ fetch(`${process.env.DOMAIN}/api/client/users/${req.body.id}`).then(r=>r.json()).then(d=>{
+  if(d.user.bot) return res.json({err: "cannot_add_user"});
+ })
  if(!req.body.owners) return res.json({err: "no_owners"});
  if(!req.body.short) return res.json({err: "no_short"});
  if(req.body.short.length > 50 || req.body.short.length < 10) return res.json({err: "invalid_short"});
