@@ -152,7 +152,34 @@ router.delete("/:id", (req, res)=>{
   res.json({err: "bot_already_deleted"});
  }
 })
-
+router.get("/import/:id", (req, res)=>{
+ fetch(`https://top.gg/api/bots/${req.params.id}`, {
+  headers: {
+   "Authorization": process.env.TOPTOKEN
+  }
+ }).then(r=>r.json()).then(bot=>{
+  fetch(`${process.env.DOMAIN}/api/bots/new`, {
+     method: "POST",
+     headers: {
+      "content-type": "application/json"
+     },
+     body: JSON.stringify({
+      "id": bot.id,
+      "owners": bot.owners,
+      "short": bot.shortdesc,
+      "desc": bot.longdesc,
+      "prefix": bot.prefix,
+      "lib": bot.lib || null,
+      "support": bot.support,
+      "website": bot.website || null,
+      "github": bot.github || null,
+      "invite": bot.invite
+     })
+    }).then(r=>r.json).then(d=>{
+     res.json(d);
+    });
+ });
+})
 router.get("/import/topgg/:id", (req, res)=>{
  if(!req.query.key) return res.json({err: "no_key"});
  fetch(`https://top.gg/api/bots/${req.params.id}`, {
