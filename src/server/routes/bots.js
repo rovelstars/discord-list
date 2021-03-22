@@ -1,4 +1,5 @@
 let Bots = require("@models/bots.js");
+let {owners} = require("../../../data.js");
 let BotAuth = require("@models/botauth.js");
 const passgen = require("@utils/passgen.js");
 let {fetch} = require("rovel.js");
