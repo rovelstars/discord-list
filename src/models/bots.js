@@ -11,6 +11,7 @@ const Bots = new Schema({
   required: true
   }, //botId
  owners: [{type: String}], //owners
+ lib: {type: String},
  short: String, //short desc
  desc: String, //description
  prefix: String, //bot prefix
