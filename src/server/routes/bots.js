@@ -190,7 +190,10 @@ router.get("/import/topgg/:id", (req, res)=>{
       "invite": bot.invite
      })
     }).then(r=>r.json).then(d=>{
-     if(d.err) return res.json({err: d.err});
+     if(d.err){
+      res.json({err: "error"});
+      console.log(d.err);
+     }
      else res.json({imported: "done"});
     })
    }
