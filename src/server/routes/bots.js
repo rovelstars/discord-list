@@ -154,6 +154,7 @@ router.delete("/:id", (req, res)=>{
 })
 router.get("/import/:id", (req, res)=>{
  fetch(`https://top.gg/api/bots/${req.params.id}`, {
+  method: "GET",
   headers: {
    "Authorization": process.env.TOPTOKEN
   }
