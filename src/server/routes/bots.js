@@ -214,7 +214,7 @@ router.post("/new", async (req, res)=>{
  })
  if(!req.body.owners) return res.json({err: "no_owners"});
  if(!req.body.short) return res.json({err: "no_short"});
- if(req.body.short.length > 50 || req.body.short.length < 10) return res.json({err: "invalid_short"});
+ if(req.body.short.length > 150 || req.body.short.length < 10) return res.json({err: "invalid_short"});
  if(!req.body.desc) return res.json({err: "no_desc"});
  if(!req.body.lib) return res.json({err: "no_lib"});
  if(req.body.length>11) return res.json({err: "invalid_lib"});
