@@ -1,6 +1,6 @@
 let Bots = require("@models/bots.js");
-let {owners} = require("../../../data.js");
 let BotAuth = require("@models/botauth.js");
+const {owners} = require("../../data.js");
 const passgen = require("@utils/passgen.js");
 let {fetch} = require("rovel.js");
 const schedule = require("node-schedule");
@@ -153,82 +153,6 @@ router.delete("/:id", (req, res)=>{
   res.json({err: "bot_already_deleted"});
  }
 })
-router.get("/import/:id", (req, res)=>{
- fetch(`https://top.gg/api/bots/${req.params.id}`, {
-  method: "GET",
-  headers: {
-   "Authorization": process.env.TOPTOKEN
-  }
- }).then(r=>r.json()).then(bot=>{
-  console.log(bot);
-  fetch(`${process.env.DOMAIN}/api/bots/new`, {
-     method: "POST",
-     headers: {
-      "content-type": "application/json"
-     },
-     body: JSON.stringify({
-      "id": bot.id,
-      "owners": bot.owners,
-      "short": bot.shortdesc,
-      "desc": bot.longdesc,
-      "prefix": bot.prefix,
-      "lib": bot.lib || null,
-      "support": bot.support,
-      "website": bot.website || null,
-      "github": bot.github || null,
-      "invite": bot.invite
-     })
-    }).then(r=>r.json).then(d=>{
-     res.json(d);
-    });
- });
-})
-router.get("/import/topgg/:id", (req, res)=>{
- if(!req.query.key) return res.json({err: "no_key"});
- fetch(`https://top.gg/api/bots/${req.params.id}`, {
-  headers: {
-   "Authorization": process.env.TOPTOKEN
-  }
- }).then(r=>r.json()).then(bot=>{
-  var cond = true;
-  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
-  if(d.err) return res.json({err: "invalid_key"});
-  if(!bot.owners.includes(d.id)) return res.json({err: "wrong_owner"});
- for(const owner of bot.owners){
-  fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
-   cond = d.condition;
-   if(cond){
-    if(bot.support) fetch(`https://discord.com/api/v7/invites/${bot.support}`).then(r=>r.json()).then(d=>{
-     bot.support = d.guild.id;
-    })
-    
-    fetch(`${process.env.DOMAIN}/api/bots/new`, {
-     method: "POST",
-     headers: {
-      "content-type": "application/json"
-     },
-     body: JSON.stringify({
-      "id": bot.id,
-      "owners": bot.owners,
-      "short": bot.shortdesc,
-      "desc": bot.longdesc,
-      "prefix": bot.prefix,
-      "lib": bot.lib || null,
-      "support": bot.support,
-      "website": bot.website || null,
-      "github": bot.github || null,
-      "invite": bot.invite
-     })
-    }).then(r=>r.json).then(d=>{
-     if(d.botAdded) return res.json({topgg: "imported"});
-     else return res.json({err: d.err});
-    })
-   }
-   else res.json({err: "owner_not_in_server"});
-  })
- }
- })})
-});
 
 router.post("/new", async (req, res)=>{
  try{
@@ -239,15 +163,15 @@ router.post("/new", async (req, res)=>{
    "Authorization": `Bot ${process.env.TOKEN}`
   }
  }).then(r=>r.json()).then(user=>{
-  if(user.bot) return res.json({err: "cannot_add_user"});
+  if(user.bot==undefined) return res.json({err: "cannot_add_user"});
   if(user.code == 10013) return res.json({err: "cannot_add_invalid_user"});
  })
  if(!req.body.owners) return res.json({err: "no_owners"});
  if(!req.body.short) return res.json({err: "no_short"});
- if(!req.body.lib) return res.json({err: "no_lib"});
- if(req.body.lib.length > 11) return res.json({err: "invalid_lib"});
  if(req.body.short.length > 50 || req.body.short.length < 10) return res.json({err: "invalid_short"});
  if(!req.body.desc) return res.json({err: "no_desc"});
+ if(!req.body.lib) return res.json({err: "no_lib"});
+ if(req.body.length>11) return res.json({err: "invalid_lib"});
  if(req.body.desc.split(" ").join("").split("\n").join("").length < 200) return res.json({err: "invalid_desc"});
  if(!req.body.prefix) return res.json({err: "no_prefix"});
  if(!req.body.invite) return res.json({err: "no_invite"});
@@ -256,8 +180,8 @@ router.post("/new", async (req, res)=>{
  });
  var cond = true;
  for(const owner of req.body.owners){
-  await fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(async d=>{
-   cond = await d.condition;
+  await fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
+   cond = d.condition;
   })
  }
  //end of validation
