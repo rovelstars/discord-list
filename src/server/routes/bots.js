@@ -174,7 +174,7 @@ router.get("/import/topgg/:id", (req, res)=>{
      desc: bot.longdesc,
      support: bot.guilds[0],
      owners: bot.owners,
-     owners: bot.invite,
+     invite: bot.invite,
      support: bot.support,
      github: bot.github,
      website: bot.website
