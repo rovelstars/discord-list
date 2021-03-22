@@ -239,7 +239,7 @@ router.post("/new", async (req, res)=>{
    "Authorization": `Bot ${process.env.TOKEN}`
   }
  }).then(r=>r.json()).then(user=>{
-  if(user.bot==undefined) return res.json({err: "cannot_add_user"});
+  if(user.bot) return res.json({err: "cannot_add_user"});
   if(user.code == 10013) return res.json({err: "cannot_add_invalid_user"});
  })
  if(!req.body.owners) return res.json({err: "no_owners"});
