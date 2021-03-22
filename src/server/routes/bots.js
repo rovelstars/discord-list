@@ -176,7 +176,8 @@ router.post("/new", async (req, res)=>{
  if(!req.body.prefix) return res.json({err: "no_prefix"});
  if(!req.body.invite) return res.json({err: "no_invite"});
  req.body.desc = coronaSanitizer(req.body.desc, {
-  allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'iframe', 'style'])
+  allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'iframe', 'style']),
+  allowVulnerableTags: true
  });
  var cond = true;
  for(const owner of req.body.owners){
