@@ -189,6 +189,9 @@ router.get("/import/topgg/:id", (req, res)=>{
       "github": bot.github || null,
       "invite": bot.invite
      })
+    }).then(r=>r.json).then(d=>{
+     if(d.err) return res.json({err: d.err});
+     else res.json({imported: "done"});
     })
    }
    else return res.json({err: "owner_not_in_server"});
