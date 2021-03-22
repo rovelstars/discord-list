@@ -165,7 +165,7 @@ router.get("/import/topgg/:id", (req, res)=>{
   if(d.err) return res.json({err: "invalid_key"});
   if(!bot.owners.include(d.id)) return res.json({err: "wrong_owner"});
  for(const owner of bot.owners){
-  await fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
+  fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
    cond = d.condition;
    if(cond){
     if(bot.support) fetch(`https://discord.com/api/v7/invites/${bot.support}`).then(r=>r.json()).then(d=>{
