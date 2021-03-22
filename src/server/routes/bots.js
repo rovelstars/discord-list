@@ -152,7 +152,52 @@ router.delete("/:id", (req, res)=>{
  } catch {
   res.json({err: "bot_already_deleted"});
  }
-})
+});
+
+router.get("/import/topgg/:id", (req, res)=>{
+ if(req.query.key){
+  var userid;
+  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(user=>{
+   userid = user.id;
+   fetch(`https://top.gg/api/bots/${req.params.id}`, {
+    method: "GET",
+    headers: {
+     "Authorization": `${process.env.TOPTOKEN}`
+    }
+   }).then(r=>r.json()).then(bot=>{
+    if(bot.owners.includes(userid)){
+     var abot;
+     abot.id=bot.id;
+     abot.lib=bot.lib;
+     abot.prefix=bot.prefix;
+     abot.short=bot.shortdesc;
+     abot.desc=bot.longdesc;
+     abot.support=bot.guilds[0];
+     abot.owners=bot.owners;
+     abot.invite=bot.invite;
+     abot.support=bot.support;
+     abot.github=bot.github;
+     abot.website=bot.website;
+     fetch(`${process.env.DOMAIN}/api/bots/new`,{
+      method: "POST",
+      headers: {
+       "content-type": "application/json"
+      },
+      body = JSON.stringify(abot)
+     }).then(r=>r.json()).then(d=>{
+      res.json(d);
+     })
+    }
+    else{
+     return res.json({err: "unauth_owner"});
+    }
+   });
+  })
+ }
+ else{
+  res.json({err: "no_key"});
+ }
+});
 
 router.post("/new", async (req, res)=>{
  try{

@@ -17,11 +17,13 @@ router.get("/key", async (req, res)=>{
 router.get("/user", async (req, res)=>{
  if(req.query.key || req.cookies['key']){
   try {
-  const user = await auth.getUser(req.query.key || req.cookies['key']);
+  const user = await auth.getUser(req.query.key || req.cookies['key']).catch(e=>{
+   return res.json({err: "invalid_key"});
+  });
   await res.json(user);
  }
-  catch(e){
-   res.json({error: e});
+  catch{
+   res.json({error: "invalid_key"});
   }
  }
  else res.json({error: "no_key"});
