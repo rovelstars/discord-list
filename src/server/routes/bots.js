@@ -163,7 +163,7 @@ router.get("/import/topgg/:id", (req, res)=>{
   var cond = true;
   fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
   if(d.err) return res.json({err: "invalid_key"});
-  if(!bot.owners.include(d.id)) return res.json({err: "wrong_owner"});
+  if(!bot.owners.includes(d.id)) return res.json({err: "wrong_owner"});
  for(const owner of bot.owners){
   fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r=>r.json()).then(d=>{
    cond = d.condition;
