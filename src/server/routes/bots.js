@@ -166,18 +166,19 @@ router.get("/import/topgg/:id", (req, res)=>{
     }
    }).then(r=>r.json()).then(bot=>{
     if(bot.owners.includes(userid)){
-     var abot;
-     abot.id=bot.id;
-     abot.lib=bot.lib;
-     abot.prefix=bot.prefix;
-     abot.short=bot.shortdesc;
-     abot.desc=bot.longdesc;
-     abot.support=bot.guilds[0];
-     abot.owners=bot.owners;
-     abot.invite=bot.invite;
-     abot.support=bot.support;
-     abot.github=bot.github;
-     abot.website=bot.website;
+     var abot={
+     id: bot.id,
+     lib: bot.lib,
+     prefix: bot.prefix,
+     short: bot.shortdesc,
+     desc=bot.longdesc,
+     support=bot.guilds[0],
+     owners=bot.owners,
+     invite=bot.invite,
+     support=bot.support,
+     github=bot.github,
+     website=bot.website
+     }
      fetch(`${process.env.DOMAIN}/api/bots/new`,{
       method: "POST",
       headers: {
