@@ -171,13 +171,13 @@ router.get("/import/topgg/:id", (req, res)=>{
      lib: bot.lib,
      prefix: bot.prefix,
      short: bot.shortdesc,
-     desc=bot.longdesc,
-     support=bot.guilds[0],
-     owners=bot.owners,
-     invite=bot.invite,
-     support=bot.support,
-     github=bot.github,
-     website=bot.website
+     desc: bot.longdesc,
+     support: bot.guilds[0],
+     owners: bot.owners,
+     owners: bot.invite,
+     support: bot.support,
+     github: bot.github,
+     website: bot.website
      }
      fetch(`${process.env.DOMAIN}/api/bots/new`,{
       method: "POST",
