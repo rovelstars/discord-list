@@ -159,6 +159,7 @@ router.get("/import/:id", (req, res)=>{
    "Authorization": process.env.TOPTOKEN
   }
  }).then(r=>r.json()).then(bot=>{
+  console.log(bot);
   fetch(`${process.env.DOMAIN}/api/bots/new`, {
      method: "POST",
      headers: {
