@@ -218,7 +218,7 @@ router.post("/new", async (req, res)=>{
  if(!req.body.desc) return res.json({err: "no_desc"});
  if(!req.body.lib) return res.json({err: "no_lib"});
  if(req.body.length>11) return res.json({err: "invalid_lib"});
- if(req.body.desc.split(" ").join("").split("\n").join("").length < 200) return res.json({err: "invalid_desc"});
+ if(req.body.desc.split(" ").join("").split("\n").join("").length < 100) return res.json({err: "invalid_desc"});
  if(!req.body.prefix) return res.json({err: "no_prefix"});
  if(!req.body.invite) return res.json({err: "no_invite"});
  req.body.desc = coronaSanitizer(req.body.desc, {
