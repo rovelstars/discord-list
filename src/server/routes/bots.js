@@ -183,7 +183,7 @@ router.get("/import/topgg/:id", (req, res)=>{
       headers: {
        "content-type": "application/json"
       },
-      body = JSON.stringify(abot)
+      body: JSON.stringify(abot)
      }).then(r=>r.json()).then(d=>{
       res.json(d);
      })
