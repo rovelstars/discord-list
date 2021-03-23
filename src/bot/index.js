@@ -143,7 +143,18 @@ router.get("/bannedusers", (req, res)=>{
 });
 
 router.get("/bannedusers/:id", (req, res)=>{
- res.json({hello: "world"});
+ client.guilds.cache.get("602906543356379156").fetchBans().then(list=>{
+  var cond = true;
+  for(var banuser of list){
+   if(banuser.user==req.params.id){
+    cond = false;
+    return res.json({banned: true});
+   }
+  }
+  if(cond){
+   return res.json({banned: false});
+  }
+ })
 });
 
 router.get("/users/:id", (req, res)=>{
