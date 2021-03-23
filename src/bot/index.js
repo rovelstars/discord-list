@@ -136,6 +136,16 @@ router.get("/mainserver/members/:id", (req, res)=>{
  const condition = (user)? true : false;
  res.json({condition});
 });
+router.get("/bannedusers", (req, res)=>{
+ client.guilds.cache.get("602906543356379156").fetchBans().then(list=>{
+  res.json(list);
+ })
+});
+
+router.get("/bannedusers/:id", (req, res)=>{
+ res.json({hello: "world"});
+});
+
 router.get("/users/:id", (req, res)=>{
  var user = client.users.cache.get(req.params.id);
  if(user=="" || user==undefined || user==null) user = {err: "not_there"};
