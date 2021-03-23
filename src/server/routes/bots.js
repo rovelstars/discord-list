@@ -211,11 +211,7 @@ router.post("/new", async (req, res)=>{
  }).then(r=>r.json()).then(user=>{
   if(user.bot==undefined) return res.json({err: "cannot_add_user"});
   if(user.code == 10013) return res.json({err: "cannot_add_invalid_user"});
-  else{
- var hmm = user;
-  }
  })
- console.log("bot"+user);
  if(!req.body.owners) return res.json({err: "no_owners"});
  if(!req.body.short) return res.json({err: "no_short"});
  if(req.body.short.length > 150 || req.body.short.length < 10) return res.json({err: "invalid_short"});
@@ -236,7 +232,12 @@ router.post("/new", async (req, res)=>{
  }
  //end of validation
  if(cond){
- const bot = await new Bots({
+  fetch(`https://discord.com/api/v7/users/${req.body.id}`,{
+  headers: {
+   "Authorization": `Bot ${process.env.TOKEN}`
+  }
+ }).then(r=>r.json()).then(info=>{
+  const bot = await new Bots({
  id: req.body.id,
  owners: req.body.owners,
  short: req.body.short,
@@ -261,7 +262,8 @@ router.post("/new", async (req, res)=>{
   },
   body: JSON.stringify({
    "secret": process.env.SECRET,
-   "desc": `Bot <@!${bot.id}> has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\``,
+   "img": `https://cdn.discordapp.com/avatars/${info.id}/${info.avatar}.png?size=512`,
+   "desc": `**${d.username}** has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\``,
    "title": "New Bot Added!",
    "color": "#31CB00",
    "owners": bot.owners,
@@ -270,6 +272,7 @@ router.post("/new", async (req, res)=>{
  });
   }
  });
+ })
  }
  else res.json({err: "owner_not_in_server"});
  }
