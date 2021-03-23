@@ -237,7 +237,7 @@ router.post("/new", async (req, res)=>{
    "Authorization": `Bot ${process.env.TOKEN}`
   }
  }).then(r=>r.json()).then(info=>{
-  const bot = await new Bots({
+  const bot = new Bots({
  id: req.body.id,
  owners: req.body.owners,
  short: req.body.short,
