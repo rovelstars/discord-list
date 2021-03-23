@@ -215,7 +215,7 @@ router.post("/new", async (req, res)=>{
  var hmm = user;
   }
  })
- console.log(user);
+ console.log("bot"+user);
  if(!req.body.owners) return res.json({err: "no_owners"});
  if(!req.body.short) return res.json({err: "no_short"});
  if(req.body.short.length > 150 || req.body.short.length < 10) return res.json({err: "invalid_short"});
