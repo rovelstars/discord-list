@@ -265,12 +265,12 @@ router.post("/new", async (req, res)=>{
  if(!req.body.prefix) return res.json({err: "no_prefix"});
  if(!req.body.invite) return res.json({err: "no_invite"});
  if(!req.body.support) return res.json({err: "no_support"});
- if(req.body.support.startsWith("https://discord.gg/")) req.body.invite.replace("https://discord.gg/", "");
+ if(req.body.support.startsWith("https://discord.gg/")) req.body.support.replace("https://discord.gg/", "");
 
  var testguild = parseInt(req.body.support);
- if(testguild!=req.body.support){
+ if(testguild!==req.body.support){
    fetch(`https://discord.com/api/v7/invites/${req.body.invite}`).then(r=>r.json()).then(d=>{
-  if(d.code == 10006) return res.json({err: "invalid_support"});
+  if(d.code == 10006 && d.code != req.body.support) return res.json({err: "invalid_support"});
   else req.body.support = d.guild.id;
  })
  }
