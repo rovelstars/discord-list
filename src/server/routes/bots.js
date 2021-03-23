@@ -270,6 +270,7 @@ router.post("/new", async (req, res)=>{
  var testguild = parseInt(req.body.support);
  if(testguild!==req.body.support){
    fetch(`https://discord.com/api/v7/invites/${req.body.invite}`).then(r=>r.json()).then(d=>{
+    console.log(d);
   if(d.code == 10006 && d.code != req.body.support) return res.json({err: "invalid_support"});
   else req.body.support = d.guild.id;
  })
