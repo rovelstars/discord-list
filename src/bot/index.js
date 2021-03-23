@@ -148,7 +148,7 @@ router.get("/bannedusers/:id", (req, res)=>{
   for(var banuser of list){
    if(banuser.user==req.params.id){
     cond = false;
-    return res.json({banned: true});
+    res.json({banned: true});
    }
   }
   if(cond){
