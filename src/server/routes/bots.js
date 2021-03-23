@@ -172,12 +172,56 @@ router.get("/import/topgg/:id", (req, res)=>{
      prefix: bot.prefix,
      short: bot.shortdesc,
      desc: bot.longdesc,
-     support: bot.guilds[0],
+     support: bot.support,
      owners: bot.owners,
      invite: bot.invite,
-     support: bot.support,
      github: bot.github,
      website: bot.website
+     }
+     fetch(`${process.env.DOMAIN}/api/bots/new`,{
+      method: "POST",
+      headers: {
+       "content-type": "application/json"
+      },
+      body: JSON.stringify(abot)
+     }).then(r=>r.json()).then(d=>{
+      res.json(d);
+     })
+    }
+    else{
+     return res.json({err: "unauth_owner"});
+    }
+   });
+  })
+ }
+ else{
+  res.json({err: "no_key"});
+ }
+});
+
+router.get("/import/del/:id", (req, res)=>{
+ if(req.query.key){
+  var userid;
+  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(user=>{
+   userid = user.id;
+   fetch(`https://api.discordextremelist.xyz/v2/bot/${req.params.id}`, {
+    method: "GET",
+    headers: {
+     "Authorization": `${process.env.TOPTOKEN}`
+    }
+   }).then(r=>r.json()).then(bot=>{
+    if(bot.owners.includes(userid)){
+     var abot={
+     id: bot.bot.id,
+     lib: bot.bot.library,
+     prefix: bot.bot.prefix,
+     short: bot.shortDesc,
+     desc: bot.longDesc,
+     owners: [bot.owner.id],
+     invite: bot.links.invite,
+     support: bot.links.support,
+     github: bot.links.repo,
+     website: bot.links.website
      }
      fetch(`${process.env.DOMAIN}/api/bots/new`,{
       method: "POST",
@@ -220,6 +264,16 @@ router.post("/new", async (req, res)=>{
  if(req.body.desc.length < 100) return res.json({err: "invalid_desc"});
  if(!req.body.prefix) return res.json({err: "no_prefix"});
  if(!req.body.invite) return res.json({err: "no_invite"});
+ if(!req.body.support) return res.json({err: "no_support"});
+ if(req.body.support.startsWith("https://discord.gg/")) req.body.invite.replace("https://discord.gg/", "");
+
+ var testguild = parseInt(req.body.support);
+ if(testguild!=req.body.support){
+   fetch(`https://discord.com/api/v7/invites/${req.body.invite}`).then(r=>r.json()).then(d=>{
+  if(d.code == 10006) return res.json({err: "invalid_support"});
+  else req.body.support = d.guild.id;
+ })
+ }
  req.body.desc = coronaSanitizer(req.body.desc, {
   allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'iframe', 'style']),
   allowVulnerableTags: true
