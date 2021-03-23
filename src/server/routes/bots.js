@@ -203,7 +203,7 @@ router.get("/import/del/:id", (req, res)=>{
  if(req.query.key){
   fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(user=>{
    fetch(`https://api.discordextremelist.xyz/v2/bot/${req.params.id}`).then(r=>r.json()).then(bot=>{
-    if(bot.owners.includes(user.id)){
+    if(bot.owner.id==user.id){
      var abot={
      id: bot.bot.id,
      lib: bot.bot.library,
@@ -241,7 +241,7 @@ router.get("/import/dbl/:id", (req, res)=>{
  if(req.query.key){
   fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(user=>{
    fetch(`https://discordbotlist.com/api/v1/bots/${req.params.id}`).then(r=>r.json()).then(bot=>{
-    if(bot.owners.includes(user.id)){
+    if(bot.owner_id==user.id){
      if(bot.server_invite==null) bot.server_invite="602906543356379156";
      var abot = {
       id: bot.id,
