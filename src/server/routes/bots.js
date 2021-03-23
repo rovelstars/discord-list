@@ -211,7 +211,9 @@ router.post("/new", async (req, res)=>{
  }).then(r=>r.json()).then(user=>{
   if(user.bot==undefined) return res.json({err: "cannot_add_user"});
   if(user.code == 10013) return res.json({err: "cannot_add_invalid_user"});
+  else const hmm = user;
  })
+ console.log(user);
  if(!req.body.owners) return res.json({err: "no_owners"});
  if(!req.body.short) return res.json({err: "no_short"});
  if(req.body.short.length > 150 || req.body.short.length < 10) return res.json({err: "invalid_short"});
