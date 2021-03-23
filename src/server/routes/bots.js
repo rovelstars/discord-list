@@ -263,7 +263,7 @@ router.post("/new", async (req, res)=>{
   body: JSON.stringify({
    "secret": process.env.SECRET,
    "img": `https://cdn.discordapp.com/avatars/${info.id}/${info.avatar}.png?size=512`,
-   "desc": `**${d.username}** has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\``,
+   "desc": `**${info.username}** has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\``,
    "title": "New Bot Added!",
    "color": "#31CB00",
    "owners": bot.owners,
