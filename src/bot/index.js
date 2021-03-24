@@ -144,7 +144,7 @@ router.get("/bannedusers", (req, res)=>{
 
 router.get("/bannedusers/:id", (req, res)=>{
  client.guilds.cache.get("602906543356379156").fetchBans().then(list=>{
-  let ban = list.map(user=>user.id);
+  let ban = list.map(user=>user.user);
   console.log(ban);
   if(ban.includes(req.params.id)) res.json({banned: true});
   else res.json({banned: false});
