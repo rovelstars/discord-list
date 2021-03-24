@@ -36,7 +36,7 @@ const Bots = new Schema({
  badges: [{ type: String }],
 },{ versionKey: false, toJSON: { virtuals: true }});
 Bots.virtual('user').get(async function(){
- return fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`).then(r=>r.json())
+ return await fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`).then(r=>r.json())
 })
 Bots.index({'$**': 'text'});
 console.log("[DB] Compiling Schema into Model - Bots");
