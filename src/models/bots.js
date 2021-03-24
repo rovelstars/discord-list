@@ -34,7 +34,7 @@ const Bots = new Schema({
  votes: { type: Number, default: 0 },
  voted: Number,
  badges: [{ type: String }],
-},{ versionKey: false, toJSON: { virtuals: true }});
+},{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 Bots.virtual('user').get(async function(){
  const res = await fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`);
  const user = await res.json();
