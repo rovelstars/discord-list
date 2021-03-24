@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const {fetch} = require("rovel.js");
 const Bots = new Schema({
  _id: {
     default: () => new Date(),
