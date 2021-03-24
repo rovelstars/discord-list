@@ -145,7 +145,6 @@ router.get("/bannedusers", (req, res)=>{
 router.get("/bannedusers/:id", (req, res)=>{
  client.guilds.cache.get("602906543356379156").fetchBans().then(list=>{
   let ban = list.map(user=>user.user.id);
-  console.log(ban);
   if(ban.includes(req.params.id)) res.json({banned: true});
   else res.json({banned: false});
  })
@@ -154,7 +153,7 @@ router.get("/bannedusers/:id", (req, res)=>{
 router.get("/users/:id", (req, res)=>{
  var user = client.users.cache.get(req.params.id);
  if(user=="" || user==undefined || user==null) user = {err: "not_there"};
- res.json({user});
+ res.json(user);
 });
 router.get("/owners", (req, res) => {
  res.json({owners: client.owners});

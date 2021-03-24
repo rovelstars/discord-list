@@ -36,6 +36,9 @@ const Bots = new Schema({
 },{
  versionKey: false
 });
+Bots.virtual('user').get(async function(){
+ return fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`).then(r=>r.json())
+})
 Bots.index({'$**': 'text'});
 console.log("[DB] Compiling Schema into Model - Bots");
 module.exports = mongoose.model('Bots', Bots);
