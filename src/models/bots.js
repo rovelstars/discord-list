@@ -36,7 +36,8 @@ const Bots = new Schema({
  badges: [{ type: String }],
 },{ versionKey: false, toJSON: { virtuals: true }});
 Bots.virtual('user').get(async function(){
- const user = await fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`).then(r=>r.json());
+ const res = await fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`);
+ const user = await res.json();
  console.log(user);
  return user;
 })
