@@ -37,6 +37,7 @@ const Bots = new Schema({
 },{ versionKey: false, toJSON: { virtuals: true }});
 Bots.virtual('user').get(async function(){
  const user = await fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`).then(r=>r.json());
+ console.log(user);
  return user;
 })
 Bots.index({'$**': 'text'});
