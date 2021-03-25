@@ -1,16 +1,37 @@
 @charset "utf-8";
 @import "../../bulma/bulma.sass";
 
+@font-face {
+  font-family: discord;
+  src: url(https://discord.rovelstars.com/assets/font/sans.otf);
+}
+@font-face {
+ font-family: burbank;
+ src: url(https://discord.rovelstars.com/assets/font/Burbank.otf);
+}
+@font-face {
+ font-family: angrybirds;
+ src: url(https://discord.rovelstars.com/assets/angrybirds.ttf);
+}
+@font-face {
+ font-family: bangers;
+ src: url(https://discord.rovelstars.com/assets/Bangers.ttf);
+}
+
 $blurple: #7289da;
 $white: #ffffff;
 $black: #36393f;
 $primary: $blurple;
+$bg: $black;
 
 html, body{
  height: 100%;
 }
 
-body{
- background-color: $black;
- color: $white;
-}
+$text: $white;
+$text-strong: $white;
+$label-color: $white;
+$title-color: $white;
+$subtitle-color: #d8d8d8;
+$body-background-color: $bg;
+$family-sans-serif: discord, sans-serif;
