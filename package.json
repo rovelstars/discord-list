@@ -7,7 +7,7 @@
     "main": "node src/index.js",
     "server": "node src/server/app.js",
     "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed",
-    "bulma": "mv node_modules/bulma . -r",
+    "bulma": "mv node_modules/bulma .",
     "postinstall": "run-s bulma css-compile"
   },
   "engines": {
