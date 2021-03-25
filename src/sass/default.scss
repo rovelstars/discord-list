@@ -1,26 +1,16 @@
-@import "../../node_modules/bootstrap/scss/bootstrap";
-@font-face {
-  font-family: discord;
-  src: url(https://discord.rovelstars.com/assets/font/sans.otf);
-}
-@font-face {
- font-family: burbank;
- src: url(https://discord.rovelstars.com/assets/font/Burbank.otf);
-}
-@font-face {
- font-family: angrybirds;
- src: url(https://discord.rovelstars.com/assets/angrybirds.ttf);
-}
-@font-face {
- font-family: bangers;
- src: url(https://discord.rovelstars.com/assets/Bangers.ttf);
-}
+@charset "utf-8";
+@import "../../bulma/bulma.sass";
 
 $blurple: #7289da;
-$white: #FFFFFF;
-$grey-dark: #36393f;
-// start
+$white: #ffffff;
+$black: #36393f;
+$primary: $blurple;
 
-body {
- background-color: $grey-dark;
+html, body{
+ height: 100%;
+}
+
+body{
+ background-color: $black;
+ color: $white;
 }
