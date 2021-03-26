@@ -51,6 +51,7 @@ var checkBanned = async function(req, res, next) {
    else next()
   });
  }
+ else next()
 };
 app.use(checkBanned);
 var weblog = function(req, res, next) {
