@@ -3,11 +3,10 @@
   "description": "Rovel Discord List",
   "version": "1.0.0",
   "scripts": {
-    "start": "npm run main",
+    "start": "run-s css-compile main",
     "main": "node src/index.js",
     "server": "node src/server/app.js",
-    "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed",
-    "postinstall": "run-s css-compile"
+    "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed"
   },
   "engines": {
     "node": "^15.x"

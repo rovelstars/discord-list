@@ -60,10 +60,16 @@ var checkBanned = async function(req, res, next) {
      })
     })
    }
-   else next()
+   else {
+    req.user = user;
+    next()
+   }
   });
  }
- else next()
+ else {
+  req.user = null;
+  next()
+ }
 };
 app.use(checkBanned);
 var weblog = function(req, res, next) {
@@ -99,6 +105,7 @@ app.get('/api/*', (req, res)=>{
 
 app.get("/", async (req, res) => {
  if(req.cookies['key']){
+  console.log("user:"+req.user);
  var user = await auth.getUser(req.cookies['key']);
  await res.render('index.ejs', {user});
 }
@@ -130,7 +137,20 @@ app.get("/beta", (req, res)=>{
 
 app.get("/logout", async (req, res)=>{
  if(req.cookies['key']){
-  fetch(`${process.env.DOMAIN}`)
+  const user = await auth.getUser(req.cookies['key']);
+  fetch(`${process.env.DOMAIN}/api/client/log`, {
+   method: "POST",
+   headers: {
+    "content-type": "application/json"
+   },
+   body: JSON.stringify({
+    "secret": process.env.SECRET,
+    "title": `${user.tag} Logouted!`,
+    "desc": `Bye bye ${user.tag}\nSee you soon back on RDL!`,
+    "color": "#ff0000",
+    "owners": user.id
+   })
+  })
   res.cookie('key', req.cookies['key'], {maxAge: 0});
   
  }

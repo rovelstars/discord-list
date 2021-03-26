@@ -9,6 +9,20 @@ router.get("/", async (req, res)=>{
      httpOnly: true,
      secure: true
     });
+    const user = await auth.getUser(key);
+  fetch(`${process.env.DOMAIN}/api/client/log`, {
+   method: "POST",
+   headers: {
+    "content-type": "application/json"
+   },
+   body: JSON.stringify({
+    "secret": process.env.SECRET,
+    "title": `${user.tag} Logined!`,
+    "desc": `Hello ${user.tag}!\nWelcome to RDL!`,
+    "color": "#1FD816",
+    "owners": user.id
+   })
+  })
     await res.redirect(process.env.DOMAIN);
 });
 router.get("/key", async (req, res)=>{
