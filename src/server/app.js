@@ -41,6 +41,18 @@ process.on('unhandledRejection', err => {
  }
 });
 
+var checkBanned = function(req, res, next) {
+ if(req.cookies['key']){
+  var user = await auth.getUser(req.cookies['key']);
+  fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r=>r.json()).then(d=>{
+   if(d.banned){
+    res.send("You're banned from Rovel Stars");
+   }
+   else next()
+  });
+ }
+};
+app.use(checkBanned);
 var weblog = function(req, res, next) {
  const weburl = process.env.WEBHOOK;
  const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.ip || req.ips}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\``;
@@ -63,6 +75,14 @@ app.use('/assets', express.static(path.resolve("src/public/assets")));
 app.use('/api/bots', bots);
 app.use('/api/auth', authRoute);
 app.use('/api/client', client);
+
+app.get('/api', (req, res)=>{
+ res.json({hello: "coder!"});
+})
+
+app.get('/api/*', (req, res)=>{
+ res.json({err: 404});
+})
 
 app.get("/", async (req, res) => {
  if(req.cookies['key']){
