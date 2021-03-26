@@ -25,7 +25,7 @@ setTimeout(()=>{
 }, 5000);
 // ejs setting
 app.set('view engine', 'ejs');
-app.set('views', path.resolve("src/pages"));
+app.set('views', path.resolve("src/views"));
 const limiter = rateLimit({
  windowMs: 30 * 1000, // 30 secs
  max: 300 // limit each IP to 300 requests per windowMs
