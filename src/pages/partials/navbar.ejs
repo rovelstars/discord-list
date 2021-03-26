@@ -1,4 +1,4 @@
-<nav class="navbar" role="navigation" aria-label="main navigation">
+<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <a class="navbar-item" href="https://discord.rovelstars.com">
       <img src="https://discord.rovelstars.com/assets/img/logo.svg" width="28" height="28">
@@ -13,6 +13,7 @@
 
   <div id="navbarmenuthing" class="navbar-menu">
     <div class="navbar-start">
+     <h2> Welcome back <% if(user){ %><img src="<%= user.avatarUrl(128) %>" style="border-radius: 50%; width: 32px;height: 32px;" alt="<%= user.username %>"><%= user.username %><% } %>!</h2>
       <a class="navbar-item">
         Home
       </a>
@@ -54,7 +55,7 @@
       <div class="navbar-item">
         <div class="buttons">
           <a class="button is-primary">
-            <strong>Log in</strong>
+            <strong><% if(!user) {%>Log in<% } else { %>Log out<% } %></strong>
           </a>
         </div>
       </div>
