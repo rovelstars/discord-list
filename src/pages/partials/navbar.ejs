@@ -1,85 +1,76 @@
-<nav class="navbar navbar-dark bg-dark" id="navbar">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <img src="https://discord.rovelstars.com/assets/img/robot.svg" alt="" width="30" height="30" class="d-inline-block align-top vert-move">&nbsp;&nbsp;R&nbsp;D&nbsp;L
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="https://discord.rovelstars.com">
+      <img src="https://discord.rovelstars.com/assets/img/logo.svg" width="28" height="28">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#"><i class="bx bxs-home"></i>&nbsp;Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="bx bxs-wink-smile"></i>&nbsp;Emojis</a>
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="bx bxs-user-account"></i>&nbsp;Users</a>
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="bx bxs-server"></i>&nbsp;Servers</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="bx bxs-bot"></i>&nbsp;Bots</a>
-        </li>
-      </ul>
-      <span class="navbar-text">
-        Welcome back <% if(user){ %><img src="<%= user.avatarUrl(64) %>" style="border-radius: 50%; width: 10%" alt="<%= user.username %>">&nbsp;&nbsp;&nbsp;<%= user.username %><% } %> !
-      </span>
-      <% if(!user) {%><br>
-      <button class="btn btn-outline-success me-2" type="button" onclick="login()"><i class="bx bxs-log-in-circle"></i>&nbsp;Login</button><br>
-      <% } else { %><br>
-      <button class="btn btn-outline-danger me-2" type="button" onclick="logout()"><i class="bx bxs-log-out-circle"></i>&nbsp;Logout</button><br>
-      <% } %>
-      <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            More...
+
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarmenuthing">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarmenuthing" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item">
+        Home
+      </a>
+
+      <a class="navbar-item">
+        Documentation
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Lists
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item">
+            <i class="bx bxs-wink-smile"></i> Emojis
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="width: 100%">
-            <li><a class="dropdown-item" href="https://github.com/rovelstars/rdl"><i class="bx bxl-github"></i>RDL source - Github</a></li>
-            <li><a class="dropdown-item" href="https://discord.gg/953XCpHbKF"><i class="bx bxl-discord"></i>Discord Server</a></li>
-            <li><a class="dropdown-item" href="https://rovelstars.ga/"><i class="bx bxs-book-alt"></i>Rovel docs</a></li>
-            <li><a class="dropdown-item" href="https://blog.rovelstars.ga/"><i class="bx bxs-news"></i>Rovel Blog</a></li>
-            <li><a class="dropdown-item" href="https://rovel.js.org"><i class="bx bxs-package"></i>Rovel.js</a></li>
-          </ul>
-        </li>
-      <br>
-      <form class="d-flex">
-      <input class="form-control me-2" type="search" placeholder="Search for E-USB..." aria-label="Search">
-      <button class="btn btn-outline-success" type="submit"><i class="bx bx-search-alt"></i>Search</button>
-    </form>
+          <a class="navbar-item">
+            <i class="bx bxs-user-account"></i> Users
+          </a>
+          <a class="navbar-item">
+            <i class="bx bxs-server"></i> Servers
+          </a>
+          <a class="navbar-item">
+           <i class="bx bxs-bot"></i> Bots
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item">
+            Join Discord Server
+          </a>
+          <a class="navbar-item">
+           Source Code
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="buttons">
+          <a class="button is-primary">
+            <strong>Log in</strong>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
 <script>
- function login(){
-  window.location.href = "https://discord.rovelstars.com/login";
- }
- function logout(){
-  window.location.href = "https://discord.rovelstars.com/logout";
- }
- 
- window.onscroll = function() {nav()};
-var navbar = document.getElementById("navbar");
-var sticky = navbar.offsetTop;
-function nav() {
-  if (window.pageYOffset >= sticky) {
-    navbar.classList.add("sticky")
-  } else {
-    navbar.classList.remove("sticky");
-  }
-}
-$(document).ready(function(){ 
-    $(window).scroll(function(){ 
-        if ($(this).scrollTop() > 100) { 
-            $('#scroll').fadeIn(); 
-        } else { 
-            $('#scroll').fadeOut(); 
-        } 
-    }); 
-    $('#scroll').click(function(){ 
-        $("html, body").animate({ scrollTop: 0 }, 600); 
-        return false; 
-    }); 
+ $(document).ready(function() {
+
+  // Check for click events on the navbar burger icon
+  $(".navbar-burger").click(function() {
+
+      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+      $(".navbar-burger").toggleClass("is-active");
+      $(".navbar-menu").toggleClass("is-active");
+
+  });
 });
 </script>
-<a href="#" id="scroll" style="display: none;"><span></span></a>

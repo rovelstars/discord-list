@@ -67,7 +67,7 @@ var checkBanned = async function(req, res, next) {
     })
    }
    else {
-   /* req.user = user;*/
+   req.user = user;
     next()
    }
   });
@@ -111,14 +111,14 @@ app.get('/api/*', (req, res)=>{
 
 app.get("/", async (req, res) => {
  if(req.cookies['key']){
- var user = await auth.getUser(req.cookies['key']);
+ var user = req.user;
  await res.render('index.ejs', {user});
 }
 else res.render('index.ejs', {user: null});
 });
 
 app.get("/favicon.ico", (req, res) => {
- res.redirect("/assets/img/robot.png");
+ res.redirect("/assets/img/logo.png");
 });
 
 app.get("/server", (req, res)=>{
