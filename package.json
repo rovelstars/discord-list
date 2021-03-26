@@ -3,12 +3,11 @@
   "description": "Rovel Discord List",
   "version": "1.0.0",
   "scripts": {
-    "start": "npm run main && npm run sass",
+    "start": "npm run main",
     "main": "node src/index.js",
     "server": "node src/server/app.js",
     "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed",
-    "bulma": "mv node_modules/bulma .",
-    "postinstall": "run-s bulma css-compile"
+    "postinstall": "run-s css-compile"
   },
   "engines": {
     "node": "^15.x"
