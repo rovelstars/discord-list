@@ -1,5 +1,5 @@
 <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
+  <div class="navbar-brand is-primary">
     <a class="navbar-item" href="https://discord.rovelstars.com">
       <img src="https://discord.rovelstars.com/assets/img/logo.svg" width="28" height="28">
     </a>
@@ -12,7 +12,7 @@
   </div>
 
   <div id="navbarmenuthing" class="navbar-menu">
-    <div class="navbar-start is-primary">
+    <div class="navbar-start">
      <h2 class="subtitle"> Welcome back <% if(user){ %><img src="<%= user.avatarUrl(128) %>" style="border-radius: 50%; width: 32px;height: 32px;" alt="<%= user.username %>"><%= user.username %><% } %>!</h2>
       <a class="navbar-item">
         Home
