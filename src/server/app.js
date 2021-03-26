@@ -47,6 +47,18 @@ var checkBanned = async function(req, res, next) {
   fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r=>r.json()).then(d=>{
    if(d.banned){
     res.send("You're banned from Rovel Stars");
+    fetch(`${process.env.DOMAIN}/api/client/log`, {
+     method: "POST",
+     headers: {
+      "content-type": "application/json"
+     },
+     body: JSON.stringify({
+      "secret": process.env.SECRET,
+      "title": `Banned User ${user.tag} tried to visit us!`,
+      "color": "#ff0000",
+      "desc": `**${user.tag}** (${user.id}) was banned before, and they tried to visit our site at path:\n\`${req.path}\``
+     })
+    })
    }
    else next()
   });
