@@ -14,30 +14,30 @@
   <div id="navbarmenuthing" class="navbar-menu has-background-dark">
     <div class="navbar-start">
      <h2 class="subtitle has-text-centered"> Welcome back <% if(user){ %><img src="<%= user.avatarUrl(128) %>" style="border-radius: 50%; width: 32px;height: 32px;" alt="<%= user.username %>"><%= user.username %><% } %>!</h2>
-      <a class="navbar-item">
+      <a class="navbar-item" href="/">
         Home
       </a>
 
-      <a class="navbar-item">
+      <a class="navbar-item" href="https://docs.rovelstars.com">
         Documentation
       </a>
-          <a class="navbar-item">
+          <a class="navbar-item" href="/emojis">
             <i class="bx bxs-wink-smile"></i> Emojis
           </a>
-          <a class="navbar-item">
+          <a class="navbar-item" href="/users">
             <i class="bx bxs-user-account"></i> Users
           </a>
-          <a class="navbar-item">
+          <a class="navbar-item" href="/servers">
             <i class="bx bxs-server"></i> Servers
           </a>
-          <a class="navbar-item">
+          <a class="navbar-item" href="/bots">
            <i class="bx bxs-bot"></i> Bots
           </a>
           <hr class="navbar-divider">
-          <a class="navbar-item">
+          <a class="navbar-item" href="/server">
             <i class="bx bxl-discord"></i> Join Discord Server
           </a>
-          <a class="navbar-item">
+          <a class="navbar-item" href="https://github.com/rovelstars/rovel-discord-list">
            <i class="bx bxl-github"></i> Source Code
           </a>
     </div>
@@ -47,10 +47,10 @@
         <div class="buttons">
          <% if(!user){ %>
           <a class="button is-primary" href="/login">
-            <strong><i class="bx bx-login"></i>Log in</strong></a>
+            <strong><i class="bx bx-login"></i> Log in</strong></a>
             <% } else { %>
               <a class="button is-danger" href="/logout">
-            <strong><i class="bx bx-logout"></i>Log out</strong>
+            <strong><i class="bx bx-logout"></i> Log out</strong>
           </a>
           <% } %>
         </div>
