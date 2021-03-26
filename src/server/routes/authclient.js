@@ -20,6 +20,7 @@ router.get("/", async (req, res)=>{
     "title": `${user.tag} Logined!`,
     "desc": `Hello ${user.tag}!\nWelcome to RDL!`,
     "color": "#1FD816",
+    "img": user.avatarUrl(128),
     "owners": user.id
    })
   })

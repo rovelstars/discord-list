@@ -148,6 +148,7 @@ app.get("/logout", async (req, res)=>{
     "title": `${user.tag} Logouted!`,
     "desc": `Bye bye ${user.tag}\nSee you soon back on RDL!`,
     "color": "#ff0000",
+    "img": user.avatarUrl(128),
     "owners": user.id
    })
   })
