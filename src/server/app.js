@@ -40,7 +40,13 @@ process.on('unhandledRejection', err => {
   app.use(unre);
  }
 });
-
+var booting = function(req, res, next){
+ if(process.uptime()< 60){
+  res.sendFile(path.resolve("src/public/assets/loading.html"));
+ }
+ else next();
+}
+app.use(booting);
 var checkBanned = async function(req, res, next) {
  if(req.cookies['key']){
   var user = await auth.getUser(req.cookies['key']);
