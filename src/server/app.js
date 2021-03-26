@@ -61,7 +61,7 @@ var checkBanned = async function(req, res, next) {
     })
    }
    else {
-    req.user = user;
+   /* req.user = user;*/
     next()
    }
   });
@@ -105,12 +105,12 @@ app.get('/api/*', (req, res)=>{
 
 app.get("/", async (req, res) => {
  if(req.cookies['key']){
-  console.log("user:"+req.user);
  var user = await auth.getUser(req.cookies['key']);
  await res.render('index.ejs', {user});
 }
 else res.render('index.ejs', {user: null});
 });
+
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/img/robot.png");
 });
