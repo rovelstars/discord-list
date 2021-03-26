@@ -18,22 +18,13 @@
  src: url(https://discord.rovelstars.com/assets/Bangers.ttf);
 }
 
-$blurple: #7289da;
-$white: #ffffff;
-$black: #36393f;
-$purple: $blurple;
-$primary: $blurple;
-$link: $blurple;
-$bg: $black;
-$turquoise: $blurple;
 html, body{
  height: 100%;
 }
 
+$blurple: #7289da;
+$grey-dark: #36393f;
+$primary: $blurple;
+$background: $blurple;
+$body-background-color: $grey-dark;
 $text: $white;
-$text-strong: $white;
-$label-color: $white;
-$title-color: $white;
-$subtitle-color: #d8d8d8;
-$body-background-color: $bg;
-$family-sans-serif: discord, sans-serif;
