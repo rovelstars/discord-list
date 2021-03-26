@@ -41,7 +41,7 @@ process.on('unhandledRejection', err => {
  }
 });
 
-var checkBanned = function(req, res, next) {
+var checkBanned = async function(req, res, next) {
  if(req.cookies['key']){
   var user = await auth.getUser(req.cookies['key']);
   fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r=>r.json()).then(d=>{
