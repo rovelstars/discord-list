@@ -129,7 +129,11 @@ app.get("/beta", (req, res)=>{
 });
 
 app.get("/logout", async (req, res)=>{
- if(req.cookies['key']) res.cookie('key', req.cookies['key'], {maxAge: 0});
+ if(req.cookies['key']){
+  fetch(`${process.env.DOMAIN}`)
+  res.cookie('key', req.cookies['key'], {maxAge: 0});
+  
+ }
  res.redirect("/");
 });
 
