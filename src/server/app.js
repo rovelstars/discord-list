@@ -46,7 +46,7 @@ var booting = function(req, res, next){
  }
  else next();
 }
-app.use(booting);
+//app.use(booting);
 var checkBanned = async function(req, res, next) {
  if(req.cookies['key']){
   var user = await auth.getUser(req.cookies['key']);
