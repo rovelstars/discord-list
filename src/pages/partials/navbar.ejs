@@ -42,10 +42,10 @@
           </a>
           <hr class="navbar-divider">
           <a class="navbar-item">
-            Join Discord Server
+            <i class="bx bxl-discord"></i>Join Discord Server
           </a>
           <a class="navbar-item">
-           Source Code
+           <i class="bx bxl-github"></i>Source Code
           </a>
         </div>
       </div>
@@ -54,9 +54,14 @@
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="buttons">
+         <% if(user){ %>
           <a class="button is-primary">
-            <strong><% if(!user) {%>Log in<% } else { %>Log out<% } %></strong>
+            <strong><i class="bx bx-login"></i>Log in</strong></a>
+            <% } else { %>
+              <a class="button is-danger">
+            <strong><i class="bx bx-logout"></i>Log out</strong>
           </a>
+          <% } %>
         </div>
       </div>
     </div>
