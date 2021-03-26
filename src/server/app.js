@@ -27,11 +27,11 @@ setTimeout(()=>{
 app.set('view engine', 'ejs');
 app.set('views', path.resolve("src/pages"));
 const limiter = rateLimit({
- windowMs: 60 * 60 * 1000, // 60 minutes
- max: 1000 // limit each IP to 1000 requests per windowMs
+ windowMs: 30 * 1000, // 30 secs
+ max: 300 // limit each IP to 300 requests per windowMs
 });
 app.set('trust proxy', 1);
-app.use(limiter);
+app.use("/api", limiter);
 
 process.on('unhandledRejection', err => {
  var unre = function(req, res, next) {
