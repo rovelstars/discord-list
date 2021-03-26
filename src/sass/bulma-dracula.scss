@@ -1,2 +1,137 @@
 @import "./bulma-dracula-vars.scss";
-@import "../../node_modules/bulma/bulma.sass"
+@import "../../node_modules/bulma/bulma.sass";
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+@font-face {
+  font-family: discord;
+  src: url(https://discord.rovelstars.com/assets/font/sans.otf);
+}
+@font-face {
+ font-family: burbank;
+ src: url(https://discord.rovelstars.com/assets/font/Burbank.otf);
+}
+@font-face {
+ font-family: angrybirds;
+ src: url(https://discord.rovelstars.com/assets/angrybirds.ttf);
+}
+@font-face {
+ font-family: bangers;
+ src: url(https://discord.rovelstars.com/assets/Bangers.ttf);
+}
+
+img.vert-move {
+    -webkit-animation: mover 1s infinite  alternate;
+    animation: mover 1s infinite  alternate;
+}
+@-webkit-keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+@keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+
+#loading {
+  margin: 0;
+  padding: 0;
+  background-color: #282a36;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: 9999;
+  margin-top: 0px;
+  top: 0px;
+}
+
+#loading-center {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#loading-center-absolute {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 200px;
+  width: 200px;
+  margin-top: -100px;
+  margin-left: -100px;
+}
+
+#object {
+  width: 60px;
+  height: 60px;
+  background-color: #FFF;
+  border-radius: 5px;
+  -webkit-animation: animate 1s infinite ease-in-out;
+  animation: animate 1s infinite ease-in-out;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 60px;
+}
+
+@-webkit-keyframes animate {
+  0% {
+    -webkit-transform: perspective(160px);
+  }
+  50% {
+    -webkit-transform: perspective(160px) rotateY(-180deg);
+  }
+  100% {
+    -webkit-transform: perspective(160px) rotateY(-180deg) rotateX(-180deg);
+  }
+}
+
+@keyframes animate {
+  0% {
+    transform: perspective(160px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(160px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(160px) rotateX(-180deg) rotateY(0deg);
+    -webkit-transform: perspective(160px) rotateX(-180deg) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(160px) rotateX(-180deg) rotateY(-180deg);
+    -webkit-transform: perspective(160px) rotateX(-180deg) rotateY(-180deg);
+  }
+}
+#scroll {
+    position:fixed;
+    right:10px;
+    bottom:10px;
+    cursor: pointer;
+    width:50px;
+    height:50px;
+    background-color:#7289da;
+    text-indent:-9999px;
+    display:none;
+    -webkit-border-radius:60px;
+    -moz-border-radius:60px;
+    border-radius:60px
+}
+#scroll span {
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin-left:-8px;
+    margin-top:-12px;
+    height:0;
+    width:0;
+    border:8px solid transparent;
+    border-bottom-color:#ffffff;
+}
+#scroll:hover {
+    background-color:#ff0000;
+    opacity:1;filter:"alpha(opacity=100)";
+    -ms-filter:"alpha(opacity=100)";
+}
+
+h1, h2, h3, h4, h5, h6 {
+ font-family: discord, sans-serif;
+}
+p, span {
+ font-family: 'Fredoka One';
+}
