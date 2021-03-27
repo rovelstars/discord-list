@@ -2,6 +2,7 @@
 title: "Rovel Discord List - RDL",
 desc: "The next gen all-in-one Discord List coming up!"
 }); %>
+<% const {fetch} = require("rovel.js"); %>
 </head>
 <body>
  <%- include('partials/load'); %>
@@ -27,7 +28,10 @@ desc: "The next gen all-in-one Discord List coming up!"
   Hello World 😈😎
  </p>
  <div class="columns is-multiline is-centered">
-  <%- include('partials/card'); %>
+  <% for(const bot of Allbots){ %>
+  <% fetch(`${process.env.DOMAIN}/api/client/users/${bot.id}`).then(r=>r.json()).then(info=>{ %>
+  <%- include('partials/card', {bot, info}); %>
+  <% }); } %>
   </div>
 </div>
  <%- include('partials/footer'); %>
