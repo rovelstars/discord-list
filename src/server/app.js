@@ -110,7 +110,7 @@ app.get('/api/*', (req, res)=>{
 })
 
 app.get("/", async (req, res) => {
- fetch(`${process.env.DOMAIN}/api/bots`).then(r=>r.json()).then(async d=>{
+ fetch(`${process.env.DOMAIN}/api/bots`).then(r=>r.json()).then(async Allbots=>{
  if(req.cookies['key']){
  var user = req.user;
  await res.render('index.ejs', {user, Allbots});
