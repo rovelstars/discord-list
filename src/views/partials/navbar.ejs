@@ -13,25 +13,25 @@
 
   <div id="navbarmenuthing" class="navbar-menu has-background-dark">
     <div class="navbar-start">
-     <h2 class="subtitle has-text-centered"> Welcome back <% if(user){ %><img src="<%= user.avatarUrl(128) %>" style="border-radius: 50%; width: 32px;height: 32px;" alt="<%= user.username %>"><%= user.username %><% } %>!</h2>
+     <h2 class="subtitle has-text-centered"> Welcome back <% if(user){ %><img src="<%= user.avatarUrl(128) %>" style="border-radius: 50%; width: 1.2em;height: 1.2em;" alt="<%= user.username %>"><%= user.username %><% } %>!</h2>
       <a class="navbar-item" href="/">
         Home
       </a>
 
       <a class="navbar-item" href="https://docs.rovelstars.com">
-        Documentation
+        <span class="icon has-text-info"><i class="bx bxs-book-open"></i></span>Documentation
       </a>
           <a class="navbar-item" href="/emojis">
-            <i class="bx bxs-wink-smile"></i> Emojis
+            <span class="icon has-text-warning"><i class="bx bxs-wink-smile"></i></span> Emojis
           </a>
           <a class="navbar-item" href="/users">
-            <i class="bx bxs-user-account"></i> Users
+            <span class="icon has-text-info"><i class="bx bxs-user-account"></i></span> Users
           </a>
           <a class="navbar-item" href="/servers">
-            <i class="bx bxs-server"></i> Servers
+            <span class="icon has-text-success"><i class="bx bxs-server"></i></span> Servers
           </a>
           <a class="navbar-item" href="/bots">
-           <i class="bx bxs-bot"></i> Bots
+           <span class="icon has-text-danger"><i class="bx bxs-bot"></i></span> Bots
           </a>
           <hr class="navbar-divider">
           <a class="navbar-item" href="/server">
