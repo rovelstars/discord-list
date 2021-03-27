@@ -113,9 +113,9 @@ app.get("/", async (req, res) => {
  fetch(`${process.env.DOMAIN}/api/bots`).then(r=>r.json()).then(async Allbots=>{
  if(req.cookies['key']){
  var user = req.user;
- await res.render('index.ejs', {user, Allbots});
+ await res.render('index.ejs', {user, Allbots, fetch});
 }
-else res.render('index.ejs', {user: null, Allbots});
+else res.render('index.ejs', {user: null, Allbots, fetch});
 });
 });
 
