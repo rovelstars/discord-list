@@ -28,7 +28,7 @@ desc: "The next gen all-in-one Discord List coming up!"
  </p>
  <div class="columns is-multiline is-centered">
   <% for(const bot of Allbots){ %>
-  <% fetch(`${process.env.DOMAIN}/api/client/users/${bot.id}`).then(r=>r.json()).then(info=>{ %>
+  <% fetch(`${process.env.DOMAIN}/api/client/users/${bot.id}`).then(r=>r.json()).then(info=>{ %><script>console.log(<%= info %>)</script>
   <%- include('partials/card', {bot, info}); %>
   <% }); } %>
   </div>
