@@ -27,10 +27,7 @@ desc: "The next gen all-in-one Discord List coming up!"
   Hello World 😈😎
  </p>
  <div class="columns is-multiline is-centered">
-  <% for(const bot of Allbots){ %>
-  <% fetch(`https://discord.rovelstars.com/api/client/users/${bot.id}`).then(r=>r.json()).then(info=>{ %>
-  <%- include('partials/card', {bot, info}); %>
-  <% }); } %>
+  <%- include('partials/card'); %>
   </div>
 </div>
  <%- include('partials/footer'); %>
