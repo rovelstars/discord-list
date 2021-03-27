@@ -15,11 +15,11 @@
     <div class="navbar-start">
      <h2 class="subtitle has-text-centered"> Welcome back <% if(user){ %><img src="<%= user.avatarUrl(128) %>" style="border-radius: 50%; width: 1.2em;height: 1.2em;" alt="<%= user.username %>"><%= user.username %><% } %>!</h2>
       <a class="navbar-item" href="/">
-        Home
+        <span class="has-text-primary"><i class="bx bxs-home"></i></span>Home
       </a>
 
       <a class="navbar-item" href="https://docs.rovelstars.com">
-        <span class="icon has-text-info"><i class="bx bxs-book-open"></i></span>Documentation
+        <span class="icon has-text-info"><i class="bx bxs-book-open"></i></span> Documentation
       </a>
           <a class="navbar-item" href="/emojis">
             <span class="icon has-text-warning"><i class="bx bxs-wink-smile"></i></span> Emojis
