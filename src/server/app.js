@@ -52,7 +52,7 @@ var checkBanned = async function(req, res, next) {
   var user = await auth.getUser(req.cookies['key']);
   fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r=>r.json()).then(d=>{
    if(d.banned){
-    res.send("You're banned from Rovel Stars");
+    res.sendFile(path.resolve("src/public/assets/banned.html"));
     fetch(`${process.env.DOMAIN}/api/client/log`, {
      method: "POST",
      headers: {
