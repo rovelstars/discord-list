@@ -3,7 +3,7 @@
   "description": "Rovel Discord List",
   "version": "1.0.0",
   "scripts": {
-    "start": "run-s css-compile main",
+    "start": "run-p css-compile main",
     "main": "node src/index.js",
     "server": "node src/server/app.js",
     "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed"
