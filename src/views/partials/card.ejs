@@ -3,28 +3,28 @@
 <article class="media">
 <div class="media-left">
 <figure class="image is-64x64">
-<img width="64" height="64" class="is-rounded" loading="lazy" src="https://cdn.discordapp.com/avatars/603213294265958400/4f6073cb9209120a41a1d1d3237f963f.webp" alt="Rovel Stars Avatar" onerror="errorimg()">
+<img width="64" height="64" class="is-rounded" loading="lazy" src="<%= Bot.user.displayAvatarURL %>" alt="<%= Bot.user.username %> Avatar" onerror="errorimg()">
 </figure>
 </div>
 <div style="overflow: hidden;" class="media-content">
 <div class="content">
 <p>
 <span class="is-size-4 title has-text-default is-mobile" style="font-family: discord;">
-<span>ROVEL BOT</span>
+<span><%= Bot.user.username %></span>
 </span>
 <br />
-Bot Description Testing Atm..
+<%= Bot.short %>
 </p>
 </div>
 <div class="content-footer">
 <div class="buttons">
-<a href="/bots/603213294265958400" class="button is-info is-outlined">
+<a href="/bots/<%= Bot.id %>" class="button is-info is-outlined">
 <span class="icon">
 <i class="bx bxs-envelope-open"></i>
 </span>
 <span>View</span>
 </a>
-<a href="/" class="button is-link is-outlined">
+<a href="<%= Bot.invite %>" class="button is-link is-outlined">
 <span class="icon">
 <i class="bx bxs-plus-circle"></i>
 </span>
