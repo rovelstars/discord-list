@@ -40,7 +40,7 @@ async function get_request(){
   const url = `${process.env.DOMAIN}/api/client/users/${this.id}`
   const res = await fetch(url);
   const data = await res.json();//assuming data is json
-  await console.log(data);
+  return await data;
 }
 )
 Bots.index({'$**': 'text'});
