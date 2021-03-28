@@ -8,6 +8,16 @@
     <meta name="theme-color" content="#005EFF">
     <link rel="stylesheet" href="https://cdn.discordapp.com/attachments/775220204699385886/824938849464745984/default.css">
     <style>html{overflow:hidden;}</style>
+    <script>
+    var timer = 30;
+     setInterval(function(){
+      timer=timer-1;
+      document.getElementById("timer").innerHTML = timer;
+      if(timer==0){
+       location.reload();
+      }
+     }, 1000);
+    </script>
 </head>
 <body>
 <section class="hero">
@@ -21,7 +31,7 @@
                 <span>Website Starting</span>
             </h1>
             <h2 class="subtitle">
-                Rovel Discord List is currently booting up.. we will be online momentarily!
+                Rovel Discord List is currently booting up.. we will be online momentarily in <span id="timer">30</span> seconds.
             </h2>
         </div>
     </div>
