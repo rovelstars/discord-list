@@ -3,14 +3,14 @@
 <article class="media">
 <div class="media-left">
 <figure class="image is-64x64">
-<img width="64" height="64" class="is-rounded" loading="lazy" src="<%= Bots.info(bot.id).avatarURL %>" alt="<%= Bots.info(bot.id).username %> Avatar" onerror="this.onerror=null;this.src='/assets/img/logo.png';">
+<img width="64" height="64" class="is-rounded" loading="lazy" src="<%= user.avatarURL %>" alt="<%= user.username %> Avatar" onerror="this.onerror=null;this.src='/assets/img/logo.png';">
 </figure>
 </div>
 <div style="overflow: hidden;" class="media-content">
 <div class="content">
 <p>
 <span class="is-size-4 title has-text-default is-mobile" style="font-family: discord;">
-<span><%= Bots.info(bot.id).username %></span>
+<span><%= user.username %></span>
 </span>
 <br />
 <%= bot.short %>

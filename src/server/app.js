@@ -1,5 +1,6 @@
 const port = process.env.PORT || 3000;
 var Bots = require("@models/bots.js");
+const info = require("@utils/info.js");
 const app = require("express")();
 const express = require("express");
 const httpServer = require("http").createServer(app);
@@ -111,12 +112,12 @@ app.get('/api/*', (req, res)=>{
 })
 
 app.get("/", async (req, res) => {
- fetch(`${process.env.DOMAIN}/api/bots`).then(r=>r.json()).then(Allbots=>{
+ await Bots.find(function(err, Allbots){
  if(req.cookies['key']){
  var user = req.user;
- res.render('index.ejs', {user, Allbots, Bots});
+ res.render('index.ejs', {user, Allbots, info});
 }
-else res.render('index.ejs', {user: null, Allbots, Bots});
+else res.render('index.ejs', {user: null, Allbots, info});
 });
 });
 
