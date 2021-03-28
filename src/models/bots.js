@@ -35,17 +35,9 @@ const Bots = new Schema({
  voted: Number,
  badges: [{ type: String }],
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
-Bots.virtual('test').get(function(){
- return "works";
-})
-Bots.virtual('user').get(
-async function(){
-  const url = `${process.env.DOMAIN}/api/client/users/${this.id}`
-  const res = await fetch(url);
-  const data = await res.json();//assuming data is json
-  await console.log(data);
-  return await data;
-})
+Bots.methods.info = function(cb){
+ fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`).then(r=>r.json()).then(d=>cb(d));
+}
 Bots.index({'$**': 'text'});
 console.log("[DB] Compiling Schema into Model - Bots");
 module.exports = mongoose.model('Bots', Bots);
