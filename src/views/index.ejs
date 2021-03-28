@@ -27,10 +27,9 @@ desc: "The next gen all-in-one Discord List coming up!"
   Hello World 😈😎
  </p>
  <div class="columns is-multiline is-centered">
-  <% Bots.find(function(err, bots){ for(var bot of bots){ %>
-  <% console.log(bot.user); %>
+  <% for(var bot of bots){ %>
   <%- include('partials/card', {bot}); %>
-  <% }}) %>
+  <% }) %>
   </div>
 </div>
  <%- include('partials/footer'); %>
