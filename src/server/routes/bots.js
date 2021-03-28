@@ -47,7 +47,8 @@ router.get("/", (req, res)=>{
 
 router.get("/test", async (req, res)=>{
  const bot = await Bots.findOne();
- console.log(bot.user);
+ await console.log(bot.user);
+ await res.json(bot.user);
 })
 router.post("/evaldb", (req, res)=>{
  if(!req.query.key) return res.json({err: "no_key"});
