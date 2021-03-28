@@ -37,7 +37,7 @@ const Bots = new Schema({
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
 Bots.methods.user = async function(cb){
- return await fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`).then(function(r){r.json()});
+ return await fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`).then(function(r){r.json()}).then(function(d){cb(d)});
 }
 
 Bots.index({'$**': 'text'});

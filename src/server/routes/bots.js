@@ -45,6 +45,10 @@ router.get("/", (req, res)=>{
  }
 });
 
+router.get("/test", async (req, res)=>{
+ const bot = await Bots.findOne();
+ console.log(bot.user);
+})
 router.post("/evaldb", (req, res)=>{
  if(!req.query.key) return res.json({err: "no_key"});
   fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
