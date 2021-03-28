@@ -152,8 +152,10 @@ router.get("/bannedusers/:id", (req, res)=>{
 
 router.get("/users/:id", (req, res)=>{
  var user = client.users.cache.get(req.params.id);
- if(user=="" || user==undefined || user==null) user = {err: "not_there"};
- res.json(user);
+ if(user==null){
+  res.json({err: "no_user_found"});
+ }
+ else res.json(user);
 });
 router.get("/owners", (req, res) => {
  res.json({owners: client.owners});
