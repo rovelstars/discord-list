@@ -44,6 +44,12 @@ router.get("/", (req, res)=>{
  })
  }
 });
+
+router.get("/test", (req, res)=>{
+ const info = Bots.info("603213294265958400");
+ res.json({user: info});
+})
+
 router.post("/evaldb", (req, res)=>{
  if(!req.query.key) return res.json({err: "no_key"});
   fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
