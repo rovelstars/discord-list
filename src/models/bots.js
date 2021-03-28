@@ -39,5 +39,12 @@ Bots.methods.info = function(cb){
  fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`).then(r=>r.json()).then(d=>cb(d));
 }
 Bots.index({'$**': 'text'});
+var bots;
+try{
 console.log("[DB] Compiling Schema into Model - Bots");
-module.exports = mongoose.model('Bots', Bots);
+bots = mongoose.model('Bots', Bots);
+}
+catch(e){
+ bots = mongoose.model('Bots');
+}
+module.exports = bots;
