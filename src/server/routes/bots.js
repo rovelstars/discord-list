@@ -45,7 +45,7 @@ router.get("/", (req, res)=>{
  }
 });
 
-router.get("/test", async (req, res)=>{
+router.get("/test", async function(req, res){
  const info = await Bots.info("603213294265958400");
  res.json({user: info});
 })
