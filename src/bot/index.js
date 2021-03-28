@@ -153,7 +153,12 @@ router.get("/bannedusers/:id", (req, res)=>{
 router.get("/users/:id", (req, res)=>{
  var user = client.users.cache.get(req.params.id);
  if(user==null){
-  res.json({err: "no_user_found"});
+  fetch(`https://discord.com/api/v7/users/${req.params.id}`, {
+   method: "GET",
+   headers: {
+    "Authorization": `Bot ${process.env.TOKEN}`
+   }
+  }).then(r=>r.json()).then(d=>res.json(d));
  }
  else res.json(user);
 });
