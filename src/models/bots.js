@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 const {fetch} = require("rovel.js");
 const Bots = new Schema({
  _id: {
-    default: () => new Date(),
+    default: function(){ new Date()},
     type: Date
   }, //added at
  id: {
@@ -35,15 +35,14 @@ const Bots = new Schema({
  voted: Number,
  badges: [{ type: String }],
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
-Bots.virtual('user').get(async function(){
+Bots.virtual('user').get(
 async function get_request(){
   const url = `${process.env.DOMAIN}/api/client/users/${this.id}`
   const res = await fetch(url);
   const data = await res.json();//assuming data is json
-  return await data
+  await console.log(data);
 }
-get_request();
-})
+)
 Bots.index({'$**': 'text'});
 console.log("[DB] Compiling Schema into Model - Bots");
 module.exports = mongoose.model('Bots', Bots);
