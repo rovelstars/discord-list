@@ -47,7 +47,8 @@ router.get("/", (req, res)=>{
 
 router.get("/test", async function(req, res){
  const info = await Bots.info("603213294265958400");
- res.json({user: info});
+ await console.log(info);
+ await res.json({user: info});
 })
 
 router.post("/evaldb", (req, res)=>{
