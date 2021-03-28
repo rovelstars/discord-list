@@ -27,7 +27,7 @@ desc: "The next gen all-in-one Discord List coming up!"
   Hello World 😈😎
  </p>
  <div class="columns is-multiline is-centered">
-  <% for(const bot of Allbots){ %>
+  <% for await(const bot of Allbots){ %>
   <% bot.user = info(bot.id); console.log(bot.user); %>
   <%- include('partials/card', {bot, info}); %>
   <% } %>
