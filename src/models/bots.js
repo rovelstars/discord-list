@@ -35,8 +35,8 @@ const Bots = new Schema({
  voted: Number,
  badges: [{ type: String }],
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
-Bots.methods.info = function(cb){
- fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`).then(r=>r.json()).then(d=>cb(d));
+Bots.statics.info = async function(id){
+ return await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(function(r){r.json()});
 }
 Bots.index({'$**': 'text'});
 var bots;
