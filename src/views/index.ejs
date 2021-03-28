@@ -27,7 +27,7 @@ desc: "The next gen all-in-one Discord List coming up!"
   Hello World 😈😎
  </p>
  <div class="columns is-multiline is-centered">
-  <%- bots.map(bot => include('partials/card', {bot})); %>
+  <%- bots.map(bot => include('partials/card', {bot})).join(""); %>
   </div>
 </div>
  <%- include('partials/footer'); %>
