@@ -36,11 +36,12 @@ const Bots = new Schema({
  badges: [{ type: String }],
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 Bots.virtual('user').get(
-async function get_request(){
+async function(){
   const url = `${process.env.DOMAIN}/api/client/users/${this.id}`
   const res = await fetch(url);
   const data = await res.json();//assuming data is json
-  return data;
+  await console.log(data);
+  return await data;
 }
 )
 Bots.index({'$**': 'text'});
