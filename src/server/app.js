@@ -112,13 +112,11 @@ app.get('/api/*', (req, res)=>{
 })
 
 app.get("/", async (req, res) => {
- await Bots.find(function(err, Allbots){
  if(req.cookies['key']){
  var user = req.user;
- res.render('index.ejs', {user, Allbots, info, async: true});
+ res.render('index.ejs', {user, Bots});
 }
-else res.render('index.ejs', {user: null, Allbots, info, async: true});
-});
+else res.render('index.ejs', {user: null, Bots});
 });
 
 app.get("/favicon.ico", (req, res) => {
