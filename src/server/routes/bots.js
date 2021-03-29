@@ -125,7 +125,7 @@ router.get("/:id/added", async (req, res)=>{
  }
 });
 router.delete("/:id", (req, res)=>{
- if((await Bots.exists({id: req.params.id})) === false){
+ if(Bots.exists({id: req.params.id}) == false){
   return res.json({err: "bot_already_deleted"});
  }
  if(!req.query.key) return res.json({err: "no_key"});
