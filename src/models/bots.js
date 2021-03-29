@@ -40,7 +40,22 @@ const Bots = new Schema({
  badges: [{ type: String }],
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
+Bots.virtual('avatarURL').get(function(){
+ var ani=false;
+ if(this.avatar.startsWith("a_")) ani=true;
+ const aniurl=`https://cdn.discordapp.com/avatars/${this.id}/${this.avatar}.gif`;
+ const nonurl=`https://cdn.discordapp.com/avatars/${this.id}/${this.avatar}.png`;
+ const url = (ani)?aniurl:nonurl;
+ return url;
+});
+Bots.virtual('defaultavatarURL').get(function(){
+ var num = this.discriminator % 5;
+ return `https://cdn.discordapp.com/embed/avatars/${num}.png`;
+})
 
+Bots.virtual('tag').get(function(){
+ return `${this.username}#${this.discriminator}`;
+})
 
 Bots.index({'$**': 'text'});
 var bots;

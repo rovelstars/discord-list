@@ -282,6 +282,9 @@ router.get("/import/dbl/:id", (req, res)=>{
 router.post("/new", async (req, res)=>{
  try{
  //validator start
+ Bots.findOne({id: req.body.id}).then(bot=>{
+  if(bot[0].id==req.body.id) return res.json({err: "bot_already_added"});
+ });
  if(!req.body.id) return res.json({err: "no_id"});
  fetch(`https://discord.com/api/v7/users/${req.body.id}`,{
   headers: {
@@ -369,8 +372,8 @@ router.post("/new", async (req, res)=>{
  }
  else res.json({err: "owner_not_in_server"});
  }
- catch{
-  res.json({err: "bot_already_added"});
+ catch(e){
+  res.json({err: e});
  }
 });
 module.exports = router;
