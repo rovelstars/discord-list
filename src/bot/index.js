@@ -68,7 +68,7 @@ client.on('userUpdate', (olduser, newuser) => {
     .setDescription(`${bot.username} data was updated!\n${num}Please look into it if you didn't change anything on your end, but happened on our end.`)
     .setURL(`${process.env.DOMAIN}/bots/${bot.id}`)
     .setTimestamp()
-    .setThumbnail(newuser.avatarURL);
+    .setThumbnail(bot.avatarURL);
 
    client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
    if (bot.owners) {
