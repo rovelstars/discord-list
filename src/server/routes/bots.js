@@ -350,7 +350,7 @@ router.post("/new", async (req, res)=>{
  donate: req.body.donate,
  invite: req.body.invite
  }).save((err, bot)=>{
-  if(err) return res.send({err});
+  if(err){ console.log("err"+err); return res.send({err});}
   if(!err){ 
    res.send({botAdded: true});
   fetch("https://discord.rovelstars.com/api/client/log", {
