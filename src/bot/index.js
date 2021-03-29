@@ -63,9 +63,9 @@ client.on('userUpdate', (olduser, newuser) => {
      num="Status Updated!\n"
     }
     const msg = new Discord.MessageEmbed()
-    .setTitle("Bot Data Update!")
-    .setColor("#7289DA")
-    .setDescription(`${bot.username} data was updated!\n${num}Please look into it if you didn't change anything on your end, but happened on our end.`)
+    .setTitle(`${bot.tag}'s Data is Updated!`)
+    .setColor("RANDOM")
+    .setDescription(`${num}Please look into it if you didn't change anything on your end, but happened on our end.`)
     .setURL(`${process.env.DOMAIN}/bots/${bot.id}`)
     .setTimestamp()
     .setThumbnail(bot.avatarURL);

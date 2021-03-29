@@ -1,5 +1,6 @@
 const port = process.env.PORT || 3000;
 var Bots = require("@models/bots.js");
+var latency = require("response-time");
 const info = require("@utils/info.js");
 const app = require("express")();
 const express = require("express");
@@ -42,6 +43,8 @@ process.on('unhandledRejection', err => {
   app.use(unre);
  }
 });
+app.use(latency({header: "ping"}));
+
 var booting = function(req, res, next){
  if(process.uptime()< 10){
   res.sendFile(path.resolve("src/public/assets/loading.html"));
@@ -113,12 +116,8 @@ app.get('/api/*', (req, res)=>{
 
 app.get("/", async (req, res) => {
  var bots = await Bots.find();
- await console.log(bots);
- if(req.cookies['key']){
  var user = req.user;
  await res.render('index.ejs', {user, bots});
-}
-else await res.render('index.ejs', {user: null, bots});
 });
 
 app.get("/favicon.ico", (req, res) => {

@@ -12,6 +12,7 @@
     "node": "^15.x"
   },
   "dependencies": {
+    "response-time": "2.3.2",
     "socket.io": "4.0.0",
     "sanitize-html": "2.3.3",
     "node-schedule": "2.0.0",
