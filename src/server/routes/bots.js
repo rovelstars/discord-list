@@ -347,7 +347,7 @@ router.post("/new", async (req, res)=>{
  donate: req.body.donate,
  invite: req.body.invite
  }).save((err, bot)=>{
-  if(err) return res.send({err: "bot_already_added"});
+  if(err) return res.send({err});
   if(!err){ 
    res.send({botAdded: true});
   fetch("https://discord.rovelstars.com/api/client/log", {
