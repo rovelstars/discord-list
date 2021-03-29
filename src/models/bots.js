@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 const {fetch} = require("rovel.js");
 const Bots = new Schema({
  _id: {
-    default: function(){ new Date()},
+    default: () => new Date(),
     type: Date
   }, //added at
  id: {
