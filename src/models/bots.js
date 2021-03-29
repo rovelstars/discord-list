@@ -11,6 +11,10 @@ const Bots = new Schema({
   unique: true,
   required: true
   }, //botId
+  username: {type: String, unique: true, required: true},
+  avatar: {type: String, unique: true, required: true},
+  discriminator: {type: String, required: true},
+  status: String,
  owners: [{type: String}], //owners
  lib: {type: String},
  short: String, //short desc
@@ -36,9 +40,7 @@ const Bots = new Schema({
  badges: [{ type: String }],
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
-Bots.methods.user = async function(cb){
- return await fetch(`${process.env.DOMAIN}/api/client/users/${this.id}`).then(function(r){r.json()}).then(function(d){cb(d)});
-}
+
 
 Bots.index({'$**': 'text'});
 var bots;

@@ -329,6 +329,9 @@ router.post("/new", async (req, res)=>{
  }).then(r=>r.json()).then(info=>{
   const bot = new Bots({
  id: req.body.id,
+ username: info.username,
+ discriminator: info.discriminator,
+ avatar: info.avatar,
  owners: req.body.owners,
  short: req.body.short,
  desc: req.body.desc,
