@@ -41,7 +41,7 @@ const Bots = new Schema({
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
 Bots.virtual('avatarURL').get(function(){
-  if(this.avatar=="1"||this.avatar=="2"||this.avatar=="3"||this.avatar=="4") return `https://cdn.discordapp.com/embed/avatars/${this.avatar}.png`;
+  if((this.avatar=="1")||(this.avatar=="2")||(this.avatar=="3")||(this.avatar=="4")) return `https://cdn.discordapp.com/embed/avatars/${this.avatar}.png`;
  var ani=false;
  if(this.avatar.startsWith("a_")) ani=true;
  const aniurl=`https://cdn.discordapp.com/avatars/${this.id}/${this.avatar}.gif`;
