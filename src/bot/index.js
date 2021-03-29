@@ -89,8 +89,7 @@ client.on("guildMemberAdd", (member)=>{
 });
 
 client.on("presenceUpdate", (old, neww)=>{
- console.log("old"+old, "new"+neww);
- /*
+ try{
  if(old.bot){
   var off=false;
   Bots.findOne({id: old.id}).then(bot=>{
@@ -132,7 +131,9 @@ client.on("presenceUpdate", (old, neww)=>{
     }
    }
   })
- }*/
+ }
+ } catch(e){
+ }
 });
 
 client.on('userUpdate', (olduser, newuser) => {
