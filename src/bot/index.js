@@ -41,6 +41,98 @@ client.once('ready', () => {
  console.log(`[BOT] Logined as ${client.user.tag}`);
 
 });
+
+client.on("guildMemberRemove", (member)=>{
+ if(member.bot){
+   Bots.findOne({id: member.id}).then(bot=>{
+    if(bot.added){
+     bot.added = false;
+     const msg = new Discord.MessageEmbed()
+    .setTitle(`${bot.tag} Stopped Listing!`)
+    .setColor("#FF0000")
+    .setDescription(`**${bot.username}** has been removed from our server and had been stopped getting listed from now on until it's added back!`)
+    .setTimestamp()
+    .setThumbnail(bot.avatarURL);
+    bot.save();
+   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
+   if (bot.owners) {
+    for (const owner of bot.owners) {
+     client.users.cache.get(owner).send(msg);
+    }
+   }
+    }
+   })
+ }
+});
+
+client.on("guildMemberAdd", (member)=>{
+ if(member.bot){
+   Bots.findOne({id: member.id}).then(bot=>{
+    if(!bot.added){
+     bot.added = true;
+     const msg = new Discord.MessageEmbed()
+    .setTitle(`${bot.tag} Listed!`)
+    .setColor("#FEF40E")
+    .setDescription(`**${bot.username}** has been added to our server and it will be getting listed on RDL from now on!`)
+    .setTimestamp()
+    .setThumbnail(bot.avatarURL);
+    bot.save();
+   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
+   if (bot.owners) {
+    for (const owner of bot.owners) {
+     client.users.cache.get(owner).send(msg);
+    }
+   }
+    }
+   })
+ }
+});
+
+client.on("presenceUpdate", (old, neww)=>{
+ if(old.bot){
+  var off=false;
+  Bots.findOne({id: old.id}).then(bot=>{
+   if(bot.status!==neww.presence.status){
+    if(neww.presence.status=="offline") off=true;
+    bot.status=neww.presence.status;
+    bot.save();
+    if(off){
+    const msg = new Discord.MessageEmbed()
+    .setTitle(`${bot.tag} is OFFLINE`)
+    .setColor("#36393f")
+    .setDescription(`${bot.username} (${bot.id}) is Offline!`)
+    .setURL(`${process.env.DOMAIN}/bots/${bot.id}`)
+    .setTimestamp()
+    .setThumbnail(bot.avatarURL);
+
+   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
+   if (bot.owners) {
+    for (const owner of bot.owners) {
+     client.users.cache.get(owner).send(msg);
+    }
+   }
+   }
+    if(!off){
+     const msg = new Discord.MessageEmbed()
+    .setTitle(`${bot.tag} is ONLINE!`)
+    .setColor("#FEF40E")
+    .setDescription(`${bot.username} (${bot.id}) is back Online!`)
+    .setURL(`${process.env.DOMAIN}/bots/${bot.id}`)
+    .setTimestamp()
+    .setThumbnail(bot.avatarURL);
+
+   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
+   if (bot.owners) {
+    for (const owner of bot.owners) {
+     client.users.cache.get(owner).send(msg);
+    }
+   }
+    }
+   }
+  })
+ }
+});
+
 client.on('userUpdate', (olduser, newuser) => {
  if (olduser.bot) {
   try {
@@ -57,10 +149,6 @@ client.on('userUpdate', (olduser, newuser) => {
     if(bot.discriminator!=newuser.discriminator){
      bot.discriminator = newuser.discriminator;
      num="Discriminator Updated!\n"
-    }
-    if(bot.status!=newuser.presence.status || !bot.status){
-     bot.status = newuser.presence.status;
-     num="Status Updated!\n"
     }
     const msg = new Discord.MessageEmbed()
     .setTitle(`${bot.tag}'s Data is Updated!`)
