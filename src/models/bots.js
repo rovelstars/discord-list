@@ -41,9 +41,7 @@ const Bots = new Schema({
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
 Bots.virtual('avatarURL').get(function(){
- if(typeof(this.avatar)==Number){
-  if(this.avatar<5) return this.defaultavatarURL;
- }
+  if(this.avatar=="1"||this.avatar=="2"||this.avatar=="3"||this.avatar=="4") return `https://cdn.discordapp.com/embed/avatars/${this.avatar}.png`;
  var ani=false;
  if(this.avatar.startsWith("a_")) ani=true;
  const aniurl=`https://cdn.discordapp.com/avatars/${this.id}/${this.avatar}.gif`;
@@ -51,10 +49,6 @@ Bots.virtual('avatarURL').get(function(){
  const url = (ani)?aniurl:nonurl;
  return url;
 });
-Bots.virtual('defaultavatarURL').get(function(){
- var num = this.discriminator % 5;
- return `https://cdn.discordapp.com/embed/avatars/${num}.png`;
-})
 
 Bots.virtual('tag').get(function(){
  return `${this.username}#${this.discriminator}`;

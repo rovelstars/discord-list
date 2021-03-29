@@ -330,7 +330,7 @@ router.post("/new", async (req, res)=>{
   }
  }).then(r=>r.json()).then(info=>{
   if(!info.avatar){
-   info.avatar = this.discriminator % 5;
+   info.avatar = (this.discriminator % 5).toString();
   }
   const bot = new Bots({
  id: req.body.id,
@@ -360,7 +360,7 @@ router.post("/new", async (req, res)=>{
   },
   body: JSON.stringify({
    "secret": process.env.SECRET,
-   "img": `https://cdn.discordapp.com/avatars/${info.id}/${info.avatar}.png?size=512`,
+   "img": bot.avatarURL,
    "desc": `**${info.username}** has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\``,
    "title": "New Bot Added!",
    "color": "#31CB00",
