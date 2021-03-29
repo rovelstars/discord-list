@@ -330,8 +330,7 @@ router.post("/new", async (req, res)=>{
   }
  }).then(r=>r.json()).then(info=>{
   if(!info.avatar){
-   var num = this.discriminator % 5;
- info.avatar = `https://cdn.discordapp.com/embed/avatars/${num}.png`;
+   info.avatar = this.discriminator % 5;
   }
   const bot = new Bots({
  id: req.body.id,

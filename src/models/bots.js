@@ -41,6 +41,9 @@ const Bots = new Schema({
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
 Bots.virtual('avatarURL').get(function(){
+ if(typeof(this.avatar)==Number){
+  if(this.avatar<5) return this.defaultavatarURL;
+ }
  var ani=false;
  if(this.avatar.startsWith("a_")) ani=true;
  const aniurl=`https://cdn.discordapp.com/avatars/${this.id}/${this.avatar}.gif`;
