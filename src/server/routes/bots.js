@@ -125,15 +125,20 @@ router.get("/:id/added", async (req, res)=>{
  }
 });
 router.delete("/:id", (req, res)=>{
- if(!await Bots.exists({id: req.params.id})){
+<<<<<<< HEAD
+ if(Bots.exists({id: req.params.id}) == false){
   return res.json({err: "bot_already_deleted"});
  }
+=======
+ try{
+>>>>>>> parent of cbe4549 (save data when user logins!)
  if(!req.query.key) return res.json({err: "no_key"});
  
  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
   if(d.err) return res.json({err: "invalid_key"});
   
   Bots.findOne({id: req.params.id}).then(bot=>{
+   if(!bot) return res.json({err: "already_deleted"});
    if(bot.owners.includes(d.id)){
    Bots.deleteOne({id: req.params.id}, function (err) {
   if (err) return res.json(err);
@@ -157,6 +162,9 @@ router.delete("/:id", (req, res)=>{
   else return res.json({err: "unauth"});
   });
  });
+ } catch {
+  res.json({err: "bot_already_deleted"});
+ }
 });
 
 router.get("/import/topgg/:id", (req, res)=>{
@@ -281,9 +289,7 @@ router.get("/import/dbl/:id", (req, res)=>{
 router.post("/new", async (req, res)=>{
  try{
  //validator start
- if(await Bots.exists({id: req.body.id})){
-  res.json({err: "bot_already_added"});
- }
+ 
  if(!req.body.id) return res.json({err: "no_id"});
  fetch(`https://discord.com/api/v7/users/${req.body.id}`,{
   headers: {
