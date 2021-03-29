@@ -1,6 +1,7 @@
 let router = require("express").Router();
 var {fetch} = require("rovel.js");
 let auth = require("@utils/auth.js");
+let Users = require("@models/users.js");
 router.use(require("express").json());
 
 router.get("/", async (req, res)=>{
@@ -11,6 +12,30 @@ router.get("/", async (req, res)=>{
      secure: true
     });
     const user = await auth.getUser(key);
+    if(!await Users.exists({id: user.id})){
+     const User = new Users({
+      id: user.id,
+      username: user.username,
+      discriminator: user.discriminator,
+      avatar: (user.avatarHash)?user.avatarHash:(user.discriminator % 5)
+     }).save((err, userr)=>{
+      if(err) return console.log(err);
+      fetch(`${process.env.DOMAIN}/api/client/log${userr.id}`,{
+       method: "POST",
+       headers: {
+        "content-type": "application/json"
+       },
+       body: JSON.stringify({
+        "secret": process.env.SECRET,
+        "title": `${userr.tag} account created!`,
+        "desc": `${userr.tag} (${user.id}) has got a new account automatically on RDL after logining for the first time! So Hey new user **${user.username}**\nWelcome to Rovel Discord List!\nHere you can add your bots, servers, emojis, find your friends, and earn money to vote for your favourite bot!\nSo let's get started on your new journey on RDL!`,
+        "owners": user.id,
+        "img": user.avatarUrl,
+        "url": `${process.env.DOMAIN}/users/${user.id}`
+       })
+      })
+     });
+    }
   fetch(`${process.env.DOMAIN}/api/client/log`, {
    method: "POST",
    headers: {
