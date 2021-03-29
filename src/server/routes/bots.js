@@ -330,7 +330,7 @@ router.post("/new", async (req, res)=>{
   }
  }).then(r=>r.json()).then(info=>{
   if(!info.avatar){
-   info.avatar = (this.discriminator % 5).toString();
+   info.avatar = (info.discriminator % 5).toString();
   }
   const bot = new Bots({
  id: req.body.id,
