@@ -12,7 +12,7 @@ router.get("/", async (req, res)=>{
      secure: true
     });
     const user = await auth.getUser(key);
-    if(!await Users.exists({id: user.id})){
+    if((await Users.exists({id: user.id}))===false){
      const User = new Users({
       id: user.id,
       username: user.username,
@@ -20,7 +20,7 @@ router.get("/", async (req, res)=>{
       avatar: (user.avatarHash)?user.avatarHash:(user.discriminator % 5)
      }).save((err, userr)=>{
       if(err) return console.log(err);
-      fetch(`${process.env.DOMAIN}/api/client/log${userr.id}`,{
+      fetch(`${process.env.DOMAIN}/api/client/log/${userr.id}`,{
        method: "POST",
        headers: {
         "content-type": "application/json"
