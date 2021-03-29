@@ -132,6 +132,7 @@ router.delete("/:id", (req, res)=>{
   if(d.err) return res.json({err: "invalid_key"});
   
   Bots.findOne({id: req.params.id}).then(bot=>{
+   if(!bot) return res.json({err: "already_deleted"});
    if(bot.owners.includes(d.id)){
    Bots.deleteOne({id: req.params.id}, function (err) {
   if (err) return res.json(err);
@@ -282,9 +283,7 @@ router.get("/import/dbl/:id", (req, res)=>{
 router.post("/new", async (req, res)=>{
  try{
  //validator start
- Bots.findOne({id: req.body.id}).then(bot=>{
-  if(bot[0].id==req.body.id) return res.json({err: "bot_already_added"});
- });
+ 
  if(!req.body.id) return res.json({err: "no_id"});
  fetch(`https://discord.com/api/v7/users/${req.body.id}`,{
   headers: {
