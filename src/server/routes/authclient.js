@@ -12,6 +12,12 @@ router.get("/", async (req, res)=>{
      secure: true
     });
     const user = await auth.getUser(key);
+   /* try{
+     fetch(`https://discord.com/api/v7/`)
+    }
+    catch(e){
+     console.log(e);
+    }*/
     Users.isthere({id: user.id}).then(result=>{
      if(!result){
       const User = new Users({

@@ -1,5 +1,6 @@
 const port = process.env.PORT || 3000;
 var Bots = require("@models/bots.js");
+const users = require("@routes/users.js");
 var latency = require("response-time");
 const info = require("@utils/info.js");
 const app = require("express")();
@@ -104,6 +105,7 @@ log("[SERVER] Started!\n[SERVER] Webhooks started!");
 
 app.use('/assets', express.static(path.resolve("src/public/assets")));
 app.use('/api/bots', bots);
+app.use('/api/users', users);
 app.use('/api/auth', authRoute);
 app.use('/api/client', client);
 

@@ -45,6 +45,7 @@ client.once('ready', () => {
 client.on("guildMemberRemove", (member)=>{
  if(member.bot){
    Bots.findOne({id: member.id}).then(bot=>{
+    if(!bot) return;
     if(bot.added){
      bot.added = false;
      const msg = new Discord.MessageEmbed()
@@ -68,6 +69,7 @@ client.on("guildMemberRemove", (member)=>{
 client.on("guildMemberAdd", (member)=>{
  if(member.bot){
    Bots.findOne({id: member.id}).then(bot=>{
+    if(!bot) return;
     if(!bot.added){
      bot.added = true;
      const msg = new Discord.MessageEmbed()
@@ -93,6 +95,7 @@ client.on("presenceUpdate", (old, neww)=>{
  if(old.bot){
   var off=false;
   Bots.findOne({id: old.id}).then(bot=>{
+   if(!bot) return;
    if(bot.status!==neww.presence.status){
     if(neww.presence.status=="offline") off=true;
     bot.status=neww.presence.status;
@@ -141,6 +144,7 @@ client.on('userUpdate', (olduser, newuser) => {
   try {
    var num;
    Bots.findOne({ id: olduser.id }).then(bot => {
+    if(!bot) return;
     if(bot.username!=newuser.username){
      bot.username = newuser.username;
      num="Username Updated!\n";
