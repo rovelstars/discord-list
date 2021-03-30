@@ -85,7 +85,8 @@ var checkBanned = async function(req, res, next) {
 app.use(checkBanned);
 var weblog = function(req, res, next) {
  const weburl = process.env.WEBHOOK;
- const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.ip || req.ips}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\nUser: ${req.user.tag || "Not logined"}`;
+ const user = (req.user)?req.user:"Not logined";
+ const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.ip || req.ips}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\nUser: ${user}`;
  fetch(weburl, {
   method: "POST",
   headers: {
