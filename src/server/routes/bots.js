@@ -127,8 +127,8 @@ router.get("/:id/added", async (req, res)=>{
 router.delete("/:id", (req, res)=>{
  Bots.isthere({id: req.params.id}).then(result=>{
   if(result) return res.json({err: "bot_already_deleted"});
- });
- if(!req.query.key) return res.json({err: "no_key"});
+  if(!result){
+    if(!req.query.key) return res.json({err: "no_key"});
  
  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
   if(d.err) return res.json({err: "invalid_key"});
@@ -156,6 +156,8 @@ router.delete("/:id", (req, res)=>{
   }
   else return res.json({err: "unauth"});
   });
+ });
+  }
  });
 });
 
@@ -279,12 +281,12 @@ router.get("/import/dbl/:id", (req, res)=>{
 });
 
 router.post("/new", async (req, res)=>{
- try{
  //validator start
  Bots.isthere({id: req.body.id}).then(result=>{
   if(result) return res.json({err: "bot_already_added"});
- });
- if(!req.body.id) return res.json({err: "no_id"});
+  if(!result){
+   try{
+   if(!req.body.id) return res.json({err: "no_id"});
  fetch(`https://discord.com/api/v7/users/${req.body.id}`,{
   headers: {
    "Authorization": `Bot ${process.env.TOKEN}`
@@ -377,5 +379,8 @@ router.post("/new", async (req, res)=>{
  catch(e){
   res.json({err: e});
  }
+  }
+ });
+ 
 });
 module.exports = router;

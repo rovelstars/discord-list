@@ -37,9 +37,8 @@ router.get("/", async (req, res)=>{
       })
      });
      }
-    })
-     
-  fetch(`${process.env.DOMAIN}/api/client/log`, {
+     if(result){
+      fetch(`${process.env.DOMAIN}/api/client/log`, {
    method: "POST",
    headers: {
     "content-type": "application/json"
@@ -53,6 +52,8 @@ router.get("/", async (req, res)=>{
     "owners": user.id
    })
   })
+     }
+    })
     await res.redirect(process.env.DOMAIN);
 });
 router.get("/key", async (req, res)=>{
