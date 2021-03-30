@@ -126,8 +126,8 @@ router.get("/:id/added", async (req, res)=>{
 });
 router.delete("/:id", async (req, res)=>{
  await Bots.isthere({id: req.params.id}).then(async result=>{
-  if(result) return res.json({err: "bot_already_deleted"});
-  if(!result){
+  if(!result) return res.json({err: "bot_already_deleted"});
+  if(result){
     if(!req.query.key) return res.json({err: "no_key"});
  
  await fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(async d=>{
