@@ -282,7 +282,7 @@ router.get("/import/dbl/:id", (req, res)=>{
 
 router.post("/new", async (req, res)=>{
  //validator start
- Bots.isthere({id: req.body.id}).then(result=>{
+ Bots.isthere({id: req.body.id}).then(async result=>{
   if(result) return res.json({err: "bot_already_added"});
   if(!result){
    try{
