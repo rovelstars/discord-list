@@ -1,5 +1,6 @@
 let Bots = require("@models/bots.js");
 let BotAuth = require("@models/botauth.js");
+const validator = require("validator");
 const {owners} = require("../../data.js");
 const passgen = require("@utils/passgen.js");
 let {fetch} = require("rovel.js");
@@ -301,12 +302,7 @@ router.post("/new", async (req, res)=>{
  if(req.body.short.length > 150){
   req.body.short = req.body.short.slice(0, 147) + "...";
  }
- if(req.body.webhook){
-  if(!req.body.webhook.startsWith("http://") || !req.body.webhook.startsWith("https://")) return res.json({err: "invalid_webhook"});
-  else{
-   await fetch(req.body.webhook).catch(e=>{ return res.json({err: "webhook_request_failed"});});
-  }
- }
+ if(!validator.isURL(req.body.webhook)) return res.json({err: "invalid_webhook"});
  if(!req.body.desc) return res.json({err: "no_desc"});
  if(req.body.length>11) return res.json({err: "invalid_lib"});
  if(req.body.desc.length < 100) return res.json({err: "invalid_desc"});
