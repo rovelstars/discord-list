@@ -13,3 +13,4 @@ router.get("/delete/:id", (req, res)=>{
  Users.deleteOne({id: req.params.id})
  res.send("deleted");
 })
+module.exports = router;
