@@ -287,11 +287,11 @@ router.post("/new", async (req, res)=>{
   if(!result){
    try{
    if(!req.body.id) return res.json({err: "no_id"});
- fetch(`https://discord.com/api/v7/users/${req.body.id}`,{
+ await fetch(`https://discord.com/api/v7/users/${req.body.id}`,{
   headers: {
    "Authorization": `Bot ${process.env.TOKEN}`
   }
- }).then(r=>r.json()).then(user=>{
+ }).then(r=>r.json()).then(async user=>{
   if(user.bot==undefined) return res.json({err: "cannot_add_user"});
   if(user.code == 10013) return res.json({err: "cannot_add_invalid_user"});
  })
@@ -300,6 +300,12 @@ router.post("/new", async (req, res)=>{
  if(req.body.short.length < 11) return res.json({err: "invalid_short"});
  if(req.body.short.length > 150){
   req.body.short = req.body.short.slice(0, 147) + "...";
+ }
+ if(req.body.webhook){
+  if(!req.body.webhook.startsWith("http://") || !req.body.webhook.startsWith("https://")) return res.json({err: "invalid_webhook"});
+  else{
+   await fetch(req.body.webhook).catch(e=>{ return res.json({err: "webhook_request_failed"});});
+  }
  }
  if(!req.body.desc) return res.json({err: "no_desc"});
  if(req.body.length>11) return res.json({err: "invalid_lib"});
@@ -336,6 +342,7 @@ router.post("/new", async (req, res)=>{
   }
   const bot = new Bots({
  id: req.body.id,
+ webhook: req.body.webhook,
  username: info.username,
  discriminator: info.discriminator,
  avatar: info.avatar,

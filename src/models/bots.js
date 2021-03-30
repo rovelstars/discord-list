@@ -23,6 +23,7 @@ const Bots = new Schema({
  prefix: String, //bot prefix
  verified: { type: Boolean, default: false }, //verified bot or not
  added: {type: Boolean, default: false},
+ webhook: String,
  support: String, //support server id
  bg: String, // background image link
  github: String, //github link
