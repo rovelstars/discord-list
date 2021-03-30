@@ -171,9 +171,3 @@ app.get("/logout", async (req, res)=>{
 app.get("*", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/index.html"));
  });
- 
- io.on("connection", (socket)=>{
-  socket.on('post_stats', (msg) => {
-   
-  });
- });
