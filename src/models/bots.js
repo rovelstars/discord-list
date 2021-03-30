@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const isthere = require("./isthere.js");
 const {fetch} = require("rovel.js");
 const Bots = new Schema({
  _id: {
@@ -53,7 +54,7 @@ Bots.virtual('avatarURL').get(function(){
 Bots.virtual('tag').get(function(){
  return `${this.username}#${this.discriminator}`;
 })
-
+Bots.plugin(isthere);
 Bots.index({'$**': 'text'});
 var bots;
 try{

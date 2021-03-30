@@ -6,6 +6,7 @@ daysUntilClose: 7
 exemptLabels:
   - pinned
   - security
+  - announcement
 # Label to use when marking an issue as stale
 staleLabel: wontfix
 # Comment to post when marking an issue as stale. Set to `false` to disable
@@ -14,4 +15,5 @@ markComment: >
   recent activity. It will be closed if no further activity occurs. Thank you
   for your contributions.
 # Comment to post when closing a stale issue. Set to `false` to disable
-closeComment: false
+closeComment: >
+  This issue is getting closed due to inactivity after becoming stale issue. Thank you to everyone who participated in it!

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
   const { Schema } = mongoose;
+  const isthere = require("./isthere.js");
   const Users = new Schema({
    id: {type: String, unique: true, required: true},
    _id: {
@@ -24,7 +25,7 @@ Users.virtual('avatarURL').get(function(){
  const url = (ani)?aniurl:nonurl;
  return url;
 });
-
+Users.plugin(isthere);
 Users.virtual('tag').get(function(){
  return `${this.username}#${this.discriminator}`;
 })

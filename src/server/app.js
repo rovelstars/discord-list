@@ -141,6 +141,7 @@ app.get("/beta", (req, res)=>{
 });
 
  app.get("/login", (req, res)=>{
+  if(req.cookies['key']) return res.redirect("/");
  res.redirect(auth.auth.link);
 });
 
