@@ -4,6 +4,7 @@ const users = require("@routes/users.js");
 var latency = require("response-time");
 const info = require("@utils/info.js");
 const app = require("express")();
+const express = require("express");
 var compression = require("compression");
 let client = require("@bot/index.js");
 let auth = require("@utils/auth.js");
