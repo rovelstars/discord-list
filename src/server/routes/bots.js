@@ -124,16 +124,16 @@ router.get("/:id/added", async (req, res)=>{
   })
  }
 });
-router.delete("/:id", (req, res)=>{
- Bots.isthere({id: req.params.id}).then(result=>{
+router.delete("/:id", async (req, res)=>{
+ await Bots.isthere({id: req.params.id}).then(async result=>{
   if(result) return res.json({err: "bot_already_deleted"});
   if(!result){
     if(!req.query.key) return res.json({err: "no_key"});
  
- fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
+ await fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(async d=>{
   if(d.err) return res.json({err: "invalid_key"});
   
-  Bots.findOne({id: req.params.id}).then(bot=>{
+  await Bots.findOne({id: req.params.id}).then(bot=>{
    if(bot.owners.includes(d.id)){
    Bots.deleteOne({id: req.params.id}, function (err) {
   if (err) return res.json(err);
