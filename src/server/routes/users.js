@@ -13,7 +13,7 @@ router.get("/coins", (req, res)=>{
  Users.findOne({id: "602902050677981224"}).then(user=>{
   user.coins+=10;
   user.save();
-  res.send(user.coins);
+  res.json({coins: user.coins});
  })
 })
 module.exports = router;
