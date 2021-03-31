@@ -9,8 +9,8 @@ router.get("/", (req, res)=>{
   res.json(users);
  })
 });
-router.get("/delete/:id", (req, res)=>{
- Users.deleteOne({id: req.params.id})
- res.send("deleted");
+router.get("/delete", async (req, res)=>{
+ await Users.deleteOne({});
+ await res.send(Users.find({}));
 })
 module.exports = router;
