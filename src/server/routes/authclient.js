@@ -20,6 +20,7 @@ router.get("/", async (req, res)=>{
     }*/
     Users.isthere({id: user.id}).then(result=>{
      if(!result){
+      console.log("new user!");
       const User = new Users({
       id: user.id,
       username: user.username,
