@@ -27,7 +27,7 @@ router.get("/", async (req, res)=>{
       avatar: (user.avatarHash)?user.avatarHash:(user.discriminator % 5)
      }).save((err, userr)=>{
       if(err) return console.log(err);
-      fetch(`${process.env.DOMAIN}/api/client/log${userr.id}`,{
+      fetch(`${process.env.DOMAIN}/api/client/log`,{
        method: "POST",
        headers: {
         "content-type": "application/json"
