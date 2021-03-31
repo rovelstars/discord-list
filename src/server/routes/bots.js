@@ -54,12 +54,12 @@ router.get("/:id/vote", async (req, res) => {
     if(d.err) return res.json({err: "invalid_key"});
     if(!req.query.coins) return res.json({err: "no_coins"});
     if(req.query.coins % 10 != 0) return res.json({err: "coins_not_divisible"});
-    const Vote = req.query.coins;
+    const Vote = req.query.coins % 10;
     Bots.exists({id: req.params.id}).then(r=>{
      if(!r) return res.json({err: "no_bot_found"});
      else{
       Users.findOne({id: d.id}).then(use=>{
-       use.coins = use.coins-req.query.coins;
+       use.bal = use.bal-req.query.coins;
        use.save();
       });
       Bots.findOne({id: req.params.id}).then(async bot=>{
