@@ -86,6 +86,7 @@ router.get("/:id/vote", async (req, res) => {
            "content-type": "application/json"
           },
           body: JSON.stringify({
+           "secret": process.env.SECRET,
            "title": `Failed to send data to ${bot.tag}`,
            "desc": `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
            "owners": bot.owners,
@@ -100,6 +101,7 @@ router.get("/:id/vote", async (req, res) => {
            "content-type": "application/json"
           },
           body: JSON.stringify({
+           "secret": process.env.SECRET,
            "title": `Failed to send data to ${bot.tag}`,
            "desc": `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
            "owners": bot.owners,
