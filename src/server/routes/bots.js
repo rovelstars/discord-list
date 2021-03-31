@@ -1,4 +1,5 @@
 let Bots = require("@models/bots.js");
+let Users = require("@models/users.js");
 let BotAuth = require("@models/botauth.js");
 const validator = require("validator");
 const { owners } = require("../../data.js");
@@ -46,11 +47,74 @@ router.get("/", (req, res) => {
  }
 });
 
-router.get("/test", async (req, res) => {
- const bot = await Bots.findOne();
- await console.log(bot.user);
- await res.json(bot.user);
+router.get("/:id/vote", async (req, res) => {
+ if(!req.query.key) res.json({err: "not_logined"});
+ else{
+   fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r=>r.json()).then(d=>{
+    if(d.err) return res.json({err: "invalid_key"});
+    if(!req.query.coins) return res.json({err: "no_coins"});
+    if(req.query.coins % 10 != 0) return res.json({err: "coins_not_divisible"});
+    const Vote = req.query.coins;
+    Bots.exists({id: req.params.id}).then(r=>{
+     if(!r) return res.json({err: "no_bot_found"});
+     else{
+      Users.findOne({id: d.id}).then(use=>{
+       use.coins = use.coins-req.query.coins;
+       use.save();
+      });
+      Bots.findOne({id: req.params.id}).then(async bot=>{
+       bot.votes = bot.votes+Vote;
+       bot.save();
+       if(bot.webhook){
+        const hmm = JSON.stringify({
+          "user": d,
+          "coins": req.query.coins,
+          "votes": Vote,
+          "currentVotes": bot.votes
+         });
+        fetch(`${bot.webhook}/vote`, {
+         method: "POST",
+         headers: {
+          "content-type": "application/json"
+         },
+         body: hmm
+        }).then(r=>r.json()).then(d=>{
+         if(!d.ok){
+          fetch(`${process.env.DOMAIN}/api/client/log`,{
+          method: "POST",
+          headers: {
+           "content-type": "application/json"
+          },
+          body: JSON.stringify({
+           "title": `Failed to send data to ${bot.tag}`,
+           "desc": `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+           "owners": bot.owners,
+           "img": bot.avatarURL
+          })
+         })
+         }
+        }).catch(e=>{
+         fetch(`${process.env.DOMAIN}/api/client/log`,{
+          method: "POST",
+          headers: {
+           "content-type": "application/json"
+          },
+          body: JSON.stringify({
+           "title": `Failed to send data to ${bot.tag}`,
+           "desc": `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+           "owners": bot.owners,
+           "img": bot.avatarURL
+          })
+         })
+        })
+       }
+      });
+     }
+    })
+   })
+ }
 })
+
 router.post("/evaldb", (req, res) => {
  if (!req.query.key) return res.json({ err: "no_key" });
  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(d => {

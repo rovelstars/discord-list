@@ -9,8 +9,11 @@ router.get("/", (req, res)=>{
   res.json(users);
  })
 });
-router.get("/delete", async (req, res)=>{
- await Users.deleteOne({});
- await res.send(Users.find({}));
+router.get("/coins", (req, res)=>{
+ Users.findOne({id: "602902050677981224"}).then(user=>{
+  user.coins+=10;
+  user.save();
+  res.send(user.coins);
+ })
 })
 module.exports = router;

@@ -38,7 +38,6 @@ const Bots = new Schema({
  msgSent: { type: Number, default: 0 },
  promoted: { type: Boolean, default: false },
  votes: { type: Number, default: 0 },
- voted: Number,
  badges: [{ type: String }],
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
