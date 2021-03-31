@@ -51,6 +51,9 @@ var booting = function(req, res, next){
 }
 app.use(booting);
 var checkBanned = async function(req, res, next) {
+ if(req.query.key){
+  req.cookies['key']=req.query.key;
+ }
  if(req.cookies['key']){
   var user = await auth.getUser(req.cookies['key']);
   fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r=>r.json()).then(d=>{
