@@ -69,7 +69,7 @@ router.get("/:id/vote", async (req, res) => {
        if(bot.webhook){
         const hmm = JSON.stringify({
           "user": d,
-          "coins": req.query.coins,
+          "coins": parseInt(req.query.coins),
           "votes": Vote,
           "currentVotes": bot.votes
          });
