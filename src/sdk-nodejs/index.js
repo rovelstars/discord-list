@@ -1,7 +1,4 @@
-let router = require("express").Router();
 var {fetch} = require("rovel.js");
-router.use(require("express").json());
-router.use(require("express").json());
 
 module.exports=function(options){
  const {key, domain} = options;
