@@ -1,11 +1,10 @@
 let router = require("express").Router();
 var {fetch} = require("rovel.js");
 router.use(require("express").json());
-var EventEmitter = require('events')
-var ee = new EventEmitter()
+router.use(require("express").json());
 
 module.exports=function(options){
- const {key} = options;
+ const {key, domain} = options;
 return function(req, res, next){
  if(!key) return console.error("[RDL] No key provided");
  if(key){
