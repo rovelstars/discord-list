@@ -71,6 +71,7 @@ router.get("/:id/vote", async (req, res) => {
     if (!r) return res.json({ err: "no_bot_found" });
     else {
      Users.findOne({ id: d.id }).then(use => {
+      if(use.bal<req.query.coins) return res.json({err: "not_enough_coins"});
       use.bal = use.bal - req.query.coins;
       use.save();
      });
