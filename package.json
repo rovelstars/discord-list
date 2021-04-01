@@ -53,6 +53,7 @@
     "@views": "src/views",
     "@assets": "src/public/assets",
     "@bot": "src/bot",
+    "@sdk": "src/sdk-nodejs",
     "@server": "src/server"
   }
 }

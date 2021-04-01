@@ -1,16 +1,15 @@
 let router = require("express").Router();
 var {fetch} = require("rovel.js");
 router.use(require("express").json());
+var EventEmitter = require('events')
+var ee = new EventEmitter()
 
-class RDL {
- constructor(key){
-  this.key = key;
+module.exports=function(key){
+return function(req, res, next){
+ if(!key) return console.error("[RDL] No key provided");
+ if(key){
+  fetch(`https://discord.rovelstars.com/api/bots/info?code=${key}`).then(r=>r.json()).then(bot=>{
+   console.log(`[RDL] Logined as ${bot.tag}`);
+  })
  }
- Botinfo(){
-  const self = this;
-  async function hmm(){
-   return await fetch("https://discord.rovelstars.com/api/bots").then(function(){r.json()});
-  }
-  return hmm();
- }
-}
+}}

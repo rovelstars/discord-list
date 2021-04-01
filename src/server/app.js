@@ -1,5 +1,6 @@
 const port = process.env.PORT || 3000;
 var Bots = require("@models/bots.js");
+var sdk = require("@sdk/index.js");
 const users = require("@routes/users.js");
 var latency = require("response-time");
 const info = require("@utils/info.js");
@@ -33,7 +34,7 @@ const limiter = rateLimit({
 });
 app.set('trust proxy', 1);
 app.use("/api", limiter);
-
+app.use("/sdk", sdk({key: process.env.TESTKEY}));
 process.on('unhandledRejection', err => {
  var unre = function(req, res, next) {
   log(error("**PROCESS** - Unhandled Rejection:\n") + warn(err));
