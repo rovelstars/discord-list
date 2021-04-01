@@ -11,6 +11,6 @@ return function(req, res, next){
  }
  if(req.path.includes("/vote") && req.method==="POST" && req.query.code===key){
   res.json({ok: true});
-  console.log(`[RDL] New Vote! `+req.body.votes);
+  console.log(`[RDL] New Vote!`);
  }
 }}
