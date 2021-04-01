@@ -27,7 +27,7 @@
     "express": "4.17.1",
     "ejs": "3.1.6",
     "rovel.js": "1.2.0",
-    "discord.js": "12.5.1",
+    "discord.js": "12.5.2",
     "express-session": "1.17.1",
     "express-fileupload": "1.2.1",
     "passport": "0.4.1",
