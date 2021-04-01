@@ -12,4 +12,8 @@ return function(req, res, next){
    console.log(`[RDL] Logined as ${bot.tag}`);
   })
  }
+ if(req.path.includes("/vote") && req.method==="POST" && req.query.code===key){
+  res.json({ok: true});
+  console.log(`[RDL] New Vote! `+req.body.votes);
+ }
 }}

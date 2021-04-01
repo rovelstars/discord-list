@@ -29,5 +29,13 @@ Users.plugin(isthere);
 Users.virtual('tag').get(function(){
  return `${this.username}#${this.discriminator}`;
 })
-  console.log("[DB] Compiling Schema into Model - Users");
-  module.exports = mongoose.model('Users', Users);
+
+var users;
+try{
+console.log("[DB] Compiling Schema into Model - Users");
+users = mongoose.model('Users', Users);
+}
+catch(e){
+ users = mongoose.model('Users');
+}
+module.exports = users;
