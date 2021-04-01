@@ -4,7 +4,8 @@ router.use(require("express").json());
 var EventEmitter = require('events')
 var ee = new EventEmitter()
 
-module.exports=function(key){
+module.exports=function(options){
+ const {key} = options;
 return function(req, res, next){
  if(!key) return console.error("[RDL] No key provided");
  if(key){
