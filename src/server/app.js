@@ -1,4 +1,5 @@
 const port = process.env.PORT || 3000;
+const marked = require("marked");
 var Bots = require("@models/bots.js");
 const users = require("@routes/users.js");
 var latency = require("response-time");
@@ -125,6 +126,7 @@ app.get("/", async (req, res) => {
 app.get("/bots/:id", async (req, res)=>{
  var bot = await Bots.findOne({id: req.params.id});
  if(!bot) return await res.send("-_-");
+ bot.desc = await marked(bot.desc);
  var user = req.user;
  await res.render('botpage.ejs', {user, bot});
 })

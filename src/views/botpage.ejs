@@ -7,18 +7,20 @@ img: bot.avatarURL
 <body>
  <%- include('partials/load'); %>
  <%- include('partials/navbar', {user}); %>
- <section class="hero is-primary" <% if (bot.bg) { %>style="background-image: url(<%= bot.bg %>); background-size: cover; background-position: center"<% } %>
-  <div class="hero-body">
-   <br>
+ <section class="hero is-primary" <% if(bot.bg){ %>style="background-image: url('<%= bot.bg %>'); background-repeat: no-repeat; background-attachment: fixed; background-size: 100% 100%;"<% } %>>
   <div class="container">
   <div class="columns">
   <div class="column is-2">
    <img class="image" style="margin: auto; width: 128px; border-radius: 50%;" src="<%= bot.avatarURL %>" onerror="this.onerror = null;this.src = '/assets/img/logo.png'">
+   <div class="has-text-centered"><h1><%= bot.tag %></h1></div>
    </div>
-   <div class="column has-text-centered">
-          <h1>
-        <span><%= bot.name %></span>
-      </h1>
+   </div>
+   </div>
+ </section>
+  <div class="hero-body">
+   <br>
+    <div class="content">
+    <%= bot.desc %>
     </div>
       <%- include('partials/footer'); %>
 </body>
