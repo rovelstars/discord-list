@@ -74,7 +74,6 @@ router.get("/:id/vote", async (req, res) => {
       if(use.bal<req.query.coins) return res.json({err: "not_enough_coins"});
       use.bal = use.bal - req.query.coins;
       use.save();
-     });
      Bots.findOne({ id: req.params.id }).then(async bot => {
       BotAuth.findOne({ id: req.params.id }).then(async ba => {
        bot.votes = bot.votes + parseInt(Vote);
@@ -127,6 +126,7 @@ router.get("/:id/vote", async (req, res) => {
        }
       });
      });
+    });
     }
    })
   })
