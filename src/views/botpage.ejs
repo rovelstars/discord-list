@@ -1,0 +1,13 @@
+<%- include('partials/header', {
+title: `${bot.tag} - Rovel Discord List`,
+desc: `${bot.short}`,
+img: bot.avatarURL
+}); %>
+</head>
+<body>
+ <%- include('partials/load'); %>
+ <%- include('partials/navbar', {user}); %>
+ 
+  <%- include('partials/footer'); %>
+</body>
+</html>

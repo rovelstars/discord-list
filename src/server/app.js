@@ -122,6 +122,12 @@ app.get("/", async (req, res) => {
  await res.render('index.ejs', {user, bots});
 });
 
+app.get("/bots/:id", async (req, res)=>{
+ var bot = await Bots.findOne({id: req.params.id});
+ var user = req.user;
+ await res.render('botpage.ejs', {user, bot});
+})
+
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/img/logo.png");
 });
