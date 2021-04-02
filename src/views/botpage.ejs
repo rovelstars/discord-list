@@ -7,7 +7,7 @@ img: bot.avatarURL
 <body>
  <%- include('partials/load'); %>
  <%- include('partials/navbar', {user}); %>
- <section class="hero is-primary" <% if(bot.bg){ %>style="background-image: url('<%= bot.bg %>'); background-repeat: no-repeat; background-attachment: fixed; background-size: 100% 100%;"<% } %>>
+ <section class="hero is-primary">
   <div class="container">
   <div class="columns">
   <div class="column is-2">
@@ -20,7 +20,7 @@ img: bot.avatarURL
   <div class="hero-body">
    <br>
     <div class="content">
-    <%= bot.desc %>
+    <%- bot.desc %>
     </div>
       <%- include('partials/footer'); %>
 </body>
