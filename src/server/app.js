@@ -124,6 +124,7 @@ app.get("/", async (req, res) => {
 
 app.get("/bots/:id", async (req, res)=>{
  var bot = await Bots.findOne({id: req.params.id});
+ if(!bot) return await res.send("-_-");
  var user = req.user;
  await res.render('botpage.ejs', {user, bot});
 })
