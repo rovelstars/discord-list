@@ -128,6 +128,9 @@ app.get("/bots/:id", async (req, res)=>{
  if(!bot) return await res.send("-_-");
  bot.desc = await marked(bot.desc);
  var user = req.user;
+ await fetch(`${process.env.DOMAIN}/api/client/users/${bot.owners[0]}`).then(r=>r.json()).then(d=>{
+  bot.owner = d.tag;
+ });
  await res.render('botpage.ejs', {user, bot});
 })
 
