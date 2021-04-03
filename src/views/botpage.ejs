@@ -9,16 +9,19 @@ img: bot.avatarURL
  <%- include('partials/navbar', {user}); %>
  <section class="hero is-black is-medium">
   <div class="hero-body">
-   <span class="title">
+   <h1 class="title">
     <img class="image is-64x64 is-rounded" src="<%= bot.avatarURL %>" alt="<%= bot.tag %> Avatar"> <%= bot.username %>
-   </span>
-   <span class="subtitle">
+   </h1>
+   <h3 class="subtitle">
     <%= bot.short %>
-   </span>
+   </h3>
   </div>
  </section>
- <div class="content is-fluid">
-  <%- bot.desc %>
+ <br>
+ <div class="container" style="overflow: hidden;">
+  <div class="section content">
+   <%- bot.desc %>
+  </div>
  </div>
       <%- include('partials/footer'); %>
 </body>
