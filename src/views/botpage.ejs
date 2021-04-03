@@ -7,12 +7,12 @@ img: bot.avatarURL
 <body>
  <%- include('partials/load'); %>
  <%- include('partials/navbar', {user}); %>
- <section class="hero is-info is-medium">
+ <section class="hero is-dark is-medium">
   <div class="hero-body">
-   <h1 class="title has-text-center">
-    <img class="image is-64x64" style="margin: auto; border-radius: 50%;" src="<%= bot.avatarURL %>" alt="<%= bot.tag %> Avatar"> <br> <%= bot.username %>
+   <h1 class="title has-text-centered">
+    <img class="image is-128x128" style="margin: auto; border-radius: 50%;" src="<%= bot.avatarURL %>" alt="<%= bot.tag %> Avatar"> <br> <%= bot.username %>
    </h1><br>
-   <h4 class="subtitle has-text-center has-text-muted">
+   <h4 class="subtitle has-text-centered has-text-muted">
     <%= bot.short %>
    </h4>
   </div>
