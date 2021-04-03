@@ -13,7 +13,7 @@
 
   <div id="navbarmenuthing" class="navbar-menu has-background-dark">
     <div class="navbar-start">
-     <h2 class="subtitle has-text-centered"> Welcome back <% if(user){ %><img src="<%= user.avatarUrl(128) %>" style="border-radius: 50%; width: 1.2em;height: 1.2em;" alt="<%= user.username %>"><%= user.username %><% } %>!</h2>
+     <h2 class="subtitle has-text-centered"> Welcome back <% if(user){ %><img src="<%= user.avatarUrl(512) %>" style="border-radius: 50%; width: 1em;height: 1em;" alt="<%= user.username %>"> <%= user.username %><% } %>!</h2>
       <a class="navbar-item" href="/">
         <span class="has-text-primary"><i class="bx bxs-home"></i></span>Home
       </a>
@@ -47,11 +47,10 @@
         <div class="buttons">
          <% if(!user){ %>
           <a class="button is-primary" href="/login">
-            <strong><i class="bx bx-login"></i> Log in</strong></a>
+            <i class="bx bxs-chevron-right-circle"></i> Log in</a>
             <% } else { %>
               <a class="button is-danger" href="/logout">
-            <strong><i class="bx bx-logout"></i> Log out</strong>
-          </a>
+            <i class="bx bxs-chevron-righr-circle"></i> Log out</a>
           <% } %>
         </div>
       </div>
