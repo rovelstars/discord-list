@@ -15,6 +15,35 @@ img: bot.avatarURL
    <h4 class="subtitle has-text-centered has-text-muted">
     <%= bot.short %>
    </h4>
+   <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Prefix</span>
+    <span class="tag is-danger"><%= bot.prefix %></span>
+    </div>
+  </div>
+   <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Library</span>
+    <span class="tag is-info"><%= bot.lib %></span>
+    </div>
+  </div>
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Owner(s)</span>
+    <span class="tag is-success"><% bot.owners=bot.owners.join(","); %><%= bot.owners %></span>
+    </div>
+  </div>
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">In</span>
+    <span class="tag is-link"><%= bot.servers %> Servers</span>
+    </div>
+  </div>
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Votes</span>
+    <span class="tag is-info"><%= bot.votes %></span>
+    </div>
   </div>
  </section>
  <br>

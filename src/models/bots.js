@@ -30,7 +30,7 @@ const Bots = new Schema({
  website: String, //website link
  donate: String, //donate account link
  invite: String, // invite link
- servers: Number, //servers number
+ servers: {type: Number, default: 1 }, //servers number
  ramUsed: { type: Number, default: 0 },
  ramLeft: { type: Number, default: 0 },
  msgGot: { type: Number, default: 0 },
