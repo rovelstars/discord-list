@@ -447,7 +447,7 @@ router.post("/edit", async (req, res) => {
      }
     }
     await bot.save();
-    await res.json(bot).catch();
+    await res.json(bot);
    });
   }
  });
