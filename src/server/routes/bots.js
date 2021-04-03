@@ -397,7 +397,10 @@ router.post("/edit", async (req, res) => {
       else {
        bot.desc = coronaSanitizer(req.body.desc, {
         allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'iframe', 'style']),
-        allowVulnerableTags: true
+        allowVulnerableTags: true,
+        allowedAttributes: {
+      '*': ["*"]
+     }
        });
       }
      }
@@ -493,7 +496,10 @@ router.post("/new", async (req, res) => {
     }
     req.body.desc = coronaSanitizer(req.body.desc, {
      allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'iframe', 'style']),
-     allowVulnerableTags: true
+     allowVulnerableTags: true,
+     allowedAttributes: {
+      '*': ["*"]
+     }
     });
     var cond = true;
     for (const owner of req.body.owners) {
