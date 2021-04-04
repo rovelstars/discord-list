@@ -7,44 +7,46 @@ img: bot.avatarURL
 <body>
  <%- include('partials/load'); %>
  <%- include('partials/navbar', {user}); %>
- <section class="hero" style="background-color: #7289da">
+ <section class="hero" style="background-image: url(<%= bot.bg %>); background-size: cover;">
   <div class="hero-body">
    <h1 class="title has-text-centered">
-    <img class="image is-128x128" style="margin: auto; border-radius: 50%;" src="<%= bot.avatarURL %>" alt="<%= bot.tag %> Avatar"><%= bot.username %>
+    <img class="image is-128x128" style="margin: auto; border-radius: 50%;" src="<%= bot.avatarURL %>" alt="<%= bot.tag %> Avatar"><br><%= bot.username %>
    </h1>
    <h4 class="subtitle has-text-centered has-text-muted">
     <%= bot.short %>
    </h4>
-   <div class="control">
+   <div class="columns is-mobile">
+   <div class="control column">
     <div class="tags has-addons">
     <span class="tag is-dark">Prefix</span>
     <span class="tag is-danger"><%= bot.prefix %></span>
     </div>
   </div><br>
-   <div class="control">
+   <div class="control column">
     <div class="tags has-addons">
     <span class="tag is-dark">Library</span>
     <span class="tag is-info"><%= bot.lib %></span>
     </div>
   </div><br>
-  <div class="control">
+  <div class="control column">
     <div class="tags has-addons">
     <span class="tag is-dark">Made by</span>
     <span class="tag is-success"><%= bot.owner %></span>
     </div>
   </div><br>
-  <div class="control">
+  <div class="control column">
     <div class="tags has-addons">
     <span class="tag is-dark">In</span>
     <span class="tag is-link"><%= bot.servers %> Servers</span>
     </div>
   </div><br>
-  <div class="control">
+  <div class="control column">
     <div class="tags has-addons">
     <span class="tag is-dark">Votes</span>
     <span class="tag is-info"><%= bot.votes %></span>
     </div>
-  </div><br>
+  </div>
+  </div>
  </section>
  <br>
  <div class="container" style="overflow: hidden;">
