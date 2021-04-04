@@ -9,12 +9,18 @@ img: bot.avatarURL
  <%- include('partials/navbar', {user}); %>
  <section class="hero" style="background-image: url(<%= bot.bg %>); background-size: cover;">
   <div class="hero-body">
-   <h1 class="title has-text-centered">
-    <img class="image is-128x128" style="margin: auto; border-radius: 50%;" src="<%= bot.avatarURL %>" alt="<%= bot.tag %> Avatar"><br><%= bot.username %>
+   <div class="container">
+    <div class="columns">
+     <div class="column is-2">
+      <img class="image is-128x128" style="margin: auto; border-radius: 50%;" src="<%= bot.avatarURL %>" alt="<%= bot.tag %> Avatar">
+     </div>
+     <div class="column is-10">
+         <h1 class="title"><%= bot.username %>
    </h1>
-   <h4 class="subtitle has-text-centered has-text-muted">
+   <h4 class="subtitle">
     <%= bot.short %>
    </h4>
+   <div class="field is-grouped is-grouped-multiline">
    <div class="control">
     <div class="tags has-addons">
     <span class="tag is-dark">Prefix</span>
@@ -44,6 +50,8 @@ img: bot.avatarURL
     <span class="tag is-dark">Votes</span>
     <span class="tag is-info"><%= bot.votes %></span>
     </div>
+  </div>
+  </div>
   </div>
  </section>
  <br>
