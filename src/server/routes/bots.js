@@ -182,15 +182,13 @@ router.get("/:id", (req, res) => {
  });
 });
 router.delete("/:id", async (req, res) => {
- await Bots.isthere({ id: req.params.id }).then(async result => {
-  if (!result) return res.json({ err: "bot_already_deleted" });
-  if (result) {
    if (!req.query.key) return res.json({ err: "no_key" });
 
    await fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(async d => {
     if (d.err) return res.json({ err: "invalid_key" });
 
     await Bots.findOne({ id: req.params.id }).then(bot => {
+     if(!bot) return res.json({err: "no_bot_found"});
      if (bot.owners.includes(d.id)) {
       Bots.deleteOne({ id: req.params.id }, function(err) {
        if (err) return res.json(err);
@@ -214,9 +212,7 @@ router.delete("/:id", async (req, res) => {
      else return res.json({ err: "unauth" });
     });
    });
-  }
  });
-});
 
 router.get("/import/topgg/:id", (req, res) => {
  if (req.query.key) {
@@ -338,10 +334,8 @@ router.get("/import/dbl/:id", (req, res) => {
 });
 router.post("/edit", async (req, res) => {
  if (!req.body.id) return res.json({ err: "no_id" });
- Bots.isthere({ id: req.body.id }).then(async result => {
-  if (!result) return res.json({ err: "no_bot_found" });
-  else {
    Bots.findOne({ id: req.body.id }).then(async bot => {
+    if(!bot) return res.json({err: "not_bot_found"});
     await fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(async d => {
      if (d.err) return res.json({ err: "invalid_key" });
      if (!bot.owners.includes(d.id)) return res.json({ err: "unauth" });
@@ -425,12 +419,10 @@ router.post("/edit", async (req, res) => {
     await bot.save();
     await res.json(bot);
    });
-  }
- });
 });
 router.post("/new", async (req, res) => {
  //validator start
- Bots.isthere({ id: req.body.id }).then(async result => {
+ Bots.findOne({ id: req.body.id }).then(async result => {
   if (result) return res.json({ err: "bot_already_added" });
   if (!result) {
    try {
@@ -442,7 +434,6 @@ router.post("/new", async (req, res) => {
     }).then(r => r.json()).then(async user => {
      if (user.bot == undefined) return res.json({ err: "cannot_add_user" });
      if (user.code == 10013) return res.json({ err: "cannot_add_invalid_user" });
-    })
     if (req.body.bg) {
      if (!validator.isURL(req.body.bg)) return res.json({ err: "invalid_bg" });
     }
@@ -532,6 +523,7 @@ router.post("/new", async (req, res) => {
      })
     }
     else res.json({ err: "owner_not_in_server" });
+   });
    }
    catch (e) {
     res.json({ err: e });
