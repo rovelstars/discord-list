@@ -65,15 +65,14 @@ router.get("/:id/vote", async (req, res) => {
    if (!req.query.coins) return res.json({ err: "no_coins" });
    if (req.query.coins % 10 != 0) return res.json({ err: "coins_not_divisible" });
    const Vote = parseInt(req.query.coins) / 10;
-   Bots.exists({ id: req.params.id }).then(r => {
-    if (!r) return res.json({ err: "no_bot_found" });
-    else {
      Users.findOne({ id: d.id }).then(use => {
+      if(!use) return res.json({err: "no_user_found"});
       if(use.bal<req.query.coins) return res.json({err: "not_enough_coins"});
-      use.bal = use.bal - req.query.coins;
-      use.save();
      Bots.findOne({ id: req.params.id }).then(async bot => {
+      if(!bot) return res.json({err: "no_bot_found"});
       BotAuth.findOne({ id: req.params.id }).then(async ba => {
+       use.bal = use.bal - req.query.coins;
+      use.save();
        bot.votes = bot.votes + parseInt(Vote);
        bot.save();
        res.json({ bot });
@@ -125,8 +124,6 @@ router.get("/:id/vote", async (req, res) => {
       });
      });
     });
-    }
-   })
   })
  }
 })
@@ -183,28 +180,6 @@ router.get("/:id", (req, res) => {
  Bots.findOne({ id: req.params.id }).then(bot => {
   res.json(bot);
  });
-});
-router.get("/:id/added", async (req, res) => {
- if (req.query.secret === process.env.SECRET) {
-  var bot = await Bots.findOne({ id: req.params.id });
-  bot.added = true;
-  await bot.save();
-  res.send(`${bot.added}`);
-  fetch("https://discord.rovelstars.com/api/client/log", {
-   method: "POST",
-   headers: {
-    "Content-Type": "application/json"
-   },
-   body: JSON.stringify({
-    "secret": process.env.SECRET,
-    "desc": `Bot <@!${req.params.id}> has been added to this server and is getting listed on RDL!`,
-    "title": "Bot Listed!",
-    "color": "#FEF40E",
-    "owners": bot.owners,
-    "url": `${process.env.DOMAIN}/api/bots/${bot.id}`
-   })
-  })
- }
 });
 router.delete("/:id", async (req, res) => {
  await Bots.isthere({ id: req.params.id }).then(async result => {
