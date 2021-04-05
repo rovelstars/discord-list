@@ -49,10 +49,8 @@ router.get("/", (req, res) => {
 
 router.get("/info", (req, res) => {
  if (!req.query.code) return res.json({ err: "no_code" });
- BotAuth.exists({ code: req.query.code }).then(r => {
-  if (!r) return res.json({ err: "no_bot_found" });
- })
  BotAuth.findOne({ code: req.query.code }).then(ba => {
+  if(!ba) return res.json({err: "no_bot_found"});
   Bots.findOne({ id: ba.id }).then(bot => {
    res.json(bot);
   });

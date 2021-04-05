@@ -1,0 +1,4 @@
+User-agent: Googlebot
+Disallow: /api/*
+Allow: /*
+# Sitemap: https://discord.rovelstars.com/sitemap.xml

@@ -137,6 +137,9 @@ app.get("/bots/:id", async (req, res)=>{
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/img/logo.png");
 });
+app.get("/robots.txt", (req, res)=>{
+ res.sendFile(path.resolve("src/public/assets/robots.txt"));
+});
 
 app.get("/server", (req, res)=>{
  res.redirect("https://discord.gg/953XCpHbKF");
