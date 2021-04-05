@@ -12,11 +12,11 @@
     "node": "^15.x"
   },
   "dependencies": {
+    "cluster-messages": "1.2.1",
     "response-time": "2.3.2",
     "validator": "13.5.2",
     "sanitize-html": "2.3.3",
     "node-schedule": "2.0.0",
-    "ws": "7.4.4",
     "helmet": "4.4.1",
     "cookie-parser": "1.4.5",
     "disco-oauth": "5.0.1",

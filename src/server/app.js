@@ -1,4 +1,6 @@
 const port = process.env.PORT || 3000;
+let ClusterMessages = require('cluster-messages');
+let messages = new ClusterMessages();
 const marked = require("marked");
 var Bots = require("@models/bots.js");
 const users = require("@routes/users.js");
@@ -56,8 +58,8 @@ var checkBanned = async function(req, res, next) {
  }
  if(req.cookies['key']){
   var user = await auth.getUser(req.cookies['key']);
-  fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r=>r.json()).then(d=>{
-   if(d.banned){
+  messages.send('bannedusers', user, d=>{
+   if(!d.banned){
     res.sendFile(path.resolve("src/public/assets/banned.html"));
     fetch(`${process.env.DOMAIN}/api/client/log`, {
      method: "POST",

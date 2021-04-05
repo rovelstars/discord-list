@@ -3,6 +3,8 @@ const Discord = require('discord.js');
 var Bots = require("@models/bots.js");
 const client = new Discord.Client();
 client.login(process.env.TOKEN);
+let ClusterMessages = require('cluster-messages');
+let messages = new ClusterMessages();
 const { fetch } = require("rovel.js");
 const { owners, emojiapprovers, mods, contributors } = require("../data.js");
 client.commands = new Discord.Collection();
@@ -367,4 +369,11 @@ router.post("/log", (req, res) => {
  }
  catch {}
 });
+messages.on('bannedusers', (data, cb)=>{
+ client.guilds.cache.get("602906543356379156").fetchBans().then(list => {
+  let ban = list.map(user => user.user.id);
+  if (ban.includes(data.id)) return cb({ banned: true });
+  else cb({ banned: false });
+ });
+})
 module.exports = router;
