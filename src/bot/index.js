@@ -370,6 +370,7 @@ router.post("/log", (req, res) => {
  catch {}
 });
 messages.on('bannedusers', (data, cb)=>{
+ console.log(data);
  client.guilds.cache.get("602906543356379156").fetchBans().then(list => {
   let ban = list.map(user => user.user.id);
   if (ban.includes(data.id)) return cb({ banned: true });

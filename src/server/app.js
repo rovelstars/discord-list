@@ -59,6 +59,7 @@ var checkBanned = async function(req, res, next) {
  if(req.cookies['key']){
   var user = await auth.getUser(req.cookies['key']);
   messages.send('bannedusers', user, d=>{
+   console.log(d);
    if(!d.banned){
     res.sendFile(path.resolve("src/public/assets/banned.html"));
     fetch(`${process.env.DOMAIN}/api/client/log`, {
