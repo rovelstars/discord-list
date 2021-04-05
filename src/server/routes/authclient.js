@@ -18,7 +18,7 @@ router.get("/", async (req, res)=>{
     catch(e){
      console.log(e);
     }*/
-    Users.isthere({id: user.id}).then(result=>{
+    Users.findOne({id: user.id}).then(result=>{
      if(!result){
       console.log("new user!");
       const User = new Users({
