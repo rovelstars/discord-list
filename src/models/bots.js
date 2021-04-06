@@ -31,7 +31,7 @@ const Bots = new Schema({
  invite: String, // invite link
  servers: [{
   count: {type: Number, default: 1 },
- _id: {
+ time: {
   default: () => new Date(), type: Date}
  }], //servers number
  promoted: { type: Boolean, default: false },

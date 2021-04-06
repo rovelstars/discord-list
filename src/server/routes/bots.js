@@ -147,6 +147,7 @@ router.get("/:id/apikey", (req, res) => {
   if (d.err) return res.json({ err: "invalid_key" });
 
   Bots.findOne({ id: req.params.id }).then(bot => {
+   if(!bot) return res.json({err: "no_bot_found"});
    if (bot.owners.includes(d.id)) {
     const botauth = new BotAuth({
      id: req.params.id,
@@ -181,6 +182,7 @@ router.get("/:id", (req, res) => {
   res.json(bot);
  });
 });
+
 router.post("/:id/servers", (req, res)=>{
  if(!req.body.code) return res.json({err: "no_code"});
  BotAuth.findOne({code: req.body.code, id: req.params.id}).then(b=>{
@@ -188,6 +190,7 @@ router.post("/:id/servers", (req, res)=>{
   Bots.findOne({id: b.id}).then(bot=>{
    if(bot.servers.length>=5){
     bot.servers.slice();
+    console.log("sliced!");
    }
    bot.servers.push({count: req.body.count});
    bot.save();
@@ -458,7 +461,9 @@ router.post("/new", async (req, res) => {
     if (req.body.short.length > 150) {
      req.body.short = req.body.short.slice(0, 147) + "...";
     }
+    if(req.body.webhook){
     if (!validator.isURL(req.body.webhook)) return res.json({ err: "invalid_webhook" });
+    }
     if (!validator.isURL(req.body.invite)) return res.json({ err: "invalid_invite" });
     if (!req.body.desc) return res.json({ err: "no_desc" });
     if (req.body.lib.length > 11) return res.json({ err: "invalid_lib" });
