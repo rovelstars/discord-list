@@ -189,8 +189,7 @@ router.post("/:id/servers", (req, res)=>{
   if(!b) return res.json({err: "invalid_code"});
   Bots.findOne({id: b.id}).then(bot=>{
    if(bot.servers.length>=5){
-    bot.servers.slice();
-    console.log("sliced!");
+    bot.servers.shift();
    }
    bot.servers.push({count: req.body.count});
    bot.save();
