@@ -45,6 +45,8 @@ app.use(latency({header: "ping"}));
 
 var booting = function(req, res, next){
  if(process.uptime()< 10){
+  if(req.path.includes("/assets/")) next();
+  
   res.sendFile(path.resolve("src/public/assets/loading.html"));
  }
  else next();
