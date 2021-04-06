@@ -218,10 +218,11 @@ router.delete("/:id", async (req, res) => {
         },
         body: JSON.stringify({
          "secret": process.env.SECRET,
-         "desc": `Bot <@!${req.params.id}> has been deleted by <@!${d.id}>`,
+         "desc": `Bot <@!${req.params.id}> has been deleted by <@!${d.id}>\nThe data deleted is:\n\`\`\`\n${JSON.stringify(bot)}\n\`\`\`\nIncase it was deleted accidentally, the above data may be added back again manually if the bot is added back to RDL`,
          "title": "Bot Deleted!",
          "color": "#ff0000",
          "owners": bot.owners,
+         "img": bot.avatarURL,
          "url": `https://discord.rovelstars.com/`
         })
        });
