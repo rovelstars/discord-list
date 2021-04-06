@@ -5,6 +5,7 @@ let Users = require("@models/users.js");
 router.use(require("express").json());
 
 router.get("/", async (req, res)=>{
+ try{
     const key = await auth.getAccess(req.query.code);
     res.cookie('key', key, {
      maxAge: 86400 * 1000 * 90,
@@ -62,6 +63,10 @@ router.get("/", async (req, res)=>{
      }
     })
     await res.redirect(process.env.DOMAIN);
+ } catch(e){
+  res.json(e);
+  console.log(e);
+ }
 });
 router.get("/key", async (req, res)=>{
  res.json({key: req.cookies['key'] || null});
