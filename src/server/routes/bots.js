@@ -181,6 +181,21 @@ router.get("/:id", (req, res) => {
   res.json(bot);
  });
 });
+router.post("/:id/servers", (req, res)=>{
+ if(!req.body.code) return res.json({err: "no_code"});
+ BotAuth.findOne({code: req.body.code, id: req.params.id}).then(b=>{
+  if(!b) return res.json({err: "invalid_code"});
+  Bots.findOne({id: b.id}).then(bot=>{
+   if(bot.servers.length>=5){
+    bot.servers.slice();
+   }
+   bot.servers.push({count: req.body.count});
+   bot.save();
+   res.json(bot.servers);
+  })
+ })
+});
+
 router.delete("/:id", async (req, res) => {
    if (!req.query.key) return res.json({ err: "no_key" });
 

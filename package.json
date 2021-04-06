@@ -1,7 +1,7 @@
 {
   "name": "rovel-discord-list",
   "description": "Rovel Discord List",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "scripts": {
     "start": "run-p css-compile main",
     "main": "node src/index.js",

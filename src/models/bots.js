@@ -29,12 +29,11 @@ const Bots = new Schema({
  website: String, //website link
  donate: String, //donate account link
  invite: String, // invite link
- servers: {type: Number, default: 1 }, //servers number
- ramUsed: { type: Number, default: 0 },
- ramLeft: { type: Number, default: 0 },
- msgGot: { type: Number, default: 0 },
- cmdGot: { type: Number, default: 0 },
- msgSent: { type: Number, default: 0 },
+ servers: [{
+  count: {type: Number, default: 1 },
+ _id: {
+  default: () => new Date(), type: Date}
+ }], //servers number
  promoted: { type: Boolean, default: false },
  votes: { type: Number, default: 0 },
  badges: [{ type: String }],
