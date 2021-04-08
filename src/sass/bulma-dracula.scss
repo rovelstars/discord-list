@@ -31,7 +31,7 @@ img.vert-move {
     0% { transform: translateY(0); }
     100% { transform: translateY(-10px); }
 }
-
+/*
 #loading {
   margin: 0;
   padding: 0;
@@ -97,7 +97,7 @@ img.vert-move {
     transform: perspective(160px) rotateX(-180deg) rotateY(-180deg);
     -webkit-transform: perspective(160px) rotateX(-180deg) rotateY(-180deg);
   }
-}
+}*/
 #scroll {
     position:fixed;
     right:10px;
