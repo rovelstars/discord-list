@@ -167,7 +167,7 @@ router.get("/:id/apikey", (req, res) => {
   });
  });
 });
-router.get("/:id/stats", (req, res) => {
+/*router.get("/:id/stats", (req, res) => {
  if (req.query.secret == process.env.SECRET) {
   Bots.findOne({ id: req.params.id }).then(bot => {
    bot.servers = req.query.servers;
@@ -176,7 +176,7 @@ router.get("/:id/stats", (req, res) => {
   })
  }
  else res.json({ err: "no_key" })
-})
+})*/
 router.get("/:id", (req, res) => {
  Bots.findOne({ id: req.params.id }).then(bot => {
   res.json(bot);
