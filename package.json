@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "sitemap": "6.4.0",
+    "zlib": "1.0.5",
     "response-time": "2.3.2",
     "validator": "13.5.2",
     "sanitize-html": "2.3.3",

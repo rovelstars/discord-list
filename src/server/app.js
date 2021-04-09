@@ -1,6 +1,7 @@
 const port = process.env.PORT || 3000;
 const marked = require("marked");
 const { SitemapStream, streamToPromise } = require( 'sitemap' );
+const { createGzip } = require('zlib')
 var Bots = require("@models/bots.js");
 const users = require("@routes/users.js");
 var latency = require("response-time");
