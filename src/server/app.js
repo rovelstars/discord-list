@@ -135,7 +135,7 @@ app.get("/", async (req, res) => {
  var user = req.user;
  await res.render('index.ejs', {user, bots});
 });
-
+/*
 var sitemap;
 app.get("/sitemap.xml", async (req, res)=>{
  try{
@@ -160,7 +160,7 @@ app.get("/sitemap.xml", async (req, res)=>{
  } catch(e){
   console.log(e);
  }
-});
+});*/
 
 app.get("/bots/:id", async (req, res)=>{
  var bot = await Bots.findOne({id: req.params.id});

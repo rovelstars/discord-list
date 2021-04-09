@@ -56,7 +56,7 @@ router.get("/all", async (req, res)=>{
     await res.json(users);
    }
    }
-   else return res.json({err: "failed"});
+   else return res.json({err: `failed`, logs: resp});
   })
  }
  else return res.json({err: "no_query"});
