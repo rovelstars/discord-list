@@ -1,5 +1,6 @@
 const port = process.env.PORT || 3000;
 const marked = require("marked");
+const { SitemapStream, streamToPromise } = require( 'sitemap' );
 var Bots = require("@models/bots.js");
 const users = require("@routes/users.js");
 var latency = require("response-time");
@@ -132,6 +133,26 @@ app.get("/", async (req, res) => {
  var bots = await Bots.find();
  var user = req.user;
  await res.render('index.ejs', {user, bots});
+});
+
+var sitemap;
+app.get("/sitemap.xml", async (req, res)=>{
+ res.header('Content-Type', 'application/xml');
+ res.header('Content-Encoding', 'gzip');
+ if(sitemap) return res.send(sitemap);
+ 
+ const allbots = await Bots.find({added: true}).select('id');
+ const botsmap = await allbots.map((id)=>{`/bots/${id}`});
+ 
+ const smStream = new SitemapStream({ hostname: 'https://discord.rovelstars.com/' })
+ const pipeline = smStream.pipe(createGzip())
+ botsmap.forEach((item)=>{
+  smStream.write({ url: item, changefreq: 'daily', priority: 0.6})
+ });
+ streamToPromise(pipeline).then(sm=>sitemap=sm);
+ smStream.end();
+ pipeline.pipe(res).on('error', (e)=>{throw(e)});
+ 
 });
 
 app.get("/bots/:id", async (req, res)=>{
