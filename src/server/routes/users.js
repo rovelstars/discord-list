@@ -23,7 +23,7 @@ router.get("/all", async (req, res)=>{
  if(req.query.q){
   await fetch(`https://api.dscrd.info/search/${req.query.q}`).then(r=>r.json()).then(async resp=>{
    if(resp.success){
-    if(resp.users.length==0){//need to perform id fetch
+    if(resp.members.length==0){//need to perform id fetch
      await fetch(`https://api.dscrd.info/id/${req.query.q}`).then(r=>r.json()).then(async resp=>{
       if(res.success){
        const hash = res.user.avatar_url.replace(`https://cdn.discordapp.com/avatars/${data.username}/`, "");
