@@ -42,7 +42,20 @@ img: bot.avatarURL
   <div class="control">
     <div class="tags has-addons">
     <span class="tag is-dark">In</span>
-    <span class="tag is-link"><%= bot.servers[1].count || 1 %> Servers</span>
+    <% if(bot.servers[5]){ %>
+    <span class="tag is-link"><%= bot.servers[5].count %> Servers
+    <% } else if(bot.servers[4]){ %>
+    <span class="tag is-link"><%= bot.servers[4].count %> Servers
+    <% } else if(bot.servers[3]){ %>
+    <span class="tag is-link"><%= bot.servers[3].count %> Servers
+    <% } else if(bot.servers[2]){ %>
+    <span class="tag is-link"><%= bot.servers[2].count %> Servers
+    <% } else if(bot.servers[1]){ %>
+    <span class="tag is-link"><%= bot.servers[1].count %> Servers
+    <% } else { %>
+    <span class="tag is-link">??? Servers
+    <% } %>
+    </span>
     </div>
   </div><br>
   <div class="control">
