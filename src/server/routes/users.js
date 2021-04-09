@@ -25,16 +25,16 @@ router.get("/all", async (req, res)=>{
    if(resp.success){
     if(resp.members.length==0){//need to perform id fetch
      await fetch(`https://api.dscrd.info/id/${req.query.q}`).then(r=>r.json()).then(async resp=>{
-      if(res.success){
-       var hash = res.user.avatar_url.replace(`https://cdn.discordapp.com/avatars/${data.username}/`, "");
+      if(resp.success){
+       var hash = resp.user.avatar_url.replace(`https://cdn.discordapp.com/avatars/${data.username}/`, "");
        hash = hash.replace("?size=1024", "");
        var users = [{
         id: resp.user.user_id,
-        username: res.user.username,
-        avatarURL: res.user.avatar_url,
+        username: resp.user.username,
+        avatarURL: resp.user.avatar_url,
         avatar: hash,
-        discriminator: res.user.discriminator,
-        tag: res.user.username+"#"+res.user.discriminator
+        discriminator: resp.user.discriminator,
+        tag: resp.user.username+"#"+resp.user.discriminator
       }];
       res.json(users);
       } else {
