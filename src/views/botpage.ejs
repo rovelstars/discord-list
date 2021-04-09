@@ -30,7 +30,11 @@ img: bot.avatarURL
    <div class="control">
     <div class="tags has-addons">
     <span class="tag is-dark">Library</span>
+    <% if(bot.lib == ""){ %>
+    <span class="tag is-info">not known</span>
+    <% } else { %>
     <span class="tag is-info"><%= bot.lib %></span>
+    <% } %>
     </div>
   </div><br>
   <div class="control">
