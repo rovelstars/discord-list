@@ -140,8 +140,10 @@ var sitemap;
 app.get("/sitemap.xml", async (req, res)=>{
  res.header('Content-Type', 'application/xml');
  res.header('Content-Encoding', 'gzip');
- if(sitemap) return res.send(sitemap);
- 
+ if(sitemap){
+  res.send(sitemap);
+  return;
+ }
  const allbots = await Bots.find({added: true}).select('id');
  const botsmap = await allbots.map((id)=>{`/bots/${id}`});
  
@@ -151,9 +153,8 @@ app.get("/sitemap.xml", async (req, res)=>{
   smStream.write({ url: item, changefreq: 'daily', priority: 0.6})
  });
  streamToPromise(pipeline).then(sm=>sitemap=sm);
- smStream.end();
  pipeline.pipe(res).on('error', (e)=>{throw(e)});
- 
+ smStream.end();
 });
 
 app.get("/bots/:id", async (req, res)=>{
