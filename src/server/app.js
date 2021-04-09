@@ -53,8 +53,17 @@ var booting = function(req, res, next){
 }
 app.use(booting);
 var checkBanned = async function(req, res, next) {
+ if(req.header('RDL-key')){
+  req.query.key = req.header('RDL-key');
+ }
+ if(req.header('RDL-code')){
+  req.query.code = req.header('RDL-code');
+ }
  if(req.query.key){
   req.cookies['key']=req.query.key;
+ }
+ if(req.query.code){
+  req.cookies['code']=req.query.code;
  }
  if(req.cookies['key']){
   var user = await auth.getUser(req.cookies['key']);
