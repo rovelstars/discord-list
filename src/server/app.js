@@ -138,6 +138,7 @@ app.get("/", async (req, res) => {
 
 var sitemap;
 app.get("/sitemap.xml", async (req, res)=>{
+ try{
  res.header('Content-Type', 'application/xml');
  res.header('Content-Encoding', 'gzip');
  if(sitemap){
@@ -155,6 +156,10 @@ app.get("/sitemap.xml", async (req, res)=>{
  streamToPromise(pipeline).then(sm=>sitemap=sm);
  pipeline.pipe(res).on('error', (e)=>{throw(e)});
  smStream.end();
+ console.log("hmm",sitemap);
+ } catch(e){
+  console.log(e);
+ }
 });
 
 app.get("/bots/:id", async (req, res)=>{
