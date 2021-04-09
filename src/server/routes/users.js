@@ -26,7 +26,7 @@ router.get("/all", async (req, res)=>{
     if(resp.members.length==0){//need to perform id fetch
      await fetch(`https://api.dscrd.info/id/${req.query.q}`).then(r=>r.json()).then(async resp=>{
       if(res.success){
-       const hash = res.user.avatar_url.replace(`https://cdn.discordapp.com/avatars/${data.username}/`, "");
+       var hash = res.user.avatar_url.replace(`https://cdn.discordapp.com/avatars/${data.username}/`, "");
        hash = hash.replace("?size=1024", "");
        var users = [{
         id: resp.user.user_id,
@@ -47,7 +47,7 @@ router.get("/all", async (req, res)=>{
     var temp;
     const members = resp.members;
     await members.forEach((data, index)=>{
-     const hash = data.avatar_url.replace(`https://cdn.discordapp.com/avatars/${data.username}/`, "");
+     var hash = data.avatar_url.replace(`https://cdn.discordapp.com/avatars/${data.username}/`, "");
      hash = hash.replace("?size=1024", "");
      temp = {
       id: data.user_id,
