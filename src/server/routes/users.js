@@ -26,13 +26,10 @@ router.get("/all", async (req, res)=>{
     if(resp.members.length==0){//need to perform id fetch
      await fetch(`https://api.dscrd.info/id/${req.query.q}`).then(r=>r.json()).then(async resp=>{
       if(resp.success){
-       var hash = resp.user.avatar_url.replace(`https://cdn.discordapp.com/avatars/${resp.user.username}/`, "");
-       hash = hash.replace("?size=1024", "");
        var users = [{
         id: resp.user.user_id,
         username: resp.user.username,
         avatarURL: resp.user.avatar_url,
-        avatar: hash,
         discriminator: resp.user.discriminator,
         tag: resp.user.username+"#"+resp.user.discriminator
       }];
@@ -47,13 +44,10 @@ router.get("/all", async (req, res)=>{
     var temp;
     const members = resp.members;
     await members.forEach((data, index)=>{
-     var hash = data.avatar_url.replace(`https://cdn.discordapp.com/avatars/${data.username}/`, "");
-     hash = hash.replace("?size=1024", "");
      temp = {
       id: data.user_id,
       username: data.username,
       avatarURL: data.avatar_url,
-      avatar: hash,
       discriminator: data.discriminator,
       tag: data.username+"#"+data.discriminator
      };
