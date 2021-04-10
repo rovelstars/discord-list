@@ -1,4 +1,6 @@
 #!/bin/sh
+cd src/public/assets/img
+ls
 resize-img logo-512.png --width 36 > logo-36.png
 echo "36x36 done!"
 resize-img logo-512.png --width 48 > logo-48.png

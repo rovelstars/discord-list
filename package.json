@@ -4,8 +4,7 @@
   "version": "0.0.2",
   "scripts": {
     "start": "run-p css-compile resize main",
-    "resize": "cd src/public/assets/img && npm run basher",
-    "basher": "chmod +x run.sh && ./run.sh",
+    "resize": "chmod +x run.sh && ./run.sh",
     "main": "node src/index.js",
     "server": "node src/server/app.js",
     "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed"
