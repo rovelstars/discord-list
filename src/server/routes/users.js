@@ -19,7 +19,7 @@ router.get("/", (req, res) => {
   })
  }
 });
-/*
+
 router.get("/all", async (req, res)=>{
  if(req.query.q){
   await fetch(`https://api.dscrd.info/search/${req.query.q}`).then(r=>r.json()).then(async resp=>{
@@ -61,7 +61,7 @@ router.get("/all", async (req, res)=>{
   })
  }
  else return res.json({err: "no_query"});
-});*/
+});
 
 router.get("/:id", (req, res) => {
  Users.findOne({ id: req.params.id }).then(user => {
