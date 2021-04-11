@@ -119,7 +119,6 @@ var pathsaver = function(req, res, next){
      httpOnly: false,
      secure: true
     });
- res.redirect("/");
  }
  else {
   next();
