@@ -11,6 +11,11 @@ const Bots = new Schema({
   unique: true,
   required: true
   }, //botId
+  card: {
+   img: String,
+   title: String,
+   msg: String
+  },
   username: {type: String, unique: true, required: true},
   avatar: {type: String, unique: true, required: true},
   discriminator: {type: String, required: true},

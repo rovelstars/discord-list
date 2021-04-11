@@ -57,6 +57,33 @@ router.get("/info", (req, res) => {
  });
 });
 
+router.post("/:id/card", (req, res)=>{
+ if(req.query.code){
+  BotAuth.findOne({id: req.params.id, code: req.query.code}).then(au=>{
+   if(!au) return res.json({err: "not_found"});
+   else {
+    Bots.findOne({id: req.params.id}).then(bot=>{
+     if(!bot) return res.json({err: "bot_not_found"});
+     else {
+      if(req.body.img){
+       if(!validator.isURL(req.body.img)) return res.json({err: "invalid_img"});
+       else bot.card.img = req.body.img;
+      }
+      if(req.body.title){
+       bot.card.title = req.body.title;
+      }
+      if(req.body.msg){
+       bot.card.msg = req.body.msg;
+      }
+      bot.save();
+     }
+    });
+   }
+  })
+ }
+ else return res.json({err: "no_code"});
+});
+
 router.get("/:id/vote", async (req, res) => {
  if (!req.query.key) res.json({ err: "not_logined" });
  else {
