@@ -62,7 +62,7 @@ router.get("/", async (req, res)=>{
   })
      }
     })
-    await res.redirect(req.cookies.path||"/");
+    await res.redirect("/");
  } catch(e){
   res.json(e);
   console.log(e);

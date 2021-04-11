@@ -112,19 +112,6 @@ var weblog = function(req, res, next) {
  next();
 }
 app.use(weblog);
-var pathsaver = function(req, res, next){
- if(!req.cookies['path']){
-  res.cookie('path', "/", {
-     maxAge: 86400 * 1000 * 90,
-     httpOnly: false,
-     secure: true
-    });
- }
- else {
-  next();
- }
-}
-app.use(pathsaver);
 
 log("[SERVER] Started!\n[SERVER] Webhooks started!");
 
@@ -212,21 +199,11 @@ app.get("/beta", (req, res)=>{
 });
 
  app.get("/login", (req, res)=>{
-  res.cookie("path", req.path, {
-   maxAge: 86400 * 1000 * 90,
-     httpOnly: false,
-     secure: true
-  });
   if(req.cookies['key']) return res.redirect("/");
  res.redirect(auth.auth.link);
 });
 
 app.get("/logout", async (req, res)=>{
- res.cookie("path", req.path, {
-  maxAge: 86400 * 1000 * 90,
-     httpOnly: false,
-     secure: true
- });
  if(req.cookies['key']){
   const user = await auth.getUser(req.cookies['key']);
   fetch(`${process.env.DOMAIN}/api/client/log`, {
