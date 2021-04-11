@@ -76,6 +76,7 @@ router.post("/:id/card", (req, res)=>{
        bot.card.msg = req.body.msg;
       }
       bot.save();
+      res.json({card: "updated"});
      }
     });
    }
