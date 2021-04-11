@@ -68,6 +68,38 @@ router.get("/:id", (req, res) => {
   res.json(user);
  });
 });
+router.get("/:id/delete", (req, res)=>{
+ if(!req.query.key) return res.json({err: "no_key"});
+ else {
+  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(d => {
+   if (d.err) return res.json({ err: "invalid_key" });
+   else {
+    if(d.id == req.params.id){
+     Users.findOne({id: d.id}).then(user=>{
+      if(!user) return;
+      Users.deleteOne({id: user.id}).then(r=>{});
+      res.json({ deleted: true });
+       fetch("https://discord.rovelstars.com/api/client/log", {
+        method: "POST",
+        headers: {
+         "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+         "secret": process.env.SECRET,
+         "desc": `${user.tag} deleted their account!\nThe data deleted is:\n\`\`\`\n${JSON.stringify(user)}\n\`\`\`\nIncase it was deleted accidentally, the above data may be added back again manually if the user is added back to RDL`,
+         "title": "User Deleted!",
+         "color": "#ff0000",
+         "owners": user.id,
+         "img": user.avatarURL,
+         "url": `https://discord.rovelstars.com/`
+        })
+       });
+     })
+    }
+   }
+  });
+ }
+})
 router.get("/coins", (req, res)=>{
  Users.findOne({id: "602902050677981224"}).then(user=>{
   user.bal+=10;
