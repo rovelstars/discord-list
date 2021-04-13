@@ -28,6 +28,23 @@ console.log("[SENTRY] Initialized!\nAll issues and performance are being sent!")
 process.on('unhandledRejection', error =>{ console.warn('An Error Occurred!\n' + error);
  });
  const {app, port} = require("@server/app.js");
+ var cf = require("node_cloudflare");
+ cf.load(function (error, fs_error) //Loads the ranges and then starts the webserver.
+{
+	if (fs_error)
+	{
+		throw new Error(fs_error);
+	}
  app.listen(port, () => {
  console.log(`[SERVER] Started on port: ${port}`);
 });
+});
+var cfip = function(req, res, next){
+ var oldip = req.ip;
+ if(cf.check(req)){
+  req.cfip = oldip;
+  req.ip = cf.get(req);
+ }
+ next();
+};
+app.use(cfip);
