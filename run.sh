@@ -1,5 +1,6 @@
 #!/bin/sh
-node-git-info -d server
+node-git-info -d src/server
+node-git-info -d src
 echo "Generated git.properties"
 cat server/git.properties
 cd src/public/assets/img
