@@ -1,4 +1,7 @@
 #!/bin/sh
+node-git-info
+echo "Generated git.properties"
+cat git.properties
 cd src/public/assets/img
 resize-img logo-512.png --width 36 > logo-36.png
 echo "36x36 done!"

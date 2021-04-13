@@ -40,6 +40,7 @@
     "@meanie/mongoose-to-json": "2.5.0"
   },
   "devDependencies": {
+    "node-git-info": "1.1.0",
     "resize-img-cli": "1.0.0",
     "autoprefixer": "^10.2.0",
     "node-sass": "^5.0.0",
