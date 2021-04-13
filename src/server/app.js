@@ -1,4 +1,5 @@
 const port = process.env.PORT || 3000;
+const actuator = require('express-actuator');
 const marked = require("marked");
 var cloudflare = require('cloudflare-express');
 var Bots = require("@models/bots.js");
@@ -44,7 +45,7 @@ process.on('unhandledRejection', err => {
  }
 });
 app.use(latency({header: "ping"}));
-
+app.use(actuator({basePath:"/api"}));
 var booting = function(req, res, next){
  if(process.uptime()< 10){
   if(req.path.includes("/assets/")) next();

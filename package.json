@@ -13,6 +13,7 @@
     "node": "^15.x"
   },
   "dependencies": {
+    "express-actuator": "1.7.0",
     "cloudflare-express": "1.0.1",
     "response-time": "2.3.2",
     "validator": "13.5.2",
