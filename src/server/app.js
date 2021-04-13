@@ -98,7 +98,7 @@ app.use(checkBanned);
 var weblog = function(req, res, next) {
  const weburl = process.env.WEBHOOK;
  const user = (req.user)?req.user.tag:"Not logined";
- const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.ip}||\n**CF IP: ${req.cfip || "None"}\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\nUser: ${user}`;
+ const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.ip}||\n**CF IP:** ${req.cfip || "None"}\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\nUser: ${user}`;
  fetch(weburl, {
   method: "POST",
   headers: {

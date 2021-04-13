@@ -41,6 +41,7 @@ process.on('unhandledRejection', error =>{ console.warn('An Error Occurred!\n' +
 });
 var cfip = function(req, res, next){
  var oldip = req.ip;
+ req.connection.remoteAddress = oldip;
  if(cf.check(req)){
   req.cfip = oldip;
   req.ip = cf.get(req);
