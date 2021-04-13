@@ -1,5 +1,6 @@
 const port = process.env.PORT || 3000;
 const marked = require("marked");
+var cloudflare = require('cloudflare-express');
 var Bots = require("@models/bots.js");
 const users = require("@routes/users.js");
 var latency = require("response-time");
@@ -12,6 +13,7 @@ let auth = require("@utils/auth.js");
 const authRoute = require("@routes/authclient.js");
 module.exports = { app, port };
 var cookieParser = require("cookie-parser");
+app.use(cloudflare.restore({update_on_start:true}));
 app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(compression());
@@ -98,7 +100,7 @@ app.use(checkBanned);
 var weblog = function(req, res, next) {
  const weburl = process.env.WEBHOOK;
  const user = (req.user)?req.user.tag:"Not logined";
- const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.ip}||\n**CF IP:** ${req.cfip || "None"}\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\nUser: ${user}`;
+ const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.cf_ip}\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\nUser: ${user}`;
  fetch(weburl, {
   method: "POST",
   headers: {
