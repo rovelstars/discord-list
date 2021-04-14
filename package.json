@@ -5,7 +5,7 @@
   "scripts": {
     "start": "run-p css-compile resize main",
     "resize": "chmod +x run.sh && ./run.sh",
-    "main": "pm2 start src/index.js --name main --watch",
+    "main": "node src/index.js",
     "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed"
   },
   "engines": {
