@@ -12,6 +12,7 @@
     "node": "^15.x"
   },
   "dependencies": {
+    "iplocation": "7.2.0",
     "express-actuator": "1.7.0",
     "cloudflare-express": "1.0.1",
     "response-time": "2.3.2",

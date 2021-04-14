@@ -1,6 +1,7 @@
 const port = process.env.PORT || 3000;
 const actuator = require('express-actuator');
 const marked = require("marked");
+const geoip = require("iplocation");
 var cloudflare = require('cloudflare-express');
 var Bots = require("@models/bots.js");
 const users = require("@routes/users.js");
@@ -98,11 +99,12 @@ var checkBanned = async function(req, res, next) {
  }
 };
 app.use(checkBanned);
-var weblog = function(req, res, next) {
+var weblog = async function(req, res, next) {
  const weburl = process.env.WEBHOOK;
  const user = (req.user)?req.user.tag:"Not logined";
- const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.cf_ip}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\nUser: ${user}`;
- fetch(weburl, {
+ const geo = await geoip(req.cf_ip);
+ const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.cf_ip}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\n**Location:** ${geo.region.name}\nUser: ${user}`;
+ await fetch(weburl, {
   method: "POST",
   headers: {
    "Content-Type": "application/json"
