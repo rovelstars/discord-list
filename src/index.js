@@ -31,3 +31,4 @@ process.on('unhandledRejection', error =>{ console.warn('An Error Occurred!\n' +
  app.listen(port, () => {
  console.log(`[SERVER] Started on port: ${port}`);
 });
+require("./runtime.js");
