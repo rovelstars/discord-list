@@ -19,7 +19,7 @@ async function login(key){
       throw res.err;
     }
     else {
-      res = RDLclient;
+      RDLclient = res;
       logined = true;
       code = key;
       event.emit('login', RDLclient);
@@ -68,6 +68,18 @@ async function updateCard(img, title, msg){
   });
  }
 }
+
+event.on("postServers", servers=>{
+ if(logined) rovel.fetch(`https://discord.rovelstars.com/api/bots/${RDLclient.id}/servers?code=${code}`, {
+  method: "POST",
+  headers: {
+   "content-type": "application/json"
+  },
+  body: JSON.stringify({count: servers})
+ }).then(r=>r.json()).then(d=>{
+  if(d.err) throw d.err;
+ });
+});
 
 var makeModule = module.exports = event;
 makeModule.login = login;
