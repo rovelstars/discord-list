@@ -103,7 +103,7 @@ app.use(checkBanned);
 var weblog = async function(req, res, next) {
  const weburl = process.env.WEBHOOK;
  if(req.query.code){
-  const botu = await BotAuth.findOne({code: req.query.code});
+  var botu = await BotAuth.findOne({code: req.query.code});
  if(botu){
   botu=botu.id;
  }}
