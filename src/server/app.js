@@ -104,10 +104,9 @@ var weblog = async function(req, res, next) {
  const weburl = process.env.WEBHOOK;
  if(req.query.code){
   const botu = await BotAuth.findOne({code: req.query.code});
- }
  if(botu){
   botu=botu.id;
- }
+ }}
  const user = (req.user)?req.user.tag:"Not logined";
  const geo = await geoip.lookup(req.cf_ip);
  const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.cf_ip}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\n**Location:** ${geo.timezone}\n**User:** ${user}\n**Bot:** \`${botu || "nope"}\``;
