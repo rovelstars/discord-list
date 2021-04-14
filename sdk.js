@@ -21,6 +21,7 @@ async function login(key){
     else {
       res = RDLclient;
       logined = true;
+      code = key;
       event.emit('login', RDLclient);
     }
   });
@@ -30,8 +31,18 @@ async function server(app, basePath){
   if(basePath==undefined) basePath = "/";
   if(!basePath.startsWith("/")) basePath="/"+basePath;
   if(app==undefined) throw "no_express_server";
+  var expressEvent = function(req, res, next){
+    event.emit('serverRequest', req);
+  }
+  app.use(expressEvent);
   app.get("/", (req, res)=>{
     res.json({status: "UP"});
+  });
+  app.post("/vote", (req, res)=>{
+    if(!req.query.code) return res.json({err: "no_code"});
+    if(req.query.code!==code) return res.json({err: "invalid_code"});
+    event.emit('serverVote', {body: req.body});
+    res.json({ok: true});
   });
   event.emit('serverStarted', true);
 }
@@ -58,4 +69,11 @@ async function updateCard(img, title, msg){
  }
 }
 
-module.exports = {event, test, getBotInfo, login, server, updateCard};
+var makeModule = module.exports = event;
+makeModule.login = login;
+makeModule.test = test;
+makeModule.getBotInfo = getBotInfo;
+makeModule.client = RDLclient;
+makeModule.server = server;
+makeModule.updateCard = updateCard;
+makeModule.hmm = hmm;
