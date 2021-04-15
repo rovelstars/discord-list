@@ -33,7 +33,7 @@ var commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.e
 let i = 0;
 let j = commandFiles.length;
 for (var file of commandFiles) {
- const command = fs.readFileSync(`./commands/${file}`,{encoding: "utf8", flag: "r"});
+ const command = fs.readFileSync(`${__dirname}/commands/${file}`,{encoding: "utf8", flag: "r"});
  i += 1;
  console.log(`[BOT] Loaded - ${file} (${i}/${j})`);
  file = file.replace(".js","");
