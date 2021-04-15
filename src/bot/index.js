@@ -28,17 +28,15 @@ function searchCommand(name){
   }
 }
 
-var commandNames = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
-commandNames.forEach((data, index)=>{
-  data[index] = data.replace(".js","");
-});
+var commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
 
 let i = 0;
-let j = commandNames.length;
-for (const file of commandNames) {
+let j = commandFiles.length;
+for (var file of commandFiles) {
+  file = file.replace(".js","");
  const command = fs.readFileSync(`./commands/${file}.js`,{encoding: "utf8", flag: "r"});
  i += 1;
- console.log(`[BOT] Loaded - ${file} (${i}/${j})`)
+ console.log(`[BOT] Loaded - ${file} (${i}/${j})`);
  client.commands.push({name: file, code: command});
 }
 
