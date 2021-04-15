@@ -29,7 +29,6 @@ function searchCommand(name){
 }
 
 var commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
-
 let i = 0;
 let j = commandFiles.length;
 for (var file of commandFiles) {
@@ -37,7 +36,8 @@ for (var file of commandFiles) {
  i += 1;
  console.log(`[BOT] Loaded - ${file} (${i}/${j})`);
  file = file.replace(".js","");
- client.commands.push({name: file, code: command});
+ const desc = fs.readFileSync(`${__dirname}/desc/${file}.md`,{encoding: "utf8",flag: "r"});
+ client.commands.push({name: file, code: command, desc});
 }
 
 client.once('ready', () => {
@@ -49,8 +49,18 @@ client.on("message", message=>{
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
+	if(command=="desc"){
+	  const cmd = searchCommand(args[0]);
+	  if(!cmd) return message.reply("That Command Never **Existed** in the whole World! 😑");
+	  else message.reply("**Description**\n"+cmd.desc);
+	}
 	const cmd = searchCommand(command);
-	eval(cmd.code);
+	try{
+	if(!cmd) return message.reply("That command Doesn't exist!");
+	else eval(cmd.code);
+	} catch(e){
+	  message.reply(`An Error Occured!\n\`\`\`\n${e}\n\`\`\``)
+	}
 });
 
 client.on("guildMemberRemove", (member)=>{
