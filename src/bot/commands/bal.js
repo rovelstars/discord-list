@@ -7,7 +7,8 @@ if(!args[0]){
   })
 }
 else {
-  getMention(args[0]).then(userhmm=>{
+  (async()=>{
+    const userhmm = await getMention(args[0]);
     Users.findOne({id: userhmm.id}).then(user=>{
       if(!user) message.reply("It seems as if He never logined on RDL...");
       else{
