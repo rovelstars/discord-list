@@ -34,13 +34,13 @@ const job = schedule.scheduleJob(rule, async function() {
 router.get("/", (req, res) => {
  if (req.query.q) {
   const q = decodeURI(req.query.q);
-  Bots.find({ $text: { $search: q } }).exec((err, doc) => {
+  Bots.find({ $text: { $search: q } }, {id: false}).exec((err, doc) => {
    if (err) return res.json({ err });
    res.json(doc);
   })
  }
  else {
-  Bots.find(function(err, bots) {
+  Bots.find({},{id: false}).exec(function(err, bots) {
    if (err) return console.error(err);
    res.send(bots);
   })

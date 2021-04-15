@@ -54,6 +54,10 @@ Bots.virtual('avatarURL').get(function(){
  return url;
 });
 
+Bots.virtual("id_").get(function(){
+  return this.id;
+});
+
 Bots.virtual('tag').get(function(){
  return `${this.username}#${this.discriminator}`;
 });
