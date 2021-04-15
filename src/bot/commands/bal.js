@@ -7,13 +7,11 @@ if(!args[0]){
   })
 }
 else {
-  (async()=>{
-    const userhmm = await getMention(args[0]);
-    await Users.findOne({id: userhmm.id}).then(user=>{
+    const userhmm = getIDFromMention(args[0]);
+    Users.findOne({id: userhmm}).then(user=>{
       if(!user) message.reply("It seems as if He never logined on RDL...");
       else{
         message.reply(`${user.username}'s balance: R$ **${user.bal}**`);
       }
     })
-  });
 }
