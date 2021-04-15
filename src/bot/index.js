@@ -33,35 +33,26 @@ function searchCommand(name){
 
 
 var commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
-let i = 0;
-let j = commandFiles.length;
+let ci = 0;
+let cj = commandFiles.length;
 for (var file of commandFiles) {
  const command = fs.readFileSync(`${__dirname}/commands/${file}`,{encoding: "utf8", flag: "r"});
- i += 1;
- console.log(`[BOT] Loaded - ${file} (${i}/${j})`);
+ ci += 1;
+ console.log(`[BOT] Command Loaded - ${file} (${ci}/${cj})`);
  file = file.replace(".js","");
  const desc = fs.readFileSync(`${__dirname}/desc/${file}.md`,{encoding: "utf8",flag: "r"});
  client.commands.push({name: file, code: command, desc});
 }
 
-client.once('ready', () => {
- console.log(`[BOT] Logined as ${client.user.tag}`);
- client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(`>>> Rovel Discord List has Started!\nWith ${client.users.cache.size} users, in ${client.channels.cache.size} channels of ${client.guilds.cache.size} guilds.`)
-});
-
-client.on("message", message=>{
-  if (!message.content.startsWith(prefix) || message.author.bot) return;
-	const args = message.content.slice(prefix.length).trim().split(/ +/);
-	const command = args.shift().toLowerCase();
-	const cmd = searchCommand(command);
-	try{
-	if(!cmd) return message.reply("That command Doesn't exist!");
-	else eval(cmd.code);
-	} catch(e){
-	  message.reply(`An Error Occured!\n\`\`\`\n${e}\n\`\`\``)
-	}
-});
-
+var eventFiles = fs.readdirSync(__dirname+'/events').filter(file=>file.endsWith('.js'));
+let ei = 0;
+let ej = eventFiles.length;
+for (var file of eventFiles) {
+ const event = fs.readFileSync(`${__dirname}/events/${file}`,{encoding: "utf8", flag: "r"});
+ ei += 1;
+ console.log(`[BOT] Event Loaded - ${file} (${ei}/${ej})`);
+ eval(event);
+}
 client.on("guildMemberRemove", (member)=>{
  if(member.bot){
    Bots.findOne({id: member.id}).then(bot=>{
