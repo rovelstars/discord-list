@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 var Bots = require("@models/bots.js");
+var Users = require("@models/users.js");
 var client = new Discord.Client();
 client.login(process.env.TOKEN);
 const { fetch } = require("rovel.js");
@@ -11,6 +12,9 @@ client.mods = mods;
 client.contributors = contributors;
 client.commands = [];
 const prefix = "hmm!" || process.env.PREFIX;
+var cooldown;
+cooldown.daily = new Set();
+
 
 function getMention(mention) {
  if (!mention) return;
@@ -27,6 +31,7 @@ function searchCommand(name){
     if(client.commands[i].name == name) return client.commands[i];
   }
 }
+
 
 var commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
 let i = 0;
