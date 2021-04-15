@@ -12,8 +12,7 @@ client.mods = mods;
 client.contributors = contributors;
 client.commands = [];
 const prefix = "hmm!" || process.env.PREFIX;
-var cooldown;
-cooldown.daily = new Set();
+var cooldowndaily = new Set();
 
 
 function getMention(mention) {
