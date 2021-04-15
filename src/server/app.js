@@ -198,7 +198,7 @@ app.get("/robots.txt", (req, res)=>{
 });
 
 app.get("/server", (req, res)=>{
- res.redirect("https://discord.gg/953XCpHbKF");
+ res.sendFile(path.resolve("src/public/assets/invite.html"));
 });
 
 app.get("/email", (req, res)=>{
