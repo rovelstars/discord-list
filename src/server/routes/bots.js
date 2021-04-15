@@ -34,13 +34,13 @@ const job = schedule.scheduleJob(rule, async function() {
 router.get("/", (req, res) => {
  if (req.query.q) {
   const q = decodeURI(req.query.q);
-  Bots.find({ $text: { $search: q } }, {id: false}).exec((err, doc) => {
+  Bots.find({ $text: { $search: q } }, {_id: false}).exec((err, doc) => {
    if (err) return res.json({ err });
    res.json(doc);
   })
  }
  else {
-  Bots.find({},{id: false}).exec(function(err, bots) {
+  Bots.find({},{_id: false}).exec(function(err, bots) {
    if (err) return console.error(err);
    res.send(bots);
   })
@@ -206,7 +206,7 @@ router.get("/:id/apikey", (req, res) => {
  else res.json({ err: "no_key" })
 })*/
 router.get("/:id", (req, res) => {
- Bots.findOne({ id: req.params.id }).then(bot => {
+ Bots.findOne({ id: req.params.id },{_id: false}).then(bot => {
   res.json(bot);
  });
 });

@@ -7,13 +7,13 @@ router.use(require("express").json());
 router.get("/", (req, res) => {
  if (req.query.q) {
   const q = decodeURI(req.query.q);
-  Users.find({ $text: { $search: q } }).exec((err, doc) => {
+  Users.find({ $text: { $search: q } },{_id: false}).exec((err, doc) => {
    if (err) return res.json({ err });
    res.json(doc);
   })
  }
  else {
-  Users.find(function(err, users) {
+  Users.find({},{_id: false}).exec(function(err, users) {
    if (err) return console.error(err);
    res.send(users);
   })
@@ -64,7 +64,7 @@ router.get("/all", async (req, res)=>{
 });
 
 router.get("/:id", (req, res) => {
- Users.findOne({ id: req.params.id }).then(user => {
+ Users.findOne({ id: req.params.id },{_id: false}).then(user => {
   res.json(user);
  });
 });
