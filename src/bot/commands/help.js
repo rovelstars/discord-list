@@ -10,6 +10,6 @@ message.channel.send(msg);
 }
 else{
   const cmd = searchCommand(args[0]);
-  if(!cmd) return message.reply("That Command Never **Existed** in the whole World! 😑");
+  if(!cmd) message.reply("That Command Never **Existed** in the whole World! 😑");
 	  else message.reply("**Description**\n"+cmd.desc);
 }
