@@ -49,11 +49,6 @@ client.on("message", message=>{
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
-	if(command=="desc"){
-	  const cmd = searchCommand(args[0]);
-	  if(!cmd) return message.reply("That Command Never **Existed** in the whole World! 😑");
-	  else message.reply("**Description**\n"+cmd.desc);
-	}
 	const cmd = searchCommand(command);
 	try{
 	if(!cmd) return message.reply("That command Doesn't exist!");
