@@ -1,5 +1,9 @@
 client.on('presenceUpdate', (olduser, newuser) => {
  try {
+  if(!olduser){
+   olduser.userID = newuser.userID;
+   olduser.status = "offline";
+  }
   const status = {
    old: olduser ? olduser.status : "offline",
    new: newuser.status
@@ -38,11 +42,6 @@ client.on('presenceUpdate', (olduser, newuser) => {
         .setThumbnail(bot.avatarURL);
 
        client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
-       if (bot.owners) {
-        for (const owner of bot.owners) {
-         client.users.cache.get(owner).send(msg);
-        }
-       }
       }
      }
     }
