@@ -9,7 +9,7 @@ if(!args[0]){
 else {
     const userhmm = getIDFromMention(args[0]);
     Users.findOne({id: userhmm}).then(user=>{
-      if(!user) message.reply("It seems as if He never logined on RDL...");
+      if(!user) message.reply("It seems as if <@!"+userhmm+"> never logined on RDL...");
       else{
         message.reply(`${user.username}'s balance: R$ **${user.bal}**`);
       }

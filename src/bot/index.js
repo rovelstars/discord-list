@@ -13,7 +13,7 @@ client.contributors = contributors;
 client.commands = [];
 const prefix = "hmm!" || process.env.PREFIX;
 var cooldowndaily = new Set();
-
+const prompter = require('discordjs-prompter');
 
 function getIDFromMention(mention) {
  if (!mention) return;

@@ -12,6 +12,7 @@
     "node": "^15.x"
   },
   "dependencies": {
+    "discordjs-prompter": "2.0.4",
     "geoip-lite": "1.4.2",
     "express-actuator": "1.7.0",
     "cloudflare-express": "1.0.1",
