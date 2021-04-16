@@ -20,7 +20,7 @@ prompter
    const msg = new Discord.MessageEmbed()
    .setTitle(`Choose your choice! By ${message.author.tag} !`)
    .setColor("RANDOM")
-   .setDesc(`Hosted by ${message.author.tag}!\nWould you choose:-\n${choices.join("\n")}\nReact your choice below!`)
+   .setDescription(`Hosted by ${message.author.tag}!\nWould you choose:-\n${choices.join("\n")}\nReact your choice below!`)
    .setFooter(`Conducted by: ${message.author.username}`)
    .setTimestamp();
    message.channel.send("Ok.. Making a petition and posting it!");
