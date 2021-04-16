@@ -1,21 +1,16 @@
-if(!args.length){
-  Users.findOne({id: message.author.id}).then(user=>{
-    if(!user) message.reply("Please login to get an account on RDL!\nLogin link:\nhttps://discord.rovelstars.com/login");
-    else {
-      message.reply("You have R$ **"+user.bal+"**");
-    }
-  })
+if (!args.length) {
+ Users.findOne({ id: message.author.id }).then(user => {
+  if (!user) message.reply("Please login to get an account on RDL!\nLogin link:\nhttps://discord.rovelstars.com/login");
+  else {
+   message.reply("You have R$ **" + user.bal + "**");
+  }
+ })
 }
 else {
- (async()=>{
-    const userhmm = await getMention(args[0]);
-    await message.channel.send(`Checking ${userhmm.tag || args[0] || "oof"}`).then(async msg=>{
-    await Users.findOne({id: userhmm.id}).then(user=>{
-      if(!user) msg.edit("It seems as if "+userhmm.tag+" never logined on RDL...");
-      else{
-        msg.edit(`${user.username}'s balance: R$ **${user.bal}**`);
-      }
-    })
-    });
+ await Users.findOne({ id: args[0] }).then(user => {
+  if (!user) message.channel.send("It seems as if " + args[0] + " never logined on RDL...");
+  else {
+   message.channel.send(`${user.username}'s balance: R$ **${user.bal}**`);
+  }
  });
 }
