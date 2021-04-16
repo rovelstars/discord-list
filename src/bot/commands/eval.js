@@ -7,8 +7,8 @@ if (!client.owners.some(x => x === message.author.id)) {
     let codein = args.join(" ");
     if (danger.some(word => codein.includes(word))) {
      message.channel.send('You aren\'t allowed to get secrets.');
-     return;
     }
+    else {
     //console.log(message.author.tag + ' used eval function')
     let code = eval(codein);
     if (typeof code !== 'string')
@@ -24,6 +24,7 @@ if (!client.owners.some(x => x === message.author.id)) {
     if (code.length >= '1990') {
      code = code.slice(0,1990).concat("\n...");
      message.channel.send("```js\n"+code+"\n```");
+    }
     }
    } catch (e) {
     message.channel.send(`\`\`\`js\n${e}\n\`\`\``);
