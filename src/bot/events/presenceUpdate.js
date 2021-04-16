@@ -1,9 +1,8 @@
-client.on('presenceUpdate', (olduser, newuser) => {
+client.on('presenceUpdate', (olduserr, newuser) => {
  try {
-  if(!olduser){
-   olduser.userID = newuser.userID;
-   olduser.status = "offline";
-  }
+  let olduser;
+   olduser.userID = olduserr ? olduserr.userID: newuser.userID;
+   olduser.status = olduserr? olduserr.status : "offline";
   const status = {
    old: olduser ? olduser.status : "offline",
    new: newuser.status
