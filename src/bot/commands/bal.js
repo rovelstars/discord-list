@@ -9,11 +9,13 @@ if(args.length===0){
 else {
  (async()=>{
     const userhmm = await getMention(args[0]);
+    await message.channel.send(`Checking ${userhmm.tag || args[0] || "oof"}`).then(msg=>{
     await Users.findOne({id: userhmm.id}).then(user=>{
-      if(!user) message.reply("It seems as if "+userhmm.tag+" never logined on RDL...");
+      if(!user) msg.edit("It seems as if "+userhmm.tag+" never logined on RDL...");
       else{
-        message.reply(`${user.username}'s balance: R$ **${user.bal}**`);
+        msg.edit(`${user.username}'s balance: R$ **${user.bal}**`);
       }
     })
+    });
  });
 }
