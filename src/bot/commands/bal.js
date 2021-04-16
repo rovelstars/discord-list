@@ -9,7 +9,7 @@ if(args.length===0){
 else {
  (async()=>{
     const userhmm = await getMention(args[0]);
-    await message.channel.send(`Checking ${userhmm.tag || args[0] || "oof"}`).then(msg=>{
+    await message.channel.send(`Checking ${userhmm.tag || args[0] || "oof"}`).then(async msg=>{
     await Users.findOne({id: userhmm.id}).then(user=>{
       if(!user) msg.edit("It seems as if "+userhmm.tag+" never logined on RDL...");
       else{
