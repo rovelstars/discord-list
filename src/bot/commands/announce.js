@@ -6,14 +6,14 @@ if(client.owners.includes(message.author.id)){
   max: 1,
   timeout: (3*3600),
  })
- .then(responses => {
-  if (!responses.size) {
+ .then(response => {
+  if (!response) {
    message.reply("You left me? Am i a __**JOKE**__ to you?");
   }
   else{
    const pinged = args.includes("--everyone");
    const isrdl = args.includes("--rdl-related");
-   const announcement = responses[0];
+   const announcement = response;
    const msg = new Discord.MessageEmbed()
    .setTitle("New Announcement!")
    .setColor("RANDOM")
