@@ -7,7 +7,7 @@ if (!args.length) {
  })
 }
 else {
- await Users.findOne({ id: args[0] }).then(user => {
+ Users.findOne({ id: args[0] }).then(user => {
   if (!user) message.channel.send("It seems as if " + args[0] + " never logined on RDL...");
   else {
    message.channel.send(`${user.username}'s balance: R$ **${user.bal}**`);

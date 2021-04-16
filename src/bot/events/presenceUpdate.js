@@ -50,6 +50,6 @@ client.on('presenceUpdate', (olduser, newuser) => {
   }
  }
  catch (e) {
-  DiscordLog({ title: "Presence Error", desc: `\`\`\`js\n${e}\n\`\`\``, color: "#FF0000" });
+  DiscordLog({ title: "Presence Error", desc: `\`\`\`js\n${e}\n\`\`\`\nID: ${newuser.userID}`, color: "#FF0000" });
  }
 });

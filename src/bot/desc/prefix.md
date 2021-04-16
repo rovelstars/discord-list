@@ -1,0 +1,1 @@
+Get to know the prefix of a bot!
