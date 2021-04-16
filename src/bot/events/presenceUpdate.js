@@ -1,6 +1,8 @@
 client.on("presenceUpdate", (old, neww)=>{
- old.send("you offline (just testing)").catch();
  try{
+  if(!old.bot || !neww.bot){
+   client.users.cache.get(old.id || neww.id).send("hey im just testing.").catch(e=>{});
+  }
  if(old.bot){
   var off=false;
   Bots.findOne({id: old.id}).then(bot=>{
