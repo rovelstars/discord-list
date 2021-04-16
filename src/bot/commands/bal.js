@@ -7,8 +7,12 @@ if (!args.length) {
  })
 }
 else {
- Users.findOne({ id: args[0] }).then(user => {
-  if (!user) message.channel.send("It seems as if " + args[0] + " never logined on RDL...");
+ const usern = getMention(args[0]);
+ if(!usern) {
+  message.reply("Doesn't seems to be a valid user... <:wtf:825723176176713739>");
+ }
+ Users.findOne({ id: usern.id }).then(user => {
+  if (!user) message.channel.send("It seems as if " + usern.tag + " never logined on RDL...");
   else {
    message.channel.send(`${user.username}'s balance: R$ **${user.bal}**`);
   }

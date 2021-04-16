@@ -1,6 +1,6 @@
 client.on("message", message=>{
   if (!message.content.startsWith(prefix) || message.author.bot) return;
-	const args = message.content.slice(prefix.length).trim().split(/ +/);
+	let args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
 	const cmd = searchCommand(command);
 	try{
