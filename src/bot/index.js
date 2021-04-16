@@ -54,13 +54,17 @@ for (var file of eventFiles) {
  eval(event);
 }
 
+function DiscordLog({title, desc, color}){
+ const msg = new Discord.MessageEmbed()
+    .setTitle(title)
+    .setColor(color || "#7289DA")
+    .setDescription(desc)
+    .setURL("https://discord.rovelstars.com")
+    .setTimestamp()
+    .setThumbnail("https://discord.rovelstars.com/favicon.ico");
 
-
-
-
-
-
-
+   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
+}
 
 let router = require("express").Router();
 router.use(require("express").json());
