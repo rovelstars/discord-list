@@ -1,4 +1,4 @@
-if(args.length===0){
+if(!args.length){
   Users.findOne({id: message.author.id}).then(user=>{
     if(!user) message.reply("Please login to get an account on RDL!\nLogin link:\nhttps://discord.rovelstars.com/login");
     else {
