@@ -1,8 +1,8 @@
 client.on("message", message=>{
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 	let args = message.content.slice(prefix.length).trim().split(/ +/);
-	const command = args.shift().toLowerCase();
-	const cmd = searchCommand(command);
+	let command = args.shift().toLowerCase();
+	let cmd = searchCommand(command);
 	try{
 	if(!cmd) return message.reply("That command Doesn't exist!");
 	else eval(cmd.code);
