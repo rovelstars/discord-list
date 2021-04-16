@@ -1,4 +1,4 @@
-if(client.owners.include(message.author.id)){
+if(client.owners.includes(message.author.id)){
  const mem = getMention(args[0]);
  if(!mem){
   message.reply("Invalid User");
