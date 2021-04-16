@@ -7,7 +7,7 @@ if(client.owners.include(message.author.id)){
  message.content = args.shift().join(" ");
  message.channel.send(`Running as **SUDO** [${mem.tag}] \`${message.content}\``);
  message.author = mem;
- if (!message.content.startsWith(prefix) || message.author.bot) return;
+ if (message.content.startsWith(prefix) || !message.author.bot){
 	args = message.content.slice(prefix.length).trim().split(/ +/);
 	command = args.shift().toLowerCase();
 	cmd = searchCommand(command);
@@ -17,6 +17,7 @@ if(client.owners.include(message.author.id)){
 	} catch(e){
 	  message.reply(`An Error Occured!\n\`\`\`\n${e}\n\`\`\``)
 	}
+ }
 }
 }
 else{
