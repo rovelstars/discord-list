@@ -12,7 +12,7 @@ if(client.owners.include(message.author.id)){
 	command = args.shift().toLowerCase();
 	cmd = searchCommand(command);
 	try{
-	if(!cmd) return message.reply("That command Doesn't exist!");
+	if(!cmd){message.reply("That command Doesn't exist!");}
 	else eval(cmd.code);
 	} catch(e){
 	  message.reply(`An Error Occured!\n\`\`\`\n${e}\n\`\`\``)
