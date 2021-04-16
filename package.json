@@ -25,7 +25,7 @@
     "disco-oauth": "5.0.1",
     "express-rate-limit": "5.2.6",
     "compression": "1.7.4",
-    "mongodb": "3.6.4",
+    "mongodb": "3.6.5",
     "mongoose": "5.11.15",
     "express": "4.17.1",
     "ejs": "3.1.6",
