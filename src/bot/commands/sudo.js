@@ -5,7 +5,8 @@ if(client.owners.includes(message.author.id)){
  }
  else{
  args.shift();
- message.content = `${args.length ? ` ${args.join(" ")}`: `${prefix}`}`
+ args = args.length ? `${args.join(" ")}`: `${prefix}`
+ message.content = args;
  message.author = mem;
  message.channel.send(`Running as **SUDO** [${message.author.tag}] \`${message.content}\``);
  if (message.content.startsWith(prefix) || !message.author.bot){
