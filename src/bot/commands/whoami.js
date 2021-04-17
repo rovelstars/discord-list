@@ -1,0 +1,1 @@
+message.channel.send(`${message.author.tag} [${message.author.id}]`);
