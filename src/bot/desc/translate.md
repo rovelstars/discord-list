@@ -1,1 +1,0 @@
-Translate any language to other language!

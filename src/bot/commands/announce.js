@@ -4,7 +4,7 @@ if(client.owners.includes(message.author.id)){
   question: 'Write your Announcement!',
   userId: message.author.id,
   max: 1,
-  timeout: (3*3600),
+  timeout: (3*3600*1000),
  })
  .then(responses => {
   if (!responses.size) {
