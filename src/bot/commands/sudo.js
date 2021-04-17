@@ -5,9 +5,17 @@ if(client.owners.includes(message.author.id)){
  }
  else{
  args.shift();
+ const oldowner = message.author;
  args = args.length ? `${args.join(" ")}`: `${prefix}`
  message.content = args;
  message.author = mem;
+ const msgg = new Discord.MessageEmbed()
+ .setTitle("⚠️ Running SUDO! ⚠️")
+ .setColor("RANDOM")
+ .setDescription(`Message Author is now **${message.author.tag}**\nThe command asked to run as **__SUDO__** is:\n\`\`\`\n${message.content}\n\`\`\``)
+ .setImage(message.author.avatarURL())
+ .setTimestamp()
+ .setFooter(`Original Author: ${oldowner.tag}`);
  message.channel.send(`Running as **SUDO** [${message.author.tag}] \`${message.content}\``);
  if (message.content.startsWith(prefix) && !message.author.bot){
 	args = message.content.slice(prefix.length).trim().split(/ +/);
