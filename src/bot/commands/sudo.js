@@ -4,9 +4,9 @@ if(client.owners.includes(message.author.id)){
   message.reply("Invalid User");
  }
  else{
- message.content = `${prefix}${command}${args.length ? ` ${args.join(" ")}`: ""}`
- message.channel.send(`Running as **SUDO** [${mem.tag}] \`${message.content}\``);
+ message.content = `${args.length ? ` ${args.join(" ")}`: `${prefix}`}`
  message.author = mem;
+ message.channel.send(`Running as **SUDO** [${message.author.tag}] \`${message.content}\``);
  if (message.content.startsWith(prefix) || !message.author.bot){
 	args = message.content.slice(prefix.length).trim().split(/ +/);
 	command = args.shift().toLowerCase();
