@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 var Bots = require("@models/bots.js");
 var Users = require("@models/users.js");
-var client = new Discord.Client();
+var client = new Discord.Client({fetchAllMembers: true});
 client.login(process.env.TOKEN);
 const { fetch } = require("rovel.js");
 const { owners, emojiapprovers, mods, contributors } = require("../data.js");
