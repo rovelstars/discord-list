@@ -182,7 +182,7 @@ app.get("/bots/:id", async (req, res)=>{
  var user = req.user;
  bot.owner = [];
  await bot.owners.forEach(async (id)=>{
-  await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r=>r.json()).then(d=>{
+  await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r=>r.json()).then(async d=>{
   await bot.owner.push(d.tag);
  });
  });
