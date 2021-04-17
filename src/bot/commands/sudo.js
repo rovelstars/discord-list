@@ -16,7 +16,7 @@ if(client.owners.includes(message.author.id)){
  .setImage(message.author.avatarURL())
  .setTimestamp()
  .setFooter(`Original Author: ${oldowner.tag}`);
- message.channel.send(`Running as **SUDO** [${message.author.tag}] \`${message.content}\``);
+ message.channel.send(msgg);
  if (message.content.startsWith(prefix) && !message.author.bot){
 	args = message.content.slice(prefix.length).trim().split(/ +/);
 	command = args.shift().toLowerCase();
