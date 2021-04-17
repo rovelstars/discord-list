@@ -13,7 +13,7 @@ if(client.owners.includes(message.author.id)){
  .setTitle("⚠️ Running SUDO! ⚠️")
  .setColor("RANDOM")
  .setDescription(`Message Author is now **${message.author.tag}**\nThe command asked to run as **__SUDO__** is:\n\`\`\`\n${message.content}\n\`\`\``)
- .setImage(message.author.avatarURL())
+ .setThumbnail(message.author.avatarURL())
  .setTimestamp()
  .setFooter(`Original Author: ${oldowner.tag}`);
  message.channel.send(msgg);
