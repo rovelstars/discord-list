@@ -9,7 +9,7 @@ if(client.owners.includes(message.author.id)){
  message.content = args;
  message.author = mem;
  message.channel.send(`Running as **SUDO** [${message.author.tag}] \`${message.content}\``);
- if (message.content.startsWith(prefix) || !message.author.bot){
+ if (message.content.startsWith(prefix) && !message.author.bot){
 	args = message.content.slice(prefix.length).trim().split(/ +/);
 	command = args.shift().toLowerCase();
 	cmd = searchCommand(command);
