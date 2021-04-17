@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const fs = require("fs");
+var RDL = require("@root/../sdk.js");
 var Bots = require("@models/bots.js");
 var Users = require("@models/users.js");
 var client = new Discord.Client({fetchAllMembers: true});
@@ -66,6 +67,11 @@ function DiscordLog({title, desc, color}){
    client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
 }
 
+RDL.login(process.env.TESTKEY);
+RDL.once('login', rc=>{
+  console.log(`[RDL] Logged in as ${rc.tag}`);
+  DiscordLog({title: "SDK Testing", desc: `Logged in as ${rc.tag}`});
+});
 let router = require("express").Router();
 router.use(require("express").json());
 router.get("/", (req, res) => {
