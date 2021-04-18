@@ -21,7 +21,7 @@ else {
   max: 1,
   timeout: (3600*1000),
  }).then(responses=>{
-  if(!responses.size()){
+  if(!responses.size){
    message.reply("Time's up! I won't change his nickname anymore unless you ask me again to.");
   }
   else {
