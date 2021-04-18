@@ -29,8 +29,9 @@ console.log("[SENTRY] Initialized!\nAll issues and performance are being sent!")
 process.on('unhandledRejection', error => {
  console.warn('An Error Occurred!\n' + error);
 });
+let server;
 const { app, port } = require("@server/app.js");
-app.listen(port, () => {
+server = app.listen(port, () => {
  console.log(`[SERVER] Started on port: ${port}`);
 });
 process.on('SIGTERM', () => {
@@ -49,7 +50,7 @@ process.on('SIGTERM', () => {
  })
  console.log('Closing http server.');
  setTimeout(()=>{
- app.close(() => {
+ server.close(() => {
   console.log('Http server closed.');
   // boolean means [force], see in mongoose doc
   db.close(false, () => {
