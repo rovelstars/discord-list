@@ -46,9 +46,8 @@ process.on('SIGTERM', () => {
    "title": "Stopping Process!",
    "color": "#ff0000"
   })
- })
+ }).then(r=>r.text()).then(d=>{
  console.log('Closing http server.');
- setTimeout(()=>{
  server.close(() => {
   console.log('Http server closed.');
   // boolean means [force], see in mongoose doc
