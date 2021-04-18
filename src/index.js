@@ -1,6 +1,5 @@
 require("module-alias/register");
 var rovel = require("rovel.js");
-
 rovel.env.config();
 const mongoose = require('mongoose');
 mongoose.connect(process.env.DB, {
