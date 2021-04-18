@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const fs = require("fs");
+const normalText = require("diacritics").remove;
 var Bots = require("@models/bots.js");
 var Users = require("@models/users.js");
 var client = new Discord.Client({fetchAllMembers: true});
