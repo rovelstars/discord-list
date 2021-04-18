@@ -72,6 +72,9 @@ RDL.once('login', rc=>{
   console.log(`[RDL] Logged in as ${rc.tag}`);
   DiscordLog({title: "SDK Testing", desc: `Logged in as ${rc.tag}`});
 });
+process.once("testing", obj=>{
+  console.log("Called testing process!",obj);
+});
 let router = require("express").Router();
 router.use(require("express").json());
 router.get("/", (req, res) => {

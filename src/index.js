@@ -31,4 +31,15 @@ process.on('unhandledRejection', error =>{ console.warn('An Error Occurred!\n' +
  app.listen(port, () => {
  console.log(`[SERVER] Started on port: ${port}`);
 });
-//require("./runtime.js");
+process.on('SIGTERM', () => {
+  console.info('SIGTERM signal received.');
+  console.log('Closing http server.');
+  app.close(() => {
+    console.log('Http server closed.');
+    // boolean means [force], see in mongoose doc
+    mongoose.connection.close(false, () => {
+      console.log('MongoDb connection closed.');
+      process.exit(0);
+    });
+  });
+});

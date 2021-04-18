@@ -243,3 +243,4 @@ app.get("/logout", async (req, res)=>{
 app.get("*", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/index.html"));
  });
+ process.emit("testing", {hello: "world"});
