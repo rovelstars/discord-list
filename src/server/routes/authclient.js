@@ -12,7 +12,9 @@ router.get("/", async (req, res)=>{
      httpOnly: true,
      secure: true
     });
-    const user = await auth.getUser(key);
+    const user = await auth.getUser(key).catch(e=>{
+     return res.redirect("/logout");
+    });
    /* try{
      fetch(`https://discord.com/api/v7/`)
     }
