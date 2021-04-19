@@ -10,7 +10,7 @@ else {
   if (!usern) message.reply("Please provide a valid user!");
   else {
    if (usern.username !== normalText(usern.username)) {
-    client.guilds.cache.get(message.guild.id).users.cache.get(usern.id).setNickname(normalText(usern.username));
+    message.guild.members.cache.get(usern.id).setNickname(normalText(usern.username));
     message.reply("Successfully updated "+usern.username+"'s nickname to "+normalText(usern.username));
    }
    else{
@@ -25,7 +25,7 @@ else {
    message.reply("Time's up! I won't change his nickname anymore unless you ask me again to.");
   }
   else {
-   client.guilds.cache.get(message.guild.id).users.cache.get(usern.id).setNickname(responses.first());
+   message.guild.members.cache.get(usern.id).setNickname(responses.first());
     message.reply("Successfully updated "+usern.username+"'s nickname to "+responses.first());
   }
  })
