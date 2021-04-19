@@ -25,8 +25,9 @@ else {
    message.reply("Time's up! I won't change his nickname anymore unless you ask me again to.");
   }
   else {
-   message.guild.members.cache.get(usern.id).setNickname(responses.first());
-    message.reply("Successfully updated "+usern.username+"'s nickname to "+responses.first());
+   const msg = responses.first();
+   message.guild.members.cache.get(usern.id).setNickname(msg);
+    message.reply("Successfully updated "+usern.username+"'s nickname to "+msg);
   }
  })
    }

@@ -23,8 +23,8 @@ function getMention(mention) {
   if (mention.startsWith('!')) {
    mention = mention.slice(1);
   }
-  return client.users.cache.get(mention);
  }
+ return client.users.cache.get(mention);
 }
 function searchCommand(name){
   for(var i=0; i< client.commands.length; i++){
