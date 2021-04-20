@@ -1,0 +1,22 @@
+<%- include('partials/header', {
+title: "Dashboard - Rovel Discord List",
+desc: "Im sure you can't read this hehe",
+img: "<%= user.avatarUrl(128) %>"
+}); %>
+</head>
+<body>
+ <%- include('partials/load'); %>
+ <%- include('partials/navbar', {user}); %>
+ <section class="hero" style="background:url(/assets/img/banner_placeholder.png) repeat;-webkit-animation:scrolling-background 120s linear infinite;animation:scrolling-background 120s linear infinite">
+  <div class="hero-body">
+   <h1 class="title">
+    Welcome To Your Dashboard <%= user.username %><span class="text-muted">#<%= user.discriminator %></span>
+   </h1>
+   <h3 class="subtitle">
+    Here you can manage your Account, Bots, and Servers!
+   </h3>
+  </div>
+ </section>
+ <%- include('partials/footer'); %>
+</body>
+</html>

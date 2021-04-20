@@ -188,7 +188,14 @@ app.get("/bots/:id", async (req, res)=>{
  });
  await console.log(bot.owner);
  await res.render('botpage.ejs', {user, bot});
-})
+});
+
+app.get("/dashboard", (req, res)=>{
+ if(!req.user) return res.redirect("/login");
+ else {
+  res.render('dashboard.ejs', {user: req.user});
+ }
+});
 
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/img/logo.png");

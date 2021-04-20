@@ -13,7 +13,6 @@
 
   <div id="navbarmenuthing" class="navbar-menu has-background-dark">
     <div class="navbar-start">
-     <h2 class="subtitle has-text-centered"> Welcome back <% if(user){ %><img src="<%= user.avatarUrl(512) %>" style="border-radius: 50%; width: 1em;height: 1em;" alt="<%= user.username %>"> <%= user.username %><% } %>!</h2>
       <a class="navbar-item" href="/">
         <span class="has-text-primary"><i class="bx bxs-home"></i></span>Home
       </a>
@@ -51,6 +50,9 @@
             <% } else { %>
               <a class="button is-danger" href="/logout">
             <i class="bx bxs-chevron-righr-circle"></i> Log out</a>
+             <a class="button" style="background-color: #7289da;" href="/dashboard">
+              <i class="bx bxs-grid-alt"></i> DashBoard
+             </a>
           <% } %>
         </div>
       </div>
