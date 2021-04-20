@@ -7,7 +7,7 @@ img: `${user.avatarUrl(128)}`
 <body>
  <%- include('partials/load'); %>
  <%- include('partials/navbar', {user}); %>
- <section class="hero">
+ <section class="hero has-background-danger">
   <div class="hero-body">
    <h1 class="title">
     Welcome To Your Dashboard <%= user.username %><span class="text-muted">#<%= user.discriminator %></span>
