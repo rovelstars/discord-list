@@ -7,7 +7,7 @@ img: `${user.avatarUrl(128)}`
 <body>
  <%- include('partials/load'); %>
  <%- include('partials/navbar', {user}); %>
- <section class="hero" style="background:url(/assets/img/banner_placeholder.png) repeat;-webkit-animation:scrolling-background 120s linear infinite;animation:scrolling-background 120s linear infinite">
+ <section class="hero">
   <div class="hero-body">
    <h1 class="title">
     Welcome To Your Dashboard <%= user.username %><span class="text-muted">#<%= user.discriminator %></span>
