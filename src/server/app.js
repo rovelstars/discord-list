@@ -220,7 +220,7 @@ app.get("/beta", (req, res)=>{
 
 app.get("/logout", async (req, res)=>{
  if(req.cookies['key']){
-  const user = await auth.getUser(req.cookies['key']);
+  const user = await auth.getUser(req.cookies['key']).catch(()=>{});
   fetch(`${process.env.DOMAIN}/api/client/log`, {
    method: "POST",
    headers: {
@@ -228,11 +228,11 @@ app.get("/logout", async (req, res)=>{
    },
    body: JSON.stringify({
     "secret": process.env.SECRET,
-    "title": `${user.tag} Logouted!`,
-    "desc": `Bye bye ${user.tag}\nSee you soon back on RDL!`,
+    "title": `${(user)?user.tag:"IDK who"} Logouted!`,
+    "desc": `Bye bye ${(user)?user.tag:"Unknown Guy"}\nSee you soon back on RDL!`,
     "color": "#ff0000",
-    "img": user.avatarUrl(128),
-    "owners": user.id
+    "img": (user)?user.avatarUrl(128):`${process.env.DOMAIN}/favicon.ico`,
+    "owners": (user)?user.id:null
    })
   })
   res.cookie('key', req.cookies['key'], {maxAge: 0});
