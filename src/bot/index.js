@@ -32,7 +32,7 @@ function searchCommand(name){
   }
 }
 
-
+function reload(){
 var commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
 let ci = 0;
 let cj = commandFiles.length;
@@ -54,7 +54,8 @@ for (var file of eventFiles) {
  console.log(`[BOT] Event Loaded - ${file} (${ei}/${ej})`);
  eval(event);
 }
-
+}
+reload();
 function DiscordLog({title, desc, color}){
  const msg = new Discord.MessageEmbed()
     .setTitle(title)
