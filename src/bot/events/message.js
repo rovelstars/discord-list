@@ -4,8 +4,24 @@ client.on("message", message=>{
 	let command = args.shift().toLowerCase();
 	if(command==""|| !command) message.reply("What do you want?");
 	else if(command=="reload"){
-	 message.reply("Reloading Everything!");
+	 if(message.content.includes("--force")){
+	  if(!client.owners.include(message.author.id)){
+	   message.reply("You're not a owner, so you can't force me.");
+	  }
+	  else{
+	   reload();
+	   message.reply("**Force** Reloading Commands and Events!");
+	  }
+	 }
+	 else {
+	 let cdm = searchCommand("help");
+	 if(!cdm){
+	 message.reply("Reloading Commands and Events!");
 	 reload();
+	 }
+	 else {
+	  message.reply("I think the commands are already there. Use `--force` to force reload!");
+	 }}
 	}
 	else{
 	let cmd = searchCommand(command);
