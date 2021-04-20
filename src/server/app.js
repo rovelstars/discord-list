@@ -71,6 +71,7 @@ var checkBanned = async function(req, res, next) {
  }
  if(req.cookies['key']){
   var user = await auth.getUser(req.cookies['key']).catch(()=>{next()});
+  if(user){
   fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r=>r.json()).then(d=>{
    if(d.banned){
     res.sendFile(path.resolve("src/public/assets/banned.html"));
@@ -92,7 +93,7 @@ var checkBanned = async function(req, res, next) {
     next()
    }
   });
- }
+ }}
  else {
   req.user = null;
   next()
