@@ -1,4 +1,18 @@
 client.on("message", message=>{
+ if(message.content.startsWith("https://discord.com/channels/")){
+  message.content = message.content.replace("https://discord.com/channels/","");
+  const ar = message.content.split("/");
+  //[guid,chid,msgid]
+  try{
+   const guid = ar[0];
+   const chid = ar[1];
+   const msgid = ar[2];
+   message.reply(ar.join(","));
+  }
+  catch(e){
+   
+  }
+ }
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 	let args = message.content.slice(prefix.length).trim().split(/ +/);
 	let command = args.shift().toLowerCase();
