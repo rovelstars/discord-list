@@ -19,7 +19,7 @@ client.on("message", message => {
    });
   }
   catch (e) {
-
+   message.reply(e);
   }
  }
  if (!message.content.startsWith(prefix) || message.author.bot) return;
