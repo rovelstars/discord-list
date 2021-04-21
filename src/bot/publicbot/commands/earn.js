@@ -3,11 +3,11 @@ if(cooldownearn.has(message.author.id)){
 }
 else {
   Users.findOne({id: message.author.id}).then(user=>{
-    if(!user) message.reply("Please login to RDL to make an account in order to recieve money!\nLogin link:\nhttps://discord.rovelstars.com/login");
+    if(!user) message.reply("Nani?! You're not logined!\nPlease login to RDL to make an account in order to recieve money!\nLogin link:\nhttps://discord.rovelstars.com/login");
     else {
       user.bal+=1;
       user.save();
-      message.channel.send("You recieved R$ 1!");
+      message.channel.send("Nani o matsu?! You recieved R$ 1!\nThat's nothing compared to me-");
       cooldownearn.add(message.author.id);
   setTimeout(()=>{
     cooldownearn.delete(message.author.id);

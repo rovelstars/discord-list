@@ -26,35 +26,35 @@ client.on("message", message => {
  if (!message.content.startsWith(prefix) || message.author.bot) return;
  let args = message.content.slice(prefix.length).trim().split(/ +/);
  let command = args.shift().toLowerCase();
- if (command == "" || !command) message.reply("What do you want?");
+ if (command == "" || !command) message.reply("Nani? Say it Clearly!");
  else if (command == "reload") {
   if (message.content.includes("--force")) {
-   if (!client.owners.include(message.author.id)) {
-    message.reply("You're not a owner, so you can't force me.");
+   if (!client.owners.includes(message.author.id)) {
+    message.reply("Baka! You're not even allowed to do so!");
    }
    else {
     reload();
-    message.reply("**Force** Reloading Commands and Events!");
+    message.reply("Kyōsei!? When i will be a owner, i will force you then!\nTokorode, Events and Commands are being reloaded!");
    }
   }
   else {
    let cdm = searchCommand("help");
    if (!cdm) {
-    message.reply("Reloading Commands and Events!");
+    message.reply("Rirōdo? Ok, Reloading Commands and Events!");
     reload();
    }
    else {
-    message.reply("I think the commands are already there. Use `--force` to force reload!");
+    message.reply("Chottomatte! I think the commands are already there. Use `--force` to force reload!");
    }
   }
  }
  else {
   let cmd = searchCommand(command);
   try {
-   if (!cmd) return message.reply("That command Doesn't exist!");
+   if (!cmd) return message.reply("Baka! That Komando Sonzai suru!");
    else eval(cmd.code);
   } catch (e) {
-   message.reply(`An Error Occured!\n\`\`\`\n${e}\n\`\`\``)
+   message.reply(`Nani?!\nI got an Error!\n\`\`\`\n${e}\n\`\`\``)
   }
  }
 });

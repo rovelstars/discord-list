@@ -1,1 +1,0 @@
-Claim your daily gift of R$10 !

@@ -28,7 +28,7 @@ client.on("message", message => {
  if (command == "" || !command) message.reply("What do you want?");
  else if (command == "reload") {
   if (message.content.includes("--force")) {
-   if (!client.owners.include(message.author.id)) {
+   if (!client.owners.includes(message.author.id)) {
     message.reply("You're not a owner, so you can't force me.");
    }
    else {

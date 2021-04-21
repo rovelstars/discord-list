@@ -1,1 +1,1 @@
-message.reply("pong!");
+message.reply("Do you wanna play Tenisu with me?\nIma wa isogashi sugimasu");
