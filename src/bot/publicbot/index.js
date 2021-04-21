@@ -33,6 +33,7 @@ function searchCommand(name){
 
 function reload(){
  delete client.commands;
+ client.commands = [];
 var commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
 let ci = 0;
 let cj = commandFiles.length;
