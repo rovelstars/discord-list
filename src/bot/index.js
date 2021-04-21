@@ -33,7 +33,7 @@ function searchCommand(name){
 }
 
 function reload(){
- client.commands = [];
+ delete client.commands;
 var commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
 let ci = 0;
 let cj = commandFiles.length;
@@ -45,7 +45,8 @@ for (var file of commandFiles) {
  const desc = fs.readFileSync(`${__dirname}/desc/${file}.md`,{encoding: "utf8",flag: "r"});
  client.commands.push({name: file, code: command, desc});
 }
-
+}
+reload();
 var eventFiles = fs.readdirSync(__dirname+'/events').filter(file=>file.endsWith('.js'));
 let ei = 0;
 let ej = eventFiles.length;
@@ -55,8 +56,6 @@ for (var file of eventFiles) {
  console.log(`[BOT] Event Loaded - ${file} (${ei}/${ej})`);
  eval(event);
 }
-}
-reload();
 function DiscordLog({title, desc, color}){
  const msg = new Discord.MessageEmbed()
     .setTitle(title)
