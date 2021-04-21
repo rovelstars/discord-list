@@ -10,7 +10,7 @@ client.on("message", message => {
    client.guilds.cache.get(guid).channels.cache.get(chid).messages.fetch(msgid).then(msg => {
     const hmm = new Discord.MessageEmbed()
     .setTitle("Message content of Link posted above")
-    .setURL(message.content)
+    .setURL("https://discord.com/channels/"+message.content)
     .setColor("RANDOM")
     .setThumbnail(msg.author.displayAvatarURL())
     .setDescription(msg.content)
