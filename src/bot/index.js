@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const fs = require("fs");
+require("./publicbot/index.js");
 const normalText = require("diacritics").remove;
 var Bots = require("@models/bots.js");
 var Users = require("@models/users.js");
@@ -13,7 +14,6 @@ client.mods = mods;
 client.contributors = contributors;
 client.commands = [];
 const prefix = "hmm!" || process.env.PREFIX;
-var cooldowndaily = new Set();
 const prompter = require('discordjs-prompter');
 
 function getMention(mention) {
