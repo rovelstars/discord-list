@@ -181,19 +181,27 @@ app.get("/bots/:id", async (req, res)=>{
  bot.desc = await marked(bot.desc);
  var user = req.user;
  bot.owner = [];
- await bot.owners.forEach(async (id)=>{
+ for(const id of bot.owners){
   await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r=>r.json()).then(async d=>{
   await bot.owner.push(d.tag);
  });
- });
  await console.log(bot.owner);
  await res.render('botpage.ejs', {user, bot});
+};
 });
 
-app.get("/dashboard", (req, res)=>{
+app.get("/dashboard", async (req, res)=>{
  if(!req.user) return res.redirect("/login");
  else {
-  res.render('dashboard.ejs', {user: req.user});
+  let botus;
+  Bots.find({$text:{$search: req.user.id}}).then(async bots=>{
+   for(const bot of bots){
+    if(bot.owners.includes(req.user.id)){
+     await botus.push(bot);
+    }
+   }
+  })
+  await res.render('dashboard.ejs', {user: req.user, bots: botus});
  }
 });
 
