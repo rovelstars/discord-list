@@ -185,9 +185,9 @@ app.get("/bots/:id", async (req, res)=>{
   await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r=>r.json()).then(async d=>{
   await bot.owner.push(d.tag);
  });
+ };
  await console.log(bot.owner);
  await res.render('botpage.ejs', {user, bot});
-};
 });
 
 app.get("/dashboard", async (req, res)=>{
