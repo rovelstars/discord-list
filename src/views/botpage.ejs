@@ -7,7 +7,7 @@ img: bot.avatarURL
 <body>
  <%- include('partials/load'); %>
  <%- include('partials/navbar', {user}); %>
- <section class="hero" style="background-image: url(<%= bot.bg %>); background-size: cover;" onerror="this.onerror = null;this.src = 'assets/img/banner_placeholder.png';">
+ <section class="hero" style="background-image: url(<%= bot.bg || 'https://discord.rovelstars.com/assets/img/banner_placeholder.png' %>); background-size: cover;">
   <div class="hero-body">
    <div class="container">
     <div class="columns">
