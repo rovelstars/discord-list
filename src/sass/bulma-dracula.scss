@@ -157,7 +157,6 @@ body {
  min-height: 100vh;
  display: flex;
  flex-direction: column;
- margin: 0;
 }
 footer, .footer-img{
  margin-top: auto;
@@ -198,4 +197,7 @@ div.content iframe {
  padding: 4px;
  border-radius: 20px;
  font-family: discord;
+}
+*{
+ margin: 0;
 }
