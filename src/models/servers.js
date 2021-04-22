@@ -2,10 +2,13 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const Servers = new Schema({
    id: Number,
-   _id: Number,
+   _id: {
+    default: () => new Date(),
+    type: Date
+  }, //added at
    short: String,
    desc: String,
-   owner: Number,
+   owner: String,
    invite: String,
    promoted: {type: Boolean, default: false},
    badges: [{type: String}],
