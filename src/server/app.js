@@ -193,7 +193,7 @@ app.get("/bots/:id", async (req, res)=>{
 app.get("/dashboard", async (req, res)=>{
  if(!req.user) return res.redirect("/login");
  else {
-  let botus;
+  let botus =[];
   Bots.find({$text:{$search: req.user.id}}).then(async bots=>{
    for(const bot of bots){
     if(bot.owners.includes(req.user.id)){
