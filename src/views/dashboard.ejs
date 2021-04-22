@@ -17,6 +17,50 @@ img: `${user.avatarUrl(128)}`
    </h3>
   </div>
  </section>
+ <div class="container is-fluid">
+  <h2 class="title">Your Bots</h2>
+ <div class="columns is-multiline is-centered">
+  <% for(const bot of bots){ %>
+  <div class="column is-one-third" is-bot-card>
+<div class="box has-background-dark" style="overflow: hidden; height: 100%;">
+<article class="media">
+<div class="media-left">
+<figure class="image is-64x64">
+<img width="64" height="64" class="is-rounded" loading="lazy" src="<%= bot.avatarURL %>" alt="<%= bot.username %> Avatar" onerror="this.onerror=null;this.src='/assets/img/logo.png';">
+</figure>
+</div>
+<div style="overflow: hidden;" class="media-content">
+<div class="content">
+<p>
+<span class="is-size-4 title has-text-default is-mobile" style="font-family: discord;">
+<span><%= bot.username %>#<span class="has-text-grey"><%= bot.discriminator %></span></span>
+</span>
+<br />
+<span class="has-text-grey-light"><%= bot.short %></span>
+</p>
+</div>
+<div class="content-footer">
+<div class="buttons">
+<a href="/bots/<%= bot.id %>" class="button is-info is-outlined">
+<span class="icon">
+<i class="bx bxs-envelope-open"></i>
+</span>
+<span>View</span>
+</a>
+ <a href="/dashboard/bots/edit/<%= bot.id %>" class="button is-link is-outlined">
+<span class="icon">
+<i class="bx bxs-pencil"></i>
+</span>
+<span>Edit</span>
+</a>
+</div>
+</div>
+</article>
+</div>
+</div>
+  <% } %>
+  </div>
+  </div>
  <%- include('partials/footer'); %>
 </body>
 </html>
