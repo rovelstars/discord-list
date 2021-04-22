@@ -200,7 +200,7 @@ app.get("/dashboard", async (req, res)=>{
      await botus.push(bot);
     }
    }
-  await res.render('dashboard.ejs', {user: req.user, bots});
+  await res.render('dashboard.ejs', {user: req.user, bots: botus});
   });
  }
 });
