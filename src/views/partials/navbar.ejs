@@ -1,7 +1,7 @@
 <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
   <div class="navbar-brand is-primary">
     <a class="navbar-item" href="https://discord.rovelstars.com">
-      <img src="https://discord.rovelstars.com/assets/img/logo.svg" width="28" height="28"><span style="font-family: discord">Rovel Discord List</span>
+      <img class="logo" src="https://discord.rovelstars.com/assets/img/logo.svg" width="28" height="28"><span style="font-family: discord">Rovel Discord List</span>
     </a>
 
     <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarmenuthing">
@@ -69,7 +69,9 @@ twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
       $(".navbar-burger").toggleClass("is-active");
       $(".navbar-menu").toggleClass("is-active");
   });
+  setTimeout(()=>{
    $(".avatar").addClass("vivify popIn");
-   $(".navbar-item").addClass("vivify rollInLeft");
+   $("img.logo").addClass("vivify rollInLeft");
+  },1000);
 });
 </script>
