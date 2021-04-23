@@ -69,8 +69,8 @@ twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
       $(".navbar-burger").toggleClass("is-active");
       $(".navbar-menu").toggleClass("is-active");
   });
-  setTimeout(function(){
    $(".avatar").addClass("vivify popIn");
-  }, 3000);
+   $(".avatar").removeClass("popIn");
+   $(".avatar").addClass("pulsate infinite")
 });
 </script>
