@@ -6,10 +6,10 @@ const Servers = new Schema({
     default: () => new Date(),
     type: Date
   }, //added at
-   short: String,
-   desc: String,
-   owner: String,
-   invite: String,
+   short: {type: String, default: "Short description is not Updated."},
+   desc: {type: String, default: "Description is not updated."},
+   owner: {type: String, required: true},
+   invite: {type: String, required: true},
    promoted: {type: Boolean, default: false},
    badges: [{type: String}],
   });

@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 const normalText = require("diacritics").remove;
 var Users = require("@models/users.js");
+var Servers = require("@models/servers.js");
 var client = new Discord.Client();
 client.login(process.env.PUBLIC_TOKEN);
 const { fetch } = require("rovel.js");
