@@ -12,7 +12,7 @@ const Servers = new Schema({
    invite: {type: String, required: true},
    promoted: {type: Boolean, default: false},
    badges: [{type: String}],
-  });
+  },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
   var servers;
   try{
   console.log("[DB] Compiling Schema into Model - Servers");
