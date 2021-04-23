@@ -1,10 +1,20 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const Emojis = new Schema({
-   id: Number,
-   _id: Number,
+   id: {type: Number, required: true},
+   _id: {
+    default: () => new Date(),
+    type: Date
+  }, //added at
    desc: String,
    gif: {type: Boolean, default: false},
-  });
+  },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
+  var emojis;
+  try{
   console.log("[DB] Compiling Schema into Model - Emojis");
-  module.exports = mongoose.model('Emojis', Emojis);
+  emojis = mongoose.model('Emojis', Emojis);
+  }
+  catch(e){
+  emojis =  mongoose.model('Emojis');
+  }
+  module.exports = emojis;

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const Servers = new Schema({
-   id: Number,
+   id: {type: Number, required: true},
    _id: {
     default: () => new Date(),
     type: Date
