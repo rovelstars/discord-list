@@ -15,7 +15,7 @@ if(message.member.hasPermission("ADMINISTRATOR")){
   owner: message.guild.owner.id
  }).save((err, ser)=>{
   if(err) message.reply("Nani?! An Error Occurred!\nI cannot add your server to RDL!\n"+err);
-   message.channel.send("Successfully Added your server to RDL!\nPlease update the description of your server on the dashboard on RDL.\nhttps://discord.rovelstars.com/servers/"+ser.id);
+   message.channel.send("Successfully Added your server to RDL!\nPlease update the description of your server on the dashboard on RDL.\nhttps://discord.rovelstars.com/servers/"+Server.id);
  })
   }
   else {

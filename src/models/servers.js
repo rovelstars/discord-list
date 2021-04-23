@@ -13,5 +13,12 @@ const Servers = new Schema({
    promoted: {type: Boolean, default: false},
    badges: [{type: String}],
   });
+  var servers;
+  try{
   console.log("[DB] Compiling Schema into Model - Servers");
-  module.exports = mongoose.model('Servers', Servers);
+  servers = mongoose.model('Servers', Servers);
+  }
+  catch(e){
+ servers = mongoose.model('Servers');
+}
+module.exports = servers;
