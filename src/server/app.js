@@ -148,6 +148,13 @@ app.get("/", async (req, res) => {
  var user = req.user;
  await res.render('index.ejs', {user, bots});
 });
+
+app.get("/bots", async (req, res) => {
+ var bots = await Bots.find();
+ var user = req.user;
+ await res.render('bots.ejs', {user, bots});
+});
+
 app.get("/manifest.json", (req, res)=>{
  res.sendFile(path.resolve("src/public/assets/manifest.json"));
 });
