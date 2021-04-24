@@ -32,14 +32,13 @@ img: "https://cdn.discordapp.com/attachments/775220204699385886/8115693001961636
 </section>
 <script>
  const input = document.getElementById("searchInput");
+ console.log("hmm");
     input.addEventListener("keyup", async (event) => {
-     console.log("hmm");
         if (event.keyCode === 13) {
             await doSearch();
         } else return;
     });
     async function doSearch(){
-     console.log("ok");
      const page = document.getElementById("results");
      page.innerHTML="<p>Searching For Your Query, please wait...<p>";
      fetch("https://discord.rovelstars.com/api/bots?q="+encodeURI(input.value)).then(r=>r.json()).then(bots=>{
