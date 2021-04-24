@@ -73,7 +73,7 @@ twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
    $(".is-announcement").addClass("vivify fadeInBottom");
    $(".is-bot-card").addClass("vivify popIn");
    
-   var Canvas = document.getElementById('playground');
+   var Canvas = document.getElementsByClassName('playground');
 var ctx = Canvas.getContext('2d');
 
 var resize = function() {
@@ -168,5 +168,5 @@ setInterval(function() {
 }, 10);
 });
 </script>
-<canvas id="playground">
+<canvas class="playground">
 </canvas>
