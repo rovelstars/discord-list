@@ -379,16 +379,17 @@ router.get("/import/dbl/:id", (req, res) => {
  else res.json({ err: "no_key" });
 });
 router.post("/edit", async (req, res) => {
+ let err;
  if (!req.body.id) return res.json({ err: "no_id" });
    Bots.findOne({ id: req.body.id }).then(async bot => {
-    if(!bot) return res.json({err: "not_bot_found"});
+    if(!bot) err="not_bot_found";
     await fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(async d => {
-     if (d.err) return res.json({ err: "invalid_key" });
+     if (d.err) err="invalid_key";
      if (!bot.owners.includes(d.id)) return res.json({ err: "unauth" });
     });
     if (req.body.webhook) {
      if (req.body.webhook !== bot.webhook) {
-      if (!validator.isURL(req.body.webhook)) return res.json({ err: "invalid_webhook" });
+      if (!validator.isURL(req.body.webhook))err="invalid_webhook";
       else bot.webhook = req.body.webhook;
      }
     }
@@ -400,13 +401,13 @@ router.post("/edit", async (req, res) => {
         cond = d.condition;
        })
       }
-      if (!cond) return res.json({ err: "owner_not_in_server" });
+      if (!cond) err="owner_not_in_server";
       if (cond) bot.owners = req.body.owners;
      }
     }
     if (req.body.desc) {
      if (req.body.desc !== bot.desc) {
-      if (req.body.desc.length < 100) return res.json({ err: "invalid_desc" });
+      if (req.body.desc.length < 100) err="invalid_desc";
       else {
        bot.desc = coronaSanitizer(req.body.desc, {
         allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'iframe', 'style']),
@@ -420,7 +421,7 @@ router.post("/edit", async (req, res) => {
     }
     if (req.body.short) {
      if (req.body.short !== bot.short) {
-      if (req.body.short.length < 11) return res.json({ err: "invalid_short" });
+      if (req.body.short.length < 11)err="invalid_short";
       if (req.body.short.length > 150) {
        req.body.short = req.body.short.slice(0, 147) + "...";
       }
@@ -431,7 +432,7 @@ router.post("/edit", async (req, res) => {
      if (req.body.support !== bot.support) {
       if (!req.body.support.length > 18) {
        fetch(`https://discord.com/api/v7/invites/${req.body.support}`).then(r => r.json()).then(d => {
-        if ((d.code == 10006 || d.code == 0) || d.code != req.body.support) return res.json({ err: "invalid_support" });
+        if ((d.code == 10006 || d.code == 0) || d.code != req.body.support) err="invalid_support";
         else req.body.support = d.guild.id;
        })
        bot.support = await req.body.support;
@@ -441,13 +442,13 @@ router.post("/edit", async (req, res) => {
     }
     if (req.body.lib) {
      if (req.body !== bot.lib) {
-      if (req.body.lib.length > 11) return res.json({ err: "invalid_lib" });
+      if (req.body.lib.length > 11) err="invalid_lib";
       else bot.lib = req.body.lib;
      }
     }
     if (req.body.invite) {
      if (req.body.invite !== bot.invite) {
-      if (!validator.isURL(req.body.invite)) return res.json({ err: "invalid_invite" });
+      if (!validator.isURL(req.body.invite)) err="invalid_invite";
       else bot.invite = req.body.invite;
      }
     }
@@ -458,12 +459,17 @@ router.post("/edit", async (req, res) => {
     }
     if (req.body.bg) {
      if (req.body.bg !== bot.bg) {
-      if (!validator.isURL(req.body.bg)) return res.json({ err: "invalid_bg" });
+      if (!validator.isURL(req.body.bg)) err="invalid_bg";
       else bot.bg = req.body.bg;
      }
     }
+    if(!err){
     await bot.save();
     await res.json(bot);
+    }
+    else{
+     res.json({err});
+    }
    });
 });
 router.post("/new", async (req, res) => {
