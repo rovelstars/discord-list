@@ -8,7 +8,9 @@ if (message.member.hasPermission("ADMINISTRATOR")) {
      let Server = new Servers({
       id: message.guild.id,
       invite: invite.code,
-      owner: message.guild.owner.id
+      owner: message.guild.ownerID,
+      name: message.guild.name,
+      icon: message.guild.icon
      }).save((err, ser) => {
       if (err) message.reply("Nani?! An Error Occurred!\nI cannot add your server to RDL!\n" + err);
       message.channel.send("Successfully Added your server to RDL!\nPlease update the description of your server on the dashboard on RDL.");

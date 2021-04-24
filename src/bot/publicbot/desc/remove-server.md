@@ -1,0 +1,1 @@
+remove this server from RDL.
