@@ -21,7 +21,7 @@ img: "https://cdn.discordapp.com/attachments/775220204699385886/8115693001961636
                 Search Bot
             </h2>
             <p class="control has-icons-left has-icons-right">
-<input class="input is-rounded is-dark" id="searchInput" placeholder="Input a search phrase" type="text">
+<input class="input is-rounded is-dark" onkeyup="doSearch()" id="searchInput" placeholder="Input a search phrase" type="text">
 <span class="icon is-small is-left">
 <i class="bx bxs-search"></i>
 </span>
@@ -31,15 +31,10 @@ img: "https://cdn.discordapp.com/attachments/775220204699385886/8115693001961636
 </div>
 </section>
 <script>
- const input = document.getElementById("searchInput");
- console.log("hmm");
-    input.addEventListener("keyup", async (event) => {
-        if (event.keyCode === 13) {
-            await doSearch();
-        } else return;
-    });
     async function doSearch(){
-     const page = document.getElementById("results");
+      console.log("works");
+      let input = document.getElementById("searchInput");
+      let page = document.getElementById("results");
      page.innerHTML="<p>Searching For Your Query, please wait...<p>";
      fetch("https://discord.rovelstars.com/api/bots?q="+encodeURI(input.value)).then(r=>r.json()).then(bots=>{
      page.innerHTML = bots.map(bot={
