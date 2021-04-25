@@ -1,4 +1,20 @@
 const port = process.env.PORT || 3000;
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
 const actuator = require('express-actuator');
 const marked = require("marked");
 let BotAuth = require("@models/botauth.js");
@@ -145,12 +161,14 @@ app.get('/api/*', (req, res)=>{
 
 app.get("/", async (req, res) => {
  var bots = await Bots.find();
+ shuffle(bots);
  var user = req.user;
  await res.render('index.ejs', {user, bots});
 });
 
 app.get("/bots", async (req, res) => {
  var bots = await Bots.find();
+ shuffle(bots);
  var user = req.user;
  await res.render('bots.ejs', {user, bots});
 });
