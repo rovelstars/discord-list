@@ -21,7 +21,14 @@ var cookieParser = require("cookie-parser");
 app.use(cloudflare.restore({update_on_start:true}));
 app.disable('x-powered-by');
 app.use(cookieParser());
-app.use(compression());
+app.use(compression({filter: shouldCompress}));
+function shouldCompress (req, res) {
+  if (req.headers['x-no-compression']) {
+    // don't compress responses with this request header
+    return false
+  }
+  return compression.filter(req, res)
+}
 let log = console.log;
 const rovel = require("rovel.js")
 const fetch = rovel.fetch;
