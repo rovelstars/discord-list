@@ -21,7 +21,7 @@ var cookieParser = require("cookie-parser");
 app.use(cloudflare.restore({update_on_start:true}));
 app.disable('x-powered-by');
 app.use(cookieParser());
-app.use(compression({filter: shouldCompress}));
+app.use(compression({filter: false}));
 function shouldCompress (req, res) {
   if (req.headers['x-no-compression']) {
     // don't compress responses with this request header
