@@ -204,8 +204,8 @@ app.get("/sitemap.xml", async (req, res)=>{
 });*/
 let sitemap;
 async function gensitemap(){
- const allbots = await Bots.find({}).select('id');
- const botsmap = await allbots.map(function(id){`<url>\n<loc>${process.env.DOMAIN}/bots/${id}</loc>\n<lastmod>2022-04-26</lastmod>\n<priority>0.9</priority>\n<changefreq>hourly</changefreq></url>`}).join("\n");
+ const allbots = await Bots.find({});
+ const botsmap = await allbots.map(function(bot){`<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<lastmod>2022-04-26</lastmod>\n<priority>0.9</priority>\n<changefreq>hourly</changefreq></url>`}).join("\n");
  const Sitemap='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'+`\n<url>\n<loc>${process.env.DOMAIN}/</loc>\n<lastmod>2021-04-26T11:55:48+00:00</lastmod>\n<priority>1.00</priority><changefreq>daily</changefreq>\n</url>`+botsmap+'</urlset>';
  return Sitemap;
 };
