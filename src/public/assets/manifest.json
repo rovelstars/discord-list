@@ -36,10 +36,5 @@
   "background_color": "#272a36",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "any",
-  "protocol_handlers": [
-  {
-    "protocol": "rdl",
-    "url": "/"
-  }]
+  "orientation": "any"
 }
