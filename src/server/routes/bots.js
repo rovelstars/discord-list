@@ -270,7 +270,7 @@ router.get("/import/topgg/:id", (req, res) => {
      "Authorization": `${process.env.TOPTOKEN}`
     }
    }).then(r => r.json()).then(bot => {
-    console.log(bot);
+    if(bot.error) return res.json({err: bot.error});
     if (bot.owners.includes(userid)) {
      var abot = {
       id: bot.id,
