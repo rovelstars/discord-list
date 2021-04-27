@@ -4,6 +4,23 @@ desc: `${bot.short}`,
 img: bot.avatarURL
 }); %>
 </head>
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "View Bot",
+        "item": "https://discord.rovelstars.com/bots/<%= bot.id %>"
+    }, {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Bot",
+        "item": "<%= bot.invite %>"
+    }]
+}
+</script>
 <body>
  <%- include('partials/load'); %>
  <%- include('partials/navbar', {user}); %>

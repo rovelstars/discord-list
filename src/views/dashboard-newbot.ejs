@@ -1,0 +1,46 @@
+<%- include('partials/header', {
+title: "Rovel Discord List - RDL",
+desc: "The next gen all-in-one Discord List for Emojis, Users, Servers and Bots! Find the best stuff for yourself here! Or reach the top of the leaderboard with your friends!",
+img: "https://cdn.discordapp.com/attachments/775220204699385886/811569300196163604/robot.png"
+}); %>
+</head>
+<body>
+ <%- include('partials/load'); %>
+ <%- include('partials/navbar', {user}); %>
+ <section class="hero is-black">
+<div class="hero-body">
+<br>
+<div class="container has-text-centered">
+<h1 class="title">
+<span class="icon is-medium">
+<i aria-hidden="true" class="bx bxs-plus-square has-text-success"></i>
+</span>
+<br>
+<span>Add A New Bot!</span>
+</h1>
+<h2 class="subtitle"><span>
+And make sure our server if not done already, and also make sure your DMs are open in Rovel Stars server, in order to receive notifications about your bot!
+</span></h2>
+</div>
+</div>
+</section>
+<div class="container">
+<div class="section">
+<article id="errors" style="display: none;" class="message is-danger">
+<div class="message-body content has-background-primary">
+<ul id="errorList" style="margin-top: unset;">
+</ul>
+</div>
+</article>
+<form method="POST">
+<h3 class="is-size-3 has-text-default">
+General Information
+</h3>
+<br>
+<span>Your Bot ID</span>
+<input class="input is-primary" type="text" placeholder="1234567890">
+</div>
+</div>
+ <%- include('partials/footer'); %>
+</body>
+</html>
