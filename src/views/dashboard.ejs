@@ -42,7 +42,7 @@ img: `${user.avatarUrl(128)}`
 <div class="content">
 <p>
 <span class="is-size-4 title has-text-default is-mobile" style="font-family: discord;">
-<span><%= bot.username %>#<span class="has-text-grey"><%= bot.discriminator %></span></span>
+<span><%= bot.username %>#<span class="has-text-grey-light"><%= bot.discriminator %></span></span>
 </span>
 <br />
 <span class="has-text-grey-light"><%= bot.short %></span>
@@ -68,6 +68,43 @@ img: `${user.avatarUrl(128)}`
 </div>
 </div>
   <% } %>
+  <div class="column is-one-third" is-bot-card>
+<div class="box has-background-dark" style="overflow: hidden; height: 100%;">
+<article class="media">
+<div class="media-left">
+<figure class="image is-64x64">
+<img width="64" height="64" class="is-rounded" loading="lazy" src="/favicon.ico" alt="New Bot Avatar" onerror="this.onerror=null;this.src='/assets/img/logo.png';">
+</figure>
+</div>
+<div style="overflow: hidden;" class="media-content">
+<div class="content">
+<p>
+<span class="is-size-4 title has-text-default is-mobile" style="font-family: discord;">
+<span>New Bot#<span class="has-text-grey-light">0000</span></span>
+</span>
+<br />
+<span class="has-text-grey-light">Want to add a new bot to RDL? Let's start this new journey of getting your bot become popular!</span>
+</p>
+</div>
+<div class="content-footer">
+<div class="buttons">
+<a href="/dashboard/bots/new" class="box button is-info is-outlined">
+<span class="icon">
+<i class="bx bxs-envelope-open"></i>
+</span>
+<span>Add New Bot</span>
+</a>
+ <a href="https://discord.com/developers/applications" target="_blank" class="box button is-link is-outlined">
+<span class="icon">
+<i class="bx bxs-pencil"></i>
+</span>
+<span>Make A Discord Bot!</span>
+</a>
+</div>
+</div>
+</article>
+</div>
+</div>
   </div>
   </div>
  <%- include('partials/footer'); %>
