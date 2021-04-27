@@ -3,6 +3,18 @@ title: "Rovel Discord List - Bots",
 desc: "Find the next bot for your server!",
 img: "https://cdn.discordapp.com/attachments/775220204699385886/811569300196163604/robot.png"
 }); %>
+<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://www.example.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://discord.rovelstars.com/bots?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
 <script>
 let input = document.getElementById("searchInput");
 let page = document.getElementById("results");
