@@ -210,7 +210,7 @@ async function gensitemap(){
  return Sitemap;
 };
 (async()=>{sitemap = await gensitemap();});
-setInterval(async function(){sitemap = await gensitemap()},1000*3600*24);
+setInterval(async function(){sitemap = await gensitemap();fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);},1000*3600*24);
 app.get("/sitemap.xml", async (req, res)=>{
  res.header('Content-Type', 'application/xml');
  if(!sitemap){
