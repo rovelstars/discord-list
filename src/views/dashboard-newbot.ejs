@@ -4,6 +4,8 @@ desc: "The next gen all-in-one Discord List for Emojis, Users, Servers and Bots!
 img: "https://cdn.discordapp.com/attachments/775220204699385886/811569300196163604/robot.png"
 }); %>
 <script src="/assets/js/codemirror.js"></script>
+<script src="/assets/js/markdown.js"></script>
+<script src="/assets/js/xml.js"></script>
 <link rel="stylesheet" href="/assets/css/codemirror.css">
 </head>
 <body>
@@ -77,7 +79,7 @@ General Information
   <br />
   <p>Long Description</p>
   <p>
-   <input class="input" id="botdesc" placeholder="A very long description which supports both html and markdown!">
+   <textarea name="botdesc" id="botdesc" placeholder=""></textarea>
   </p>
   <br />
   <p>Background Image</p>
@@ -132,11 +134,15 @@ General Information
 </form>
 <script>
  var editor = CodeMirror.fromTextArea(document.getElementById("botdesc"), {
+    mode: "markdown",
     lineNumbers: true,
     styleActiveLine: true,
-    matchBrackets: true
+    matchBrackets: true,
+    htmlMode: true,
+    lineWrapping: true,
+    theme: "dracula"
   });
-  editor.setOption("theme", "dracula");
+  editor.setSize(null,"100%");
 </script>
 </div>
 </div>
