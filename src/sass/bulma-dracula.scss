@@ -1,7 +1,6 @@
 @import "./bulma-dracula-vars.scss";
 @import "../../node_modules/bulma/bulma.sass";
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Hammersmith+One&display=swap');
 @font-face {
  font-family: discord;
  src: url(https://discord.rovelstars.com/assets/font/sans.otf);
@@ -153,7 +152,7 @@ img.vert-move {
 }
 
 body {
- font-family: 'Fredoka One', sans-serif;
+ font-family: 'Hammersmith One', sans-serif;
  min-height: 100vh;
  display: flex;
  flex-direction: column;
