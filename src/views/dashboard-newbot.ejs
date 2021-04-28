@@ -3,6 +3,8 @@ title: "Rovel Discord List - RDL",
 desc: "The next gen all-in-one Discord List for Emojis, Users, Servers and Bots! Find the best stuff for yourself here! Or reach the top of the leaderboard with your friends!",
 img: "https://cdn.discordapp.com/attachments/775220204699385886/811569300196163604/robot.png"
 }); %>
+<script src="/assets/js/codemirror.js"></script>
+<link rel="stylesheet" href="/assets/css/codemirror.css">
 </head>
 <body>
  <%- include('partials/load'); %>
@@ -74,11 +76,8 @@ General Information
   </p>
   <br />
   <p>Long Description</p>
-  <p class="control has-icons-left">
+  <p>
    <input class="input" id="botdesc" placeholder="A very long description which supports both html and markdown!">
-   <span class="icon is-small is-left">
-    <i class="bx bxs-message-alt-detail"></i>
-   </span>
   </p>
   <br />
   <p>Background Image</p>
@@ -132,7 +131,12 @@ General Information
 </div>
 </form>
 <script>
- 
+ var editor = CodeMirror.fromTextArea(document.getElementById("botdesc"), {
+    lineNumbers: true,
+    styleActiveLine: true,
+    matchBrackets: true
+  });
+  editor.setOption("theme", "dracula");
 </script>
 </div>
 </div>
