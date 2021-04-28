@@ -3,10 +3,9 @@ title: "Rovel Discord List - RDL",
 desc: "The next gen all-in-one Discord List for Emojis, Users, Servers and Bots! Find the best stuff for yourself here! Or reach the top of the leaderboard with your friends!",
 img: "https://cdn.discordapp.com/attachments/775220204699385886/811569300196163604/robot.png"
 }); %>
-<script src="/assets/js/codemirror.js"></script>
-<script src="/assets/js/markdown.js"></script>
-<script src="/assets/js/xml.js"></script>
-<link rel="stylesheet" href="/assets/css/codemirror.css">
+<script src="https://live.prismjs.com/src/prism-live.js"></script>
+<script src="https://live.prismjs.com/src/prism-live-css.js"></script>
+<script src="https://live.prismjs.com/src/prism-live-markup.js"></script>
 </head>
 <body>
  <%- include('partials/load'); %>
@@ -79,7 +78,7 @@ General Information
   <br />
   <p>Long Description</p>
   <p>
-   <textarea name="botdesc" id="botdesc" placeholder=""></textarea>
+   <textarea class="prism-live language-html language-md" name="botdesc" id="botdesc" placeholder=""></textarea>
   </p>
   <br />
   <p>Background Image</p>
@@ -133,16 +132,6 @@ General Information
 </div>
 </form>
 <script>
- var editor = CodeMirror.fromTextArea(document.getElementById("botdesc"), {
-    mode: "markdown",
-    lineNumbers: true,
-    styleActiveLine: true,
-    matchBrackets: true,
-    htmlMode: true,
-    lineWrapping: true,
-    theme: "dracula"
-  });
-  editor.setSize(null,"100%");
 </script>
 </div>
 </div>
