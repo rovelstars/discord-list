@@ -11,10 +11,8 @@ function shuffle(array) {
     array[currentIndex] = array[randomIndex];
     array[randomIndex] = temporaryValue;
   }
-
   return array;
 }
-
 const actuator = require('express-actuator');
 const marked = require("marked");
 let BotAuth = require("@models/botauth.js");
@@ -176,32 +174,7 @@ app.get("/bots", async (req, res) => {
 app.get("/manifest.json", (req, res)=>{
  res.sendFile(path.resolve("src/public/assets/manifest.json"));
 });
-/*
-var sitemap;
-app.get("/sitemap.xml", async (req, res)=>{
- try{
- res.header('Content-Type', 'application/xml');
- res.header('Content-Encoding', 'gzip');
- if(sitemap){
-  res.send(sitemap);
-  return;
- }
- const allbots = await Bots.find({added: true}).select('id');
- const botsmap = await allbots.map((id)=>{`/bots/${id}`});
- 
- const smStream = new SitemapStream({ hostname: 'https://discord.rovelstars.com/' })
- const pipeline = smStream.pipe(createGzip())
- botsmap.forEach((item)=>{
-  smStream.write({ url: item, changefreq: 'daily', priority: 0.6})
- });
- streamToPromise(pipeline).then(sm=>sitemap=sm);
- pipeline.pipe(res).on('error', (e)=>{throw(e)});
- smStream.end();
- console.log("hmm",sitemap);
- } catch(e){
-  console.log(e);
- }
-});*/
+
 let sitemap;
 async function gensitemap(){
  const allbots = await Bots.find({});
@@ -209,8 +182,8 @@ async function gensitemap(){
  const Sitemap= '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'+`\n<url>\n<loc>${process.env.DOMAIN}/</loc>\n<priority>1.00</priority><changefreq>daily</changefreq>\n</url>`+botsmap+'</urlset>';
  return Sitemap;
 };
-(async()=>{sitemap = await gensitemap();});
-setInterval(async function(){sitemap = await gensitemap();fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);},1000*3600*24);
+(async()=>{sitemap = await gensitemap();fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);});
+setInterval(async function(){sitemap = await gensitemap();fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);},1000*3600*10);
 app.get("/sitemap.xml", async (req, res)=>{
  res.header('Content-Type', 'application/xml');
  if(!sitemap){
