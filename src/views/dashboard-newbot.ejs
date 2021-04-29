@@ -78,7 +78,7 @@ General Information
    <div class="desc-live">
    <textarea style="width:100%;" name="botdesc" id="botdesc" placeholder=""></textarea>
    <p class="has-text-grey-light">Live Preview</p>
-   <pre><code></code></pre>
+   <div class="container" id="livedesc"></div>
    </div>
   </p>
   <br />
@@ -133,13 +133,12 @@ General Information
 </div>
 </form>
 <script>
-var editor = document.querySelector(".code-editor textarea"),
-    visualizer = document.querySelector(".code-editor code");
+var editor = document.getElementById("botdesc");
+var visualizer = document.getElementById("livedesc");
 
-editor.addEventListener("input", (e) => {
-   visualizer.innerHTML = e.target.value;
-   Prism.highlightAll();
-})
+editor.addEventListener("keyup",async (e) => {
+   visualizer.innerHTML = editor.value;
+});
 </script>
 </div>
 </div>
