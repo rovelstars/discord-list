@@ -71,10 +71,6 @@ General Information
   <p>
    <div class="desc-live">
    <textarea style="width:100%;" name="botdesc" id="botdesc" placeholder=""></textarea>
-   <p class="has-text-grey-light">Live Preview</p>
-   <div class="container" id="livedesc"></div>
-   </div>
-  </p>
   <br />
   <p>Background Image</p>
   <p class="has-text-grey-light">Not necessary to provide one.</p>
@@ -126,12 +122,95 @@ General Information
   </p>
 </div>
 </form>
+<div class="preview">
+ <center><p> -Live Preview - </p></center>
+ <div class="hero-body">
+   <div class="container">
+    <div class="columns">
+     <div class="column is-2">
+      <img class="avatar image is-128x128" id="bot-avatar" style="margin: auto; border-radius: 50%;" src="https://discord.rovelstars.com/favicon.ico" alt="bot Avatar">
+     </div>
+     <div class="column is-10">
+         <h1 class="title" id="bot-username">Sample Bot
+   </h1><br />
+   <h4 class="subtitle" id="bot-short">
+    Sample Bot Description
+   </h4>
+   <div class="field is-grouped is-grouped-multiline">
+   <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Prefix</span>
+    <span class="tag is-danger" id="bot-prefix">Bot Prefix</span>
+    </div>
+  </div><br>
+   <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Library</span>
+    <span class="tag is-info" id="bot-lib">not known</span>
+    </div>
+  </div><br>
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Made by</span>
+    <span class="tag is-success"><strong>Due to API ratelimits, it won't be shown here.</strong></span>
+    </div>
+  </div><br>
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">In</span>
+    <span class="tag is-link">??? Servers
+    </span>
+    </div>
+  </div><br>
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Votes</span>
+    <span class="tag is-info">0</span>
+    </div>
+  </div>
+  </div>
+  </div>
+ </section>
+ <br>
+ <div class="container" style="overflow: hidden;">
+  <div class="section content" id="livedesc">
+   Bot Description
+  </div>
+ </div>
+</div>
 <script>
-var editor = document.getElementById("botdesc");
+var botdesc = document.getElementById("botdesc");
 var visualizer = document.getElementById("livedesc");
+var botid = document.getElementById("botid");
+botid.addEventListener("keyup", async(e)=>{
+ fetch("https://discord.rovelstars.com/api/client/users/"+botid.value).then(r=>r.json()).then(d=>{
+  document.getElementById("bot-image").src=(d.avatar)?`https://cdn.discordapp.com/avatars/${d.id}/${d.avatar}.png`:`https://cdn.discordapp.com/embed/avatars/0.png`;
+  document.getElementById("bot-username").innerText=d.username;
+ })
+});
 
-editor.addEventListener("keyup",async (e) => {
-   const dirtyhtml = marked(editor.value);
+var botshort = document.getElementById("botshort");
+botshort.addEventListener("keyup", async(e)=>{
+ document.getElementById("bot-short").innerText(botshort.value);
+});
+
+var botprefix = document.getElementById("botprefix");
+botshort.addEventListener("keyup", async(e)=>{
+ document.getElementById("bot-prefix").innerText(botprefix.value);
+});
+
+var botlib = document.getElementById("botlib");
+botshort.addEventListener("keyup", async(e)=>{
+ document.getElementById("bot-lib").innerText(botlib.value);
+});
+
+var botshort = document.getElementById("botshort");
+botshort.addEventListener("keyup", async(e)=>{
+ document.getElementById("bot-short").innerText(botshort.value);
+});
+
+botdesc.addEventListener("keyup",async (e) => {
+   const dirtyhtml = marked(botdesc.value);
    const noicehtml = sanitizeHtml(dirtyhtml, {
      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['discord-message', 'iframe', 'style']),
      allowVulnerableTags: true,
