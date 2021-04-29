@@ -132,7 +132,7 @@ var visualizer = document.getElementById("livedesc");
 
 editor.addEventListener("keyup",async (e) => {
    const dirtyhtml = marked(editor.value);
-   const noicehtml = sanitizeHtml(req.body.desc, {
+   const noicehtml = sanitizeHtml(dirtyhtml, {
      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['discord-message', 'iframe', 'style']),
      allowVulnerableTags: true,
      allowedAttributes: {
