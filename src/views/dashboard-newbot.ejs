@@ -3,6 +3,8 @@ title: "Rovel Discord List - RDL",
 desc: "The next gen all-in-one Discord List for Emojis, Users, Servers and Bots! Find the best stuff for yourself here! Or reach the top of the leaderboard with your friends!",
 img: "https://cdn.discordapp.com/attachments/775220204699385886/811569300196163604/robot.png"
 }); %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.3/marked.min.js" integrity="sha512-t1jq1b5U4hgz4lQoeyRD9QiVu99KxjyA939fnND+R+gLOHmuT5F9YFHJI1Nse1B1QG6/U11SPAc8fshYshb6MA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.27.5/sanitize-html.min.js" integrity="sha512-1WdDeZGPykoWawFKD3NGJfZM+4hq2+OxUF8ZJrrqFBNU3J+Q5Tgvn+XwHNt8HaVs1MRFFlAgtOgyJr6/mqN/xw==" crossorigin="anonymous"></script>
 </head>
 <body>
  <%- include('partials/load'); %>
@@ -26,14 +28,6 @@ And make sure to join our server if not done already, and also make sure your DM
 </section>
 <div class="container">
 <div class="section">
-<article id="errors" style="display: none;" class="is-danger">
-<span class="icon-text has-text-danger">
-  <span class="icon">
-    <i class="bx bxs-error"></i>
-  </span>
-  <span id="error_placeholder"></span>
-</span>
-</article>
 <form method="POST">
 <h1 class="is-size-3 has-text-default">
 General Information
@@ -137,7 +131,15 @@ var editor = document.getElementById("botdesc");
 var visualizer = document.getElementById("livedesc");
 
 editor.addEventListener("keyup",async (e) => {
-   visualizer.innerHTML = editor.value;
+   const dirtyhtml = marked(editor.value);
+   const noicehtml = sanitizeHtml(req.body.desc, {
+     allowedTags: sanitizeHtml.defaults.allowedTags.concat(['discord-message', 'iframe', 'style']),
+     allowVulnerableTags: true,
+     allowedAttributes: {
+      '*': ["*"]
+     }
+    });
+    visualizer.innerHTML = noicehtml;
 });
 </script>
 </div>
