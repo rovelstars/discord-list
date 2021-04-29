@@ -75,7 +75,11 @@ General Information
   <br />
   <p>Long Description</p>
   <p>
+   <div class="desc-live">
    <textarea style="width:100%;" name="botdesc" id="botdesc" placeholder=""></textarea>
+   <p class="has-text-grey-light">Live Preview</p>
+   <pre><code></code></pre>
+   </div>
   </p>
   <br />
   <p>Background Image</p>
@@ -129,6 +133,13 @@ General Information
 </div>
 </form>
 <script>
+var editor = document.querySelector(".code-editor textarea"),
+    visualizer = document.querySelector(".code-editor code");
+
+editor.addEventListener("input", (e) => {
+   visualizer.innerHTML = e.target.value;
+   Prism.highlightAll();
+})
 </script>
 </div>
 </div>
