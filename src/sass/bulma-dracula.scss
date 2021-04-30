@@ -1,6 +1,7 @@
 @import "./bulma-dracula-vars.scss";
 @import "../../node_modules/bulma/bulma.sass";
-@import url('https://fonts.googleapis.com/css2?family=Paytone+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
 @font-face {
  font-family: discord;
  src: url(https://discord.rovelstars.com/assets/font/sans.otf);
@@ -152,7 +153,7 @@ img.vert-move {
 }
 
 body {
- font-family: 'Paytone One', sans-serif;
+ font-family: 'Montserrat', sans-serif;
  min-height: 100vh;
  display: flex;
  flex-direction: column;
@@ -161,12 +162,12 @@ footer, .footer-img{
  margin-top: auto;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 {
  font-family: discord, sans-serif;
 }
 
