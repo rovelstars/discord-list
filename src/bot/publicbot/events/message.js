@@ -51,6 +51,6 @@ client.on("message", message => {
  else {
   let cmd = searchCommand(command);
    if (!cmd) return message.reply("Baka! That Komando Sonzai suru!");
-   else eval('try{'+cmd.code+'}catch(e){message.reply(`Nani?!\nI got an Error!\n\`\`\`\n${e}\n\`\`\``);}');
+   else eval('try{'+cmd.code+'} catch(e){message.reply(`Nani?!\nI got an Error!\n\`\`\`\n${e}\n\`\`\``)}');
  }
 });
