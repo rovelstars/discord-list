@@ -49,11 +49,7 @@ client.on("message", message => {
  }
  else {
   let cmd = searchCommand(command);
-  try {
    if (!cmd) return message.reply("That command Doesn't exist!");
-   else eval(cmd.code);
-  } catch (e) {
-   message.reply(`An Error Occured!\n\`\`\`\n${e}\n\`\`\``)
-  }
+   else eval('try{'+cmd.code+'}catch(e){message.reply(`An Error Occured!\n\`\`\`\n${e}\n\`\`\``);}');
  }
 });
