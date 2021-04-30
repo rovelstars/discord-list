@@ -513,7 +513,7 @@ router.post("/new", async (req, res) => {
      })
     }
     req.body.desc = coronaSanitizer(req.body.desc, {
-     allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'iframe', 'style']),
+     allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages', 'iframe', 'style']),
      allowVulnerableTags: true,
      allowedAttributes: {
       '*': ["*"]

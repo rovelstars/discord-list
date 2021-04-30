@@ -233,7 +233,7 @@ botgithub.addEventListener("keyup", async(e)=>{
 botdesc.addEventListener("keyup",async (e) => {
    const dirtyhtml = marked(botdesc.value);
    const noicehtml = sanitizeHtml(dirtyhtml, {
-     allowedTags: sanitizeHtml.defaults.allowedTags.concat(['discord-message', 'iframe', 'style']),
+     allowedTags: sanitizeHtml.defaults.allowedTags.concat(['discord-message','discord-messages', 'iframe', 'style']),
      allowVulnerableTags: true,
      allowedAttributes: {
       '*': ["*"]
