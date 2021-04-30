@@ -183,7 +183,7 @@ async function gensitemap(){
  return Sitemap;
 };
 (async()=>{sitemap = await gensitemap();fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);});
-setInterval(async function(){sitemap = await gensitemap();fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);},1000*3600*10);
+setInterval(async function(){sitemap = await gensitemap();fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);},3600000);
 app.get("/sitemap.xml", async (req, res)=>{
  res.header('Content-Type', 'application/xml');
  if(!sitemap){
@@ -292,4 +292,3 @@ app.get("/logout", async (req, res)=>{
 app.get("*", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/index.html"));
  });
- process.emit("testing", {hello: "world"});

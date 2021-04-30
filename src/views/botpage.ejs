@@ -43,7 +43,7 @@ img: bot.avatarURL
     <span class="tag is-dark">Prefix</span>
     <span class="tag is-danger"><%= bot.prefix %></span>
     </div>
-  </div><br>
+  </div><br />
    <div class="control">
     <div class="tags has-addons">
     <span class="tag is-dark">Library</span>
@@ -53,13 +53,13 @@ img: bot.avatarURL
     <span class="tag is-info"><%= bot.lib %></span>
     <% } %>
     </div>
-  </div><br>
+  </div><br />
   <div class="control">
     <div class="tags has-addons">
     <span class="tag is-dark">Made by</span>
     <span class="tag is-success"><%= bot.owner.join(", ") %></span>
     </div>
-  </div><br>
+  </div><br />
   <div class="control">
     <div class="tags has-addons">
     <span class="tag is-dark">In</span>
@@ -78,17 +78,31 @@ img: bot.avatarURL
     <% } %>
     </span>
     </div>
-  </div><br>
+  </div><br />
   <div class="control">
     <div class="tags has-addons">
     <span class="tag is-dark">Votes</span>
     <span class="tag is-info"><%= bot.votes %></span>
     </div>
+  </div><br /><% if(bot.support){ %>
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Support Server</span>
+    <span class="tag is-primary"><a href="<%= bot.support %>">Join</a></span>
+    </div><br /><% } %>
+    <% if(bot.github){ %>
+    <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Github</span>
+    <span class="tag is-success"><a href="<%= bot.github %>">Check Source Code</a></span>
+    </div>
+  </div>
+    <% } %>
   </div>
   </div>
   </div>
  </section>
- <br>
+ <br />
  <div class="container" style="overflow: hidden;">
   <div class="section content">
    <% if(bot.card.title){ %>

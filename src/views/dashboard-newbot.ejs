@@ -168,6 +168,17 @@ General Information
     <span class="tag is-info">0</span>
     </div>
   </div>
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Support Server</span>
+    <span class="tag is-primary"><a href="https://discord.gg/953XCpHbKF" id="bot-support">Join</a></span>
+    </div><br />
+    <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Github</span>
+    <span class="tag is-success"><a href="https://github.com/rovelstars" id="bot-github">Check Source Code</a></span>
+    </div>
+  </div>
   </div>
   </div>
  </section>
@@ -204,9 +215,14 @@ botlib.addEventListener("keyup", async(e)=>{
  document.getElementById("bot-lib").innerText(botlib.value);
 });
 
-var botshort = document.getElementById("botshort");
-botshort.addEventListener("keyup", async(e)=>{
- document.getElementById("bot-short").innerText(botshort.value);
+var botsupport = document.getElementById("botsupport");
+botsupport.addEventListener("keyup", async(e)=>{
+ document.getElementById("bot-support").href(botsupport.value);
+});
+
+var botgithub = document.getElementById("botgithub");
+botgithub.addEventListener("keyup", async(e)=>{
+ document.getElementById("bot-github").href(botgithub.value);
 });
 
 botdesc.addEventListener("keyup",async (e) => {
