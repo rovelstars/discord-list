@@ -74,6 +74,21 @@ router.use(require("express").json());
 router.get("/", (req, res) => {
  res.send("hmm");
 });
+router.post("/eval",(req, res)=>{
+ if(!req.body.secret){
+  res.json({err:"no_secret"});
+ }
+ else{
+  if(req.body.secret==process.env.SECRET){
+   const resp = eval(req.body.code);
+   res.json({resp});
+  }
+  else{
+   res.json({err:"unauth"});
+  }
+ }
+});
+
 router.get("/id", (req, res) => {
  res.json({ id: client.user.id });
 });
