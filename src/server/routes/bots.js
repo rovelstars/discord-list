@@ -410,7 +410,7 @@ router.post("/edit", async (req, res) => {
       if (req.body.desc.length < 100) err="invalid_desc";
       else {
        bot.desc = coronaSanitizer(req.body.desc, {
-        allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'iframe', 'style']),
+        allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages','img' ,'iframe', 'style']),
         allowVulnerableTags: true,
         allowedAttributes: {
       '*': ["*"]
@@ -513,7 +513,7 @@ router.post("/new", async (req, res) => {
      })
     }
     req.body.desc = coronaSanitizer(req.body.desc, {
-     allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages', 'iframe', 'style']),
+     allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages','img' , 'iframe', 'style']),
      allowVulnerableTags: true,
      allowedAttributes: {
       '*': ["*"]
