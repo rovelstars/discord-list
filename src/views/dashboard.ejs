@@ -45,7 +45,7 @@ img: `${user.avatarUrl(128)}`
 <span><%= bot.username %>#<span class="has-text-grey-light"><%= bot.discriminator %></span></span>
 </span>
 <br />
-<span class="has-text-grey-light"><%= bot.short %></span>
+<span class="has-text-grey-light"><%= ((bot.short.length>62)?(bot.short.slice(0,62)+"..."):bot.short) %></span>
 </p>
 </div>
 <div class="content-footer">
