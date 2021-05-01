@@ -66,7 +66,7 @@ router.get("/", async (req, res)=>{
     })
     await res.redirect("/");
  } catch(e){
-  res.json("Error!");
+  res.redirect("/");
   console.log(e);
  }
 });
