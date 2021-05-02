@@ -201,3 +201,13 @@ div.content iframe {
 .section{
  padding: 3rem 0.5rem;
 }
+
+@import "path/to/node_modules/keyboard-css/dist/scss/main";
+$kbc-primary: $is-primary;
+$kbc-secondary: $is-black;
+$kbc-success: $is-success;
+$kbc-info: $is-info;
+$kbc-warning: $is-warning;
+$kbc-danger: $is-danger;
+$kbc-light: $is-grey;
+$kbc-dark: $is-dark;
