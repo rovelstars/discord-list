@@ -14,10 +14,6 @@ if(client.owners.includes(message.author.id)){
    const pinged = args.includes("--everyone");
    const isrdl = args.includes("--rdl-related");
    const announcement = responses.first();
-   if(announcement=="cancel"){
-    message.reply("🙅 Cancelled Making Announcement!");
-   }
-   else{
    const msg = new Discord.MessageEmbed()
    .setTitle("New Announcement!")
    .setColor("RANDOM")
@@ -45,7 +41,7 @@ if(client.owners.includes(message.author.id)){
      }, 10000);
     })
    })
-  }}
+  }
  });
 }
 else{
