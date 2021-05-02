@@ -203,11 +203,11 @@ div.content iframe {
 }
 
 @import "../../node_modules/keyboard-css/dist/scss/main";
-$kbc-primary: $is-primary;
-$kbc-secondary: $is-black;
-$kbc-success: $is-success;
-$kbc-info: $is-info;
-$kbc-warning: $is-warning;
-$kbc-danger: $is-danger;
-$kbc-light: $is-grey;
-$kbc-dark: $is-dark;
+$kbc-primary: $primary;
+$kbc-secondary: $black;
+$kbc-success: $success;
+$kbc-info: $info;
+$kbc-warning: $warning;
+$kbc-danger: $danger;
+$kbc-light: $grey;
+$kbc-dark: $dark;
