@@ -22,7 +22,7 @@
   "validator": "13.6.0",
   "sanitize-html": "2.3.3",
   "node-schedule": "2.0.0",
-  "helmet": "4.4.1",
+  "helmet": "4.5.0",
   "cookie-parser": "1.4.5",
   "disco-oauth": "5.0.1",
   "express-rate-limit": "5.2.6",
