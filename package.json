@@ -43,6 +43,7 @@
   "@meanie/mongoose-to-json": "2.5.0"
  },
  "devDependencies": {
+  "sweetalert2": "10.16.6",
   "@sweetalert2/theme-dark": "4.0.5",
   "keyboard-css": "1.2.4",
   "pm2": "4.5.6",
