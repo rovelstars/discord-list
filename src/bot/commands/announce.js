@@ -14,6 +14,10 @@ if(client.owners.includes(message.author.id)){
    const pinged = args.includes("--everyone");
    const isrdl = args.includes("--rdl-related");
    const announcement = responses.first();
+   if(announcement=="cancel"){
+    message.reply("🙅 Cancelled Making Announcement!");
+   }
+   else{
    const msg = new Discord.MessageEmbed()
    .setTitle("New Announcement!")
    .setColor("RANDOM")
@@ -22,14 +26,14 @@ if(client.owners.includes(message.author.id)){
    .setTimestamp();
    if(!isrdl && pinged){
     client.guilds.cache.get("602906543356379156").channels.cache.get("775245886795808768").send(msg);
-    client.guilds.cache.get("602906543356379156").channels.cache.get("775245886795808768").send("everyone");
+    client.guilds.cache.get("602906543356379156").channels.cache.get("775245886795808768").send("@everyone ^");
    }
    else if(!isrdl && !pinged){
     client.guilds.cache.get("602906543356379156").channels.cache.get("775245886795808768").send(msg);
    }
    else if(isrdl && pinged){
     client.guilds.cache.get("602906543356379156").channels.cache.get("830791693904904212").send(msg);
-    client.guilds.cache.get("602906543356379156").channels.cache.get("830791693904904212").send("everyone");
+    client.guilds.cache.get("602906543356379156").channels.cache.get("830791693904904212").send("@everyone ^");
    }
    else {
     client.guilds.cache.get("602906543356379156").channels.cache.get("830791693904904212").send(msg);
@@ -41,7 +45,7 @@ if(client.owners.includes(message.author.id)){
      }, 10000);
     })
    })
-  }
+  }}
  });
 }
 else{
