@@ -1,40 +1,38 @@
 # Rovel Discord List
 
-> The Ultimate Discord List for Emojis, Users, Servers & Bots!
+> ## Like it? Consider Starring it! ⭐
+<br>
 
-This List is currently in **Work In Progress** and we are not sure the E.T.A for this. If you want to check the progress, or wanna talk with us, please join our server!
+## The Ultimate Discord List for Emojis, Users, Servers & Bots!
 
-[website link](https://discord.rovelstars.com)
+This List is currently a **Work In Progress** and we cannot provide an E.T.A for this reason. If you want to check the progress, or want to talk with us, please [join our server](https://discord.gg/953XCpHbKF)!
 
-[invite](https://discord.gg/953XCpHbKF)
+[Website Link](https://discord.rovelstars.com)
 
-## You like it? Star ⭐ it  please
+[Server Invite](https://discord.gg/953XCpHbKF)
 
----
 
 # License Notice
 ![License Notice](https://i.ibb.co/Q8vQDTs/image.png)
-- Keep your repository open source, with same license.
-- Link to our repository on website (if editing, it links here by default).
-
----
+- Keep your repository open source, with the same license.
+- Link our repository on the website.
 
 # Setup
-1. fill in the envs
-2. run `npm i && npm run build && npm start`
+1. Fill in the envs
+2. Run `npm i && npm run build && npm start`
 3. Enjoy!
 
 ---
 
-## Note:
+## Note
 
-We don't care about other's to setup their own list, and we will not tolerate any questions asked about how to setup your own instance of the list. But if you think there's some problem with our code which won't run on vps or other places, please do let us know.
+We will **not** assist or answer any questions about the setup of your own instance. If you think the problem is code related (won't run on other VPS etc..), please do let us know.
 
-Please keep bugs, issues and everything related to the code in our issues and pull requests. Taking them to our discord server will be **IGNORED**. The website feedback looks for your likes and dislikes on the front end as well as suggestions, but not for fixes or problems. Please bring them here if you really want help/to help.
+Please keep **bugs**, **issues** and **code related subjects** in our issues and pull requests. If they are posted on our Discord server they will be **IGNORED**. The website feedback looks at your likes, dislikes and suggestions on the front end, but not for bugfixes or other problems. Please bring them here if you really want help/to help.
 
 ---
 
-This project is open sourced for allowing us to be transparent in our work, and to prove that we are good. If you're trying to setup it, please do so only if you're testing it or helping us.
-If you're running it publicly, as a self deployment, make sure to let us know about your website link in our support server.
+This project is open source to allow us to be transparent in our work and to prove we do not have bad intentions. If you're trying to run it, please only do so if you're testing or helping us.
+If your instance is public, make sure to let us know about your website in our support server.
 
-> Thank you for your time and love that made us make this possible!
+> Thank you for your time, love and support that make this project possible!
