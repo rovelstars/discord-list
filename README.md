@@ -11,10 +11,7 @@ This List is currently in **Work In Progress** and we are not sure the E.T.A for
 ## You like it? Star ⭐ it  please
 
 # Important Notice !
-There's no license attached, and that means:
-> When you make a creative work (which includes code), the work is under exclusive copyright by default. Unless you include a license that specifies otherwise, nobody else can copy, distribute, or modify your work without being at risk of take-downs, shake-downs, or litigation. Once the work has other contributors (each a copyright holder), “nobody” starts including you.
-
-For more information about the license, please visit [here](https://choosealicense.com/no-permission/)
+<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://discord.rovelstars.com">License for Rovel Discord List</a> by <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://github.com/sayantan300">Sayantan Das (sayantan300/rovelstars)</a> is licensed under <a href="http://creativecommons.org/licenses/by-nc/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Attribution-NonCommercial 4.0 International<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"></a></p>
 
 # Setup
 1. fill in the envs
