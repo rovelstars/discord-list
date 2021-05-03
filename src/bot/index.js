@@ -13,7 +13,7 @@ client.emojiapprovers = emojiapprovers;
 client.mods = mods;
 client.contributors = contributors;
 client.commands = [];
-const prefix = "hmm!" || process.env.PREFIX;
+const prefix = process.env.PREFIX;
 const prompter = require('discordjs-prompter');
 
 function getMention(mention) {
