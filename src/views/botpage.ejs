@@ -121,7 +121,12 @@ img: bot.avatarURL
    <%- bot.desc %>
   </div>
  </div>
+ <br>
+ <div class="container">
  <div id="disqus_thread"></div>
+ <br>
+ <div id="disqus_recommendations"></div>
+ </div>
 <script>
     /**
     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
@@ -135,6 +140,7 @@ img: bot.avatarURL
     s.src = 'https://roveldiscord.disqus.com/embed.js';
     s.setAttribute('data-timestamp', +new Date());
     (d.head || d.body).appendChild(s);
+    window.DISQUS_RECOMMENDATIONS.reset()
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments.</a></noscript>
