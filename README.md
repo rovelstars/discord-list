@@ -13,7 +13,9 @@ This List is currently a **Work In Progress** and we cannot provide an E.T.A for
 
 
 # License Notice
+
 ![License Notice](https://i.ibb.co/Q8vQDTs/image.png)
+
 - Keep your repository open source, with the same license.
 - Link our repository on the website.
 
