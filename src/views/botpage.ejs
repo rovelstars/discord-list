@@ -76,14 +76,16 @@ img: bot.avatarURL
   </div><br /><% if(bot.support){ %>
   <div class="control">
     <div class="tags has-addons">
-    <span class="tag is-dark">Support Server</span>
-    <span class="tag is-primary"><a href="<%= bot.support %>" style="color:white;">Join</a></span>
+     <a href="<%= bot.support %>">
+    <span class="tag is-dark" style="color:white;">Support Server</span>
+    <span class="tag is-primary" style="color:white;">Join</span></a>
     </div><br /><% } %>
     <% if(bot.github){ %>
     <div class="control">
     <div class="tags has-addons">
-    <span class="tag is-dark">Github</span>
-    <span class="tag is-success"><a href="<%= bot.github %>" style="color:black;">Check Source Code</a></span>
+     <a href="<%= bot.github %>">
+    <span class="tag is-dark" style="color:white;">Github</span>
+    <span class="tag is-success" style="color:black;">Check Source Code</span></a>
     </div>
   </div>
     <% } %>
