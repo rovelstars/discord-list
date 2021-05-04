@@ -505,13 +505,13 @@ router.post("/new", async (req, res) => {
     if (!req.body.prefix) return res.json({ err: "no_prefix" });
     if (!req.body.invite) return res.json({ err: "no_invite" });
     if (!req.body.support) return res.json({ err: "no_support" });
-    if (!req.body.support.length > 18) {
+    req.body.support = req.body.support.replace("https://discord.gg","");
+    if (req.body.support.length <= 18) {
      fetch(`https://discord.com/api/v7/invites/${req.body.support}`).then(r => r.json()).then(d => {
-      console.log(d);
       if ((d.code == 10006 || d.code == 0) || d.code != req.body.support) return res.json({ err: "invalid_support" });
-      else req.body.support = d.guild.id;
      })
     }
+    if(req.body.support.length>=18) return res.json({err: "invalid_support"});
     req.body.desc = coronaSanitizer(req.body.desc, {
      allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages','img' , 'iframe', 'style']),
      allowVulnerableTags: true,

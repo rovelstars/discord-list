@@ -312,7 +312,81 @@ function addBot(){
  "invite": botinvite.value
   })
  }).then(r=>r.json()).then(d=>{
-  Swal.fire((d.err)?d.err:"Added Bot!");
+  if(d.err){
+   let err;
+   var title = d.err.split("_").map(a => a.charAt(0).toUpperCase() + a.substring(1).toLowerCase()).join(" ")
+   if(d.err=="no_id"){
+    err="Please Write The Bot ID"
+   }
+   if(d.err=="bot_already_added"){
+    err="The Bot Has Been Added To Our List."
+   }
+   if(d.err=="cannot_add_user"){
+    err="We cannot add a user as a bot"
+   }
+   if(d.err=="cannot_add_invalid_user"){
+    err="The ID you gave is invalid"
+   }
+   if(d.err=="invalid_bg"){
+    err="The Background Image is invalid"
+   }
+   if(d.err=="no_owners"){
+    err="Huh? Did you Messed with the site or what?!"
+   }
+   if(d.err=="no_short"){
+    err="Please Write Short Description"
+   }
+   if(d.err=="invalid_short"){
+    err="Short Description should be atleast 10 characters long"
+   }
+   if(d.err=="invalid_webhook"){
+    err="Please provide a valid https/http webhook url"
+   }
+   if(d.err=="invalid_invite"){
+    err="Please provide a valid https/http url"
+   }
+   if(d.err=="no_desc"){
+    err="Please provide long description"
+   }
+   if(d.err=="invalid_lib"){
+    err="Please provide a valid discord library"
+   }
+   if(d.err=="invalid_desc"){
+    err="Please Provide more than 100 length for Long Description"
+   }
+   if(d.err=="no_prefix"){
+    err="Please provide a bot prefix"
+   }
+   if(d.err=="no_support"){
+    err="Please provide your server invite in support section"
+   }
+   if(d.err=="no_invite"){
+    err="Please provide a link to add your bot"
+   }
+   if(d.err=="invalid_support"){
+     err="Please provide a valid discord.gg url"
+   }
+   if(d.err=="owner_not_in_server"){
+    err="Either you or one of your bot owners are not in our support server. Please join/make them join our server in order to add your bot"
+   }
+   if(!err){
+    err="Uh Oh! There's some other error. Please report the title of this notification to our github issues."
+   }
+   Swal.fire({
+  icon: 'error',
+  title,
+  text: err,
+  footer: '<a href="/server">Why do I have this error?</a>'
+})
+  }
+  else{
+   Swal.fire({
+    icon: 'success',
+    title: "Bot Added!",
+    text: "And now make sure your DMs are open in our server!",
+    footer: '<a href="/server">Why do I need to keep DMs open?</a>'
+   })
+  }
  })
 }
 </script>
