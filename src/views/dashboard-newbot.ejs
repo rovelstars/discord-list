@@ -244,6 +244,12 @@ botdesc.addEventListener("keyup",async (e) => {
     visualizer.innerHTML = noicehtml;
     Prism.highlightAll();
     twemoji.parse(document.body);
+    var theme = document.getElementById("meta-theme");
+    if(theme){
+     const color = theme.innerText;
+     document.querySelector('meta[name="theme-color"]').setAttribute('content',color);
+     document.querySelector('meta[name="theme-color"]').setAttribute('msapplication-navbutton-color',color);
+    }
 });
 </script>
 </div>

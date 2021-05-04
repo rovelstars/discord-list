@@ -141,6 +141,13 @@ img: bot.avatarURL
     (d.head || d.body).appendChild(s);
     window.DISQUS_RECOMMENDATIONS.reset()
     })();
+    
+    var theme = document.getElementById("meta-theme");
+    if(theme){
+     const color = theme.innerText;
+     document.querySelector('meta[name="theme-color"]').setAttribute('content',color);
+     document.querySelector('meta[name="theme-color"]').setAttribute('msapplication-navbutton-color',color);
+    }
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments.</a></noscript>
       <%- include('partials/footer'); %>
