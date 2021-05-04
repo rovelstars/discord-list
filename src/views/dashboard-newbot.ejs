@@ -267,6 +267,8 @@ botgithub.addEventListener("keyup", async(e)=>{
  document.getElementById("bot-donate").href=botdonate.value;
 });
 
+var botinvite = document.getElementById("botinvite");
+
 botdesc.addEventListener("keyup",async (e) => {
    const dirtyhtml = marked(botdesc.value);
    const noicehtml = sanitizeHtml(dirtyhtml, {
@@ -296,20 +298,18 @@ function addBot(){
    "content-type":"application/json"
   },
   body: JSON.stringify({
-   {
   "id": botid.value,
  "lib": botlib.value,
  "owners": owners,
  "short": botshort.value,
  "desc": botdesc.value,
-"bg": botbg.value,
-"prefix": botprefix.value,
+ "bg": botbg.value,
+ "prefix": botprefix.value,
  "support": botsupport.value,
  "github": botsupport.github,
  "website": botwebsite.value,
  "donate": botdonate.value,
- "invite": 
-}
+ "invite": botinvite.value
   })
  }).then(r=>r.json()).then(d=>{
   Swal.fire((d.err)?d.err:"Added Bot!");
