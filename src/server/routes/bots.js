@@ -394,6 +394,7 @@ router.post("/edit", async (req, res) => {
      }
     }
     if (req.body.owners) {
+      req.body.owners = [...new Set(req.body.owners)];
      if (req.body.owners !== bot.owners) {
       var cond = true;
       for (const owner of req.body.owners) {
@@ -490,6 +491,7 @@ router.post("/new", async (req, res) => {
      if (!validator.isURL(req.body.bg)) return res.json({ err: "invalid_bg" });
     }
     if (!req.body.owners) return res.json({ err: "no_owners" });
+    req.body.owners = [...new Set(req.body.owners)];
     if (!req.body.short) return res.json({ err: "no_short" });
     if (req.body.short.length < 11) return res.json({ err: "invalid_short" });
     if (req.body.short.length > 150) {
