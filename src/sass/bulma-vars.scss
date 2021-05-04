@@ -31,12 +31,12 @@ $info: #9b84ee;
 $success: #43b581;
 $warning: #faa61a;
 $danger: #f04747;
-$dark: #2f3136;
-$grey: #36393f;
+$dark: darken(#2f3136,10%);
+$grey: #99aab5;
 
 $text: #ffffff;
-$text-light: lighten(#ffffff, 5%);
-$text-strong: darken(#ffffff, 5%);
+$text-light: lighten(#99aab5, 5%);
+$text-strong: darken(#99aab5, 5%);
 
 $background: #2f3136;
 
