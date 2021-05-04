@@ -1,7 +1,7 @@
 # Rovel Discord List
 
 > ## Like it? Consider Starring it! ⭐
-<br>
+<br />
 
 ## The Ultimate Discord List for Emojis, Users, Servers & Bots!
 
