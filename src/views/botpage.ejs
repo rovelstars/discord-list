@@ -78,12 +78,21 @@ img: bot.avatarURL
     <div class="tags has-addons">
      <a href="https://discord.gg/<%= bot.support %>">
     <span class="tag is-dark" style="color:white;">Support Server</span><span class="tag is-primary" style="color:white;">Join</span></a>
+    </div>
     </div><br /><% } %>
     <% if(bot.github){ %>
     <div class="control">
     <div class="tags has-addons">
      <a href="<%= bot.github %>">
     <span class="tag is-dark" style="color:white;">Github</span><span class="tag is-success" style="color:black;">Check Source Code</span></a>
+    </div>
+  </div>
+    <% } %>
+    <% if(bot.donate){ %>
+    <div class="control">
+    <div class="tags has-addons">
+     <a href="<%= bot.donate %>">
+    <span class="tag is-dark" style="color:white;">Donate</span><span class="tag is-warning" style="color:black;">Money</span></a>
     </div>
   </div>
     <% } %>

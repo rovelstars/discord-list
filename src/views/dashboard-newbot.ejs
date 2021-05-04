@@ -121,8 +121,21 @@ General Information
     <i class="bx bx-money"></i>
    </span>
   </p>
+  <br />
+  <p>Bot Invite Link</p>
+  <p class="control has-icons-left">
+   <input class="input" id="botinvite" placeholder="https://discord.com/api/oauth2/authorize...">
+   <span class="icon is-small is-left">
+    <i class="bx bxs-plus-square"></i>
+   </span>
+  </p>
 </div>
 </form>
+<br />
+<div class="has-text-centered">
+ <button class="button is-success" onclick="addBot()">Add Bot</button>
+</div>
+<br />
 <div class="preview">
  <center><p> -Live Preview - </p></center>
  <div class="hero-body">
@@ -173,13 +186,20 @@ General Information
     <div class="tags has-addons">
      <a href="https://discord.gg/953XCpHbKF" id="bot-support">
     <span class="tag is-dark" style="color:white;">Support Server</span>
-    <span class="tag is-primary" style="color:white;">Join</span></a>
+    <span class="tag is-primary" style="color:white;">Join</span></a></div>
     </div><br />
     <div class="control">
     <div class="tags has-addons">
      <a href="https://github.com/rovelstars/discord-list" id="bot-github">
     <span class="tag is-dark" style="color:white;">Github</span>
     <span class="tag is-success" style="color:black;">Check Source Code</span></a>
+    </div>
+  </div>
+  <br />
+  <div class="control">
+    <div class="tags has-addons">
+     <a id="bot-donate" href="">
+    <span class="tag is-dark" style="color:white;">Donate</span><span class="tag is-warning" style="color:black;">Money</span></a>
     </div>
   </div>
   </div>
@@ -207,6 +227,16 @@ botid.addEventListener("keyup", async(e)=>{
  })
 });
 
+var owners=["<%= user.id %>"];
+var botowners = document.getElementById("botowners");
+botowners.addEventListener("keyup", async(e)=>{
+ var temp;
+ temp = botowners.value.split(",").map(s=>s.trim());
+ for(i=0;i<temp.length;i++){
+  owners.push(temp[i]);
+ }
+});
+
 var botshort = document.getElementById("botshort");
 botshort.addEventListener("keyup", async(e)=>{
  document.getElementById("bot-short").innerText=botshort.value;
@@ -232,6 +262,11 @@ botgithub.addEventListener("keyup", async(e)=>{
  document.getElementById("bot-github").href=botgithub.value;
 });
 
+var botdonate = document.getElementById("botdonate");
+botgithub.addEventListener("keyup", async(e)=>{
+ document.getElementById("bot-donate").href=botdonate.value;
+});
+
 botdesc.addEventListener("keyup",async (e) => {
    const dirtyhtml = marked(botdesc.value);
    const noicehtml = sanitizeHtml(dirtyhtml, {
@@ -252,6 +287,32 @@ botdesc.addEventListener("keyup",async (e) => {
      document.querySelector('meta[name="theme-color"]').setAttribute('msapplication-navbutton-color',color);
     }
 });
+function addBot(){
+ fetch("https://discord.rovelstars.com/api/bots/new",{
+  method: "POST",
+  headers: {
+   "content-type":"application/json"
+  },
+  body: JSON.stringify({
+   {
+  "id": botid.value,
+ "lib": botlib.value,
+ "owners": owners,
+ "short": botshort.value,
+ "desc": botdesc.value,
+"bg": botbg.value,
+"prefix": botprefix.value,
+ "support": botsupport.value,
+ "github": botsupport.github,
+ "website": botwebsite.value,
+ "donate": botdonate.value,
+ "invite": 
+}
+  })
+ }).then(r=>r.json()).then(d=>{
+  Swal.fire((d.err)?d.err:"Added Bot!");
+ })
+}
 </script>
 </div>
 </div>
