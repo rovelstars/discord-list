@@ -144,6 +144,7 @@ img: bot.avatarURL
     
     var theme = document.getElementById("meta-theme");
     if(theme){
+     theme.style.display="none";
      const color = theme.innerText;
      document.querySelector('meta[name="theme-color"]').setAttribute('content',color);
      document.querySelector('meta[name="theme-color"]').setAttribute('msapplication-navbutton-color',color);
