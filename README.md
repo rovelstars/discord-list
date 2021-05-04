@@ -5,6 +5,8 @@
 
 ## The Ultimate Discord List for Emojis, Users, Servers & Bots!
 
+<img src="https://cdn.discordapp.com/attachments/775220204699385886/839101027264757780/Screenshot_20210504-1657052.jpg" style="width: 100%"></img>
+
 This List is currently a **Work In Progress** and we cannot provide an E.T.A for this reason. If you want to check the progress, or want to talk with us, please [join our server](https://discord.gg/953XCpHbKF)!
 
 [Website Link](https://discord.rovelstars.com)
