@@ -291,6 +291,8 @@ botdesc.addEventListener("keyup",async (e) => {
      const color = theme.innerText;
      document.querySelector('meta[name="theme-color"]').setAttribute('content',color);
      document.querySelector('meta[name="theme-color"]').setAttribute('msapplication-navbutton-color',color);
+     var nav = document.getElementsByClassName("navbar is-fixed-top");
+  nav[0].style.backgroundColor = color;
     }
 });
 function addBot(){
