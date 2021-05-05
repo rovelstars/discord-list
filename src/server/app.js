@@ -170,7 +170,6 @@ async function UpdateBots(){
  TopVotedBots = await Bots.find({}).sort({votes: -1});
  NewAddedBots = await Bots.find({}).sort({timestamp: -1});
 }
-setInterval(UpdateBots(),1000*3600);
 app.get("/bots", async (req, res) => {
  shuffle(bots);
  var user = req.user;
