@@ -4,17 +4,22 @@ desc: "Find the next bot for your server!",
 img: "https://cdn.discordapp.com/attachments/775220204699385886/811569300196163604/robot.png"
 }); %>
 <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "url": "https://discord.rovelstars.com/",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://discord.rovelstars.com/bots?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
+{
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://discord.rovelstars.com"
+    }, {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Bots",
+        "item": "https://discord.rovelstars.com/bots"
+    }]
+}
+</script>
 <script>
 let input = document.getElementById("searchInput");
 let page = document.getElementById("results");
@@ -25,8 +30,13 @@ input.addEventListener("keyup", async (event) => {
     });
 
     function doSearch(){
+     document.getElementById("loadtext").innerText="Searching for your query!"
+     $("#object").fadeIn();
+     $("#loading").fadeIn();
      page.innerHTML="<p>Searching For Your Query, please wait...<p>";
      fetch("https://discord.rovelstars.com/api/bots?q="+encodeURI(input.value)).then(r=>r.json()).then(bots=>{
+      $("#object").fadeOut();
+      $("#loading").fadeOut();
      if(!bots.length){ page.innerHTML = "<p>Uh Oh! No Bots found related to your query! 😔";twemoji.parse(document.body);}
      else {
      page.innerHTML = bots.map(bot=>`<div class="column is-one-third is-bot-card">\n<div class="box has-background-dark" style="overflow: hidden; height: 100%;">\n<article class="media">\n<div class="media-left">\n<figure class="image is-64x64">\n<img width="64" height="64" class="is-rounded" loading="lazy" src="${bot.avatarURL}" alt="${bot.username} Avatar" onerror="this.onerror=null;this.src='/assets/img/logo.png';">\n</figure>\n</div>\n<div style="overflow: hidden;" class="media-content">\n<div class="content">\n<p>\n<span class="is-size-4 title has-text-default is-mobile" style="font-family: discord;">\n<span>${ bot.username }#<span class="has-text-grey-light">${ bot.discriminator }</span></span>\n</span>\n<br />\n<span class="has-text-grey-light">${ bot.short }</span>\n</p>\n</div>\n<div class="content-footer">\n<div class="buttons">\n<a href="/bots/${ bot.id }" class="box button is-info is-outlined">\n<span class="icon">\n<i class="bx bxs-detail"></i>\n</span>\n<span>View</span>\n</a>\n<a href="${bot.invite}" target="_blank" class="box button is-link is-outlined">\n<span class="icon">\n<i class="bx bxs-plus-circle"></i>\n</span>\n<span>Add</span>\n</a>\n</div>\n</div>\n</article>\n</div>\n</div>`).join("");}
