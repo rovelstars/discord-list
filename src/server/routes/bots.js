@@ -274,7 +274,7 @@ router.get("/import/topgg/:id", (req, res) => {
     if (bot.owners.includes(userid)) {
      var abot = {
       id: bot.id,
-      lib: bot.lib,
+      lib: (bot.lib=="")?null:bot.lib,
       prefix: bot.prefix,
       short: bot.shortdesc,
       desc: bot.longdesc,
@@ -312,7 +312,7 @@ router.get("/import/del/:id", (req, res) => {
     if (bot.owner.id == user.id) {
      var abot = {
       id: bot.bot.id,
-      lib: bot.bot.library,
+      lib: (bot.bot.library=="")?null:bot.bot.library,
       prefix: bot.bot.prefix,
       short: bot.shortDesc,
       desc: bot.longDesc,
@@ -482,6 +482,12 @@ router.post("/new", async (req, res) => {
  let err;
  Bots.findOne({ id: req.body.id }).then(async result => {
   if (result) err= "bot_already_added";
+  if(!err){
+   if(req.body.github=="") req.body.github = null;
+    if(req.body.bg=="") req.body.bg= null;
+    if(req.body.support=="") req.body.support = null;
+    if(req.body.donate=="") req.body.donate = null;
+  }
   if (!err && !result) {
    try {
     if (!err && !req.body.id) err= "no_id";
@@ -517,7 +523,8 @@ router.post("/new", async (req, res) => {
     if (!err && !req.body.prefix) err= "no_prefix"
     if (!err && !req.body.invite) err= "no_invite"
     if (!err && req.body.support){
-    req.body.support = req.body.support.replace("discord.gg","");
+    req.body.support = req.body.support.replace("discord.gg/","");
+    req.body.support = req.body.support.replace("discord.com/invite/","");
     req.body.support.replace("https://","");
     if(!err){
      fetch(`https://discord.com/api/v7/invites/${req.body.support}`).then(r => r.json()).then(d => {
