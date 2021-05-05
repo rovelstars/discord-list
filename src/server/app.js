@@ -167,9 +167,11 @@ app.get("/", async (req, res) => {
 let TopVotedBots;
 let NewAddedBots;
 async function UpdateBots(){
- TopVotedBots = await Bots.find({}).sort({votes: -1});
- NewAddedBots = await Bots.find({}).sort({timestamp: -1});
+ TopVotedBots = await Bots.find({}).sort({votes: -1}).limit(10);
+ NewAddedBots = await Bots.find({});
+ NewAddedBots = NewAddedBots.reverse().slice(0,10);
 }
+UpdateBots();
 app.get("/bots", async (req, res) => {
  shuffle(bots);
  var user = req.user;
