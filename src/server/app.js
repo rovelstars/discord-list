@@ -175,7 +175,7 @@ UpdateBots();
 app.get("/bots", async (req, res) => {
  shuffle(bots);
  var user = req.user;
- await res.render('bots.ejs', {user, bots: NewAddedBots});
+ await res.render('bots.ejs', {user, nbots: NewAddedBots});
 });
 
 app.get("/manifest.json", (req, res)=>{

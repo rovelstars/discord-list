@@ -72,9 +72,9 @@ input.addEventListener("keyup", async (event) => {
 </section>
 <div class="container is-fluid">
  <div class="columns is-multiline is-centered" id="results">
-  <h1>Top Voted Bots</h1>
+  <h1>New Bots!</h1>
   <br />
-  <%- bots.map(bot => include('partials/card', {bot})).join(""); %>
+  <%- nbots.map(bot => include('partials/card', {bot})).join(""); %>
   </div>
 </div>
  <%- include('partials/footer'); %>
