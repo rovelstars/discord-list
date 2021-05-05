@@ -91,6 +91,7 @@ General Information
   </p>
   <br />
   <p>Github Source Code</p>
+  <p class="has-text-grey-light">Not necessary to provide one.</p>
   <p class="control has-icons-left">
    <input class="input" id="botgithub" placeholder="https://github.com/rovelstars/rovel-discord-list">
    <span class="icon is-small is-left">
@@ -99,6 +100,7 @@ General Information
   </p>
   <br />
   <p>Support Server</p>
+  <p class="has-text-grey-light">Not necessary to provide one.</p>
   <p class="control has-icons-left">
    <input class="input" id="botsupport" placeholder="https://discord.gg/953XCpHbKF">
    <span class="icon is-small is-left">
@@ -107,6 +109,7 @@ General Information
   </p>
   <br />
   <p>Website</p>
+  <p class="has-text-grey-light">Not necessary to provide one.</p>
   <p class="control has-icons-left">
    <input class="input" id="botwebsite" placeholder="https://discord.rovelstars.com">
    <span class="icon is-small is-left">
@@ -115,6 +118,7 @@ General Information
   </p>
   <br />
   <p>Donate</p>
+  <p class="has-text-grey-light">Not necessary to provide one.</p>
   <p class="control has-icons-left">
    <input class="input" id="botdonate" placeholder="paypal, patreon, etc.">
    <span class="icon is-small is-left">
@@ -357,8 +361,8 @@ function addBot(){
    if(d.err=="no_prefix"){
     err="Please provide a bot prefix"
    }
-   if(d.err=="no_support"){
-    err="Please provide your server invite in support section"
+   if(d.err=="invalid_donate"){
+    err="Please provide a URL for donate if you want donations. Or leave it blank if you don't want donations"
    }
    if(d.err=="no_invite"){
     err="Please provide a link to add your bot"
@@ -367,7 +371,7 @@ function addBot(){
      err="Please provide a valid discord.gg url"
    }
    if(d.err=="owner_not_in_server"){
-    err="Either you or one of your bot owners are not in our support server. Please join/make them join our server in order to add your bot"
+    err="Either you or one of your bot owners are not in our support server. Please join/make them join our server in order to add your bot. Link in navbar"
    }
    if(d.err=="invalid_github"){
     err="Please provide a valid github repository URL"

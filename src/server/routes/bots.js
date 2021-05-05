@@ -382,33 +382,33 @@ router.post("/edit", async (req, res) => {
  let err;
  if (!req.body.id) return res.json({ err: "no_id" });
    Bots.findOne({ id: req.body.id }).then(async bot => {
-    if(!bot) err="not_bot_found";
+    if(!err && !bot) err="not_bot_found";
     await fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(async d => {
-     if (d.err) err="invalid_key";
-     if (!bot.owners.includes(d.id)) return res.json({ err: "unauth" });
+     if (!err && d.err) err="invalid_key";
+     if (!err && !bot.owners.includes(d.id)) "unauth"
     });
-    if (req.body.webhook) {
-     if (req.body.webhook !== bot.webhook) {
-      if (!validator.isURL(req.body.webhook))err="invalid_webhook";
+    if (!err && req.body.webhook) {
+     if (!err && req.body.webhook !== bot.webhook) {
+      if (!err && !validator.isURL(req.body.webhook))err="invalid_webhook";
       else bot.webhook = req.body.webhook;
      }
     }
-    if (req.body.owners) {
+    if (!err && req.body.owners) {
       req.body.owners = [...new Set(req.body.owners)];
-     if (req.body.owners !== bot.owners) {
+     if (!err && (req.body.owners !== bot.owners)) {
       var cond = true;
       for (const owner of req.body.owners) {
        await fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r => r.json()).then(d => {
-        cond = d.condition;
+        cond = (cond==true && d.condition==false)?false:true;
        })
       }
-      if (!cond) err="owner_not_in_server";
-      if (cond) bot.owners = req.body.owners;
+      if (!err && !cond) err="owner_not_in_server";
+      if (!err && cond) bot.owners = req.body.owners;
      }
     }
-    if (req.body.desc) {
-     if (req.body.desc !== bot.desc) {
-      if (req.body.desc.length < 100) err="invalid_desc";
+    if (!err && req.body.desc) {
+     if (!err && req.body.desc !== bot.desc) {
+      if (!err && req.body.desc.length < 100) err="invalid_desc";
       else {
        bot.desc = coronaSanitizer(req.body.desc, {
         allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages','img' ,'iframe', 'style']),
@@ -420,48 +420,53 @@ router.post("/edit", async (req, res) => {
       }
      }
     }
-    if (req.body.short) {
-     if (req.body.short !== bot.short) {
+    if (!err && req.body.short) {
+     if (!err && req.body.short !== bot.short) {
       if (req.body.short.length < 11)err="invalid_short";
-      if (req.body.short.length > 150) {
+      if (!err && req.body.short.length > 150) {
        req.body.short = req.body.short.slice(0, 147) + "...";
       }
       bot.short = req.body.short;
      }
     }
-    if (req.body.support) {
+    if (!err && req.body.support) {
      if (req.body.support !== bot.support) {
-      if (!req.body.support.length > 18) {
-       fetch(`https://discord.com/api/v7/invites/${req.body.support}`).then(r => r.json()).then(d => {
+      req.body.support = req.body.support.replace("discord.gg","");
+      req.body.support.replace("https://","");
+      if(req.body.support!==""){
+      fetch(`https://discord.com/api/v7/invites/${req.body.support}`).then(r => r.json()).then(d => {
         if ((d.code == 10006 || d.code == 0) || d.code != req.body.support) err="invalid_support";
-        else req.body.support = d.guild.id;
        })
-       bot.support = await req.body.support;
-      }
      }
-     else bot.support = req.body.support;
-    }
-    if (req.body.lib) {
+     else bot.support = (req.body.support=="")?null:req.body.support;
+    }}
+    if (!err && req.body.lib) {
      if (req.body !== bot.lib) {
       if (req.body.lib.length > 11) err="invalid_lib";
       else bot.lib = req.body.lib;
      }
     }
-    if (req.body.invite) {
+    if (!err && req.body.invite) {
      if (req.body.invite !== bot.invite) {
       if (!validator.isURL(req.body.invite)) err="invalid_invite";
       else bot.invite = req.body.invite;
      }
     }
-    if (req.body.prefix) {
+    if (!err && req.body.prefix) {
      if (req.body.prefix !== bot.prefix) {
       bot.prefix = req.body.prefix;
      }
     }
-    if (req.body.bg) {
+    if (!err && req.body.bg) {
      if (req.body.bg !== bot.bg) {
       if (!validator.isURL(req.body.bg)) err="invalid_bg";
-      else bot.bg = req.body.bg;
+      else bot.bg = (req.body.bg=="")?null:req.body.bg;
+     }
+    }
+    if(!err && req.body.github){
+     if(req.body.github!==bot.github){
+      if(!req.body.github.match(gitregex)) err="invalid_github";
+      else bot.github = (req.body.github=="")?null:req.body.github;
      }
     }
     if(!err){
@@ -474,64 +479,71 @@ router.post("/edit", async (req, res) => {
    });
 });
 router.post("/new", async (req, res) => {
- //validator start
+ let err;
  Bots.findOne({ id: req.body.id }).then(async result => {
-  if (result) return res.json({ err: "bot_already_added" });
-  if (!result) {
+  if (result) err= "bot_already_added";
+  if (!err && !result) {
    try {
-    if (!req.body.id) return res.json({ err: "no_id" });
+    if (!err && !req.body.id) err= "no_id";
     await fetch(`https://discord.com/api/v7/users/${req.body.id}`, {
      headers: {
       "Authorization": `Bot ${process.env.TOKEN}`
      }
     }).then(r => r.json()).then(async user => {
-     if (user.bot == undefined) return res.json({ err: "cannot_add_user" });
-     if (user.code == 10013) return res.json({ err: "cannot_add_invalid_user" });
-    if (req.body.bg) {
-     if (!validator.isURL(req.body.bg)) return res.json({ err: "invalid_bg" });
+     if (!err && (user.bot == undefined)) err= "cannot_add_user"
+     if (!err && (user.code == 10013)) err= "cannot_add_invalid_user"
+    if (!err && req.body.bg) {
+     if (!validator.isURL(req.body.bg)) err= "invalid_bg"
     }
-    if (!req.body.owners) return res.json({ err: "no_owners" });
+    if (!err && !req.body.owners) err= "no_owners"
+    
     req.body.owners = [...new Set(req.body.owners)];
-    if (!req.body.short) return res.json({ err: "no_short" });
-    if (req.body.short.length < 11) return res.json({ err: "invalid_short" });
-    if (req.body.short.length > 150) {
+    
+    if (!err && !req.body.short) err= "no_short"
+    if (!err && (req.body.short.length < 11)) err= "invalid_short"
+    if (!err && (req.body.short.length > 150)) {
      req.body.short = req.body.short.slice(0, 147) + "...";
     }
-    if(req.body.webhook){
-    if (!validator.isURL(req.body.webhook)) return res.json({ err: "invalid_webhook" });
+    if(!err && req.body.webhook){
+    if (!validator.isURL(req.body.webhook)) err= "invalid_webhook"
     }
-    if (!validator.isURL(req.body.invite)) return res.json({ err: "invalid_invite" });
-    if (!req.body.desc) return res.json({ err: "no_desc" });
-    if (req.body.lib.length > 11) return res.json({ err: "invalid_lib" });
-    if (req.body.desc.length < 100) return res.json({ err: "invalid_desc" });
-    if (!req.body.prefix) return res.json({ err: "no_prefix" });
-    if (!req.body.invite) return res.json({ err: "no_invite" });
-    if (!req.body.support) return res.json({ err: "no_support" });
-    req.body.support = req.body.support.replace("https://discord.gg","");
-    if (req.body.support.length <= 18) {
+    if (!err && !validator.isURL(req.body.invite)) err= "invalid_invite"
+    if(!err && req.body.donate){
+     if(!validator.isURL(req.body.donate)) err="invalid_donate"
+    }
+    if (!err && !req.body.desc) err="no_desc"
+    if (!err && req.body.lib.length > 11) err="invalid_lib"
+    if (!err && (req.body.desc.length < 100)) err="invalid_desc"
+    if (!err && !req.body.prefix) err= "no_prefix"
+    if (!err && !req.body.invite) err= "no_invite"
+    if (!err && req.body.support){
+    req.body.support = req.body.support.replace("discord.gg","");
+    req.body.support.replace("https://","");
+    if(!err){
      fetch(`https://discord.com/api/v7/invites/${req.body.support}`).then(r => r.json()).then(d => {
-      if ((d.code == 10006 || d.code == 0) || d.code != req.body.support) return res.json({ err: "invalid_support" });
-     })
+      if ((d.code == 10006 || d.code == 0) || d.code != req.body.support) err= "invalid_support"
+     })}
+    if(!err && (req.body.support.length>=18)) err: "invalid_support"
     }
-    if(req.body.support.length>=18) return res.json({err: "invalid_support"});
-    if(req.body.github){
-     if(!req.body.github.match(gitregex)) return res.json({err:"invalid_github"});
+    if(!err && req.body.github){
+     if(!req.body.github.match(gitregex)) err="invalid_github"
     }
+    if(!err && req.body.desc){
     req.body.desc = coronaSanitizer(req.body.desc, {
      allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages','img' , 'iframe', 'style']),
      allowVulnerableTags: true,
      allowedAttributes: {
       '*': ["*"]
      }
-    });
-    var cond = true;
+    });}
     for (const owner of req.body.owners) {
      await fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r => r.json()).then(d => {
-      cond = d.condition;
+      if(!err && !d.condition){
+      err="owner_not_in_server"
+      }
      })
     }
-    //end of validation
-    if (cond) {
+    if (!err) {
      fetch(`https://discord.com/api/v7/users/${req.body.id}`, {
       headers: {
        "Authorization": `Bot ${process.env.TOKEN}`
@@ -552,16 +564,16 @@ router.post("/new", async (req, res) => {
        prefix: req.body.prefix,
        verified: false,
        lib: req.body.lib,
-       support: req.body.support,
-       bg: req.body.bg,
-       github: req.body.github,
-       website: req.body.website,
-       donate: req.body.donate,
+       support: (req.body.support=="")?null:req.body.support,
+       bg: (req.body.bg)?null:req.body.bg,
+       github: (req.body.github=="")?null:req.body.github,
+       website: (req.body.website=="")?null:req.body.website,
+       donate: (req.body.donate=="")?null:req.body.donate,
        invite: req.body.invite
       }).save((err, bot) => {
        if (err) { console.log("err" + err); return res.send({ err }); }
        if (!err) {
-        res.send({ botAdded: true });
+        res.send({ success: true });
         fetch("https://discord.rovelstars.com/api/client/log", {
          method: "POST",
          headers: {
@@ -581,7 +593,9 @@ router.post("/new", async (req, res) => {
       });
      })
     }
-    else res.json({ err: "owner_not_in_server" });
+    if(err){
+     res.json({err});
+    }
    });
    }
    catch (e) {
