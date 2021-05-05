@@ -158,8 +158,23 @@ body {
  display: flex;
  flex-direction: column;
 }
-footer, .footer-img{
+footer, .wave{
  margin-top: auto;
+ background: url(/assets/img/waves.svg);
+ background-size: 1000px 100px;
+}
+
+.wave.wave1{
+ animation: animate 30s linear infinite;
+}
+
+@keyframes animate {
+ 0%{
+  background-position-x: 0;
+ }
+ 100%{
+  background-position-x: 1000px;
+ }
 }
 
 h1, .h1,
