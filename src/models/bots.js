@@ -57,6 +57,9 @@ Bots.virtual('avatarURL').get(function(){
 Bots.virtual('tag').get(function(){
  return `${this.username}#${this.discriminator}`;
 });
+Bots.virtual('timestamp').get(function(){
+ return `${~~(this._id / 1000)}`
+})
 Bots.index({'$**': 'text'});
 var bots;
 try{

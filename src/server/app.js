@@ -164,11 +164,17 @@ app.get("/", async (req, res) => {
  await res.render('index.ejs', {user, bots});
 });
 
+let TopVotedBots;
+let NewAddedBots;
+async function UpdateBots(){
+ TopVotedBots = await Bots.find({}).sort({votes: -1});
+ NewAddedBots = await Bots.find({}).sort({timestamp: -1});
+}
+setInterval(UpdateBots(),1000*3600);
 app.get("/bots", async (req, res) => {
- var bots = await Bots.find();
  shuffle(bots);
  var user = req.user;
- await res.render('bots.ejs', {user, bots});
+ await res.render('bots.ejs', {user, bots: NewAddedBots});
 });
 
 app.get("/manifest.json", (req, res)=>{
