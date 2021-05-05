@@ -12,6 +12,7 @@
   "node": "^15.x"
  },
  "dependencies": {
+  "express-amp": "1.0.9",
   "diacritics": "1.3.0",
   "cheerio": "1.0.0-rc.6",
   "discordjs-prompter": "2.0.4",

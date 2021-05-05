@@ -31,6 +31,7 @@ let client = require("@bot/index.js");
 let auth = require("@utils/auth.js");
 const authRoute = require("@routes/authclient.js");
 module.exports = { app, port };
+let AMP = require("express-amp");
 var cookieParser = require("cookie-parser");
 app.use(cloudflare.restore({update_on_start:true}));
 app.disable('x-powered-by');
@@ -139,6 +140,11 @@ var weblog = async function(req, res, next) {
  next();
 }
 app.use(weblog);
+
+app.use(AMP({
+ override: true,
+ staticsPath: `${path.resolve("src/public/assets/amp")}`
+}));
 
 log("[SERVER] Started!\n[SERVER] Webhooks started!");
 
