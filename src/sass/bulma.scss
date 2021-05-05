@@ -165,10 +165,10 @@ footer, .wave{
 }
 
 .wave.wave1{
- animation: animate 30s linear infinite;
+ animation: wavea1 30s linear infinite;
 }
 
-@keyframes animate {
+@keyframes wavea1 {
  0%{
   background-position-x: 0;
  }
