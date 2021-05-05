@@ -306,7 +306,7 @@ function addBot(){
  "bg": botbg.value,
  "prefix": botprefix.value,
  "support": botsupport.value,
- "github": botsupport.github,
+ "github": botgithub.github,
  "website": botwebsite.value,
  "donate": botdonate.value,
  "invite": botinvite.value
@@ -369,6 +369,9 @@ function addBot(){
    if(d.err=="owner_not_in_server"){
     err="Either you or one of your bot owners are not in our support server. Please join/make them join our server in order to add your bot"
    }
+   if(d.err=="invalid_github"){
+    err="Please provide a valid github repository URL"
+   }
    if(!err){
     err="Uh Oh! There's some other error. Please report the title of this notification to our github issues."
    }
@@ -385,7 +388,9 @@ function addBot(){
     title: "Bot Added!",
     text: "And now make sure your DMs are open in our server!",
     footer: '<a href="/server">Why do I need to keep DMs open?</a>'
-   })
+   }).then(hmm=>{
+    window.location.replace(`/bots/${botid.value}`);
+   });
   }
  })
 }

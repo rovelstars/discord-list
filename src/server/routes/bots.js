@@ -13,7 +13,7 @@ const rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = 0;
 rule.hour = 12;
 rule.minute = 0;
-
+var gitregex = /(https?:\/\/)?github.com\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+/i;
 const job = schedule.scheduleJob(rule, async function() {
  const hmm = await Bots.updateMany({}, { votes: 0 });
  fetch(`${process.env.DOMAIN}/api/client/log`, {
@@ -514,6 +514,9 @@ router.post("/new", async (req, res) => {
      })
     }
     if(req.body.support.length>=18) return res.json({err: "invalid_support"});
+    if(req.body.github){
+     if(!req.body.github.match(gitregex)) return res.json({err:"invalid_github"});
+    }
     req.body.desc = coronaSanitizer(req.body.desc, {
      allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages','img' , 'iframe', 'style']),
      allowVulnerableTags: true,
