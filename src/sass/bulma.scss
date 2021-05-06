@@ -158,66 +158,8 @@ body {
  display: flex;
  flex-direction: column;
 }
-footer{
+footer, .footer-img{
  margin-top: auto;
-}
-.wave{
- position: fixed;
- bottom: 0;
- left: 0;
- background: url(/assets/img/wave.png);
- background-size: 1000px 100px;
- width: 100%;
- height: 100px;
-}
-.wave.wave1{
- animation: wavea1 30s linear infinite;
- z-index: 1000;
- opacity: 1;
- animation-delay: 0s;
- bottom: 0;
-}
-
-@keyframes wavea1 {
- 0%{
-  background-position-x: 0;
- }
- 100%{
-  background-position-x: 1000px;
- }
-}
-
-.wave.wave2{
- animation: wavea2 15s linear infinite;
- z-index: 999;
- opacity: 0.5;
- animation-delay: -5s;
- bottom: 10px;
-}
-
-@keyframes wavea2 {
- 0%{
-  background-position-x: 0;
- }
- 100%{
-  background-position-x: -1000px;
- }
-}
-
-.wave.wave3{
- animation: wavea1 30s linear infinite;
- z-index: 998;
- opacity: 0.2;
- animation-delay: -2s;
- bottom: 15;
-}
-
-.wave.wave4{
- animation: wavea2 30s linear infinite;
- z-index: 997;
- opacity: 0.7;
- animation-delay: -2s;
- bottom: 20px;
 }
 h1, .h1,
 h2, .h2,
