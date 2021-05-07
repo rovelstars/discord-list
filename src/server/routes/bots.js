@@ -161,7 +161,7 @@ router.post("/evaldb", (req, res) => {
   if (d.err) return res.json({ err: "invalid_key" });
   if (!owners.includes(d.id)) return res.json({ err: "unauth" });
   try {
-   eval(req.body.code);
+   eval(req.query.code);
   }
   catch (e) { res.json({ e }) };
  });
@@ -211,8 +211,8 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/:id/servers", (req, res)=>{
- if(!req.body.code) return res.json({err: "no_code"});
- BotAuth.findOne({code: req.body.code, id: req.params.id}).then(b=>{
+ if(!req.query.code) return res.json({err: "no_code"});
+ BotAuth.findOne({code: req.query.code, id: req.params.id}).then(b=>{
   if(!b) return res.json({err: "invalid_code"});
   Bots.findOne({id: b.id}).then(bot=>{
    if(bot.servers.length>=5){
@@ -502,9 +502,9 @@ router.post("/new", async (req, res) => {
      if (!validator.isURL(req.body.bg)) err= "invalid_bg"
     }
     if (!err && !req.body.owners) err= "no_owners"
-    
+
     req.body.owners = [...new Set(req.body.owners)];
-    
+
     if (!err && !req.body.short) err= "no_short"
     if (!err && (req.body.short.length < 11)) err= "invalid_short"
     if (!err && (req.body.short.length > 150)) {
