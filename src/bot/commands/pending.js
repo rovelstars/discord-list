@@ -5,7 +5,7 @@ Bots.find({added: false}).limit(5).then(bots=>{
    if(!d.condition){
     msg+=`<https://discord.com/api/oauth2/authorize?client_id=${bot.id}&permissions=0&scope=bot> - ${bot.tag}\n`
    }
-   message.channel.send(msg);
   });
  }
+ message.channel.send(msg);
 })
