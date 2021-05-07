@@ -1,4 +1,49 @@
 client.on("guildMemberRemove", (member)=>{
+ if(!member.bot){
+  Bots.find({$text:{$search: member.id}}).then(async bots=>{
+   for(const bot of bots){
+    if(bot.owners[0]==member.id){
+     Bots.deleteOne({id: bot.id},function(err){
+      fetch("https://discord.rovelstars.com/api/client/log", {
+        method: "POST",
+        headers: {
+         "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+         "secret": process.env.SECRET,
+         "desc": `Bot ${bot.tag} (${bot.id}) has been deleted because the main owner left the server.\nThe data deleted is:\n\`\`\`\n${JSON.stringify(bot)}\n\`\`\`\nIncase it was deleted accidentally, the above data may be added back again manually if the bot is added back to RDL`,
+         "title": "Bot Deleted!",
+         "color": "#ff0000",
+         "owners": bot.owners,
+         "img": bot.avatarURL,
+         "url": `https://discord.rovelstars.com/`
+        })
+       });
+     });
+    }
+    else if(bot.owners.includes(member.id)){
+     Bots.findOne({id: bot.id}).then(d=>{
+      d.added = false;
+      d.save();
+      fetch("https://discord.rovelstars.com/api/client/log", {
+        method: "POST",
+        headers: {
+         "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+         "secret": process.env.SECRET,
+         "desc": `Bot ${bot.tag} (${bot.id}) was stopped listing because one of the secondary owners left the server. Please ask them to join back to make this bot list back again.`,
+         "title": "Bot Stopped Listing!",
+         "color": "#ff0000",
+         "owners": bot.owners,
+         "img": bot.avatarURL,
+         "url": `https://discord.rovelstars.com/`
+        })
+       });
+     })
+    }
+    }});
+ }
  if(member.bot){
    Bots.findOne({id: member.id}).then(bot=>{
     if(!bot) return;
@@ -7,7 +52,7 @@ client.on("guildMemberRemove", (member)=>{
      const msg = new Discord.MessageEmbed()
     .setTitle(`${bot.tag} Stopped Listing!`)
     .setColor("#FF0000")
-    .setDescription(`**${bot.username}** has been removed from our server and had been stopped getting listed from now on until it's added back!`)
+    .setDescription(`**${bot.tag}** has been removed from our server and had been stopped getting listed from now on until it's added back!`)
     .setTimestamp()
     .setThumbnail(bot.avatarURL);
     bot.save();
