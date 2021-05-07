@@ -21,6 +21,11 @@ img: bot.avatarURL
     }]
 }
 </script>
+<% if(!bot.added){ %>
+<script>
+ Swal.fire({icon: "warning", title: "<%= bot.tag %> has not been listed!", text: "Please do not add this bot since it's waiting for approval. Or don't scream afterwards that your server was messed up by these bots.", footer: '<a href="/server">Ask us whether is bot is safe or not.</a>'});
+</script>
+<% } %>
 </head>
 <body>
  <%- include('partials/load'); %>

@@ -158,7 +158,7 @@ app.get('/api/*', (req, res)=>{
 })
 
 app.get("/", async (req, res) => {
- var bots = await Bots.find();
+ var bots = await Bots.find({added: true});
  shuffle(bots);
  var user = req.user;
  await res.render('index.ejs', {user, bots});
@@ -167,8 +167,8 @@ app.get("/", async (req, res) => {
 let TopVotedBots;
 let NewAddedBots;
 async function UpdateBots(){
- TopVotedBots = await Bots.find({}).sort({votes: -1}).limit(10);
- NewAddedBots = await Bots.find({});
+ TopVotedBots = await Bots.find({added: true}).sort({votes: -1}).limit(10);
+ NewAddedBots = await Bots.find({added: true});
  NewAddedBots = NewAddedBots.reverse().slice(0,10);
 }
 UpdateBots();
