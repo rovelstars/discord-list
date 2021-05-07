@@ -557,6 +557,7 @@ router.post("/new", async (req, res) => {
       if (!info.avatar) {
        info.avatar = (info.discriminator % 5).toString();
       }
+      fetch(`${process.env.DOMAIN}/api/client/mainservers/${req.body.id}`).then(r=>r.json()).then(dd=>{
       const bot = new Bots({
        id: req.body.id,
        webhook: req.body.webhook,
@@ -564,6 +565,7 @@ router.post("/new", async (req, res) => {
        discriminator: info.discriminator,
        avatar: info.avatar,
        owners: req.body.owners,
+       added: dd.condition,
        short: req.body.short,
        desc: req.body.desc,
        prefix: req.body.prefix,
@@ -587,7 +589,7 @@ router.post("/new", async (req, res) => {
          body: JSON.stringify({
           "secret": process.env.SECRET,
           "img": bot.avatarURL,
-          "desc": `**${info.username}** has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\``,
+          "desc": `**${info.username}** has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${(dd.condition==true)?"\nThe bot has been already added to the server, so they are saved as 'added'":""}`,
           "title": "New Bot Added!",
           "color": "#31CB00",
           "owners": bot.owners,
@@ -595,6 +597,7 @@ router.post("/new", async (req, res) => {
          })
         });
        }
+      });
       });
      })
     }
