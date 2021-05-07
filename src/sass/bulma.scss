@@ -210,3 +210,29 @@ $kbc-button-warning: $warning;
 $kbc-button-danger: $danger;
 $kbc-button-light: $grey;
 $kbc-button-dark: $dark;
+
+.btn5 {
+  overflow: hidden;
+  transition: all 300ms ease;
+}
+
+.btn5:after {
+  width: 300%;
+  height: 300%;
+  left: -300%;
+  transform: rotate(45deg);
+ /* background-color: #f21170;*/
+  transition: all 300ms ease;
+}
+
+.btn5:hover h4 {
+  z-index: 10;
+}
+
+.btn5:hover::after {
+  left: -100%;
+}
+
+/*.btn5:hover {
+  border: 2px solid #f21170;
+}*/
