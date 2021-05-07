@@ -1,0 +1,1 @@
+Get the bots which aren't in the server and are meant to be added.
