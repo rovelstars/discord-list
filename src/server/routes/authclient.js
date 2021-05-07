@@ -22,17 +22,17 @@ router.get("/", async (req, res) => {
     console.log(e);
    }*/
   Users.findOne({ id: user.id }).then(result => {
-   if (!result) {
+   if (!result) {/*
     tempdis = user.discriminator;
     dis = "";
     while (3 - dis.length > 0) {
      dis += "0";
     }
-    dis += tempdis;
+    dis += tempdis;*/
     const User = new Users({
      id: user.id,
      username: user.username,
-     discriminator: dis,
+     discriminator: user.discriminator,
      avatar: (user.avatarHash) ? user.avatarHash : (user.discriminator % 5)
     }).save((err, userr) => {
      if (err) return console.log(err);
@@ -45,7 +45,7 @@ router.get("/", async (req, res) => {
        "secret": process.env.SECRET,
        "title": `${userr.tag} account created!`,
        "desc": `${userr.tag} (${user.id}) has got a new account automatically on RDL after logining for the first time! So Hey new user **${user.username}**\nWelcome to Rovel Discord List!\nHere you can add your bots, servers, emojis, find your friends, and earn money to vote for your favourite bot!\nSo let's get started on your new journey on RDL!`,
-       "owners": user.id,
+        "owners": user.id,
        "img": user.avatarUrl,
        "url": `${process.env.DOMAIN}/users/${user.id}`
       })
