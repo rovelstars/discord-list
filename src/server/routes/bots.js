@@ -212,15 +212,13 @@ router.get("/:id", (req, res) => {
 
 router.post("/:id/servers", (req, res)=>{
  if(!req.query.code) return res.json({err: "no_code"});
+ if(isNaN(req.body.count)) return res.json({err: "NaN"});
  BotAuth.findOne({code: req.query.code, id: req.params.id}).then(b=>{
   if(!b) return res.json({err: "invalid_code"});
   Bots.findOne({id: b.id}).then(bot=>{
-   if(bot.servers.length>=5){
-    bot.servers.shift();
-   }
-   bot.servers.push({count: req.body.count});
+   bot.servers = req.body.count;
    bot.save();
-   res.json(bot.servers);
+   res.json({success: "true"});
   })
  })
 });

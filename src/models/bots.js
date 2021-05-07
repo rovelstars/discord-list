@@ -34,11 +34,7 @@ const Bots = new Schema({
  website: String, //website link
  donate: String, //donate account link
  invite: String, // invite link
- servers: [{
-  count: {type: Number, default: 1 },
- time: {
-  default: () => new Date(), type: Date}
- }], //servers number
+ servers: { type: Number, default: 1 },
  promoted: { type: Boolean, default: false },
  votes: { type: Number, default: 0 },
  badges: [{ type: String }],
