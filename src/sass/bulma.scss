@@ -211,12 +211,12 @@ $kbc-button-danger: $danger;
 $kbc-button-light: $grey;
 $kbc-button-dark: $dark;
 
-.btn5 {
+.button {
   overflow: hidden;
   transition: all 300ms ease;
 }
 
-.btn5:after {
+.button:after {
   width: 300%;
   height: 300%;
   left: -300%;
@@ -225,11 +225,11 @@ $kbc-button-dark: $dark;
   transition: all 300ms ease;
 }
 
-.btn5:hover h4 {
+.button:hover span {
   z-index: 10;
 }
 
-.btn5:hover::after {
+.button:hover::after {
   left: -100%;
 }
 
