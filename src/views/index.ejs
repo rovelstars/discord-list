@@ -63,9 +63,18 @@ img: "https://cdn.discordapp.com/attachments/775220204699385886/8115693001961636
     </div>
 </section>
 <div class="container is-fluid">
+            <div class="section">
+                <h2 class="is-size-3 has-text-centered has-text-default">
+                    <span class="icon is-medium iconalign">
+                        <i class="bx bxs-bot"></i>
+                    </span>
+                    <span>Random Bots</span>
+                </h2>
+                <br />
  <div class="columns is-multiline is-centered">
   <%- bots.map(bot => include('partials/card', {bot})).join(""); %>
   </div>
+</div>
 </div>
  <%- include('partials/footer'); %>
 </body>

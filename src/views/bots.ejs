@@ -39,6 +39,7 @@ input.addEventListener("keyup", async (event) => {
       $("#loading").fadeOut();
      if(!bots.length){ page.innerHTML = "<p>Uh Oh! No Bots found related to your query! 😔";twemoji.parse(document.body);}
      else {
+      document.getElementById("results-title").style.display="none";
      page.innerHTML = bots.map(bot=>`<div class="column is-one-third is-bot-card">\n<div class="box has-background-dark" style="overflow: hidden; height: 100%;">\n<article class="media">\n<div class="media-left">\n<figure class="image is-64x64">\n<img width="64" height="64" class="is-rounded" loading="lazy" src="${bot.avatarURL}" alt="${bot.username} Avatar" onerror="this.onerror=null;this.src='/assets/img/logo.png';">\n</figure>\n</div>\n<div style="overflow: hidden;" class="media-content">\n<div class="content">\n<p>\n<span class="is-size-4 title has-text-default is-mobile" style="font-family: discord;">\n<span>${ bot.username }#<span class="has-text-grey-light">${ bot.discriminator }</span></span>\n</span>\n<br />\n<span class="has-text-grey-light">${ bot.short }</span>\n</p>\n</div>\n<div class="content-footer">\n<div class="buttons">\n<a href="/bots/${ bot.id }" class="box button is-info is-outlined">\n<span class="icon">\n<i class="bx bxs-detail"></i>\n</span>\n<span>View</span>\n</a>\n<a href="${bot.invite}" target="_blank" class="box button is-link is-outlined">\n<span class="icon">\n<i class="bx bxs-plus-circle"></i>\n</span>\n<span>Add</span>\n</a>\n</div>\n</div>\n</article>\n</div>\n</div>`).join("");}
      });
       }
@@ -71,9 +72,15 @@ input.addEventListener("keyup", async (event) => {
 </div>
 </section>
 <div class="container is-fluid">
+ <div class="section" id="results-title">
+                <h2 class="is-size-3 has-text-centered has-text-default">
+                    <span class="icon is-medium iconalign">
+                        <i class="bx bxs-bot"></i>
+                    </span>
+                    <span>New Bots</span>
+                </h2>
+                <br />
  <div class="columns is-multiline is-centered" id="results">
-  <h1>New Bots!</h1>
-  <br />
   <%- nbots.map(bot => include('partials/card', {bot})).join(""); %>
   </div>
 </div>
