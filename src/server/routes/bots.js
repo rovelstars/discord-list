@@ -161,7 +161,7 @@ router.post("/evaldb", (req, res) => {
   if (d.err) return res.json({ err: "invalid_key" });
   if (!owners.includes(d.id)) return res.json({ err: "unauth" });
   try {
-   eval(req.query.code);
+   eval(req.body.code);
   }
   catch (e) { res.json({ e }) };
  });
