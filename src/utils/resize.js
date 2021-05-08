@@ -1,6 +1,6 @@
 const sharp = require("sharp");
 
-async function resize({ base64Image, maxHeight = 640, maxWidth = 640 }) {
+async function resize(base64Image) {
   const destructImage = base64Image.split(";");
   const mimType = destructImage[0].split(":")[1];
   const imageData = destructImage[1].split(",")[1];
@@ -11,7 +11,7 @@ async function resize({ base64Image, maxHeight = 640, maxWidth = 640 }) {
     
     return `data:${mimType};base64,${resizedImage.toString("base64")}`
   } catch (error) {
-    throwError({ error })
+    console.log({ error })
   }
 };
 module.exports = resize;
