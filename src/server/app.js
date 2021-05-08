@@ -174,6 +174,7 @@ async function UpdateBots(){
  NewAddedBots = NewAddedBots.reverse().slice(0,10);
 }
 UpdateBots();
+setInterval(UpdateBots,300000);
 app.get("/bots", async (req, res) => {
  shuffle(bots);
  var user = req.user;
@@ -215,7 +216,6 @@ app.get("/bots/:id", async (req, res)=>{
   await bot.owner.push(d.tag);
  });
  };
- await console.log(bot.owner);
  await res.render('botpage.ejs', {user, bot});
 });
 
