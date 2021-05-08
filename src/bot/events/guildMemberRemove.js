@@ -1,8 +1,8 @@
 client.on("guildMemberRemove", (member)=>{
- if(!member.bot){
-  Bots.find({$text:{$search: member.id}}).then(async bots=>{
+ if(!member.user.bot){
+  Bots.find({$text:{$search: member.user.id}}).then(async bots=>{
    for(const bot of bots){
-    if(bot.owners[0]==member.id){
+    if(bot.owners[0]==member.user.id){
      Bots.deleteOne({id: bot.id},function(err){
       fetch("https://discord.rovelstars.com/api/client/log", {
         method: "POST",
@@ -11,7 +11,7 @@ client.on("guildMemberRemove", (member)=>{
         },
         body: JSON.stringify({
          "secret": process.env.SECRET,
-         "desc": `Bot ${bot.tag} (${bot.id}) has been deleted because the main owner left the server.\nThe data deleted is:\n\`\`\`\n${JSON.stringify(bot)}\n\`\`\`\nIncase it was deleted accidentally, the above data may be added back again manually if the bot is added back to RDL`,
+         "desc": `Bot ${bot.tag} (${bot.id}) has been deleted because the main owner (${member.user.tag})left the server.\nThe data deleted is:\n\`\`\`\n${JSON.stringify(bot)}\n\`\`\`\nIncase he left accidentally, the above data may be added back again manually if the bot is added back to RDL`,
          "title": "Bot Deleted!",
          "color": "#ff0000",
          "owners": bot.owners,
@@ -21,7 +21,7 @@ client.on("guildMemberRemove", (member)=>{
        });
      });
     }
-    else if(bot.owners.includes(member.id)){
+    else if(bot.owners.includes(member.user.id)){
      Bots.findOne({id: bot.id}).then(d=>{
       d.added = false;
       d.save();
@@ -44,8 +44,8 @@ client.on("guildMemberRemove", (member)=>{
     }
     }});
  }
- if(member.bot){
-   Bots.findOne({id: member.id}).then(bot=>{
+ if(member.user.bot){
+   Bots.findOne({id: member.user.id}).then(bot=>{
     if(!bot) return;
     if(bot.added){
      bot.added = false;

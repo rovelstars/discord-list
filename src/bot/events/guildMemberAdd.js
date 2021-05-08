@@ -1,8 +1,8 @@
 client.on("guildMemberAdd", (member)=>{
- if(member.bot){
+ if(member.user.bot){
   let role = client.guilds.cache.get("602906543356379156").roles.cache.get("775763023234203720");
   member.roles.add(role).catch(e=>console.log(e));
-   Bots.findOne({id: member.id}).then(bot=>{
+   Bots.findOne({id: member.user.id}).then(bot=>{
     if(!bot) return;
     if(!bot.added){
      bot.added = true;
@@ -22,10 +22,10 @@ client.on("guildMemberAdd", (member)=>{
     }
    })
  }
- if(!member.bot){
-  Bots.find({$text:{$search: member.id}}).then(async bots=>{
+ if(!member.user.bot){
+  Bots.find({$text:{$search: member.user.id}}).then(async bots=>{
    for(const bot of bots){
-    if((bot.owners.includes(member.id)) && (bot.added == false)){
+    if((bot.owners.includes(member.user.id)) && (bot.added == false)){
      Bots.findOne({id: bot.id}).then(d=>{
       d.added = true;
       fetch("https://discord.rovelstars.com/api/client/log", {
@@ -35,7 +35,7 @@ client.on("guildMemberAdd", (member)=>{
         },
         body: JSON.stringify({
          "secret": process.env.SECRET,
-         "desc": `Bot ${d.username} (${d.id}) has been listed again because one of the owners - ${member.tag} (${member.id}) joined back our server.`,
+         "desc": `Bot ${d.username} (${d.id}) has been listed again because one of the owners - ${member.user.tag} (${member.user.id}) joined back our server.`,
          "title": "Bot Listed!",
          "color": "#FEF40E",
          "owners": bot.owners,
