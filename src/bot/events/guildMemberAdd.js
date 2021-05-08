@@ -1,7 +1,7 @@
 client.on("guildMemberAdd", (member)=>{
  if(member.bot){
   let role = client.guilds.cache.get("602906543356379156").roles.cache.get("775763023234203720");
-  client.guilds.cache.get("602906543356379156").members.cache.get(member.id).roles.add(role).catch(console.error);
+  member.roles.add(role).catch(e=>console.log(e));
    Bots.findOne({id: member.id}).then(bot=>{
     if(!bot) return;
     if(!bot.added){
