@@ -37,10 +37,9 @@ router.get("/bots/:id/owners", (req, res) => {
   bot.owner = [];
   for (const id of bot.owners) {
    await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r => r.json()).then(async d => {
-    await bot.owner.push(d.tag);
+    await bot.owner.push(d.username);
    });
   };
-  await console.log(bot.owner);
   await fetch(`https://img.shields.io/static/v1?label=${label}&message=${encodeURI(bot.owner.join(", "))}&color=${color}&style=${style}`).then(r => r.text()).then(d => {
    res.send(d);
   });
