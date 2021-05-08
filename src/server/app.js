@@ -21,6 +21,7 @@ var cloudflare = require('cloudflare-express');
 var Bots = require("@models/bots.js");
 var Servers = require("@models/servers.js");
 const servers = require("@routes/servers.js");
+const embeds = require("@routers/embeds.js");
 const users = require("@routes/users.js");
 var latency = require("response-time");
 const info = require("@utils/info.js");
@@ -148,6 +149,7 @@ app.use('/api/users', users);
 app.use('/api/auth', authRoute);
 app.use('/api/client', client);
 app.use('/api/servers', servers);
+app.use('/api/embeds', embeds);
 
 app.get('/api', (req, res)=>{
  res.json({hello: "coder!"});

@@ -44,18 +44,19 @@ img: bot.avatarURL
     <%= bot.short %>
    </h4>
    <div class="field is-grouped is-grouped-multiline">
-   <div class="control">
+   <div class="control" id="prefix">
     <div class="tags has-addons">
     <span class="tag is-dark">Prefix</span>
     <span class="tag is-danger"><%= bot.prefix %></span>
     </div>
   </div><br />
+    <div class="control" id="status">
     <div class="tags has-addons">
     <span class="tag is-dark">Status</span>
     <span class="tag is-success"><%= (bot.status)?bot.status:"Online" %></span>
     </div>
-  </div><br />
-   <div class="control">
+    </div><br />
+   <div class="control" id="lib">
     <div class="tags has-addons">
     <span class="tag is-dark">Library</span>
     <% if(bot.lib == ""){ %>
@@ -65,20 +66,20 @@ img: bot.avatarURL
     <% } %>
     </div>
   </div><br />
-  <div class="control">
+  <div class="control" id="owners">
     <div class="tags has-addons">
     <span class="tag is-dark">Made by</span>
     <span class="tag is-success"><%= bot.owner.join(", ") %></span>
     </div>
   </div><br />
-  <div class="control">
+  <div class="control" id="servers">
     <div class="tags has-addons">
     <span class="tag is-dark">In</span>
     <span class="tag is-link"><%= (bot.servers)?bot.servers:"???" %> Servers
     </span>
     </div>
   </div><br />
-  <div class="control">
+  <div class="control" id="votes">
     <div class="tags has-addons">
     <span class="tag is-dark">Votes</span>
     <span class="tag is-info"><%= bot.votes %></span>
