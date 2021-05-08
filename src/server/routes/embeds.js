@@ -33,7 +33,7 @@ router.get("/bots/:id/owners", (req, res) => {
   if (!bot) return res.send("no_bot");
   const style = (req.query.style) ? req.query.style : "for-the-badge";
   const color = (req.query.color) ? req.query.color : "green";
-  const label = (req.query.label) ? req.query.label : "Status";
+  const label = (req.query.label) ? req.query.label : "Owners";
   bot.owner = [];
   for (const id of bot.owners) {
    await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r => r.json()).then(async d => {
