@@ -40,6 +40,7 @@ router.get("/bots/:id/owners", (req, res) => {
     await bot.owner.push(d.tag);
    });
   };
+  await console.log(bot.owner);
   await fetch(`https://img.shields.io/static/v1?label=${label}&message=${encodeURI(bot.owner.join(", "))}&color=${color}&style=${style}`).then(r => r.text()).then(d => {
    res.send(d);
   });
