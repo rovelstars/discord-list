@@ -21,6 +21,6 @@ client.once('ready', () => {
   "and checking emails on support@rovelstars.com"]
  setInterval(() => {
   const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
-  client.user.setActivity(activities_list[index] + ' | searching for hmm! in ' + client.guilds.cache.array().length + ' servers');
+  client.user.setActivity(activities_list[index]);
  }, 10000);
 });

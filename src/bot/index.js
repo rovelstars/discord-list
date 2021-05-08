@@ -4,7 +4,7 @@ require("./publicbot/index.js");
 const normalText = require("diacritics").remove;
 var Bots = require("@models/bots.js");
 var Users = require("@models/users.js");
-var client = new Discord.Client({ ws: { intents: new Discord.Intents(Discord.Intents.ALL) },{fetchAllMembers: true}});
+var client = new Discord.Client({ ws: { intents: new Discord.Intents(Discord.Intents.ALL) }});
 client.login(process.env.TOKEN);
 const { fetch } = require("rovel.js");
 const { owners, emojiapprovers, mods, contributors } = require("../data.js");
