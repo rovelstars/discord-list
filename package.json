@@ -38,7 +38,7 @@
   "express-session": "1.17.1",
   "express-fileupload": "1.2.1",
   "passport": "0.4.1",
-  "marked": "2.0.1",
+  "marked": "2.0.3",
   "@sentry/node": "6.2.1",
   "@sentry/tracing": "6.1.0",
   "module-alias": "2.2.2",
