@@ -8,7 +8,7 @@ router.get("/bots/:id/status", (req,res)=>{
   const style = (req.query.style)?req.query.style:"for-the-badge";
   const color = (req.query.color)?req.query.color:"43b581";
   const label = (req.query.label)?req.query.label:"Status";
- await fetch(`https://img.shields.io/static/v1?label=${label}&message=${bot.status}&color=${color}&style=${style}`).then(r=>r.text()).then(d=>{
+  fetch(`https://img.shields.io/static/v1?label=${label}&message=${bot.status}&color=${color}&style=${style}`).then(r=>r.text()).then(d=>{
   res.send(d);
  });
 });
