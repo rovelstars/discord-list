@@ -75,7 +75,7 @@ img: bot.avatarURL
   <div class="control" id="servers">
     <div class="tags has-addons">
     <span class="tag is-dark">In</span>
-    <span class="tag is-link"><%= ((bot.servers)||(bot.servers!=1))?bot.servers:"???" %> Servers
+    <span class="tag is-link"><%= (bot.servers)?((bot.servers!=1)?bot.servers:"???"):"???" %> Servers
     </span>
     </div>
   </div><br />
