@@ -224,6 +224,8 @@ app.get("/dashboard", async (req, res)=>{
  if(!req.user) return res.redirect("/login");
  else {
   let botus =[];
+  Users.findOne({id: req.user.id}).then(async u=>{
+   req.user.bal = u.bal;
   Bots.find({$text:{$search: req.user.id}}).then(async bots=>{
    for(const bot of bots){
     if(bot.owners.includes(req.user.id)){
@@ -231,6 +233,7 @@ app.get("/dashboard", async (req, res)=>{
     }
    }
   await res.render('dashboard.ejs', {user: req.user, bots: botus});
+  });
   });
  }
 });
