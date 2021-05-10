@@ -200,6 +200,7 @@ router.get("/:id/sync", (req, res)=>{
         });
     }
    });
+   res.json({success: true});
   }
 });
 

@@ -137,6 +137,7 @@ router.get("/:id/sync", (req, res)=>{
           "url": `https://discord.rovelstars.com/users/${u.id}`
          })
         });
+        res.json({success: true});
     }
    });
   }
