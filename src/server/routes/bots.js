@@ -593,7 +593,7 @@ router.post("/new", async (req, res) => {
           "title": "New Bot Added!",
           "color": "#31CB00",
           "owners": bot.owners,
-          "url": `https://discord.rovelstars.com/api/bots/${bot.id}`
+          "url": `https://discord.rovelstars.com/bots/${bot.id}`
          })
         });
        }
