@@ -202,6 +202,7 @@ router.get("/:id/sync", (req, res)=>{
    });
    res.json({success: true});
   }
+ });
 });
 
 router.get("/:id/apikey", (req, res) => {
