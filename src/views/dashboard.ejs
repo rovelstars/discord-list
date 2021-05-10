@@ -7,6 +7,13 @@ img: `${user.avatarUrl(128)}`
 <body>
  <%- include('partials/load'); %>
  <%- include('partials/navbar', {user}); %>
+ <script>
+  function sync(){
+   var sc = document.getElementById("sync");
+   sc.innerText="In Progress...";
+   
+  }
+ </script>
  <section class="hero has-background-black">
   <div class="hero-body">
   <div class="container">
@@ -20,6 +27,22 @@ img: `${user.avatarUrl(128)}`
    <h4 class="subtitle">
     Here you can manage your Account, Bots, and Servers!
    </h4>
+   <div class="field is-grouped is-grouped-multiline">
+   <div class="control" onclick="sync()">
+    <div class="tags has-addons">
+    <span class="tag is-dark">Sync</span>
+    <span class="tag is-success" id="sync">Data</span>
+    </div>
+  </div><br />
+  <div class="flied is-grouped is-grouped-multiline">
+   <div class="control">
+    <div clas="tag has-addons">
+     <span class="tag is-dark">Balance</span>
+     <span class="tag is-danger">R$ <%= user.bal %></span>
+    </div>
+   </div>
+  </div>
+  </div>
   </div>
   </div>
   </div>

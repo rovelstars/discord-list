@@ -272,7 +272,8 @@ app.get("/beta", (req, res)=>{
 });
 
  app.get("/login", (req, res)=>{
-  if(req.cookies['key']) return res.redirect("/");
+  if(req.cookies['key']) res.cookie('key', req.cookies['key'], {maxAge: 0});
+  res.set("X-Robots-Tag","noindex");
  res.redirect(auth.auth.link);
 });
 
