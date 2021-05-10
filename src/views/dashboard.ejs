@@ -83,6 +83,22 @@ img: `${user.avatarUrl(128)}`
 <br />
 <span class="has-text-grey-light"><%= ((bot.short.length>62)?(bot.short.slice(0,62)+"..."):bot.short) %></span>
 </p>
+<br />
+ <div class="field is-grouped is-grouped-multiline">
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark"><i class="bx bxs-server"></i>&nbsp;In</span>
+    <span class="tag is-link"><%= (bot.servers)?((bot.servers!=1)?bot.servers:"???"):"???" %> Servers
+    </span>
+    </div>
+  </div><br />
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark"><i class="bx bxs-chevron-up-circle"></i>&nbsp;Votes</span>
+    <span class="tag is-info"><%= bot.votes %></span>
+    </div>
+  </div><br />
+  </div>
 </div>
 <div class="content-footer">
 <div class="buttons">
