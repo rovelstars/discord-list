@@ -51,7 +51,7 @@ img: `${user.avatarUrl(128)}`
    <div class="control">
     <div clas="tag has-addons">
      <span class="tag is-dark">Balance</span>
-     <span class="tag is-danger">R$ <%= user.bal %></span>
+     <span class="tag is-danger">R$ <%= (user.bal)?user.bal.toString():"0" %></span>
     </div>
    </div>
   </div>
