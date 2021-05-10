@@ -92,7 +92,7 @@ router.post("/eval",(req, res)=>{
 router.get("/id", (req, res) => {
  res.json({ id: client.user.id });
 });
-router.get("/mainserver/members/:id", (req, res) => {
+router.get("/mainserver/:id", (req, res) => {
  let user;
  try {
   user = client.guilds.cache.get("602906543356379156").members.cache.get(req.params.id).user;

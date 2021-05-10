@@ -598,7 +598,7 @@ router.post("/new", async (req, res) => {
        if (!info.avatar) {
         info.avatar = (info.discriminator % 5).toString();
        }
-       fetch(`${process.env.DOMAIN}/api/client/mainservers/${req.body.id}`).then(r => r.json()).then(dd => {
+       fetch(`${process.env.DOMAIN}/api/client/mainserver/${req.body.id}`).then(r => r.json()).then(dd => {
         const bot = new Bots({
          id: req.body.id,
          webhook: req.body.webhook,
