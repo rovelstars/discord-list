@@ -11,7 +11,20 @@ img: `${user.avatarUrl(128)}`
   function sync(){
    var sc = document.getElementById("sync");
    sc.innerText="In Progress...";
-   
+   fetch("https://discord.rovelstars.com/api/users/<%= user.id %>/sync").then(r=>r.text()).then(d=>{
+    if(d.success){
+     sc.innerText("Success!");
+     setTimeOut(()=>{
+      sc.innerText = "Data";
+     }, 5000);
+    }
+    if(d.err){
+     sc.innerText("Failed to update data!");
+     setTimeOut(()=>{
+      sc.innerText = "Data";
+     }, 5000);
+    }
+   })
   }
  </script>
  <section class="hero has-background-black">
