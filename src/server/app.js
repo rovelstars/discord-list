@@ -19,6 +19,7 @@ let BotAuth = require("@models/botauth.js");
 const geoip = require("geoip-lite");
 var cloudflare = require('cloudflare-express');
 var Bots = require("@models/bots.js");
+let Users = require("@models/users.js");
 var Servers = require("@models/servers.js");
 const servers = require("@routes/servers.js");
 const embeds = require("@routes/embeds.js");
