@@ -14,13 +14,13 @@ img: `${user.avatarUrl(128)}`
    fetch("https://discord.rovelstars.com/api/users/<%= user.id %>/sync").then(r=>r.json()).then(d=>{
     if(d.success){
      sc.innerText="Success!";
-     setTimeOut(()=>{
+     setTimeout(()=>{
       sc.innerText = "Data";
      }, 5000);
     }
     if(d.err){
      sc.innerText="Failed to update data!";
-     setTimeOut(()=>{
+     setTimeout(()=>{
       sc.innerText = "Data";
      }, 5000);
     }
