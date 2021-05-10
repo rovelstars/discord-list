@@ -18,7 +18,13 @@ img: `${user.avatarUrl(128)}`
       sc.innerText = "Data";
      }, 5000);
     }
-    if(d.err){
+    if(d.err=="same_data"){
+     sc.innerText="Nothing was updated..";
+     setTimeout(()=>{
+      sc.innerText = "Data";
+     }, 5000);
+    }
+    else{
      sc.innerText="Failed to update data!";
      setTimeout(()=>{
       sc.innerText = "Data";
@@ -47,14 +53,12 @@ img: `${user.avatarUrl(128)}`
     <span class="tag is-success" id="sync">Data</span>
     </div>
   </div><br />
-  <div class="flied is-grouped is-grouped-multiline">
    <div class="control">
     <div clas="tag has-addons">
      <span class="tag is-dark">Balance</span>
      <span class="tag is-danger">R$ <%= (user.bal)?user.bal.toString():"0" %></span>
     </div>
-   </div>
-  </div>
+  </div><br />
   </div>
   </div>
   </div>
