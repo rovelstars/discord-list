@@ -221,6 +221,23 @@ app.get("/bots/:id", async (req, res)=>{
  await res.render('botpage.ejs', {user, bot});
 });
 
+app.get("/bots/:id/vote", async (req, res)=>{
+ if(!req.user) return res.redirect("/login");
+ else{
+ var bot = await Bots.findOne({id: req.params.id});
+ if(!bot) return await res.send("-_-");
+ else{
+ var user = req.user;
+ bot.owner = [];
+ var u = await Users.findOne({id: user.id});
+ if(!u) return res.redirect("/login");
+ else{
+  user.bal = u.bal;
+ await res.render('botpage.ejs', {user, bot});
+ }}
+ }
+});
+
 app.get("/dashboard", async (req, res)=>{
  if(!req.user) return res.redirect("/login");
  else {

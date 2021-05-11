@@ -1,0 +1,60 @@
+<%-  include('partials/header', {
+title: "Rovel Discord List - RDL",
+desc: "The next gen all-in-one Discord List for Emojis, Users, Servers and Bots! Find the best stuff for yourself here! Or reach the top of the leaderboard with your friends!",
+img: "https://cdn.discordapp.com/attachments/775220204699385886/811569300196163604/robot.png"
+}); %>
+</head>
+<body>
+ <script>
+  function addVote(){
+   var coins = document.getElementById("coins");
+   fetch(`https://discord.rovelstars.com/api/bots/<%= bot.id %>/vote?coins=${coins.value}`).then(r=>r.json()).then(d=>{
+    if(d.err){
+     var title = d.err.split("_").join(" ")
+     Swal.fire({icon: "error", title,  footer: '<a href="/server">Why do I have this error?</a>'});
+    }
+    else{
+     Swal.fire({icon: "success", title: `You Voted <%= bot.username %> with R$ ${coins.value}!`}).then(()=>{
+      setTimeout(()=>{
+       window.location="https://discord.rovelstars.com/bots/<%= bot.id %>"
+      }, 5000);
+     })
+    }
+   })
+  }
+ </script>
+  <%- include('partials/load'); %>
+ <%- include('partials/navbar', {user}); %>
+ <section class="hero" style="background-image: url(<%= bot.bg %>); background-size: cover;">
+  <div class="hero-body">
+   <div class="container">
+    <div class="columns">
+     <div class="column is-2">
+      <img class="avatar image is-128x128" style="margin: auto; border-radius: 50%;" src="<%= bot.avatarURL %>" alt="<%= bot.tag %> Avatar">
+     </div>
+     <div class="column is-10">
+         <h1 class="title"><%= bot.username %>
+   </h1><br />
+   </div>
+   </div>
+   <div class="section">
+   <h2>How much are you gonna spend today for voting <strong><%= bot.username %></strong>?</h2>
+   <br />
+   <form onsubmit="return false;">
+      <p class="control has-icons-left">
+   <input class="input has-text-centered has-background-grey" id="coins" placeholder="You have <%= user.bal %> coins at the moment.">
+   <span class="icon is-small is-left">
+    <i class="bx bx-money"></i>
+   </span>
+  </p>
+   </form>
+   <div class="has-text-centered">
+     <button class="button is-success" onclick="addVote()"><i class="bx bxs-chevron-up-circle"></i>Vote</button>
+     </div>
+   </div>
+   </div>
+   </div>
+   </section>
+ <%- include('partials/footer'); %>
+</body>
+</html>

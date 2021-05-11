@@ -49,7 +49,15 @@ img: bot.avatarURL
 <span class="icon">
 <i class="bx bxs-plus-circle"></i>
 </span>
-<span>Add Bot</span>
+<span>Add <%= bot.username %></span>
+</a><br />
+</div>
+<div class="column is-3">
+    <a href="/bots/<%= bot.id %>/vote" class="box button is-success has-background-dark is-outlined">
+<span class="icon">
+<i class="bx bxs-chevron-up-circle"></i>
+</span>
+<span>Vote <%= bot.username %></span>
 </a><br />
 </div>
 </div>
