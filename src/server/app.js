@@ -208,7 +208,7 @@ app.get("/sitemap.xml", async (req, res)=>{
 });
 
 app.get("/bots/:id/vote", async (req, res)=>{
- if(!req.user) return res.redirect("/login");
+ if(!req.user && (!(req.headers['user-agent'].includes("bot")))) return res.redirect("/login");
  else{
  var bot = await Bots.findOne({id: req.params.id});
  if(!bot) return await res.send("-_-");
