@@ -1,10 +1,12 @@
 if(message.content.includes("--code")){
- const reactionEmoji = message.guild.emojis.cache.find(emoji => emoji.name == args[0]);
+ const e = message.guild.emojis.cache.find(emoji => emoji.name == args[0]);
+ if(e){
 	message.channel.send("`"+reactionEmoji.toString()+"`");
-}
+}}
 else{
- const reactionEmoji = message.guild.emojis.cache.find(emoji => emoji.name == args[0]);
+ const e = message.guild.emojis.cache.find(emoji => emoji.name == args[0]);
+ if(e){
  message.channel.bulkDelete(1).then(()=>{
-	message.channel.send(reactionEmoji.toString());
+	message.channel.send(e.toString());
  });
-}
+}}
