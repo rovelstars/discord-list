@@ -15,7 +15,7 @@ if(message.channel.type=="dm"){
     secret: process.env.SECRET,
     channel: "838067036080963584",
     title: `[MAIL] Incoming 📥`,
-    desc: `**From:** ${message.author.tag} (${message.author.id})\n\n**Message:**\n\n${args.join(" ")}`,
+    desc: `**From:** ${message.author.tag} (${message.author.id})\n\n**Message:**\n${args.join(" ")}`,
     color: "green",
     img: message.author.avatarURL(),
     attachment: (at.length!=0)?at[0]:null
