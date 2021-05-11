@@ -243,7 +243,7 @@ app.get("/dashboard", async (req, res)=>{
  else {
   let botus =[];
   Users.findOne({id: req.user.id}).then(async u=>{
-   req.user.bal = u.bal;
+   req.user.bal = rovel.approx(u.bal);
   Bots.find({$text:{$search: req.user.id}}).then(async bots=>{
    for(const bot of bots){
     if(bot.owners.includes(req.user.id)){
