@@ -219,7 +219,7 @@ app.get("/bots/:id/vote", async (req, res)=>{
  if(!u) return res.redirect("/login");
  else{
   user.bal = u.bal;
- await res.render('botpage.ejs', {user, bot});
+ await res.render('botvote.ejs', {user, bot});
  }}
  }
 });
