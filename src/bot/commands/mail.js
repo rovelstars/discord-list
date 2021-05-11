@@ -16,7 +16,7 @@ if(message.channel.type=="dm"){
     channel: "838067036080963584",
     title: `[MAIL] Incoming 📥`,
     desc: `**From:** ${message.author.tag} (${message.author.id})\n\n**Message:**\n${args.join(" ")}`,
-    color: "green",
+    color: "#43b581",
     img: message.author.avatarURL(),
     attachment: (at.length!=0)?at[0]:null
    })
