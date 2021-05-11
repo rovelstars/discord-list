@@ -6,7 +6,7 @@ if(message.channel.type=="dm"){
   message.reply("📨 Successfully Mailed The Team!");
   const at = (message.attachments).array();
   
-  fetch(`${process.env.PROCESS}/api/client/log`,{
+  fetch(`${process.env.DOMAIN}/api/client/log`,{
    method: "POST",
    headers: {
     "content-type": "application/json"
