@@ -1,0 +1,1 @@
+Dm the bot with this command to mail us directly!
