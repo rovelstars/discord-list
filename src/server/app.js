@@ -207,20 +207,6 @@ app.get("/sitemap.xml", async (req, res)=>{
  }
 });
 
-app.get("/bots/:id", async (req, res)=>{
- var bot = await Bots.findOne({id: req.params.id});
- if(!bot) return await res.send("-_-");
- bot.desc = await marked(bot.desc);
- var user = req.user;
- bot.owner = [];
- for(const id of bot.owners){
-  await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r=>r.json()).then(async d=>{
-  await bot.owner.push(d.tag);
- });
- };
- await res.render('botpage.ejs', {user, bot});
-});
-
 app.get("/bots/:id/vote", async (req, res)=>{
  if(!req.user) return res.redirect("/login");
  else{
@@ -236,6 +222,20 @@ app.get("/bots/:id/vote", async (req, res)=>{
  await res.render('botpage.ejs', {user, bot});
  }}
  }
+});
+
+app.get("/bots/:id", async (req, res)=>{
+ var bot = await Bots.findOne({id: req.params.id});
+ if(!bot) return await res.send("-_-");
+ bot.desc = await marked(bot.desc);
+ var user = req.user;
+ bot.owner = [];
+ for(const id of bot.owners){
+  await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r=>r.json()).then(async d=>{
+  await bot.owner.push(d.tag);
+ });
+ };
+ await res.render('botpage.ejs', {user, bot});
 });
 
 app.get("/dashboard", async (req, res)=>{
