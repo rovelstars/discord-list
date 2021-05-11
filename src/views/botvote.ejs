@@ -25,7 +25,7 @@ img: "https://cdn.discordapp.com/attachments/775220204699385886/8115693001961636
  </script>
   <%- include('partials/load'); %>
  <%- include('partials/navbar', {user}); %>
- <section class="hero" style="background-image: url(<%= bot.bg %>); background-size: cover;">
+ <section class="hero">
   <div class="hero-body">
    <div class="container">
     <div class="columns">
@@ -42,12 +42,13 @@ img: "https://cdn.discordapp.com/attachments/775220204699385886/8115693001961636
    <br />
    <form onsubmit="return false;">
       <p class="control has-icons-left">
-   <input class="input has-text-centered has-background-grey" id="coins" placeholder="You have <%= user.bal %> coins at the moment.">
+   <input class="input has-text-centered has-background-black" id="coins" placeholder="You have <%= user.bal %> coins at the moment.">
    <span class="icon is-small is-left">
     <i class="bx bx-money"></i>
    </span>
   </p>
    </form>
+   <br />
    <div class="has-text-centered">
      <button class="button is-success" onclick="addVote()"><i class="bx bxs-chevron-up-circle"></i>Vote</button>
      </div>
