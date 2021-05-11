@@ -1,4 +1,4 @@
-if(message.channel.type!="dm"){
+if(message.channel.type=="dm"){
  if(args.length==0){
   message.reply("Please send your message to mail.");
  }
