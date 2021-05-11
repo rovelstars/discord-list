@@ -11,10 +11,13 @@
     <script>
     var timer = 10;
      setInterval(function(){
+      if(timer>=0){
       timer=timer-1;
       document.getElementById("timer").innerHTML = timer;
+      }
       if(timer==0){
        location.reload();
+       t.getElementById("starting").innerHTML = "Website is <strong>Starting!</strong>";
       }
      }, 1000);
     </script>
@@ -30,7 +33,7 @@
                 <br />
                 <h1>Website Starting</h1>
             </h1>
-            <h2 class="subtitle">
+            <h2 class="subtitle" id="starting">
                 Rovel Discord List is currently booting up.. we will be online momentarily in <span id="timer">10</span> seconds.
             </h2>
         </div>
