@@ -434,7 +434,7 @@ router.post("/edit", async (req, res) => {
    if (!err && (req.body.owners !== bot.owners)) {
     var cond = true;
     for (const owner of req.body.owners) {
-     await fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r => r.json()).then(d => {
+     await fetch(`${process.env.DOMAIN}/api/client/mainserver/${owner}`).then(r => r.json()).then(d => {
       cond = (cond == true && d.condition == false) ? false : true;
      })
     }
@@ -562,7 +562,7 @@ router.post("/new", async (req, res) => {
      if (!err && req.body.support) {
       req.body.support = req.body.support.replace("discord.gg/", "");
       req.body.support = req.body.support.replace("discord.com/invite/", "");
-      req.body.support.replace("https://", "");
+      req.body.support = req.body.support.replace("https://", "");
       if (!err) {
        fetch(`https://discord.com/api/v7/invites/${req.body.support}`).then(r => r.json()).then(d => {
         if ((d.code == 10006 || d.code == 0) || d.code != req.body.support) err = "invalid_support"
@@ -583,28 +583,23 @@ router.post("/new", async (req, res) => {
       });
      }
      for (const owner of req.body.owners) {
-      await fetch(`${process.env.DOMAIN}/api/client/mainserver/members/${owner}`).then(r => r.json()).then(d => {
+      await fetch(`${process.env.DOMAIN}/api/client/mainserver/${owner}`).then(r => r.json()).then(d => {
        if (!err && !d.condition) {
         err = "owner_not_in_server"
        }
       })
      }
      if (!err) {
-      fetch(`https://discord.com/api/v7/users/${req.body.id}`, {
-       headers: {
-        "Authorization": `Bot ${process.env.TOKEN}`
-       }
-      }).then(r => r.json()).then(info => {
-       if (!info.avatar) {
-        info.avatar = (info.discriminator % 5).toString();
+       if (!user.avatar) {
+        user.avatar = (user.discriminator % 5).toString();
        }
        fetch(`${process.env.DOMAIN}/api/client/mainserver/${req.body.id}`).then(r => r.json()).then(dd => {
         const bot = new Bots({
          id: req.body.id,
          webhook: req.body.webhook,
-         username: info.username,
-         discriminator: info.discriminator,
-         avatar: info.avatar,
+         username: user.username,
+         discriminator: user.discriminator,
+         avatar: user.avatar,
          owners: req.body.owners,
          added: dd.condition,
          short: req.body.short,
@@ -640,7 +635,6 @@ router.post("/new", async (req, res) => {
          }
         });
        });
-      })
      }
      if (err) {
       res.json({ err });
