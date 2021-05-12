@@ -8,11 +8,11 @@ else {
      const c = Math.floor(Math.random()*10)+1;
       user.bal+=c;
       user.save();
-      message.channel.send("Nani o matsu?! You recieved R$ "+c+"!\nThat's nothing compared to me-");
+      message.channel.send((c>1000)?`Nani?! Now this is more than my pocket money! You got ${c} at the moment..`:`Nani o matsu?! You recieved R$ ${c}!\nThat's nothing compared to me-`);
       cooldownearn.add(message.author.id);
   setTimeout(()=>{
     cooldownearn.delete(message.author.id);
-  }, (3600*1000));
+  }, 60000);
     }
   })
 }
