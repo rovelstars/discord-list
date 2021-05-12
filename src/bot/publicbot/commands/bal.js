@@ -2,7 +2,7 @@ if (!args.length) {
  Users.findOne({ id: message.author.id }).then(user => {
   if (!user) message.reply("Baka! You need to login to get an account on RDL!\nLogin link:\nhttps://discord.rovelstars.com/login");
   else {
-   message.reply("You have R$ **" + user.bal + "**\nTotemo hikui? I got so much pocket money!");
+   message.reply((user.bal>1000)?`Nani?! Now this is something more than my pocket money..\nYou got **${user.bal}** at the moment.`:`You have R$ **${user.bal}**\nTotemo hikui? I got so much pocket money!`);
   }
  })
 }
