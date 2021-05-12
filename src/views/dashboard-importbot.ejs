@@ -6,7 +6,7 @@ img: "https://cdn.discordapp.com/attachments/775220204699385886/8115693001961636
 </head>
 <body>
  <script>
-  function import(){
+  function importBot(){
    var botid = document.getElementById("botid");
    var list = document.getElementById("list");
    fetch(`https://discord.rovelstars.com/api/bots/import/${list.value}/${botid.value}`).then(r=>r.json()).then(res=>{
@@ -55,18 +55,22 @@ And make sure to join our server if not done already, and also make sure your DM
   </p>
   <br />
   <p>Choose a Bot List To Import Your Discord Bot From</p>
-  <div class="select is-rounded has-background-black has-text-white">
+  <br />
+  <br />
+  <div class="select is-rounded">
   <select id="list">
     <option value="topgg">Top.gg</option>
     <option value="del">Discord Extreme List</option>
     <option value="dbl">DiscordBotList.com</option>
   </select>
+  <br />
 </div>
    </form>
    <br />
    <div class="has-text-centered">
-     <button class="button is-success has-text-white" onclick="import()"><i class="bx bxs-download"></i>Import Bot</button>
+     <button class="button is-success has-text-white" onclick="importBot()"><i class="bx bxs-download"></i>Import Bot</button>
      </div>
+ </div>
  </div>
  </div>
  <%- include('partials/footer'); %>
