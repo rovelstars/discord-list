@@ -257,8 +257,13 @@ app.get("/dashboard", async (req, res)=>{
 });
 
 app.get("/dashboard/bots/new", async (req, res)=>{
- if(!req.user) return res.redirect("/login");
+ if(!req.user){
+  res.cookie("return", "/dashboard/bots/new",{maxAge: 1000*3600});
+  res.redirect("/login");
+ }
+ else{
  await res.render('dashboard-newbot.ejs', {user: req.user});
+ }
 });
 
 app.get("/dashboard/bots/import", async (req, res)=>{

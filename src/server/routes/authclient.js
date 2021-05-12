@@ -69,6 +69,10 @@ router.get("/", async (req, res) => {
     })
    }
   })
+  if(req.cookies["return"]){
+   await res.cookie("return", req.cookies["return"],{maxAge: 0});
+   await res.redirect(req.cookies["return"]);
+  }
   await res.redirect("/");
  } catch (e) {
   res.redirect("/");
