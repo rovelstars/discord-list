@@ -625,7 +625,7 @@ router.post("/new", async (req, res) => {
            body: JSON.stringify({
             "secret": process.env.SECRET,
             "img": bot.avatarURL,
-            "desc": `**${info.username}** has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${(dd.condition==true)?"\nThe bot has been already added to the server, so they are saved as 'added'":""}`,
+            "desc": `**${user.username}** has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${(dd.condition==true)?"\nThe bot has been already added to the server, so they are saved as 'added'":""}`,
             "title": "New Bot Added!",
             "color": "#31CB00",
             "owners": bot.owners,
