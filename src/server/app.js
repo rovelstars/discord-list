@@ -208,7 +208,10 @@ app.get("/sitemap.xml", async (req, res)=>{
 });
 
 app.get("/bots/:id/vote", async (req, res)=>{
- if(!req.user) return res.redirect("/login");
+ if(!req.user){
+  res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
+  res.redirect("/login");
+ }
  else{
  var bot = await Bots.findOne({id: req.params.id});
  if(!bot) return await res.send("-_-");
@@ -216,7 +219,10 @@ app.get("/bots/:id/vote", async (req, res)=>{
  var user = req.user;
  bot.owner = [];
  var u = await Users.findOne({id: user.id});
- if(!u) return res.redirect("/login");
+ if(!u){
+  res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
+  res.redirect("/login");
+ }
  else{
   user.bal = u.bal;
  await res.render('botvote.ejs', {user, bot});
@@ -239,7 +245,10 @@ app.get("/bots/:id", async (req, res)=>{
 });
 
 app.get("/dashboard", async (req, res)=>{
- if(!req.user) return res.redirect("/login");
+ if(!req.user){
+  res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
+  res.redirect("/login");
+ }
  else {
   let botus =[];
   Users.findOne({id: req.user.id}).then(async u=>{
@@ -258,7 +267,7 @@ app.get("/dashboard", async (req, res)=>{
 
 app.get("/dashboard/bots/new", async (req, res)=>{
  if(!req.user){
-  res.cookie("return", "/dashboard/bots/new",{maxAge: 1000*3600});
+  res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
   res.redirect("/login");
  }
  else{
@@ -267,7 +276,10 @@ app.get("/dashboard/bots/new", async (req, res)=>{
 });
 
 app.get("/dashboard/bots/import", async (req, res)=>{
- if(!req.user) return res.redirect("/login");
+ if(!req.user){
+  res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
+  res.redirect("/login");
+ }
  await res.render('dashboard-importbot.ejs', {user: req.user});
 });
 
@@ -303,7 +315,9 @@ app.get("/beta", (req, res)=>{
 });
 
  app.get("/login", (req, res)=>{
-  if(req.cookies['key']) res.cookie('key', req.cookies['key'], {maxAge: 0});
+  if(req.cookies['key']){
+   res.cookie('key', req.cookies['key'], {maxAge: 0});
+  }
   res.set("X-Robots-Tag","noindex");
  res.redirect(auth.auth.link);
 });
