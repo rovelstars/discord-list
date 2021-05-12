@@ -70,10 +70,14 @@ router.get("/", async (req, res) => {
    }
   })
   if(req.cookies["return"]){
+   try{
    await res.cookie("return", req.cookies["return"],{maxAge: 0});
    await res.redirect(req.cookies["return"]);
+   } catch (e){}
   }
+  else{
   await res.redirect("/");
+  }
  } catch (e) {
   res.redirect("/");
   console.log(e);
