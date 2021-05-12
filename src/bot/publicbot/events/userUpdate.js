@@ -16,20 +16,21 @@ client.on('userUpdate', (olduser, newuser) => {
      bot.discriminator = newuser.discriminator;
      num="Discriminator Updated!\n"
     }
-    const msg = new Discord.MessageEmbed()
-    .setTitle(`${bot.tag}'s Data is Updated!`)
-    .setColor("RANDOM")
-    .setDescription(`${num}Please look into it if you didn't change anything on your end, but happened on our end.`)
-    .setURL(`${process.env.DOMAIN}/bots/${bot.id}`)
-    .setTimestamp()
-    .setThumbnail(bot.avatarURL);
-
-   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
-   if (bot.owners) {
-    for (const owner of bot.owners) {
-     client.users.cache.get(owner).send(msg);
-    }
-   }
+   fetch("https://discord.rovelstars.com/api/client/log",{
+    method: "POST",
+      headers: {
+       "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+       "secret": process.env.SECRET,
+       "secret": bot.avatarURL,
+       "desc": `${num}Please look into it if you didn't change anything on your end, but happened on our end.`,
+       "title": `Bot ${bot.tag} Data Updated!`,
+       "color": "#faa61a",
+       "owners": bot.owners,
+       "url": `https://discord.rovelstars.com/bots/${bot.id}`
+      })
+   })
    bot.save();
    })
   }
