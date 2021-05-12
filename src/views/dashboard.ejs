@@ -68,6 +68,7 @@ img: `${user.avatarUrl(128)}`
  <div class="container is-fluid">
   <br />
   <br />
+  <% if(bots.length>0){ %>
   <h2 class="title">Your Bots</h2>
  <div class="columns is-multiline is-centered">
   <% for(const bot of bots){ %>
@@ -124,6 +125,9 @@ img: `${user.avatarUrl(128)}`
 </article>
 </div>
 </div>
+  <% } } else { %>
+  <h2 class="title">You currently don't have any bots listed on RDL :/</h2>
+  <span class="subtitle">Add or Import your bot to see them here!</span>
   <% } %>
   <div class="column is-one-third" is-bot-card>
 <div class="box has-background-dark" style="overflow: hidden; height: 100%;">
@@ -155,7 +159,7 @@ img: `${user.avatarUrl(128)}`
 <span class="icon">
 <i class="bx bx-code-alt"></i>
 </span>
-<span>Import Bot!</span>
+<span>Import Bot</span>
 </a>
 </div>
 </div>
