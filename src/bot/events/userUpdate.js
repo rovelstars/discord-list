@@ -1,5 +1,5 @@
 client.on('userUpdate', (olduser, newuser) => {
- if (olduser.bot) {
+ if (newuser.bot) {
   try {
    var num;
    Bots.findOne({ id: olduser.id }).then(bot => {
@@ -35,4 +35,42 @@ client.on('userUpdate', (olduser, newuser) => {
   }
   catch {}
  }
+ else if(!newuser.bot){
+  Users.findOne({ id: newuser.id }).then(user => {
+  if (!user){
+  }
+  else {
+  fetch("https://discord.rovelstars.com/api/client/users/" + user.id).then(r => r.json()).then(u => {
+    if ((u.avatar === user.avatar) && (u.username === user.username) && (u.discriminator === user.discriminator)){
+    }
+    else {
+     if (u.avatar !== user.avatar) {
+      user.avatar = u.avatar;
+     }
+     if (u.username !== user.username) {
+      user.username = u.username;
+     }
+     if (u.discriminator !== user.discriminator) {
+      user.discriminator = u.discriminator;
+     }
+     user.save();
+     fetch("https://discord.rovelstars.com/api/client/log", {
+      method: "POST",
+      headers: {
+       "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+       "secret": process.env.SECRET,
+       "img": u.avatarURL,
+       "desc": `New Data Saved:\n\`\`\`json\n${JSON.stringify(user)}\n\`\`\``,
+       "title": ` User ${u.tag} Data Updated!`,
+       "color": "#faa61a",
+       "url": `https://discord.rovelstars.com/users/${u.id}`
+      })
+     });
+    }
+   });
+  }
+  });
+};
 });
