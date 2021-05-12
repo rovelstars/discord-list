@@ -12,7 +12,7 @@ else {
       cooldownearn.add(message.author.id);
   setTimeout(()=>{
     cooldownearn.delete(message.author.id);
-  }, 3600*1000);
+  }, (3600*1000));
     }
   })
 }
