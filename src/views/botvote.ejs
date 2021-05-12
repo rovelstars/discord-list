@@ -15,9 +15,7 @@ img: "https://cdn.discordapp.com/attachments/775220204699385886/8115693001961636
     }
     else{
      Swal.fire({icon: "success", title: `You Voted <%= bot.username %> with R$ ${coins.value}!`}).then(()=>{
-      setTimeout(()=>{
        window.location="https://discord.rovelstars.com/bots/<%= bot.id %>"
-      }, 5000);
      })
     }
    })
@@ -42,15 +40,15 @@ img: "https://cdn.discordapp.com/attachments/775220204699385886/8115693001961636
    <br />
    <form onsubmit="return false;">
       <p class="control has-icons-left">
-   <input class="input has-text-centered has-background-black" id="coins" placeholder="You have <%= user.bal %> coins at the moment.">
-   <span class="icon is-small is-left">
+   <input class="input has-background-black has-text-white" id="coins" placeholder="You have <%= user.bal %> coins at the moment.">
+   <span class="icon is-small is-left has-text-white">
     <i class="bx bx-money"></i>
    </span>
   </p>
    </form>
    <br />
    <div class="has-text-centered">
-     <button class="button is-success" onclick="addVote()"><i class="bx bxs-chevron-up-circle"></i>Vote</button>
+     <button class="button is-success has-text-white" onclick="addVote()"><i class="bx bxs-chevron-up-circle"></i>Vote</button>
      </div>
    </div>
    </div>

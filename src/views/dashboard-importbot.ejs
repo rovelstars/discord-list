@@ -1,0 +1,74 @@
+<%-  include('partials/header', {
+title: `Import Bot - Rovel Discord List`,
+desc: `Import your discord bot from other bot lists!`,
+img: "https://cdn.discordapp.com/attachments/775220204699385886/811569300196163604/robot.png"
+}); %>
+</head>
+<body>
+ <script>
+  function import(){
+   var botid = document.getElementById("botid");
+   var list = document.getElementById("list");
+   fetch(`https://discord.rovelstars.com/api/bots/import/${list.value}/${botid.value}`).then(r=>r.json()).then(res=>{
+    if(res.err){
+     const title = res.err.split(" ").join("_");
+     Swal.fire({title, icon: "error", footer: '<a href="/server">Why do I have this error?</a>'});
+    }
+    else{
+     Swal.fire({title: "Bot Successfully Imported!", icon: "success"}).then(()=>{
+
+       window.location = `https://discord.rovelstars.com/bots/${botid.value}`
+     })
+    }
+   })
+  }
+ </script>
+   <%- include('partials/load'); %>
+ <%- include('partials/navbar', {user}); %>
+ <section class="hero is-black">
+<div class="hero-body">
+<br />
+<div class="container has-text-centered">
+<h1 class="title">
+<span class="icon is-large">
+<i aria-hidden="true" class="bx bxs-download has-text-success"></i>
+</span>
+<br />
+<span>Import Bot!</span>
+</h1>
+<h2 class="subtitle has-text-grey-light"><span>
+And make sure to join our server if not done already, and also make sure your DMs are open in Rovel Stars server, in order to receive notifications about your bot!
+</span></h2>
+</div>
+</div>
+</section>
+<div class="container">
+<div class="section">
+<form onsubmit="return false;">
+ <p>Your Bot ID</p>
+<div class="field">
+  <p class="control has-icons-left">
+    <input class="input" id="botid" placeholder="1234567890">
+    <span class="icon is-small is-left">
+      <i class="bx bxs-id-card"></i>
+    </span>
+  </p>
+  <br />
+  <p>Choose a Bot List To Import Your Discord Bot From</p>
+  <div class="select is-rounded has-background-black has-text-white">
+  <select id="list">
+    <option value="topgg">Top.gg</option>
+    <option value="del">Discord Extreme List</option>
+    <option value="dbl">DiscordBotList.com</option>
+  </select>
+</div>
+   </form>
+   <br />
+   <div class="has-text-centered">
+     <button class="button is-success has-text-white" onclick="import()"><i class="bx bxs-download"></i>Import Bot</button>
+     </div>
+ </div>
+ </div>
+ <%- include('partials/footer'); %>
+</body>
+</html>

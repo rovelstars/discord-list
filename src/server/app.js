@@ -261,6 +261,11 @@ app.get("/dashboard/bots/new", async (req, res)=>{
  await res.render('dashboard-newbot.ejs', {user: req.user});
 });
 
+app.get("/dashboard/bots/import", async (req, res)=>{
+ if(!req.user) return res.redirect("/login");
+ await res.render('dashboard-importbot.ejs', {user: req.user});
+});
+
 app.get("/status", (req, res)=>{
  res.render('status.ejs',{});
 });

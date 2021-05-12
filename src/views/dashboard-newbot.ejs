@@ -37,7 +37,7 @@ General Information
 <p>Your Bot ID</p>
 <div class="field">
   <p class="control has-icons-left">
-    <input class="input" id="botid" placeholder="1234567890">
+    <input class="input has-background-black has-text-white" id="botid" placeholder="1234567890">
     <span class="icon is-small is-left">
       <i class="bx bxs-id-card"></i>
     </span>
@@ -45,7 +45,7 @@ General Information
   <br />
   <p>Bot Library</p>
   <p class="control has-icons-left">
-   <input class="input" id="botlib" placeholder="discord.js">
+   <input class="input has-background-black has-text-white" id="botlib" placeholder="discord.js">
    <span class="icon is-small is-left">
     <i class="bx bx-library"></i>
    </span>
@@ -54,7 +54,7 @@ General Information
   <p>Bot Owners</p>
   <p class="has-text-grey-light">Separate owner IDs with comma ","</p>
   <p class="control has-icons-left">
-   <input class="input" id="botowners" placeholder="1234567890,1234567890">
+   <input class="input has-background-black has-text-white" id="botowners" placeholder="1234567890,1234567890">
    <span class="icon is-small is-left">
     <i class="bx bxs-crown"></i>
    </span>
@@ -62,7 +62,7 @@ General Information
   <br />
   <p>Short Description</p>
   <p class="control has-icons-left">
-   <input class="input" id="botshort" placeholder="This bot can play music and can make your server active!">
+   <input class="input has-background-black has-text-white" id="botshort" placeholder="This bot can play music and can make your server active!">
    <span class="icon is-small is-left">
     <i class="bx bxs-binoculars"></i>
    </span>
@@ -77,7 +77,7 @@ General Information
   <p>Background Image</p>
   <p class="has-text-grey-light">Not necessary to provide one.</p>
   <p class="control has-icons-left">
-   <input class="input" id="botbg" placeholder="Image link">
+   <input class="input has-background-black has-text-white" id="botbg" placeholder="Image link">
    <span class="icon is-small is-left">
     <i class="bx bxs-image"></i>
    </span>
@@ -85,7 +85,7 @@ General Information
   <br />
   <p>Bot Prefix</p>
   <p class="control has-icons-left">
-   <input class="input" id="botprefix" placeholder="!">
+   <input class="input has-background-black has-text-white" id="botprefix" placeholder="!">
    <span class="icon is-small is-left">
     <i class="bx bxs-message-error"></i>
    </span>
@@ -94,7 +94,7 @@ General Information
   <p>Github Source Code</p>
   <p class="has-text-grey-light">Not necessary to provide one.</p>
   <p class="control has-icons-left">
-   <input class="input" id="botgithub" placeholder="https://github.com/rovelstars/rovel-discord-list">
+   <input class="input has-background-black has-text-white" id="botgithub" placeholder="https://github.com/rovelstars/rovel-discord-list">
    <span class="icon is-small is-left">
     <i class="bx bxl-github"></i>
    </span>
@@ -103,7 +103,7 @@ General Information
   <p>Support Server</p>
   <p class="has-text-grey-light">Not necessary to provide one.</p>
   <p class="control has-icons-left">
-   <input class="input" id="botsupport" placeholder="https://discord.gg/953XCpHbKF">
+   <input class="input has-background-black has-text-white" id="botsupport" placeholder="https://discord.gg/953XCpHbKF">
    <span class="icon is-small is-left">
     <i class="bx bx-support"></i>
    </span>
@@ -112,7 +112,7 @@ General Information
   <p>Website</p>
   <p class="has-text-grey-light">Not necessary to provide one.</p>
   <p class="control has-icons-left">
-   <input class="input" id="botwebsite" placeholder="https://discord.rovelstars.com">
+   <input class="input has-background-black has-text-white" id="botwebsite" placeholder="https://discord.rovelstars.com">
    <span class="icon is-small is-left">
     <i class="bx bx-world"></i>
    </span>
@@ -121,7 +121,7 @@ General Information
   <p>Donate</p>
   <p class="has-text-grey-light">Not necessary to provide one.</p>
   <p class="control has-icons-left">
-   <input class="input" id="botdonate" placeholder="paypal, patreon, etc.">
+   <input class="input has-background-black has-text-white" id="botdonate" placeholder="paypal, patreon, etc.">
    <span class="icon is-small is-left">
     <i class="bx bx-money"></i>
    </span>
@@ -129,7 +129,7 @@ General Information
   <br />
   <p>Bot Invite Link</p>
   <p class="control has-icons-left">
-   <input class="input" id="botinvite" placeholder="https://discord.com/api/oauth2/authorize...">
+   <input class="input has-background-black has-text-white" id="botinvite" placeholder="https://discord.com/api/oauth2/authorize...">
    <span class="icon is-small is-left">
     <i class="bx bxs-plus-square"></i>
    </span>
@@ -138,7 +138,7 @@ General Information
 </form>
 <br />
 <div class="has-text-centered">
- <button class="button is-success" onclick="addBot()">Add Bot</button>
+ <button class="button is-success has-text-white" onclick="addBot()">Add Bot</button>
 </div>
 <br />
 <div class="preview">
@@ -394,8 +394,8 @@ function addBot(){
     title: "Bot Added!",
     text: "And now make sure your DMs are open in our server!",
     footer: '<a href="/server">Why do I need to keep DMs open?</a>'
-   }).then(hmm=>{
-    window.location.replace(`/bots/${botid.value}`);
+   }).then(()=>{
+    window.location.replace(`https://discord.rovelstars.com/bots/${botid.value}`);
    });
   }
  })
