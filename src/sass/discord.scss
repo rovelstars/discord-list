@@ -1,3 +1,13 @@
 @import "./discord-vars.scss";
 @import "../../node_modules/bulma/bulma.sass";
 @import "./common.scss";
+
+@import "../../node_modules/keyboard-css/dist/scss/main";
+$kbc-button-primary: $primary;
+$kbc-button-secondary: $black;
+$kbc-button-success: $success;
+$kbc-button-info: $info;
+$kbc-button-warning: $warning;
+$kbc-button-danger: $danger;
+$kbc-button-light: $grey;
+$kbc-button-dark: $dark;
