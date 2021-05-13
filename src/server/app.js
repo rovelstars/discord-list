@@ -342,7 +342,12 @@ app.get("/logout", async (req, res)=>{
   res.cookie('key', req.cookies['key'], {maxAge: 0});
   
  }
- res.redirect("/");
+ if(req.query.redirect){
+  res.redirect(decodeURI(req.query.redirect));
+ }
+ if(!req.query.redirect){
+  res.redirect("/");
+ }
 });
 
 app.get("*", (req, res) => {

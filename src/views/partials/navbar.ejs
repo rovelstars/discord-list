@@ -48,7 +48,7 @@
           <a class="button is-primary" href="/login">
             <i class="bx bxs-chevron-right-circle"></i>&nbsp;&nbsp;Log in</a>
             <% } else { %>
-              <a class="button is-danger" href="/logout">
+              <a class="button is-danger" href="/logout" id="login-link">
             <i class="bx bxs-chevron-left-circle"></i>&nbsp;&nbsp;Log out</a>
              <a class="button" style="background-color: #7289da;color: #ffffff;" href="/dashboard">
               <i class="bx bxs-grid-alt"></i>&nbsp;&nbsp;DashBoard
@@ -61,6 +61,10 @@
 </nav>
 <script>
  $(document).ready(function() {
+  var logout = document.getElementById("logout-link");
+  if(logout){
+   logout.href=`/logout?redirect=${encodeURI(window.location.replace("https://discord.rovelstars.com",""))}`
+  }
 twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
   // Check for click events on the navbar burger icon
   $(".navbar-burger").click(function() {
