@@ -77,7 +77,7 @@ var booting = function(req, res, next){
 app.use(booting);
 var checkBanned = async function(req, res, next) {
  var themes = ["discord", "dracula"]
- if(!themes.include(req.cookies['theme'])){
+ if(!themes.includes(req.cookies['theme'])){
   req.cookies["theme"] = "discord";
   res.cookie('theme', "discord", {
    maxAge: 30 * 3600 * 24 * 1000, //30days
