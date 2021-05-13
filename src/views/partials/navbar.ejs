@@ -63,7 +63,7 @@
  $(document).ready(function() {
   var logout = document.getElementById("logout-link");
   if(logout){
-   logout.href=`/logout?redirect=${encodeURI(window.location.replace("https://discord.rovelstars.com",""))}`
+   logout.href=`/logout?redirect=${encodeURI(window.location)}`
   }
 twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
   // Check for click events on the navbar burger icon

@@ -343,7 +343,7 @@ app.get("/logout", async (req, res)=>{
   
  }
  if(req.query.redirect){
-  res.redirect(decodeURI(req.query.redirect));
+  res.redirect(decodeURI(req.query.redirect).replace("https://discord.rovelstars.com",""));
  }
  if(!req.query.redirect){
   res.redirect("/");
