@@ -2,14 +2,17 @@
 <html class="has-navbar-fixed-top">
 <head>
 <meta charset="UTF-8">
+<% var hex; %>
+<% if(theme=="discord"){ hex="#7289da"; } %>
+<% if(theme=="dracula"){ hex="#ff79c6"; } %>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="application-name" content="RDL">
 <meta name="apple-mobile-web-app-title" content="<%= title %>">
-<meta name="theme-color" content="#7289da">
+<meta name="theme-color" content="<%= hex %>">
 <link rel="manifest" href="/manifest.json">
 <meta name='dmca-site-verification' content='V3l1VVUrUlYwTlNXVDNqY0hRTWpsWjgyZmdDUVIyb3luZ1FseWZwOGpIRT01' />
-<meta name="msapplication-navbutton-color" content="#7289da">
+<meta name="msapplication-navbutton-color" content="<%= hex %>">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="msapplication-starturl" content="/">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
