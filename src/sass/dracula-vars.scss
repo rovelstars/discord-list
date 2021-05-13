@@ -1,0 +1,92 @@
+@charset "utf-8";
+
+// Dracula Pallete
+$dracula-bg: #282a36;
+$dracula-fg: #f8f8f2;
+$dracula-selected: #44475a;
+$dracula-comment: #6272a4;
+$dracula-cyan: #8be9fd;
+$dracula-green: #50fa7b;
+$dracula-orange: #ffb86c;
+$dracula-pink: #ff79c6;
+$dracula-purple: #bd93f9;
+$dracula-red: #ff5555;
+$dracula-yellow: #f1fa8c;
+
+
+$deep-black: #0a0a0a;
+// Update Bulma's global variables
+// read more: https://bulma.io/documentation/customize/variables/
+$primary: $dracula-purple;
+
+$link: $dracula-pink;
+$link-hover: lighten($dracula-pink, 5%);
+$link-hover-border: lighten($dracula-pink, 5%);
+$link-focus: darken($dracula-pink, 5%);
+$link-focus-border: darken($dracula-pink, 5%);
+$link-active: lighten($dracula-pink, 5%);
+$link-active-border: lighten($dracula-pink, 5%);
+
+$info: $dracula-cyan;
+$success: $dracula-green;
+$warning: $dracula-yellow;
+$danger: $dracula-red;
+$dark: $dracula-selected;
+$grey: $dracula-fg;
+
+$text: $dracula-fg;
+$text-light: lighten($dracula-fg, 5%);
+$text-strong: darken($dracula-fg, 5%);
+
+$background: $dracula-bg;
+
+$green-invert: $dracula-bg;
+$success-invert: $dracula-bg;
+
+// Update some of Bulma's component variables
+$title-color: $dracula-fg;
+$subtitle-color: $dracula-fg;
+$subtitle-strong-color: darken($dracula-fg, 5%);
+
+$body-background-color: $dracula-bg;
+$footer-background-color: $dracula-bg;
+
+$code-background: $dracula-selected;
+$label-color: $dracula-fg;
+$card-color: $dracula-bg;
+
+// button
+$button-color: $dracula-bg;
+$button-static-color: $dracula-bg;
+
+// message
+$message-body-color: $dracula-bg;
+
+// form
+$input-placeholder-color: lighten($dracula-selected, 20%);
+$input-color: $dracula-selected;
+$input-icon-color: lighten($dracula-selected, 20%);
+$input-icon-active-color: $dracula-selected;
+
+// form -- select
+$input-hover-color: $dracula-pink;
+
+// form -- radio
+// $input-hover-color: $dracula-fg;
+
+// table
+$table-background-color: $dracula-bg;
+
+$table-head-background-color: $deep-black;
+$table-foot-background-color:$deep-black;
+
+$table-row-hover-background-color: lighten($dracula-selected, 10%);
+$table-row-active-background-color: $dracula-selected;
+$table-striped-row-even-background-color: $dracula-selected;
+$table-striped-row-even-hover-background-color: lighten($dracula-selected, 10%);
+
+// box
+$box-background-color: $deep-black;
+
+// media
+$media-border-color: $dracula-fg;

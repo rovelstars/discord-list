@@ -23,6 +23,7 @@ let Users = require("@models/users.js");
 var Servers = require("@models/servers.js");
 const servers = require("@routes/servers.js");
 const embeds = require("@routes/embeds.js");
+const prefers = require("@routes/prefers.js");
 const users = require("@routes/users.js");
 var latency = require("response-time");
 const info = require("@utils/info.js");
@@ -75,6 +76,16 @@ var booting = function(req, res, next){
 }
 app.use(booting);
 var checkBanned = async function(req, res, next) {
+ var themes = ["discord", "dracula"]
+ if(!themes.include(req.cookies['theme'])){
+  req.cookies["theme"] = "discord";
+  res.cookie('theme', "discord", {
+   maxAge: 30 * 3600 * 24 * 1000, //30days
+   httpOnly: true,
+   secure: true
+  });
+ }
+ req.theme = (req.cookies["theme"])?req.cookies["theme"]:"discord";
  if(req.header('RDL-key')){
   req.query.key = req.header('RDL-key');
  }
@@ -152,6 +163,7 @@ app.use('/api/auth', authRoute);
 app.use('/api/client', client);
 app.use('/api/servers', servers);
 app.use('/api/embeds', embeds);
+app.use('/api/preferences', prefers);
 
 app.get('/api', (req, res)=>{
  res.json({hello: "coder!"});
@@ -165,7 +177,7 @@ app.get("/", async (req, res) => {
  var bots = await Bots.find({added: true});
  shuffle(bots);
  var user = req.user;
- await res.render('index.ejs', {user, bots});
+ await res.render('index.ejs', {user, theme: req.theme, bots});
 });
 
 let TopVotedBots;
@@ -180,7 +192,7 @@ setInterval(UpdateBots,300000);
 app.get("/bots", async (req, res) => {
  shuffle(bots);
  var user = req.user;
- await res.render('bots.ejs', {user, nbots: NewAddedBots});
+ await res.render('bots.ejs', {user, theme: req.theme, nbots: NewAddedBots});
 });
 
 app.get("/manifest.json", (req, res)=>{
@@ -225,7 +237,7 @@ app.get("/bots/:id/vote", async (req, res)=>{
  }
  else{
   user.bal = u.bal;
- await res.render('botvote.ejs', {user, bot});
+ await res.render('botvote.ejs', {user, theme: req.theme, bot});
  }}
  }
 });
@@ -241,7 +253,7 @@ app.get("/bots/:id", async (req, res)=>{
   await bot.owner.push(d.tag);
  });
  };
- await res.render('botpage.ejs', {user, bot});
+ await res.render('botpage.ejs', {user, theme: req.theme, bot});
 });
 
 app.get("/dashboard", async (req, res)=>{
@@ -259,7 +271,7 @@ app.get("/dashboard", async (req, res)=>{
      await botus.push(bot);
     }
    }
-  await res.render('dashboard.ejs', {user: req.user, bots: botus});
+  await res.render('dashboard.ejs', {user: req.user,theme: req.theme, bots: botus});
   });
   });
  }
@@ -271,7 +283,7 @@ app.get("/dashboard/bots/new", async (req, res)=>{
   res.redirect("/login");
  }
  else{
- await res.render('dashboard-newbot.ejs', {user: req.user});
+ await res.render('dashboard-newbot.ejs', {user: req.user, theme: req.theme});
  }
 });
 
@@ -280,7 +292,7 @@ app.get("/dashboard/bots/import", async (req, res)=>{
   res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
   res.redirect("/login");
  }
- await res.render('dashboard-importbot.ejs', {user: req.user});
+ await res.render('dashboard-importbot.ejs', {user: req.user, theme: req.theme});
 });
 
 app.get("/status", (req, res)=>{
