@@ -10,6 +10,10 @@ router.get("/themes/:name",(req, res)=>{
    httpOnly: true,
    secure: true
   });
+  res.json({success: true});
+ }
+ else{
+  res.json({err: "invalid_theme"});
  }
 });
 
