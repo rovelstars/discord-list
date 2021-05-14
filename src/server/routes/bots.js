@@ -194,7 +194,7 @@ router.get("/:id/sync", (req, res) => {
        "img": u.avatarURL,
        "desc": `New Data Saved:\n\`\`\`json\n${JSON.stringify(user)}\n\`\`\``,
        "title": `Bot ${u.tag} Data Updated!`,
-       "color": "#faa61a",
+       "color": "#FEE75C",
        "url": `https://discord.rovelstars.com/bots/${u.id}`
       })
      });

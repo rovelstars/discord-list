@@ -17,20 +17,20 @@ $dracula-yellow: #f1fa8c;
 $deep-black: #0a0a0a;
 // Update Bulma's global variables
 // read more: https://bulma.io/documentation/customize/variables/
-$primary: #7289da;
+$primary: #5865F2;
 
-$link: #ff73fa;
-$link-hover: lighten(#ff73fa, 5%);
-$link-hover-border: lighten(#ff73fa, 5%);
-$link-focus: darken(#ff73fa, 5%);
-$link-focus-border: darken(#ff73fa, 5%);
-$link-active: lighten(#ff73fa, 5%);
-$link-active-border: lighten(#ff73fa, 5%);
+$link: #EB459E;
+$link-hover: lighten(#EB459E, 5%);
+$link-hover-border: lighten(#EB459E, 5%);
+$link-focus: darken(#EB459E, 5%);
+$link-focus-border: darken(#EB459E, 5%);
+$link-active: lighten(#EB459E, 5%);
+$link-active-border: lighten(#EB459E, 5%);
 
 $info: #9b84ee;
-$success: #43b581;
-$warning: #faa61a;
-$danger: #f04747;
+$success: #57F287;
+$warning: #FEE75C;
+$danger: #ED4245;
 $dark: darken(#2f3136, 5%);
 $grey: lighten(#99aab5,10%);
 
@@ -69,7 +69,7 @@ $input-icon-color: lighten(#2f3136, 20%);
 $input-icon-active-color: #2f3136;
 
 // form -- select
-$input-hover-color: #ff73fa;
+$input-hover-color: #EB459E;
 
 // form -- radio
 // $input-hover-color: $dracula-fg;
@@ -80,10 +80,10 @@ $table-background-color: #36393f;
 $table-head-background-color: #000000;
 $table-foot-background-color: #000000;
 
-$table-row-hover-background-color: lighten(#7289da, 10%);
-$table-row-active-background-color: #7289da;
-$table-striped-row-even-background-color: #7289da;
-$table-striped-row-even-hover-background-color: lighten(#7289da, 10%);
+$table-row-hover-background-color: lighten(#5865F2, 10%);
+$table-row-active-background-color: #5865F2;
+$table-striped-row-even-background-color: #5865F2;
+$table-striped-row-even-hover-background-color: lighten(#5865F2, 10%);
 
 // box
 $box-background-color: #2f3136;

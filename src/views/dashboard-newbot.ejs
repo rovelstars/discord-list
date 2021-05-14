@@ -321,7 +321,7 @@ function addBot(){
  }).then(r=>r.json()).then(d=>{
   if(d.err){
    let err;
-   var title = d.err.split("_").join(" ")
+   var title = d.err.split("_").join(" ").toUpperCase();
    if(d.err=="no_id"){
     err="Please Write The Bot ID"
    }

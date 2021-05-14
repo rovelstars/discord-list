@@ -125,7 +125,7 @@
 }
 
 .swal2-popup.swal2-toast .swal2-success {
-  border-color: #43b581
+  border-color: #57F287
 }
 
 .swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line] {
@@ -418,7 +418,7 @@
   align-items: center;
   -webkit-animation: swal2-rotate-loading 1.5s linear 0s infinite normal;
   animation: swal2-rotate-loading 1.5s linear 0s infinite normal;
-  border-color: #7289da transparent;
+  border-color: #5865F2 transparent;
   border-radius: 100%;
   border-style: solid;
   border-width: .25em;
@@ -442,7 +442,7 @@
 
 .swal2-styled.swal2-confirm {
   background: initial;
-  background-color: #7289da
+  background-color: #5865F2
 }
 
 .swal2-styled.swal2-confirm,
@@ -455,7 +455,7 @@
 
 .swal2-styled.swal2-deny {
   background: initial;
-  background-color: #f04747
+  background-color: #ED4245
 }
 
 .swal2-styled.swal2-cancel {
@@ -531,7 +531,7 @@
 
 .swal2-close:hover {
   background: transparent;
-  color: #f04747;
+  color: #ED4245;
   transform: none
 }
 
@@ -583,14 +583,14 @@
 .swal2-file.swal2-inputerror,
 .swal2-input.swal2-inputerror,
 .swal2-textarea.swal2-inputerror {
-  border-color: #f04747 !important;
-  box-shadow: 0 0 2px #f04747 !important
+  border-color: #ED4245 !important;
+  box-shadow: 0 0 2px #ED4245 !important
 }
 
 .swal2-file:focus,
 .swal2-input:focus,
 .swal2-textarea:focus {
-  border: 1px solid #7289da;
+  border: 1px solid #5865F2;
   box-shadow: 0 0 0 3px rgba(100, 150, 200, .5);
   outline: none
 }
@@ -703,7 +703,7 @@
 }
 
 .swal2-validation-message:before {
-  background-color: #f04747;
+  background-color: #ED4245;
   border-radius: 50%;
   color: #fff;
   content: "!";
@@ -742,8 +742,8 @@
 }
 
 .swal2-icon.swal2-error {
-  border-color: #f04747;
-  color: #f04747
+  border-color: #ED4245;
+  color: #ED4245
 }
 
 .swal2-icon.swal2-error .swal2-x-mark {
@@ -752,7 +752,7 @@
 }
 
 .swal2-icon.swal2-error [class^=swal2-x-mark-line] {
-  background-color: #f04747;
+  background-color: #ED4245;
   border-radius: .125em;
   display: block;
   height: .3125em;
@@ -901,7 +901,7 @@
 }
 
 .swal2-progress-steps .swal2-progress-step {
-  background: #7289da;
+  background: #5865F2;
   border-radius: 2em;
   color: #fff;
   flex-shrink: 0;
@@ -913,7 +913,7 @@
 }
 
 .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step {
-  background: #7289da
+  background: #5865F2
 }
 
 .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step {
@@ -926,7 +926,7 @@
 }
 
 .swal2-progress-steps .swal2-progress-step-line {
-  background: #7289da;
+  background: #5865F2;
   flex-shrink: 0;
   height: .4em;
   margin: 0 -1px;

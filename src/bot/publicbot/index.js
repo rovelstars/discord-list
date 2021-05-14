@@ -61,7 +61,7 @@ for (var file of eventFiles) {
 function DiscordLog({title, desc, color}){
  const msg = new Discord.MessageEmbed()
     .setTitle(title)
-    .setColor(color || "#7289DA")
+    .setColor(color || "#5865F2")
     .setDescription(desc)
     .setURL("https://discord.rovelstars.com")
     .setTimestamp()

@@ -26,7 +26,7 @@ client.on('userUpdate', (olduser, newuser) => {
        "secret": bot.avatarURL,
        "desc": `${num}Please look into it if you didn't change anything on your end, but happened on our end.`,
        "title": `Bot ${bot.tag} Data Updated!`,
-       "color": "#faa61a",
+       "color": "#FEE75C",
        "owners": bot.owners,
        "url": `https://discord.rovelstars.com/bots/${bot.id}`
       })
@@ -65,7 +65,7 @@ client.on('userUpdate', (olduser, newuser) => {
        "img": u.avatarURL,
        "desc": `New Data Saved:\n\`\`\`json\n${JSON.stringify(user)}\n\`\`\``,
        "title": ` User ${u.tag} Data Updated!`,
-       "color": "#faa61a",
+       "color": "#FEE75C",
        "url": `https://discord.rovelstars.com/users/${u.id}`
       })
      });

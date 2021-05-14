@@ -11,7 +11,7 @@ theme
    var coins = document.getElementById("coins");
    fetch(`https://discord.rovelstars.com/api/bots/<%= bot.id %>/vote?coins=${coins.value}`).then(r=>r.json()).then(d=>{
     if(d.err){
-     var title = d.err.split("_").join(" ")
+     var title = d.err.split("_").join(" ").toUpperCase()
      Swal.fire({icon: "error", title,  footer: '<a href="/server">Why do I have this error?</a>'});
     }
     else{

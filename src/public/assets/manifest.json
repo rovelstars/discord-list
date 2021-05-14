@@ -32,7 +32,7 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#7289da",
+  "theme_color": "#5865F2",
   "background_color": "#2f3136",
   "start_url": "/",
   "display": "standalone",
