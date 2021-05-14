@@ -225,10 +225,10 @@ app.get("/bots/:id/vote", async (req, res)=>{
   res.redirect("/login");
  }
  else{
- var bot = await Bots.findOne({id: req.params.id});
- if(!bot) return await res.send("-_-");
- else{
  var user = req.user;
+ var bot = await Bots.findOne({id: req.params.id});
+ if(!bot) return await res.render("404.ejs", {user, path: req.originalUrl});
+ else{
  bot.owner = [];
  var u = await Users.findOne({id: user.id});
  if(!u){
@@ -243,10 +243,10 @@ app.get("/bots/:id/vote", async (req, res)=>{
 });
 
 app.get("/bots/:id", async (req, res)=>{
- var bot = await Bots.findOne({id: req.params.id});
- if(!bot) return await res.send("-_-");
- bot.desc = await marked(bot.desc);
  var user = req.user;
+ var bot = await Bots.findOne({id: req.params.id});
+ if(!bot) return await res.render("404.ejs",{user, path: req.originalUrl})
+ bot.desc = await marked(bot.desc);
  bot.owner = [];
  for(const id of bot.owners){
   await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r=>r.json()).then(async d=>{
@@ -363,5 +363,6 @@ app.get("/logout", async (req, res)=>{
 });
 
 app.get("*", (req, res) => {
- res.sendFile(path.resolve("src/public/assets/index.html"));
+ var user = req.user;
+ res.render("404.ejs",{user, path: req.originalUrl});
  });

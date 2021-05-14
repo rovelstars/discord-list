@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>404 - Rovel Discord List</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="/assets/css/notfound.css">
+<script>
+ function goback(){
+  window.history.go(-1);
+ }
+ var method=document.getElementById("method");
+ var button=document.getElementById("button");
+ var title=document.getElementById("title");
+ function methodupdate(){
+  if(button.innerText=="Go up"){
+   button.innerText="Go down";
+   title.innerText="405 - Method Not Allowed";
+   method.innerText="Did you *@#$?! <%= (user)?user.username:"" %>... Well, nevermind.";
+  }
+  else if(button.innerText=="Go down"){
+   button.innerText="Go up";
+   title.innerText="404 - Not Found";
+   method.innerText="<%= (user)?(user.username+", "):"" %> The page you are looking for (<%= path %>) might have been removed, had its name changed or is temporarily unavailable.";
+  }
+ }
+</script>
+</head>
+<body>
+<div class="noise"></div>
+<div class="overlay"></div>
+<div class="terminal">
+  <h1>Error <span class="errorcode" id="title">404 - Not Found</span></h1>
+  <p class="output" id="method"><%= (user)?(user.username+", "):"" %>The page you are looking for (<%= path %>) might have been removed, had its name changed or is temporarily unavailable.</p>
+  <p class="output">Please try to <a onclick="goback()">go back</a> or <a href="/">return to the homepage</a>. <span class="output has-text-link" onclick="methodupdate()" id="button">Go up</span></p>
+  <p class="output">Good luck.</p>
+</div>
+</body>
+</html>
