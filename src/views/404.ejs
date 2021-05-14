@@ -26,11 +26,11 @@
   }
   else if(input.innerText=="$ LOGIN"){
    title.innerText="Welcome <%= (user)?(user.username+", "):"User, " %> You're on Rovel Stars Terminal At the moment.";
-   method.innerText="Commands Available:\n- whoami: sends your terminal username\n- run: run javascript code, if you need to run it, end the code with double semi colon \";;\" (not nodejs)\n- play: play terminal games here!";
+   method.innerText="Commands Available:\n- whoami: sends your terminal username\n- run: run javascript code (not nodejs)\n- play: play terminal games here!";
    input.innerText="$ ";
   }
-  else if(input.innerText.startsWith("$ RUN ")&&input.innerText.endsWith(";;")){
-   const code = input.innerText.replace("$ RUN ","");
+  else if(input.innerText=="$ RUN"){
+   const code = prompt("Enter code to run!");
    eval(code);
    input.innerText="$ ";
   }
