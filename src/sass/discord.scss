@@ -11,17 +11,3 @@ $kbc-button-warning: $warning;
 $kbc-button-danger: $danger;
 $kbc-button-light: $grey;
 $kbc-button-dark: $dark;
-
-@font-face {
- font-family: discordu;
- src: url(https://discord.rovelstars.com/assets/font/discordu.ttf);
-}
-
-h1, .h1,
-h2, .h2,
-h3, .h3,
-h4, .h4,
-h5, .h5,
-h6, .h6 {
- font-family: discordu, sans-serif;
-}
