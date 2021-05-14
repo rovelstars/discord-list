@@ -205,7 +205,7 @@ router.get("/:id/sync", (req, res) => {
  });
 });
 
-router.get("/:id/apikey", (req, res) => {
+router.get("/:id/code", (req, res) => {
  if (!req.query.key) return res.json({ err: "no_key" });
 
  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(d => {
