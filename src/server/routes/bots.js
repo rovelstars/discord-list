@@ -229,6 +229,9 @@ router.get("/:id/code", (req, res) => {
      else res.json({ auth }); //not there and we made one
     })
    }
+   if(!bot.owners.includes(d.id)){
+    return res.json({err: "unauth"});
+   }
   });
  });
 });
