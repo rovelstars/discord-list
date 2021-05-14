@@ -82,7 +82,7 @@ $(window).load(function() {
  localStorage.allowcookies = "yes";
 })
   }
-   if(result.isDenied){
+   else if(result.isDenied){
     Swal.fire({
  title: "We use cookies! 🍪",
  text: "Cause they are tasty 😋!",
