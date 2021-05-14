@@ -52,7 +52,8 @@ $(window).load(function() {
     imageUrl: "https://cdn.discordapp.com/attachments/775220204699385886/811836708734631946/robot.svg",
     imageWidth: 300,
     imageHeight: 300,
-    showCancelButton: true,
+    showCancelButton: false,
+    showDenyButton: true,
     didRender: twemoji.parse,
     confirmButtonText: 'Introduce to me!',
     denyButtonText: 'I know this site 😏',
@@ -87,7 +88,7 @@ $(window).load(function() {
       localStorage.allowcookies = "yes";
      })
     }
-    else if (result.isDenied) {
+    else {
      Swal.fire({
       title: "We use cookies! 🍪",
       text: "Cause they are tasty 😋!",
