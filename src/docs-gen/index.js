@@ -1,9 +1,6 @@
 const fs = require('fs');
 const matter = require('gray-matter');
-const str = fs.readFileSync('example.html', 'utf8');
-
 var Files = fs.readdirSync(__dirname + '/docs').filter(file => file.endsWith('.md'));
-
 let ci = 0;
 let cj = Files.length;
 for (var file of Files) {
