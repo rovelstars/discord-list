@@ -124,7 +124,7 @@ router.get("/users/:id", (req, res) => {
   res.json(d)});
  }
  else {
-  if(user.avatar==null) user.avatar=(user.discriminator%5);
+  if(user.avatar==null) user.avatar=(user.discriminator%5).toString();
   res.json(user);}
 });
 router.get("/owners", (req, res) => {
