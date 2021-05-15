@@ -12,6 +12,7 @@
   "node": "^15.x"
  },
  "dependencies": {
+  "translatte": "3.0.0",
   "fetch-base64": "2.1.2",
   "diacritics": "1.3.0",
   "cheerio": "1.0.0-rc.6",
