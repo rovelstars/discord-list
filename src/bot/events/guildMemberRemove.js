@@ -1,4 +1,10 @@
 client.on("guildMemberRemove", (member)=>{
+ 
+ const channel = member.guild.channels.cache.find(ch => ch.name === 'welcome・logs');
+ if(channel){
+  channel.send(`R.I.P ${member.tag}, why did you leave bro?`);
+ }
+ 
  if(!member.user.bot){
   Bots.find({$text:{$search: member.user.id}}).then(async bots=>{
    for(const bot of bots){

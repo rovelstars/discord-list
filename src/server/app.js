@@ -227,7 +227,9 @@ app.get("/bots/:id/vote", async (req, res)=>{
  else{
  var user = req.user;
  var bot = await Bots.findOne({id: req.params.id});
- if(!bot) return await res.render("404.ejs", {user, path: req.originalUrl});
+ if(!bot){ 
+  
+  await res.render("404.ejs", {user, path: req.originalUrl});}
  else{
  bot.owner = [];
  var u = await Users.findOne({id: user.id});

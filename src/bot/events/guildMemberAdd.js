@@ -1,4 +1,52 @@
 client.on("guildMemberAdd", (member)=>{
+ 
+ // Send the message to a designated channel on a server:
+ const channel = member.guild.channels.cache.find(ch => ch.name === 'welcome・logs');
+ if(channel){
+ const welcomelist = [
+ `${member} just joined the server - glhf!`,
+`${member} just joined. Everyone, look busy!`,
+`${member} just joined. Can I get a heal?`,
+`${member} joined your party.`,
+`${member} joined. You must construct additional pylons.`,
+`Ermagherd. ${member} is here.`,
+`Welcome, ${member}. Stay awhile and listen.`,
+`Welcome, ${member}. We were expecting you ( ͡° ͜ʖ ͡°)`,
+`Welcome, ${member}. We hope you brought pizza.`,
+`Welcome ${member}. Leave your weapons by the door.`,
+`A wild ${member} appeared.`,
+`Swoooosh. ${member} just landed.`,
+`Brace yourselves. ${member} just joined the server.`,
+`${member} just joined. Hide your bananas.`,
+`${member} just arrived. Seems OP - please nerf.`,
+`${member} just slid into the server.`,
+`A ${member} has spawned in the server.`,
+`Big ${member} showed up!`,
+`Where’s ${member}? In the server!`,
+`${member} hopped into the server. Kangaroo!!`,
+`${member} just showed up. Hold my beer.`,
+`Challenger approaching - ${member} has appeared!`,
+`It's a bird! It's a plane! Nevermind, it's just ${member}.`,
+`It's ${member}! Praise the sun! [T]/`,
+`Never gonna give ${member} up.
+Nevergonna let ${member} down.`,
+`Ha! ${member} has joined! You activated my trap card!`,
+`Cheers, love! ${member}'s here!`,
+`Hey! Listen! ${member} has joined!`,
+`We've been expecting you ${member}`,
+`It's dangerous to go alone, take ${member}!`,
+`${member} has joined the server! It's super effective!`,
+`Cheers, love! ${member} is here!`,
+`${member} is here, as the prophecy foretold.`,
+`${member} has arrived. Party's over.`,
+`Ready player ${member}`,
+`${member} is here to kick butt and chew bubblegum. And Disco${member}ll out of gum.`,
+`Hello. Is it ${member} you're looking for?`,
+`${member} has joined. Stay a while and listen!`,
+`Roses are red, violets are blue, ${member} joined this server with you`, ];
+ const hiwelcome = Math.floor(Math.random() * (welcomelist.length - 1) + 1);
+ channel.send('<a:incoming:822373222993100840> ' + welcomelist[hiwelcome]);
+ }
  if(member.user.bot){
   let role = client.guilds.cache.get("602906543356379156").roles.cache.get("775763023234203720");
   member.roles.add(role).catch(e=>console.log(e));
