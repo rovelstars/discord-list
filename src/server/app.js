@@ -13,7 +13,6 @@ function shuffle(array) {
   }
   return array;
 }
-const {langcodes} = require("../data.js");
 const actuator = require('express-actuator');
 const marked = require("marked");
 let BotAuth = require("@models/botauth.js");
@@ -58,12 +57,6 @@ const limiter = rateLimit({
  max: 300 // limit each IP to 300 requests per windowMs
 });
 app.set('trust proxy', 1);
-const translatte = require("translatte");
-
-async function translate(text,lang){
- return await translatte(text, {to: lang});
-}
-app.locals.translate = translate;
 app.use("/api", limiter);
 process.on('unhandledRejection', err => {
  var unre = function(req, res, next) {
@@ -92,16 +85,7 @@ var checkBanned = async function(req, res, next) {
    secure: true
   });
  }
-  if(!langcodes.includes(req.cookies['lang'])){
-  req.cookies["lang"] = "en";
-  res.cookie('lang', "en", {
-   maxAge: 30 * 3600 * 24 * 1000, //30days
-   httpOnly: true,
-   secure: true
-  });
- }
  req.theme = (req.cookies["theme"])?req.cookies["theme"]:"discord";
- req.lang = (req.cookies["lang"])?req.cookies["lang"]:"en";
  if(req.header('RDL-key')){
   req.query.key = req.header('RDL-key');
  }
@@ -193,7 +177,7 @@ app.get("/", async (req, res) => {
  var bots = await Bots.find({added: true});
  shuffle(bots);
  var user = req.user;
- await res.render('index.ejs', {user, theme: req.theme, lang: req.lang, bots}, {async: true});
+ await res.render('index.ejs', {user, theme: req.theme, bots});
 });
 
 let TopVotedBots;
@@ -208,7 +192,7 @@ setInterval(UpdateBots,300000);
 app.get("/bots", async (req, res) => {
  shuffle(bots);
  var user = req.user;
- await res.render('bots.ejs', {user, theme: req.theme, lang: req.lang, nbots: NewAddedBots}, {async: true});
+ await res.render('bots.ejs', {user, theme: req.theme, nbots: NewAddedBots});
 });
 
 app.get("/manifest.json", (req, res)=>{
@@ -255,7 +239,7 @@ app.get("/bots/:id/vote", async (req, res)=>{
  }
  else{
   user.bal = u.bal;
- await res.render('botvote.ejs', {user, theme: req.theme, lang: req.lang, bot},{async: true});
+ await res.render('botvote.ejs', {user, theme: req.theme, bot});
  }}
  }
 });
@@ -271,7 +255,7 @@ app.get("/bots/:id", async (req, res)=>{
   await bot.owner.push(d.tag);
  });
  };
- await res.render('botpage.ejs', {user, theme: req.theme, lang: req.lang, bot},{async: true});
+ await res.render('botpage.ejs', {user, theme: req.theme, bot});
 });
 
 app.get("/dashboard", async (req, res)=>{
@@ -289,7 +273,7 @@ app.get("/dashboard", async (req, res)=>{
      await botus.push(bot);
     }
    }
-  await res.render('dashboard.ejs', {user: req.user,theme: req.theme, lang: req.lang, bots: botus},{async:true});
+  await res.render('dashboard.ejs', {user: req.user,theme: req.theme, bots: botus});
   });
   });
  }
@@ -301,7 +285,7 @@ app.get("/dashboard/bots/new", async (req, res)=>{
   res.redirect("/login");
  }
  else{
- await res.render('dashboard-newbot.ejs', {user: req.user, theme: req.theme, lang: req.lang},{async:true});
+ await res.render('dashboard-newbot.ejs', {user: req.user, theme: req.theme});
  }
 });
 
@@ -310,7 +294,7 @@ app.get("/dashboard/bots/import", async (req, res)=>{
   res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
   res.redirect("/login");
  }
- await res.render('dashboard-importbot.ejs', {user: req.user, theme: req.theme, lang: req.lang},{async:true});
+ await res.render('dashboard-importbot.ejs', {user: req.user, theme: req.theme});
 });
 
 app.get("/status", (req, res)=>{
