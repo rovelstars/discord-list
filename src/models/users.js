@@ -16,13 +16,15 @@ const mongoose = require('mongoose');
   },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
 Users.virtual('avatarURL').get(function(){
-  if((this.avatar=="1")||(this.avatar=="2")||(this.avatar=="3")||(this.avatar=="4")) return `https://cdn.discordapp.com/embed/avatars/${this.avatar}.png`;
+  if((this.avatar=="1")||(this.avatar=="2")||(this.avatar=="3")||(this.avatar=="4")){ return `https://cdn.discordapp.com/embed/avatars/${this.avatar}.png`;}
+  else{
  var ani=false;
  if(this.avatar.startsWith("a_")) ani=true;
  const aniurl=`https://cdn.discordapp.com/avatars/${this.id}/${this.avatar}.gif`;
  const nonurl=`https://cdn.discordapp.com/avatars/${this.id}/${this.avatar}.png`;
  const url = (ani)?aniurl:nonurl;
  return url;
+  }
 });
 Users.virtual('tag').get(function(){
  return `${this.username}#${this.discriminator}`;
