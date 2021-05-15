@@ -9,5 +9,5 @@ for (var file of Files) {
  ci += 1;
  console.log(`[DOCS] Page Generated - ${file} (${ci}/${cj})`);
  file = file.replace(".md","");
- fs.writeFileSync(`${__dirname}/build/${file}.json`, text);
+ fs.writeFileSync(`${__dirname}/build/${file}.json`, text, {falg: "a+"});
 }
