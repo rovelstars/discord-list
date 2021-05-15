@@ -172,9 +172,9 @@ router.get("/:id/sync", (req, res) => {
   if (!user) return res.json({ err: "not_found" });
   else {
    fetch("https://discord.rovelstars.com/api/client/users/" + user.id).then(r => r.json()).then(u => {
+    if(!u.avatar) u.avatar=(u.discriminator%5);
     if ((u.avatar === user.avatar) && (u.username === user.username) && (u.discriminator === user.discriminator)) return res.json({ err: "same_data" });
     else {
-     if(!u.avatar) u.avatar=(u.discriminator%5);
      if (u.avatar !== user.avatar) {
       user.avatar = u.avatar;
      }
