@@ -119,14 +119,13 @@ router.get("/bannedusers/:id", (req, res) => {
 router.get("/users/:id", (req, res) => {
  var user = client.users.cache.get(req.params.id);
  if (user == null) {
-  fetch(`https://discord.com/api/v7/users/${req.params.id}`, {
-   method: "GET",
-   headers: {
-    "Authorization": `Bot ${process.env.TOKEN}`
-   }
-  }).then(r => r.json()).then(d => res.json(d));
+  client.users.fetch(req.params.id).then(r => r.json()).then(d =>{
+   if(d.avatar==null) d.avatar=(u.discriminator%5);
+  res.json(d)});
  }
- else res.json(user);
+ else {
+  if(user.avatar==null) user.avatar=(user.discriminator%5);
+  res.json(user);}
 });
 router.get("/owners", (req, res) => {
  res.json({ owners: client.owners });
