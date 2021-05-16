@@ -196,6 +196,7 @@ app.get('/test', function (req, res) {
   // delay a response to simulate a long running process,
   // while another request comes in with altered language settings
   res.send(res.__("title"));
+  console.log(res.__);
 });
 
 app.getDelay = function (req, res) {
