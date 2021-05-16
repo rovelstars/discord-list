@@ -145,9 +145,12 @@ i18n.configure({
  locales: ["en", "hi"],
  cookie: "lang",
  queryParameter: "lang",
+ defaultLocale: "hi",
  directory: path.resolve("node_modules/rdl-i18n/site")
 });
+app.configure(function () {
 app.use(i18n.init);
+});
 
 var weblog = async function(req, res, next) {
  const weburl = process.env.WEBHOOK;
