@@ -77,7 +77,6 @@ var booting = function(req, res, next){
 app.use(booting);
 var checkBanned = async function(req, res, next) {
  var themes = ["discord", "dracula"];
- var langs = ["en","hi"];
  if(!themes.includes(req.cookies['theme'])){
   req.cookies["theme"] = "discord";
   res.cookie('theme', "discord", {
@@ -89,14 +88,6 @@ var checkBanned = async function(req, res, next) {
  req.theme = (req.cookies["theme"])?req.cookies["theme"]:"discord";
  if(req.header('RDL-key')){
   req.query.key = req.header('RDL-key');
- }
- if(!langs.includes(req.cookies["lang"])){
-  req.cookies["lang"]="en";
-  res.cookie('lang', "en", {
-   maxAge: 30 * 3600 * 24 * 1000, //30days
-   httpOnly: true,
-   secure: true
-  });
  }
  
  if(req.header('RDL-code')){
