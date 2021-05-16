@@ -58,13 +58,6 @@ const limiter = rateLimit({
 });
 app.set('trust proxy', 1);
 app.use("/api", limiter);
-var i18n = require("i18n");
-i18n.configure({
- locales: ["en", "hi"],
- cookie: "lang",
- directory: path.resolve("node_modules/rdl-i18n/site")
-});
-app.use(i18n.init);
 process.on('unhandledRejection', err => {
  var unre = function(req, res, next) {
   log(error("**PROCESS** - Unhandled Rejection:\n") + warn(err));
@@ -96,6 +89,10 @@ var checkBanned = async function(req, res, next) {
  if(req.header('RDL-key')){
   req.query.key = req.header('RDL-key');
  }
+ if(!req.cookies["lang"]){
+  req.cookies["lang"]="en";
+ }
+ req.header('Accept-Language')=(req.cookies["lang"])?req.cookies["lang"]:"en";
  if(req.header('RDL-code')){
   req.query.code = req.header('RDL-code');
  }
@@ -137,6 +134,13 @@ var checkBanned = async function(req, res, next) {
  }
 };
 app.use(checkBanned);
+var i18n = require("i18n");
+i18n.configure({
+ locales: ["en", "hi"],
+ directory: path.resolve("node_modules/rdl-i18n/site")
+});
+app.use(i18n.init);
+
 var weblog = async function(req, res, next) {
  const weburl = process.env.WEBHOOK;
  if(req.query.code){
@@ -187,8 +191,13 @@ app.get('/test', function (req, res) {
     res.send(
       '<body>res: ' + res.__('hello') + ' req: ' + req.__('hello') + '</body>'
     )
-  },1000);
-})
+  },app.getDelay(req, res));
+});
+
+app.getDelay = function (req, res) {
+  // eslint-disable-next-line node/no-deprecated-api
+  return url.parse(req.url, true).query.delay || 0
+}
 
 app.get("/", async (req, res) => {
  var bots = await Bots.find({added: true});
