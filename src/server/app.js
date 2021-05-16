@@ -195,11 +195,7 @@ app.get('/api/*', (req, res)=>{
 app.get('/test', function (req, res) {
   // delay a response to simulate a long running process,
   // while another request comes in with altered language settings
-  setTimeout(function () {
-    res.send(
-      '<body>res: ' + res.__('hello') + ' req: ' + req.__('hello') + '</body>'
-    )
-  },app.getDelay(req, res));
+  res.send(res.__("title"));
 });
 
 app.getDelay = function (req, res) {
