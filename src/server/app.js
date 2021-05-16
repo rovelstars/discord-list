@@ -17,8 +17,10 @@ const actuator = require('express-actuator');
 const marked = require("marked");
 var i18n = require("i18n");
 i18n.configure({
- locales: []
-})
+ locales: ["en", "hi"],
+ cookie: "lang",
+ directory: path.resolve("node_modules/rdl-i18n/site")
+});
 let BotAuth = require("@models/botauth.js");
 const geoip = require("geoip-lite");
 var cloudflare = require('cloudflare-express');
@@ -62,6 +64,7 @@ const limiter = rateLimit({
 });
 app.set('trust proxy', 1);
 app.use("/api", limiter);
+app.use(i18n.init);
 process.on('unhandledRejection', err => {
  var unre = function(req, res, next) {
   log(error("**PROCESS** - Unhandled Rejection:\n") + warn(err));
@@ -175,6 +178,16 @@ app.get('/api', (req, res)=>{
 
 app.get('/api/*', (req, res)=>{
  res.json({err: 404});
+})
+
+app.get('/test', function (req, res) {
+  // delay a response to simulate a long running process,
+  // while another request comes in with altered language settings
+  setTimeout(function () {
+    res.send(
+      '<body>res: ' + res.__('hello') + ' req: ' + req.__('hello') + '</body>'
+    )
+  },1000);
 })
 
 app.get("/", async (req, res) => {
