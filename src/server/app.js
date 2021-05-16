@@ -15,6 +15,10 @@ function shuffle(array) {
 }
 const actuator = require('express-actuator');
 const marked = require("marked");
+var i18n = require("i18n");
+i18n.configure({
+ locales: []
+})
 let BotAuth = require("@models/botauth.js");
 const geoip = require("geoip-lite");
 var cloudflare = require('cloudflare-express');
