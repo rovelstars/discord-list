@@ -194,7 +194,8 @@ app.get('/api/*', (req, res)=>{
 
 app.get('/test', function (req, res) {
   var greeting = req.__("title");
-  console.log(greeting);
+  console.log(req.locale);
+  console.log("res\n"+res.locale);
   res.send(greeting);
 });
 
