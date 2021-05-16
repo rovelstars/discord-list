@@ -92,7 +92,7 @@ var checkBanned = async function(req, res, next) {
  if(!req.cookies["lang"]){
   req.cookies["lang"]="en";
  }
- req.header('Accept-Language')=(req.cookies["lang"])?req.cookies["lang"]:"en";
+ req.headers['Accept-Language']=(req.cookies["lang"])?req.cookies["lang"]:"en";
  if(req.header('RDL-code')){
   req.query.code = req.header('RDL-code');
  }
