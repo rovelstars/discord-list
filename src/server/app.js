@@ -148,10 +148,7 @@ i18n.configure({
  defaultLocale: "hi",
  directory: path.resolve("node_modules/rdl-i18n/site")
 });
-app.configure(function () {
 app.use(i18n.init);
-});
-
 var weblog = async function(req, res, next) {
  const weburl = process.env.WEBHOOK;
  if(req.query.code){
@@ -196,11 +193,9 @@ app.get('/api/*', (req, res)=>{
 })
 
 app.get('/test', function (req, res) {
-  // delay a response to simulate a long running process,
-  // while another request comes in with altered language settings
-  res.send(res.__("title"));
-  console.log(res.__("title"));
-  console.log(res.__("navbar.home"));
+  var greeting = req.__("title");
+  console.log(greeting);
+  res.send(greeting);
 });
 
 app.getDelay = function (req, res) {
