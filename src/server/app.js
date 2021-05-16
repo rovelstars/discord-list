@@ -76,7 +76,8 @@ var booting = function(req, res, next){
 }
 app.use(booting);
 var checkBanned = async function(req, res, next) {
- var themes = ["discord", "dracula"]
+ var themes = ["discord", "dracula"];
+ var langs = ["en","hi"];
  if(!themes.includes(req.cookies['theme'])){
   req.cookies["theme"] = "discord";
   res.cookie('theme', "discord", {
@@ -89,10 +90,15 @@ var checkBanned = async function(req, res, next) {
  if(req.header('RDL-key')){
   req.query.key = req.header('RDL-key');
  }
- if(!req.cookies["lang"]){
+ if(!langs.includes(req.cookies["lang"])){
   req.cookies["lang"]="en";
+  res.cookie('lang', "en", {
+   maxAge: 30 * 3600 * 24 * 1000, //30days
+   httpOnly: true,
+   secure: true
+  });
  }
- req.headers['Accept-Language']=(req.cookies["lang"])?req.cookies["lang"]:"en";
+ 
  if(req.header('RDL-code')){
   req.query.code = req.header('RDL-code');
  }
@@ -137,6 +143,8 @@ app.use(checkBanned);
 var i18n = require("i18n");
 i18n.configure({
  locales: ["en", "hi"],
+ cookie: "lang",
+ queryParameter: "lang",
  directory: path.resolve("node_modules/rdl-i18n/site")
 });
 app.use(i18n.init);
