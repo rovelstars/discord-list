@@ -15,12 +15,6 @@ function shuffle(array) {
 }
 const actuator = require('express-actuator');
 const marked = require("marked");
-var i18n = require("i18n");
-i18n.configure({
- locales: ["en", "hi"],
- cookie: "lang",
- directory: path.resolve("node_modules/rdl-i18n/site")
-});
 let BotAuth = require("@models/botauth.js");
 const geoip = require("geoip-lite");
 var cloudflare = require('cloudflare-express');
@@ -64,6 +58,12 @@ const limiter = rateLimit({
 });
 app.set('trust proxy', 1);
 app.use("/api", limiter);
+var i18n = require("i18n");
+i18n.configure({
+ locales: ["en", "hi"],
+ cookie: "lang",
+ directory: path.resolve("node_modules/rdl-i18n/site")
+});
 app.use(i18n.init);
 process.on('unhandledRejection', err => {
  var unre = function(req, res, next) {
