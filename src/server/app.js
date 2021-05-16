@@ -196,7 +196,7 @@ app.get('/test', function (req, res) {
 
 app.getDelay = function (req, res) {
   // eslint-disable-next-line node/no-deprecated-api
-  return url.parse(req.url, true).query.delay || 0
+  return require("url").parse(req.url, true).query.delay || 0
 }
 
 app.get("/", async (req, res) => {
