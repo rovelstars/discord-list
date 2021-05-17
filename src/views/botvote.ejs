@@ -9,7 +9,10 @@ theme
  <script>
   function addVote(){
    var coins = document.getElementById("coins");
+   var submitbutton = document.getElementById("submitbutton");
+   submitbutton.classList.add("is-loading");
    fetch(`https://discord.rovelstars.com/api/bots/<%= bot.id %>/vote?coins=${coins.value}`).then(r=>r.json()).then(d=>{
+    submitbutton.classList.remove("is-loading");
     if(d.err){
      var title = d.err.split("_").join(" ").toUpperCase()
      Swal.fire({icon: "error", title,  footer: '<a href="/server">Why do I have this error?</a>'});
@@ -49,7 +52,7 @@ theme
    </form>
    <br />
    <div class="has-text-centered">
-     <button class="button is-success has-text-white" onclick="addVote()"><i class="bx bxs-chevron-up-circle"></i>Vote</button>
+     <button class="button is-success has-text-white" onclick="addVote()" id="submitbutton"><i class="bx bxs-chevron-up-circle"></i>Vote</button>
      </div>
    </div>
    </div>

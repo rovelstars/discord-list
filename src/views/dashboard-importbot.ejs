@@ -10,7 +10,10 @@ theme
   function importBot(){
    var botid = document.getElementById("botid");
    var list = document.getElementById("list");
+   var submitbutton = document.getElementById("submitbutton");
+   submitbutton.classList.add("is-loading");
    fetch(`https://discord.rovelstars.com/api/bots/import/${list.value}/${botid.value}`).then(r=>r.json()).then(res=>{
+    submitbutton.classList.remove("is-loading");
     if(res.err){
      const title = res.err.split(" ").join("_");
      Swal.fire({title, icon: "error", footer: '<a href="/server">Why do I have this error?</a>'});
@@ -68,7 +71,7 @@ And make sure to join our server if not done already, and also make sure your DM
    </form>
    <br /><br />
    <div style="width: 100%;">
-     <button class="button is-success has-text-white" onclick="importBot()"><i class="bx bxs-download"></i>Import Bot</button>
+     <button class="button is-success has-text-white" onclick="importBot()" id="submitbutton"><i class="bx bxs-download"></i>Import Bot</button>
      </div>
  </div>
  </div>
