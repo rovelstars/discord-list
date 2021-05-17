@@ -133,10 +133,10 @@ var checkBanned = async function(req, res, next) {
 app.use(checkBanned);
 var i18n = require("i18n");
 i18n.configure({
- locales: ["en", "hi"],
+ locales: ["en", "hi", "ar", "es","tr"],
  cookie: "lang",
  queryParameter: "lang",
- defaultLocale: "hi",
+ defaultLocale: "en",
  directory: path.resolve("node_modules/rdl-i18n/site")
 });
 app.use(i18n.init);
