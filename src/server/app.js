@@ -76,6 +76,8 @@ var booting = function(req, res, next){
 }
 app.use(booting);
 var checkBanned = async function(req, res, next) {
+ res.locals.req = req;
+res.locals.res = res;
  var themes = ["discord", "dracula"];
  if(!themes.includes(req.cookies['theme'])){
   req.cookies["theme"] = "discord";
