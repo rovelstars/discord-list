@@ -19,14 +19,14 @@
  <div class="field is-grouped is-grouped-multiline">
   <div class="control">
     <div class="tags has-addons">
-    <span class="tag is-black"><i class="bx bxs-server"></i>&nbsp;In</span>
-    <span class="tag is-link"><%= (bot.servers)?((bot.servers!=1)?bot.servers:"???"):"???" %> Servers
+    <span class="tag is-black"><i class="bx bxs-server"></i>&nbsp;<%= __("bot.servers.title") %></span>
+    <span class="tag is-link"><%= (bot.servers)?((bot.servers!=1)?bot.servers:"???"):"???" %> <%= __("bot.servers.text") %>
     </span>
     </div>
   </div><br />
   <div class="control">
     <div class="tags has-addons">
-    <span class="tag is-black"><i class="bx bxs-chevron-up-circle"></i>&nbsp;Votes</span>
+    <span class="tag is-black"><i class="bx bxs-chevron-up-circle"></i>&nbsp;<%= __("bot.votes.title") %></span>
     <span class="tag is-info"><%= bot.votes %></span>
     </div>
   </div><br />
@@ -38,13 +38,13 @@
 <span class="icon">
 <i class="bx bxs-detail"></i>
 </span>
-<span>View</span>
+<span><%= __("view") %></span>
 </a>
  <a href="<%= bot.invite %>" target="_blank" class="box button is-link is-outlined">
 <span class="icon">
 <i class="bx bxs-plus-circle"></i>
 </span>
-<span>Add</span>
+<span><%= __("add") %></span>
 </a>
 </div>
 </div>

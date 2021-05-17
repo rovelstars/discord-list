@@ -37,10 +37,10 @@
           </a>
           <hr class="navbar-divider">
           <a class="navbar-item" href="/server">
-            <span style="color: #5865F2;"><i class="bx bxl-discord"></i></span>&nbsp;&nbsp;Join Discord Server
+            <span style="color: #5865F2;"><i class="bx bxl-discord"></i></span>&nbsp;&nbsp;<%= __("navbar.join-server") %>
           </a>
           <a class="navbar-item" href="https://github.com/rovelstars/rovel-discord-list">
-           <i class="bx bxl-github"></i><i class="bx bx-code-alt"></i>&nbsp;&nbsp;Source Code
+           <i class="bx bxl-github"></i><i class="bx bx-code-alt"></i>&nbsp;&nbsp;<%= __("navbar.github") %>
           </a>
     </div>
 
@@ -49,12 +49,12 @@
         <div class="buttons">
          <% if(!user){ %>
           <a class="button is-primary" href="/login">
-            <i class="bx bxs-chevron-right-circle"></i>&nbsp;&nbsp;Log in</a>
+            <i class="bx bxs-chevron-right-circle"></i>&nbsp;&nbsp;<%= __("navbar.login) %></a>
             <% } else { %>
               <a class="button is-danger" href="/logout" id="logout-link">
-            <i class="bx bxs-chevron-left-circle"></i>&nbsp;&nbsp;Log out</a>
+            <i class="bx bxs-chevron-left-circle"></i>&nbsp;&nbsp;<%= __("navbar.logout") %></a>
              <a class="button" style="background-color: #5865F2;color: #ffffff;" href="/dashboard">
-              <i class="bx bxs-grid-alt"></i>&nbsp;&nbsp;DashBoard
+              <i class="bx bxs-grid-alt"></i>&nbsp;&nbsp;<%= __("navbar.dashboard") %>
              </a>
           <% } %>
         </div>
