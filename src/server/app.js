@@ -13,6 +13,7 @@ function shuffle(array) {
   }
   return array;
 }
+const {langs} = require("../data.js");
 const actuator = require('express-actuator');
 const marked = require("marked");
 let BotAuth = require("@models/botauth.js");
@@ -78,6 +79,7 @@ app.use(booting);
 var checkBanned = async function(req, res, next) {
  res.locals.req = req;
 res.locals.res = res;
+req.language = eval(`langs.${req.locale}`);
  var themes = ["discord", "dracula"];
  if(!themes.includes(req.cookies['theme'])){
   req.cookies["theme"] = "discord";
@@ -162,6 +164,7 @@ var weblog = async function(req, res, next) {
    "content": logweb
   })
  });
+ req.language = eval(`langs.${req.locale}`);
  next();
 }
 app.use(weblog);
