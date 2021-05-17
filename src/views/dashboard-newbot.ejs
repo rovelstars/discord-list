@@ -139,7 +139,7 @@ General Information
 </form>
 <br />
 <div class="has-text-centered">
- <button class="button is-success has-text-white" onclick="addBot()">Add Bot</button>
+ <button class="button is-success has-text-white" onclick="addBot()" id="submitbutton">Add Bot</button>
 </div>
 <br />
 <div class="preview">
@@ -297,6 +297,8 @@ botdesc.addEventListener("keyup",async (e) => {
     }
 });
 function addBot(){
+ var submitbutton = document.getElementById("submitbutton");
+ submitbutton.classList.add("is-loading");
  fetch("https://discord.rovelstars.com/api/bots/new",{
   method: "POST",
   redirect: "follow",
@@ -319,6 +321,7 @@ function addBot(){
  "invite": botinvite.value
   })
  }).then(r=>r.json()).then(d=>{
+  submitbutton.classList.remove("is-loading");
   if(d.err){
    let err;
    var title = d.err.split("_").join(" ").toUpperCase();
