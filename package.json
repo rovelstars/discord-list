@@ -9,7 +9,7 @@
   "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed"
  },
  "engines": {
-  "node": "^15.x"
+  "node": "^16.x"
  },
  "dependencies": {
   "i18n": "0.13.3",
@@ -52,7 +52,7 @@
   "pm2": "4.5.6",
   "resize-img-cli": "1.0.0",
   "autoprefixer": "^10.2.0",
-  "node-sass": "^5.0.0",
+  "node-sass": "^6.0.0",
   "npm-run-all": "^4.1.5",
   "postcss": "^8.2.3",
   "postcss-cli": "^8.3.1",
