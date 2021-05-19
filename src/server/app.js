@@ -188,7 +188,7 @@ app.get('/api', (req, res)=>{
 app.get('/api/*', (req, res)=>{
  res.json({err: 404});
 })
-app.get('/comments-history', (req, res) => res.json(messages));
+app.get('/comments-history', (req, res) => res.json(comments));
 app.use("/comments", express.static(path.resolve('src/commentpublic')));
 
 app.get("/", async (req, res) => {
