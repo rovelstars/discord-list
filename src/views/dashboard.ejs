@@ -42,7 +42,7 @@ theme
       <img class="image is-128x128" style="margin: auto; border-radius: 50%;" src="<%= user.avatarUrl() %>" alt="<%= user.tag %> Avatar">
      </div>
      <div class="column is-10">
-         <h1 class="title"> Welcome To Your Dashboard <%= user.username %><span class="text-muted">#<%= user.discriminator %>
+         <h1 class="title"> <%= __("dashboard.welcome") %> <%= user.username %><span class="text-muted">#<%= user.discriminator %>
    </h1><br />
    <h4 class="subtitle">
     Here you can manage your Account, Bots, and Servers!
