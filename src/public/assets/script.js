@@ -49,7 +49,7 @@ $(window).load(function() {
    Swal.fire({
     title: "Hey New Visitor!",
     text: "Allow us to introduce RDL!",
-    imageUrl: "https://cdn.discordapp.com/attachments/775220204699385886/811836708734631946/robot.svg",
+    imageUrl: "https://discord.rovelstars.com/assets/img/bot/logo.svg",
     imageWidth: 300,
     imageHeight: 300,
     showCancelButton: false,
@@ -110,3 +110,13 @@ $(window).load(function() {
   })
  }
 });
+
+function onHover()
+{
+    $("#menuImg").attr('src', 'https://discord.rovelstars.com/assets/img/bot/pet.gif');
+}
+
+function offHover()
+{
+    $("#menuImg").attr('src', 'https://discord.rovelstars.com/assets/img/bot/logo.svg');
+}
