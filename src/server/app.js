@@ -13,6 +13,7 @@ function shuffle(array) {
   }
   return array;
 }
+let comments = [];
 const {langs} = require("../data.js");
 const actuator = require('express-actuator');
 const marked = require("marked");
@@ -187,18 +188,8 @@ app.get('/api', (req, res)=>{
 app.get('/api/*', (req, res)=>{
  res.json({err: 404});
 })
-
-app.get('/test', function (req, res) {
-  var greeting = req.__("title");
-  console.log(req.locale);
-  console.log("res\n"+res.locale);
-  res.send(greeting);
-});
-
-app.getDelay = function (req, res) {
-  // eslint-disable-next-line node/no-deprecated-api
-  return require("url").parse(req.url, true).query.delay || 0
-}
+app.get('/comments-history', (req, res) => res.json(messages));
+app.use("/comments", express.static(path.resolve('src/commentpublic')));
 
 app.get("/", async (req, res) => {
  var bots = await Bots.find({added: true});

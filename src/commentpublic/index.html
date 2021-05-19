@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Chat</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/discord-theme@1.1.8/css/main.min.css" defer>
+
+  <link rel="stylesheet" href="/comments/styles.css">
+  <link rel="stylesheet" href="/comments/message.css">
+</head>
+<body>
+  <div id="chat">
+    <div id="chat-window">
+      <div id="output"></div>
+    </div>
+    <div id="feedback"></div>
+    <input id="username" class="dinput" type="text" placeholder="Username">
+    <input id="message" class="dinput" type="text" placeholder="Message">
+    <button id="send">Send</button>
+  </div>
+
+  <p id="footer">
+    Discord themed websocket chat. Messages are deleted after 5 minutes.
+  </p>
+
+  <script src="/comments/discord-html.js" defer></script>
+  <script src="/comments/chat.js" type="module" defer></script>
+</body>
+</html>
