@@ -2,32 +2,32 @@
   "name": "Rovel Discord List",
   "icons": [
     {
-      "src": "assets/img/logo-36.png",
+      "src": "assets/img/bot/logo-36.png",
       "sizes": "36x36",
       "type": "image/png"
     },
     {
-      "src": "assets/img/logo-48.png",
+      "src": "assets/img/bot/logo-48.png",
       "sizes": "48x48",
       "type": "image/png"
     },
     {
-      "src": "assets/img/logo-72.png",
+      "src": "assets/img/bot/logo-72.png",
       "sizes": "72x72",
       "type": "image/png"
     },
     {
-      "src": "assets/img/logo-96.png",
+      "src": "assets/img/bot/logo-96.png",
       "sizes": "96x96",
       "type": "image/png"
     },
     {
-      "src": "assets/img/logo-144.png",
+      "src": "assets/img/bot/logo-144.png",
       "sizes": "144x144",
       "type": "image/png"
     },
     {
-      "src": "assets/img/logo-192.png",
+      "src": "assets/img/bot/logo-192.png",
       "sizes": "192x192",
       "type": "image/png"
     }

@@ -1,6 +1,6 @@
 #!/bin/sh
 npm i rdl-i18n
-cd src/public/assets/img
+cd src/public/assets/img/bot
 resize-img logo-512.png --width 36 > logo-36.png
 echo "36x36 done!"
 resize-img logo-512.png --width 48 > logo-48.png

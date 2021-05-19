@@ -333,7 +333,7 @@ app.get("/loaderio-39a018887f7a2f8e525d19a772e9defe", (req, res)=>{
 });
 
 app.get("/favicon.ico", (req, res) => {
- res.redirect("/assets/img/logo.png");
+ res.redirect("/assets/img/bot/logo.png");
 });
 app.get("/robots.txt", (req, res)=>{
  res.sendFile(path.resolve("src/public/assets/robots.txt"));
