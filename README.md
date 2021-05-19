@@ -21,6 +21,11 @@ This List is currently a **Work In Progress** and we cannot provide an E.T.A for
 
 [Server Invite](https://discord.gg/953XCpHbKF)
 
+---
+# 🤓 Translation!
+We are looking for translators for translating RDL in every language of the world!
+Please join our server and DM `Progamer 😎#3286` with your crowdin username and the languages you will be translating. He shall give you the invite link to join the translator team!
+---
 
 # License Notice
 
