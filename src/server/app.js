@@ -13,7 +13,7 @@ function shuffle(array) {
   }
   return array;
 }
-let comments = [];
+let messages = [];
 const {langs} = require("../data.js");
 const actuator = require('express-actuator');
 const marked = require("marked");
@@ -188,7 +188,7 @@ app.get('/api', (req, res)=>{
 app.get('/api/*', (req, res)=>{
  res.json({err: 404});
 })
-app.get('/comments-history', (req, res) => res.json(comments));
+app.get('/comments-history', (req, res) => res.json(messages));
 app.use("/comments", express.static(path.resolve('src/commentpublic')));
 
 app.get("/", async (req, res) => {

@@ -29,7 +29,7 @@ process.on('unhandledRejection', error => {
  console.warn('An Error Occurred!\n' + error);
 });
 let server;
-const { app, port, messages: comments } = require("@server/app.js");
+const { app, port, messages } = require("@server/app.js");
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 server = http.listen(port, () => {
