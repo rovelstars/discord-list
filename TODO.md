@@ -4,23 +4,26 @@ The Developers of RDL are here:
 - @BasilThaddeus
 - @mrTomatolegit
 - @Zone-Infinity
+- @JustBeingAbdi
 
 ## Ideas
+- allow bots to let users earn R$ by using OTP like thingy (@sayantan300)
 
 ---
 ## Doing atm
-- comment system by @sayantan300
+- comment system (@sayantan300)
 
 ---
 ## Pending
-- All listing except bots.
-- translation for the whole site
-- Make themes
-- verification process
-- docs
-- docs generator
-- caching (partly done for [/bots](https://discord.rovelstars.com/bots))
+- All listing except bots. (@sayantan300)
+- translation for the whole site (@sayantan300)
+- Make themes (@sayantan300)
+- verification process (@sayantan300)
+- docs (@sayantan300)
+- docs generator (@sayantan300)
+- caching ,partly done for [/bots](https://discord.rovelstars.com/bots) (@sayantan300)
 
 ---
 ## We wont work on this
-- help users setup their own list
+
+- help users setup their own list (@sayantan300)
