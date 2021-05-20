@@ -20,7 +20,8 @@
     <button id="send">Send</button>
   </div>
   <script>
-  let user=<%- (req.user)?{req.user.avatarURL=req.user.avatarUrl();JSON.stringify(req.user)}:null %>;
+  <% if(req.user){req.user.avatarURL=req.user.avatarUrl();} %>
+  let user=<%- (req.user)?{JSON.stringify(req.user)}:null %>;
   var data;
   if (!window.top) {
     window = window.parent;
