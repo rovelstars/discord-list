@@ -6,7 +6,7 @@ function extremelyLongMessagePreview(data) {
                 <div class="scroller-wrap">
                     <div class="scroller messages">
                         <div class="message-group hide-overflow">
-                            <div class="avatar-large animate" style="background-image: url(${(user)?user.avatarURL:"https://cdn.discordapp.com/embed/avatars/0.png"})"></div>
+                            <div class="avatar-large animate" style="background-image: url(${(user)?user.avatarUrl:"https://cdn.discordapp.com/embed/avatars/0.png"})"></div>
                             <div class="comment">${getMessage(data)}</div>
                         </div>
                     </div>

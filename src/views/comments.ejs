@@ -20,7 +20,6 @@
     <button id="send">Send</button>
   </div>
   <script>
-  <% if(user){user.avatarURL=user.avatarUrl();} %>
   let user=<%- (user)?JSON.stringify(user):null %>;
   var data;
   if (!window.top) {
