@@ -204,6 +204,12 @@ async function UpdateBots(){
 }
 UpdateBots();
 setInterval(UpdateBots,300000);
+
+app.get("/comments",(req,res)=>{
+ res.render("comments.ejs", {user: req.user});
+});
+app.use("/comments", express.static(path.resolve("src/comments")));
+
 app.get("/bots", async (req, res) => {
  shuffle(bots);
  var user = req.user;

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>Rovel Discord List Comment Embed</title>
+ <!--<script src="https://cdn.jsdelivr.net/npm/discord-theme@1.1.8/js/main.min.js"></script>-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/discord-theme@1.1.8/css/main.min.css" defer>
+
+  <link rel="stylesheet" href="/comments/styles.css">
+  <link rel="stylesheet" href="/comments/message.css">
+ </head>
+ <body>
+<div id="chat">
+    <div id="chat-window">
+      <div id="output"></div>
+    </div>
+    <div id="feedback"></div>
+    <input id="message" class="dinput" type="text" placeholder="Message">
+    <button id="send">Send</button>
+  </div>
+  <script>
+  let user=<%= (req.user)?JSON.stringify(user):null %>;
+  var data;
+  if (!window.top) {
+    window = window.parent;
+  }
+  var resources = window.performance.getEntriesByType("resource");
+  resources.forEach(function(resource) {
+   if (resource.name.endsWith(".css")) {
+    document.write(`<link rel="stylesheet"
+  href="${resource.name}">`);
+   }
+  });
+  const message = document.getElementById('message');
+const btn = document.getElementById('send');
+const output = document.getElementById('output');
+if(!user){
+ btn.innerText="Please Login To Continue.";
+ btn.style.backgroundColor="#f04747";
+}
+// emit events
+btn.addEventListener('click', () => {
+ if(!user){
+  window.location.href="/login";
+ }
+ data = {
+  message: message.value,
+    username: "User",
+    createdAt: new Date(),
+    id: new Date().getTime()
+ }
+ if(user){
+ appendMessage(data);
+ }
+  message.value = '';
+});
+function appendMessage(data) {
+  output.innerHTML += extremelyLongMessagePreview(data);
+}
+ </script>
+ <script src="/comments/discord-html.js" defer></script>
+</body>
+</html>
