@@ -63,6 +63,5 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-H94PBD65X6');
-  <% user.avatarURL = user.avatarUrl() %>
-  const user = <%= (req.user)?JSON.stringify(req.user):null %>
+  const user = <%- (user)?JSON.stringify(user):null %>
 </script>
