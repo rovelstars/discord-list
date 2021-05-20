@@ -20,7 +20,7 @@
     <button id="send">Send</button>
   </div>
   <script>
-  let user=<%= (req.user)?JSON.stringify(user):null %>;
+  let user=<%- (req.user)?JSON.stringify(user):null %>;
   var data;
   if (!window.top) {
     window = window.parent;
