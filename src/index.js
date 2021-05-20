@@ -29,10 +29,8 @@ process.on('unhandledRejection', error => {
  console.warn('An Error Occurred!\n' + error);
 });
 let server;
-const { app, port, messages } = require("@server/app.js");
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-server = http.listen(port, () => {
+const { app, port } = require("@server/app.js");
+server = app.listen(port, () => {
  console.log(`[SERVER] Started on port: ${port}`);
 });
 
@@ -61,45 +59,3 @@ process.on('SIGTERM', () => {
  });
  }, 3000);
 });
-
-const got = require('got');
-const { toHTML } = require('discord-markdown');
-const { textEmoji } = require('markdown-to-text-emoji'); 
-
-const metascraper = require('metascraper')([
-  require('metascraper-description')(),
-  require('metascraper-image')(),
-  require('metascraper-title')(),
-  require('metascraper-url')()
-]);
-
-io.on('connection', (clientSocket) => {
-  console.log('Made socket connection', clientSocket.id);
-
-  clientSocket.on('chat', async (data) => {
-    await setEmbed(data);
-
-    data.html = toHTML(textEmoji(data.message));
-
-    const newIndex = messages.push(data) - 1;
-    setTimeout(() => messages.splice(newIndex, 1), 5 * 60 * 1000);
-    
-    io.sockets.emit('chat', data);
-  });
-
-  clientSocket.on('typing', (data) => {
-    clientSocket.broadcast.emit('typing', data);
-  });
-});
-
-async function setEmbed(data) {
-  const containsURL = /([https://].*)/.test(data.message);
-  if (containsURL) {
-    try {
-      const targetUrl = /([https://].*)/.exec(data.message)[0];
-      const { body: html, url } = await got(targetUrl);
-
-      data.embed = await metascraper({ html, url });
-    } catch {}
-  }
-}

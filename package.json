@@ -12,16 +12,6 @@
   "node": "^16.x"
  },
  "dependencies": {
-  "discord-markdown": "^2.4.1",
-  "got": "^11.7.0",
-  "markdown-to-text-emoji": "^1.1.0",
-  "metascraper": "^5.14.14",
-  "metascraper-description": "^5.14.14",
-  "metascraper-image": "^5.14.14",
-  "metascraper-title": "^5.14.14",
-  "metascraper-url": "^5.14.14",
-  "metascraper-youtube": "^5.14.14",
-  "socket.io": "4.1.2",
   "i18n": "0.13.3",
   "rdl-i18n": "github:rovelstars/rdl-i18n",
   "gray-matter": "4.0.3",

@@ -50,13 +50,13 @@ theme
    <div class="field is-grouped is-grouped-multiline">
    <div class="control" onclick="sync()">
     <div class="tags has-addons">
-    <span class="tag is-dark"><%= __("dashboard.sync.title") %></span>
+    <span class="tag is-outlined"><%= __("dashboard.sync.title") %></span>
     <span class="tag is-success" id="sync"><%= __("dashboard.sync.normal") %></span>
     </div>
   </div><br />
    <div class="control">
     <div class="tags has-addons">
-     <span class="tag is-dark"><%= __("dashboard.balance") %></span>
+     <span class="tag is-outlined"><%= __("dashboard.balance") %></span>
      <span class="tag is-danger">R$ <%= (user.bal)?user.bal.toString():"0" %></span>
     </div>
   </div><br />
@@ -109,13 +109,13 @@ theme
 </div>
 <div class="content-footer">
 <div class="buttons">
-<a href="/bots/<%= bot.id %>" class="box button is-info is-dark">
+<a href="/bots/<%= bot.id %>" class="box button is-info is-outlined">
 <span class="icon">
 <i class="bx bxs-detail"></i>
 </span>
 <span><%= __("view") %></span>
 </a>
- <a href="/dashboard/bots/edit/<%= bot.id %>" class="box button is-link is-dark">
+ <a href="/dashboard/bots/edit/<%= bot.id %>" class="box button is-link is-outlined">
 <span class="icon">
 <i class="bx bxs-pencil"></i>
 </span>
@@ -150,13 +150,13 @@ theme
 </div>
 <div class="content-footer">
 <div class="buttons">
-<a href="/dashboard/bots/new" class="box button is-info is-dark">
+<a href="/dashboard/bots/new" class="box button is-info is-outlined">
 <span class="icon">
 <i class="bx bxs-plus-circle"></i>
 </span>
 <span><%= __("add-bot") %></span>
 </a>
- <a href="/dashboard/bots/import" class="box button is-link is-dark">
+ <a href="/dashboard/bots/import" class="box button is-link is-outlined">
 <span class="icon">
 <i class="bx bx-code-alt"></i>
 </span>

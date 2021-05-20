@@ -46,7 +46,7 @@ theme
    </h4><br />
    <div class="columns buttons">
      <div class="column is-3">
-    <a href="<%= bot.invite %>" target="_blank" class="box button is-link has-background-dark is-dark">
+    <a href="<%= bot.invite %>" target="_blank" class="box button is-link has-background-dark is-outlined">
 <span class="icon">
 <i class="bx bxs-plus-circle"></i>
 </span>
@@ -54,7 +54,7 @@ theme
 </a><br />
 </div>
 <div class="column is-3">
-    <a href="/bots/<%= bot.id %>/vote" class="box button is-success has-background-dark is-dark">
+    <a href="/bots/<%= bot.id %>/vote" class="box button is-success has-background-dark is-outlined">
 <span class="icon">
 <i class="bx bxs-chevron-up-circle"></i>
 </span>
@@ -65,19 +65,19 @@ theme
    <div class="field is-grouped is-grouped-multiline">
    <div class="control" id="prefix">
     <div class="tags has-addons">
-    <span class="tag is-dark"><i class="bx bxs-message-error"></i>&nbsp;Prefix</span>
+    <span class="tag is-outlined"><i class="bx bxs-message-error"></i>&nbsp;Prefix</span>
     <span class="tag is-danger"><%= bot.prefix %></span>
     </div>
   </div><br />
     <div class="control" id="status">
     <div class="tags has-addons">
-    <span class="tag is-dark"><i class="bx bxs-notification"></i>&nbsp;Status</span>
+    <span class="tag is-outlined"><i class="bx bxs-notification"></i>&nbsp;Status</span>
     <span class="tag is-success"><%= (bot.status)?bot.status:"Online" %></span>
     </div>
     </div><br />
    <div class="control" id="lib">
     <div class="tags has-addons">
-    <span class="tag is-dark"><i class="bx bx-library"></i>&nbsp;Library</span>
+    <span class="tag is-outlined"><i class="bx bx-library"></i>&nbsp;Library</span>
     <% if(bot.lib == ""){ %>
     <span class="tag is-info">not known</span>
     <% } else { %>
@@ -87,34 +87,34 @@ theme
   </div><br />
   <div class="control" id="owners">
     <div class="tags has-addons">
-    <span class="tag is-dark"><i class="bx bxs-crown"></i>&nbsp;Made by</span>
+    <span class="tag is-outlined"><i class="bx bxs-crown"></i>&nbsp;Made by</span>
     <span class="tag is-success"><%= bot.owner.join(", ") %></span>
     </div>
   </div><br />
   <div class="control" id="servers">
     <div class="tags has-addons">
-    <span class="tag is-dark"><i class="bx bxs-server"></i>&nbsp;In</span>
+    <span class="tag is-outlined"><i class="bx bxs-server"></i>&nbsp;In</span>
     <span class="tag is-link"><%= (bot.servers)?((bot.servers!=1)?bot.servers:"???"):"???" %> Servers
     </span>
     </div>
   </div><br />
   <div class="control" id="votes">
     <div class="tags has-addons">
-    <span class="tag is-dark"><i class="bx bxs-chevron-up-circle"></i>&nbsp;Votes</span>
+    <span class="tag is-outlined"><i class="bx bxs-chevron-up-circle"></i>&nbsp;Votes</span>
     <span class="tag is-info"><%= bot.votes %></span>
     </div>
   </div><br /><% if(bot.support){ %>
   <div class="control">
     <div class="tags has-addons">
      <a href="https://discord.gg/<%= bot.support %>">
-    <span class="tag is-dark" style="color:white;"><i class="bx bx-support"></i>&nbsp;Support Server</span><span class="tag is-primary" style="color:white;">Join</span></a>
+    <span class="tag is-outlined" style="color:white;"><i class="bx bx-support"></i>&nbsp;Support Server</span><span class="tag is-primary" style="color:white;">Join</span></a>
     </div>
     </div><br /><% } %>
     <% if(bot.github){ %>
     <div class="control">
     <div class="tags has-addons">
      <a href="<%= bot.github %>">
-    <span class="tag is-dark" style="color:white;"><i class="bx bxl-github"></i>&nbsp;Github</span><span class="tag is-success" style="color:black;">Check Source Code</span></a>
+    <span class="tag is-outlined" style="color:white;"><i class="bx bxl-github"></i>&nbsp;Github</span><span class="tag is-success" style="color:black;">Check Source Code</span></a>
     </div>
   </div>
     <% } %>
@@ -122,7 +122,7 @@ theme
     <div class="control">
     <div class="tags has-addons">
      <a href="<%= bot.donate %>">
-    <span class="tag is-dark" style="color:white;"><i class="bx bx-money"></i>&nbsp;Donate</span><span class="tag is-warning" style="color:black;">Money</span></a>
+    <span class="tag is-outlined" style="color:white;"><i class="bx bx-money"></i>&nbsp;Donate</span><span class="tag is-warning" style="color:black;">Money</span></a>
     </div>
   </div>
     <% } %>
