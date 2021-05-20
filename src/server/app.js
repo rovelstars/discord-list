@@ -26,6 +26,7 @@ const servers = require("@routes/servers.js");
 const embeds = require("@routes/embeds.js");
 const prefers = require("@routes/prefers.js");
 const users = require("@routes/users.js");
+const comments = require("@routes/comments.js");
 var latency = require("response-time");
 const info = require("@utils/info.js");
 const app = require("express")();
@@ -177,6 +178,7 @@ app.use('/api/users', users);
 app.use('/api/auth', authRoute);
 app.use('/api/client', client);
 app.use('/api/servers', servers);
+app.use('/api/comments', comments);
 app.use('/api/embeds', embeds);
 app.use('/api/preferences', prefers);
 
