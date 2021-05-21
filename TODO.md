@@ -12,6 +12,7 @@ The Developers of RDL are here:
 ---
 ## Doing atm
 - comment system (@sayantan300)
+- stop other's from deploying their own version of RDL. (@sayantan300)
 
 ---
 ## Pending

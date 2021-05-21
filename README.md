@@ -33,6 +33,7 @@ Please join our server and DM `Progamer 😎#3286` with your crowdin username an
 
 - Keep your repository open source, with the same license.
 - Link our repository on the website.
+- Therefore, you should not edit the footer, or we will take down your deployment.
 
 # Setup
 1. Fill in the envs
