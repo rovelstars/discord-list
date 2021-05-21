@@ -10,6 +10,13 @@ mongoose.connect(process.env.DB, {
  useCreateIndex: true
 });
 
+if(!process.env.DOMAIN){
+ console.err("[ERROR] No Domain Given!");
+ process.exit(0);
+}
+if(process.env.DOMAIN.endsWith("/")){
+ process.env.DOMAIN = process.env.DOMAIN.slice(0, -1);
+}
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
