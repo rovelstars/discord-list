@@ -125,7 +125,7 @@ req.language = eval(`langs.${req.locale}`);
     })
    }
    else {
-   req.user = user;
+   req.user = user.toJSON();
     next()
    }
   });
