@@ -1,9 +1,10 @@
 <footer class="footer">
  <div class="content has-text-centered">
   <a href="https://github.com/rovelstars" style="color: white;"><% if((process.env.DOMAIN=="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){ %>
-  <%= __("footer.text")} %>
-  <% else{ %>
-  <%= "This Discord List has been copied from Rovel Discord List, please visit the original project - discord.rovelstars.com" } %>
+  <%= __("footer.text") %>
+  <% }else{ %>
+  <%= "This Discord List has been copied from Rovel Discord List, please visit the original project - discord.rovelstars.com" %>
+  <% } %>
   </a>
  </div>
  <div class="container has-text-centered">
