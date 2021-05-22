@@ -201,6 +201,14 @@ div.content iframe {
 
 .rdllogo:hover {
  content: url('/assets/img/bot/pet.gif');
- height: 1em;
- width: 1em;
+ height: 30;
+ width: 30;
+}
+textarea {
+ color: #ffffff;
+ font-family: Montserrat, sans-serif;
+}
+select option{
+ background-color: #ffffff;
+ font-family: Montserrat, sans-serif;
 }
