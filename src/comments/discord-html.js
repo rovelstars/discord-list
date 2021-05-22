@@ -18,7 +18,24 @@ function extremelyLongMessagePreview(data) {
 }
 
 function getMessage(data) {
- // const check = / /i
+ const emojiregex = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g;
+ var founded = data.message.match(emojiregex);
+ if(founded){
+  var oldemojis = founded;
+ founded = founded.map(emoji=>{
+  emoji = emoji.split(":");
+  const ani = (emoji[0]=="<a")?true:false;
+  if(emoji.length==3){
+   emoji.shift();
+  }
+  emoji[1]=emoji[1].replace(">","");
+  return `<img class="emoji" src="https://cdn.discordapp.com/emojis/${emoji[1]}.${(ani)?"gif":"png"}" alt="${emoji[0]}" />`;
+ });
+ for(var i=0;i<=(founded.length);i++){
+  data.message.replace(oldemojis[i],founded[i]);
+ }
+ }
+ 
  return `<div class="message first">
         <h2 style="line-height: 16px;">
             <span class="username-wrapper v-btm">
