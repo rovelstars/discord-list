@@ -9,6 +9,15 @@
 
   <link rel="stylesheet" href="/comments/styles.css">
   <link rel="stylesheet" href="/comments/message.css">
+    <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
+  <style>
+   img.emoji{
+    height: 1em;
+    width: 1em;
+    margin: 0 0.05em 0 0.1em;
+    vertical-align: -0.229em;
+   }
+  </style>
  </head>
  <body>
 <div id="chat">
@@ -54,6 +63,7 @@ btn.addEventListener('click', () => {
  appendMessage(data);
  }
   message.value = '';
+  twemoji.parse(document.body);
 });
 function appendMessage(data) {
   output.innerHTML += extremelyLongMessagePreview(data);
