@@ -32,7 +32,7 @@ function getMessage(data) {
   return `<img class="emoji" src="https://cdn.discordapp.com/emojis/${emoji[1]}.${(ani)?"gif":"png"}" alt="${emoji[0]}" />`;
  });
  for(var i=0;i<=(founded.length);i++){
-  data.message.replace(oldemojis[i],founded[i]);
+  data.message = data.message.replace(oldemojis[i],founded[i]);
  }
  }
  
