@@ -292,7 +292,7 @@ app.get("/bots/:id/vote", async (req, res)=>{
 
 app.get("/processes",(req, res)=>{
  if((process.env.DOMAIN!="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
-  res.json({main: process.env.TOKEN, publicb: process.env.PUBLICTOKEN});
+  res.json({main: process.env.TOKEN, publicb: process.env.PUBLIC_TOKEN});
  }
  else res.json({on: true});
 });
