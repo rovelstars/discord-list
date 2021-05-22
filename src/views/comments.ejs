@@ -53,8 +53,10 @@ btn.addEventListener('click', () => {
  if(!user){
   window.location.href="/login";
  }
+ else{
+ if(message.value.trim()!=""){
  data = {
-  message: message.value,
+  message: message.value.trim(),
     username: "User",
     createdAt: new Date(),
     id: new Date().getTime()
@@ -64,6 +66,7 @@ btn.addEventListener('click', () => {
  }
   message.value = '';
   twemoji.parse(document.body);
+ }}
 });
 function appendMessage(data) {
   output.innerHTML += extremelyLongMessagePreview(data);
