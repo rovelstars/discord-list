@@ -40,4 +40,4 @@ function warn(text){
  })
  globalThis.warnn(text);
 }
-module.exports = {log, err, warn};
+module.exports = {log, error, warn};
