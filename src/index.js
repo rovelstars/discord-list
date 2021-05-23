@@ -9,9 +9,17 @@ mongoose.connect(process.env.DB, {
  useFindAndModify: false,
  useCreateIndex: true
 });
+const loggy = require("@utils/loggy.js");
+
+globalThis.logg = console.log;
+globalThis.console.log = loggy.log;
+globalThis.logerr = console.error;
+globalThis.console.error = loggy.error;
+globalThis.warnn = console.warn;
+globalThis.console.warn = loggy.warn;
 
 if(!process.env.DOMAIN){
- console.err("[ERROR] No Domain Given!");
+ console.error("[ERROR] No Domain Given!");
  process.exit(0);
 }
 if(process.env.DOMAIN.endsWith("/")){
