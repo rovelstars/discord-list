@@ -29,7 +29,7 @@ function getMessage(data) {
    emoji.shift();
   }
   emoji[1]=emoji[1].replace(">","");
-  return `<img ${((data.message==oldemojis.join(" "))||(data.message==oldemojis.join("")))?'class="emoji"':''} src="https://cdn.discordapp.com/emojis/${emoji[1]}.${(ani)?"gif":"png"}" alt="${emoji[0]}" />`;
+  return `<img ${((data.message==oldemojis.join(" "))||(data.message==oldemojis.join("")))?'':'class="emoji"'} src="https://cdn.discordapp.com/emojis/${emoji[1]}.${(ani)?"gif":"png"}" alt="${emoji[0]}" />`;
  });
  for(var i=0;i<=(founded.length);i++){
   data.message = data.message.replace(oldemojis[i],founded[i]);
