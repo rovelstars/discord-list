@@ -10,6 +10,7 @@ function log(text){
    "content": text
   })
  })
+ globalThis.logg(text);
 }
 
 function error(text){
@@ -23,6 +24,7 @@ function error(text){
    "content": text
   })
  })
+ globalThis.logerr(text);
 }
 
 function warn(text){
@@ -36,5 +38,6 @@ function warn(text){
    "content": text
   })
  })
+ globalThis.warnn(text);
 }
 module.exports = {log, err, warn};
