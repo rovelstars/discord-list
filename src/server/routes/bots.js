@@ -352,18 +352,18 @@ router.get("/import/del/:id", (req, res) => {
      res.json({err: bot.message});
     }
     else{
-    if (bot.owner.id == user.id) {
+    if (bot.bot.owner.id == user.id) {
      var abot = {
       id: bot.bot.id,
       lib: (bot.bot.library == "") ? null : bot.bot.library,
       prefix: bot.bot.prefix,
-      short: bot.shortDesc,
-      desc: bot.longDesc,
-      owners: [bot.owner.id],
-      invite: bot.links.invite,
-      support: bot.links.support,
-      github: bot.links.repo,
-      website: bot.links.website
+      short: bot.bot.shortDesc,
+      desc: bot.bot.longDesc,
+      owners: [bot.bot.owner.id],
+      invite: bot.bot.links.invite,
+      support: bot.bot.links.support,
+      github: bot.bot.links.repo,
+      website: bot.bot.links.website
      }
      fetch(`${process.env.DOMAIN}/api/bots/new`, {
       method: "POST",
