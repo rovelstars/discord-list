@@ -348,6 +348,10 @@ router.get("/import/del/:id", (req, res) => {
  if (req.query.key) {
   fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(user => {
    fetch(`https://api.discordextremelist.xyz/v2/bot/${req.params.id}`).then(r => r.json()).then(bot => {
+    if(bot.error){
+     res.json({err: bot.message});
+    }
+    else{
     if (bot.owner.id == user.id) {
      var abot = {
       id: bot.bot.id,
@@ -373,7 +377,7 @@ router.get("/import/del/:id", (req, res) => {
     }
     else {
      return res.json({ err: "unauth_owner" });
-    }
+    }}
    });
   })
  }
