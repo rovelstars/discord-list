@@ -190,21 +190,19 @@ General Information
   </div><br />
   <div class="control">
     <div class="tags has-addons">
-     <a id="bot-support" href="">
     <span class="tag is-dark" style="color:white;"><i class="bx bx-support"></i>&nbsp;Support Server</span>
-    <span class="tag is-primary" style="color:white;">Join</span></a></div>
+    <a id="bot-support" href=""><span class="tag is-primary" style="color:white;">Join</span></a></div>
     </div><br />
     <div class="control">
     <div class="tags has-addons">
-     <a id="bot-github" href="">
     <span class="tag is-dark" style="color:white;"><i class="bx bxl-github"></i>&nbsp;Github</span>
-    <span class="tag is-success" style="color:black;">Check Source Code</span></a>
+    <a id="bot-github" href=""><span class="tag is-success" style="color:black;">Check Source Code</span></a>
     </div>
   </div><br />
   <div class="control">
     <div class="tags has-addons">
-     <a id="bot-donate" href="">
-    <span class="tag is-dark" style="color:white;"><i class="bx bx-money"></i>&nbsp;Donate</span><span class="tag is-warning" style="color:black;">Money</span></a>
+    <span class="tag is-dark" style="color:white;"><i class="bx bx-money"></i>&nbsp;Donate</span>
+    <a id="bot-donate" href=""><span class="tag is-warning" style="color:black;">Money</span></a>
     </div>
   </div><br />
   </div>
@@ -227,7 +225,7 @@ var visualizer = document.getElementById("livedesc");
 var botid = document.getElementById("botid");
 botid.addEventListener("keyup", async(e)=>{
  fetch("https://discord.rovelstars.com/api/client/users/"+botid.value).then(r=>r.json()).then(d=>{
-  document.getElementById("bot-avatar").src=(d.avatar)?`https://cdn.discordapp.com/avatars/${d.id}/${d.avatar}.png`:`https://cdn.discordapp.com/embed/avatars/0.png`;
+  document.getElementById("bot-avatar").src=(d.avatar)?`https://cdn.discordapp.com/avatars/${d.id}/${d.avatar}.png`:`https://cdn.discordapp.com/embed/avatars/${d.discriminator%5}.png`;
   document.getElementById("bot-username").innerText=d.username;
  })
 });
