@@ -46,7 +46,7 @@ theme
    </h4><br />
    <div class="columns buttons">
      <div class="column is-3">
-    <a href="<%= bot.invite %>" target="_blank" class="box button is-link has-background-dark is-outlined">
+    <a href="<%= bot.invite %>" target="_blank" class="box button is-link has-background-primary">
 <span class="icon">
 <i class="bx bxs-plus-circle"></i>
 </span>
@@ -54,7 +54,7 @@ theme
 </a><br />
 </div>
 <div class="column is-3">
-    <a href="/bots/<%= bot.id %>/vote" class="box button is-success has-background-dark is-outlined">
+    <a href="/bots/<%= bot.id %>/vote" class="box button is-success has-background-info">
 <span class="icon">
 <i class="bx bxs-chevron-up-circle"></i>
 </span>
@@ -106,20 +106,20 @@ theme
   </div><br /><% if(bot.support){ %>
   <div class="control">
     <div class="tags has-addons">
-    <span class="tag is-dark" style="color:white;"><i class="bx bx-support"></i>&nbsp;Support Server</span><a href="https://discord.gg/<%= bot.support %>"><span class="tag is-primary" style="color:white;">Join</span></a>
+    <span class="tag is-dark" style="color:white;"><i class="bx bx-support"></i>&nbsp;Support Server</span><span class="tag is-primary" style="color:white;"><a href="https://discord.gg/<%= bot.support %>">Join</a></span>
     </div>
     </div><br /><% } %>
     <% if(bot.github){ %>
     <div class="control">
     <div class="tags has-addons">
-    <span class="tag is-dark" style="color:white;"><i class="bx bxl-github"></i>&nbsp;Github</span><a href="<%= bot.github %>"><span class="tag is-success" style="color:black;">Check Source Code</span></a>
+    <span class="tag is-dark" style="color:white;"><i class="bx bxl-github"></i>&nbsp;Github</span><span class="tag is-success" style="color:black;"><a href="<%= bot.github %>">Check Source Code</a></span>
     </div>
   </div>
     <% } %>
     <% if(bot.donate){ %>
     <div class="control">
     <div class="tags has-addons">
-    <span class="tag is-dark" style="color:white;"><i class="bx bx-money"></i>&nbsp;Donate</span><a href="<%= bot.donate %>"><span class="tag is-warning" style="color:black;">Money</span></a>
+    <span class="tag is-dark" style="color:white;"><i class="bx bx-money"></i>&nbsp;Donate</span><span class="tag is-warning" style="color:black;"><a href="<%= bot.donate %>">Money</a></span>
     </div>
   </div>
     <% } %>
