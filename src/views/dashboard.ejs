@@ -8,32 +8,6 @@ theme
 <body>
  <%- include('partials/load'); %>
  <%- include('partials/navbar', {user}); %>
- <script>
-  function sync(){
-   var sc = document.getElementById("sync");
-   sc.innerText="In Progress...";
-   fetch("https://discord.rovelstars.com/api/users/<%= user.id %>/sync").then(r=>r.json()).then(d=>{
-    if(d.success){
-     sc.innerText="<%= __("dashboard.sync.success") %>";
-     setTimeout(()=>{
-      sc.innerText = "<%= __("dashboard.sync.normal") %>";
-     }, 5000);
-    }
-    if(d.err=="same_data"){
-     sc.innerText="<%= __("dashboard.sync.fail") %>"";
-     setTimeout(()=>{
-      sc.innerText = "<%= __("dashboard.sync.normal") %>";
-     }, 5000);
-    }
-    else{
-     sc.innerText="<%= __("dashboard.sync.error") %>";
-     setTimeout(()=>{
-      sc.innerText = "<%= __("dashboard.sync.normal") %>";
-     }, 5000);
-    }
-   })
-  }
- </script>
  <section class="hero has-background-black">
   <div class="hero-body">
   <div class="container">
@@ -169,6 +143,32 @@ theme
 </div>
   </div>
   </div>
+   <script>
+  function sync(){
+   var sc = document.getElementById("sync");
+   sc.innerText="In Progress...";
+   fetch("https://discord.rovelstars.com/api/users/<%= user.id %>/sync").then(r=>r.json()).then(d=>{
+    if(d.success){
+     sc.innerText="<%= __("dashboard.sync.success") %>";
+     setTimeout(()=>{
+      sc.innerText = "<%= __("dashboard.sync.normal") %>";
+     }, 5000);
+    }
+    if(d.err=="same_data"){
+     sc.innerText="<%= __("dashboard.sync.fail") %>"";
+     setTimeout(()=>{
+      sc.innerText = "<%= __("dashboard.sync.normal") %>";
+     }, 5000);
+    }
+    else{
+     sc.innerText="<%= __("dashboard.sync.error") %>";
+     setTimeout(()=>{
+      sc.innerText = "<%= __("dashboard.sync.normal") %>";
+     }, 5000);
+    }
+   })
+  }
+ </script>
  <%- include('partials/footer'); %>
 </body>
 </html>
