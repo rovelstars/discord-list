@@ -1,12 +1,15 @@
-<h2 align='center'>
+<h1 align='center'>
   <img src="https://discord.rovelstars.com/assets/img/bot/logo.svg" height='100px' width='100px' />
 <br>
-Rovel Discord List </h2>
-  <p align="center">
+Rovel Discord List </h1>
+  <h3 align="center">
   The Ultimate Discord List for Emojis, Users, Servers & Bots!
-  </p>
+  </h3>
   
+---
+ 
 > ## Like it? Consider Starring it! ⭐
+
 <br />
 
 ### Discord Theme
@@ -29,8 +32,9 @@ This List is currently a **Work In Progress** and we cannot provide an E.T.A for
 
 # 🤓 Translation!
 
-We are looking for translators for translating RDL in every language of the world!
+> We are looking for translators for translating RDL in every language of the world!
 Please join our server and DM `Progamer 😎#3286` with your crowdin username and the languages you will be translating. He shall give you the invite link to join the translator team!
+
 ---
 
 # License Notice
@@ -47,7 +51,8 @@ Please join our server and DM `Progamer 😎#3286` with your crowdin username an
 
 ### Self-hosting Agreement
 
-- You may not use our logo, or any of our images, @sayantan300 made them, so it's our copyright and we may report you if you used it.
+- You may not use our logo, or any of our images, `@sayantan300` made them, so it's our copyright and we may report you if you used it.
+- We have partnered and used many other's projects in RDL, with taking their permissions first. Therefore, you're not allowed to use their projects without asking them.
 - You may not host a public version of RDL.
 - You may not ask for help.
 - You may not charge for the usage of your instance of RDL.
