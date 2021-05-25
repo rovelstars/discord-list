@@ -22,7 +22,9 @@ This List is currently a **Work In Progress** and we cannot provide an E.T.A for
 [Server Invite](https://discord.gg/953XCpHbKF)
 
 ---
+
 # 🤓 Translation!
+
 We are looking for translators for translating RDL in every language of the world!
 Please join our server and DM `Progamer 😎#3286` with your crowdin username and the languages you will be translating. He shall give you the invite link to join the translator team!
 ---
@@ -35,16 +37,34 @@ Please join our server and DM `Progamer 😎#3286` with your crowdin username an
 - Link our repository on the website.
 - Therefore, you should not edit the footer, or we will take down your deployment.
 
-# Setup
-1. Fill in the envs
-2. Run `npm i && npm run build && npm start`
-3. Enjoy!
-
 ---
 
 ## Note
 
-We will **not** assist or answer any questions about the setup of your own instance. If you think the problem is code related (won't run on other VPS etc..), please do let us know.
+### Self-hosting Agreement
+
+- You may not use our logo, or any of our images, @sayantan300 made them, so it's our copyright and we may report you if you used it.
+- You may not host a public version of RDL.
+- You may not ask for help.
+- You may not charge for the usage of your instance of RDL.
+- You may not provide support for RDL.
+- You may not remove any credits to the original authors anywhere within this project. We know what code we've written, and we will recognize it.
+- You may not report any of your bugs in our issues or in our server.
+
+---
+
+## Requirements
+
+- Node.js v16 or newer
+- At least 8GB of ram
+- Dedicated Servers and network connection above 100mbps
+- Topgg token
+- DMOD.gg token
+- Run on Linux (Ubuntu preferred)
+
+---
+
+We will **not** assist or answer any questions about the setup of your own instance. If you ever post anything related to your deployment, you are straight away **BANNED**.
 
 Please keep **bugs**, **issues** and **code related subjects** in our issues and pull requests. If they are posted on our Discord server they will be **IGNORED**. The website feedback looks at your likes, dislikes and suggestions on the front end, but not for bugfixes or other problems. Please bring them here if you really want help/to help.
 
