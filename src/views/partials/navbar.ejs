@@ -18,31 +18,25 @@
         <span class="icon has-text-info"><i class="bx bxs-book-open"></i></span>&nbsp;&nbsp;<%= __("navbar.documentation") %>
       </a>
       <div class="navbar-item has-dropdown">
-  <a class="navbar-link">
-    More
-  </a>
-       <div class="navbar-dropdown">
-        <div class="navbar-dropdown">
+  <div class="navbar-link" tabindex="0">
+                    <span class="icon iconalign">
+                        <i class="fad fa-sitemap" aria-hidden="true"></i>
+                    </span>
+                    <span>&nbsp;&nbsp;Listings</span>
+                </div>
+       <div class="navbar-dropdown is-hidden-touch">
           <a class="navbar-item" href="/emojis">
             <span class="icon has-text-warning"><i class="bx bxs-wink-smile"></i></span>&nbsp;&nbsp;<%= __("navbar.emojis") %>
           </a>
-          </div>
-          <div class="navbar-dropdown">
           <a class="navbar-item" href="/users">
             <span class="icon has-text-info"><i class="bx bxs-user-account"></i></span>&nbsp;&nbsp;<%= __("navbar.users") %>
           </a>
-          </div>
-          <div class="navbar-dropdown">
           <a class="navbar-item" href="/servers">
             <span class="icon has-text-success"><i class="bx bxs-server"></i></span>&nbsp;&nbsp;<%= __("navbar.servers") %>
           </a>
-          </div>
-          <div class="navbar-dropdown">
           <a class="navbar-item" href="/templates">
            <span class="icon has-text-info"><i class="bx bxs-note"></i></span>&nbsp;&nbsp;<%= __("navbar.templates") %>
           </a>
-          </div>
-          <div class="navbar-dropdown">
           <a class="navbar-item" href="/bots">
            <span class="icon has-text-danger"><i class="bx bxs-bot"></i></span>&nbsp;&nbsp;<%= __("navbar.bots") %>
           </a>
