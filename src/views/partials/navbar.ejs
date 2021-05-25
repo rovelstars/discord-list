@@ -1,63 +1,183 @@
-<nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand is-primary">
-      <img src="https://discord.rovelstars.com/assets/img/bot/logo.svg" width="30" height="30" id="rdllogo" class="rdllogo">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarmenuthing">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-
-  <div id="navbarmenuthing" class="navbar-menu has-background-dark">
-    <div class="navbar-start">
-      <a class="navbar-item" href="/">
-        <span class="has-text-primary"><i class="bx bxs-home"></i></span>&nbsp;&nbsp;<%= __("navbar.home") %>
-      </a>
-
-      <a class="navbar-item" href="https://docs.rovelstars.com">
-        <span class="icon has-text-info"><i class="bx bxs-book-open"></i></span>&nbsp;&nbsp;<%= __("navbar.documentation") %>
-      </a>
-          <a class="navbar-item" href="/emojis">
-            <span class="icon has-text-warning"><i class="bx bxs-wink-smile"></i></span>&nbsp;&nbsp;<%= __("navbar.emojis") %>
-          </a>
-          <a class="navbar-item" href="/users">
-            <span class="icon has-text-info"><i class="bx bxs-user-account"></i></span>&nbsp;&nbsp;<%= __("navbar.users") %>
-          </a>
-          <a class="navbar-item" href="/servers">
-            <span class="icon has-text-success"><i class="bx bxs-server"></i></span>&nbsp;&nbsp;<%= __("navbar.servers") %>
-          </a>
-          <a class="navbar-item" href="/templates">
-           <span class="icon has-text-info"><i class="bx bxs-note"></i></span>&nbsp;&nbsp;<%= __("navbar.templates") %>
-          </a>
-          <a class="navbar-item" href="/bots">
-           <span class="icon has-text-danger"><i class="bx bxs-bot"></i></span>&nbsp;&nbsp;<%= __("navbar.bots") %>
-          </a>
-          <hr class="navbar-divider">
-          <a class="navbar-item" href="/server">
-            <span style="color: #5865F2;"><i class="bx bxl-discord"></i></span>&nbsp;&nbsp;<%= __("navbar.join-server") %>
-          </a>
-          <a class="navbar-item" href="https://github.com/rovelstars/rovel-discord-list">
-           <i class="bx bxl-github"></i><i class="bx bx-code-alt"></i>&nbsp;&nbsp;<%= __("navbar.github") %>
-          </a>
-    </div>
-
-    <div class="navbar-end">
-      <div class="navbar-item">
-        <div class="buttons">
-         <% if(!user){ %>
-          <a class="button is-primary" href="/login">
-            <i class="bx bxs-chevron-right-circle"></i>&nbsp;&nbsp;<%= __("navbar.login") %></a>
-            <% } else { %>
-              <a class="button is-danger" href="/logout" id="logout-link">
-            <i class="bx bxs-chevron-left-circle"></i>&nbsp;&nbsp;<%= __("navbar.logout") %></a>
-             <a class="button" style="background-color: #5865F2;color: #ffffff;" href="/dashboard">
-              <i class="bx bxs-grid-alt"></i>&nbsp;&nbsp;<%= __("navbar.dashboard") %>
-             </a>
-          <% } %>
-        </div>
-      </div>
-    </div>
-  </div>
+<div id="navbar" class="navbar-menu">
+<div class="navbar-start">
+<a class="navbar-item" href="/">
+<span class="icon iconalign">
+<i class="fad fa-house fa-swap-opacity" aria-hidden="true"></i>
+</span>
+<span>Home</span>
+</a>
+<a class="navbar-item" href="/bots">
+<span class="icon iconalign">
+<i class="fad fa-robot" aria-hidden="true"></i>
+</span>
+<span>Bots</span>
+</a>
+<a class="navbar-item" href="/servers">
+<span class="icon iconalign">
+<i class="fad fa-comments-alt fa-swap-opacity" aria-hidden="true"></i>
+</span>
+<span>Servers</span>
+</a>
+<a class="navbar-item" href="/templates">
+<span class="icon iconalign">
+<i class="fad fa-clone" aria-hidden="true"></i>
+</span>
+<span>Templates</span>
+</a>
+<a class="navbar-item" href="/users">
+<span class="icon iconalign">
+<i class="fad fa-users" aria-hidden="true"></i>
+</span>
+<span>Users</span>
+</a>
+<a class="navbar-item" href="/emojis">
+<span class="icon iconalign">
+<i class="fad fa-smile-wink" aria-hidden="true"></i>
+</span>
+<span>Emojis</span>
+</a>
+<div class="navbar-item has-dropdown is-hoverable">
+<div class="navbar-link" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-sitemap" aria-hidden="true"></i>
+</span>
+<span>More</span>
+</div>
+<div id="moreDropdown" class="navbar-dropdown is-hidden-touch">
+<a class="navbar-item" href="/server" target="_blank" rel="noopener" tabindex="0">
+<span class="icon iconalign">
+<i class="fab fa-discord" aria-hidden="true"></i>
+</span>
+<span>Join Server</span>
+</a>
+<a class="navbar-item" id="navAbout" href="/about" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-info-circle" aria-hidden="true"></i>
+</span>
+<span>About Us</span>
+</a>
+<a class="navbar-item" href="https://blog.rovelstars.ga" target="_blank" rel="noopener" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-pen" aria-hidden="true"></i>
+</span>
+<span>Blog</span>
+</a>
+<a class="navbar-item" href="/server" target="_blank" rel="noopener" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-thermometer-three-quarters" aria-hidden="true"></i>
+</span>
+<span>Status</span>
+</a>
+<a class="navbar-item" href="/docs" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-books" aria-hidden="true"></i>
+</span>
+<span>Documentation</span>
+</a>
+<hr class="navbar-divider">
+<a class="navbar-item" href="/terms" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-balance-scale" aria-hidden="true"></i>
+</span>
+<span>Terms of Use</span>
+</a>
+<a class="navbar-item" href="/privacy" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-user-secret" aria-hidden="true"></i>
+</span>
+<span>Privacy Policy</span>
+</a>
+<a class="navbar-item" href="/cookies" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-cookie" aria-hidden="true"></i>
+</span>
+<span>Cookie Policy</span>
+</a>
+<a class="navbar-item" href="/rules" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-gavel" aria-hidden="true"></i>
+</span>
+<span>Website Rules</span>
+</a>
+</div>
+</div>
+</div>
+<div class="navbar-end">
+ <!--
+<div class="navbar-item has-dropdown is-hoverable">
+<div class="navbar-link" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-language" aria-hidden="true"></i>
+</span>
+<span id="localeDropdownTitle">Language</span>
+</div>
+<div id="localeDropdown" class="navbar-dropdown is-hidden-touch">
+<a href="/en-NZ/?setLang=t" class="navbar-item" rel="nofollow" tabindex="0">
+<span>🇳🇿 English NZ</span>
+</a>
+<a href="/en-GB/?setLang=t" class="navbar-item" rel="nofollow" tabindex="0">
+<span>🇬🇧 English UK</span>
+</a>
+<div class="navbar-item" rel="nofollow" tabindex="0">
+<span title="Selected" class="icon has-text-success iconalign">
+<i class="fad fa-check-circle" aria-hidden="true"></i>
+</span>
+<span>🇺🇸 English US</span>
+</div>
+<hr class="navbar-divider">
+<a href="/fr-FR/?setLang=t" class="navbar-item" rel="nofollow" tabindex="0">
+<span>🇫🇷 Français</span>
+</a>
+<a href="/de-DE/?setLang=t" class="navbar-item" rel="nofollow" tabindex="0">
+<span>🇩🇪 Deutsch</span>
+</a>
+<a href="/he-IL/?setLang=t" class="navbar-item" rel="nofollow" tabindex="0">
+<span>🇮🇱 עברית</span>
+</a>
+<a href="/hu-HU/?setLang=t" class="navbar-item" rel="nofollow" tabindex="0">
+<span>🇭🇺 Magyar</span>
+</a>
+<a href="/pt-PT/?setLang=t" class="navbar-item" rel="nofollow" tabindex="0">
+<span>🇵🇹 Português</span>
+</a>
+<a href="/es-ES/?setLang=t" class="navbar-item" rel="nofollow" tabindex="0">
+<span>🇪🇸 Español</span>
+</a>
+<a href="/tr-TR/?setLang=t" class="navbar-item" rel="nofollow" tabindex="0">
+<span>🇹🇷 Türkçe</span>
+</a>
+<hr class="navbar-divider">
+<a class="navbar-item" target="_blank" rel="noopener" href="https://github.com/discordextremelist/i18n/blob/master/help.md" tabindex="0">
+<span id="helpUsSpan">
+🏳️ Help Translate
+</span>
+</a>
+</div>
+</div>
+-->
+<div class="navbar-item has-dropdown is-hoverable">
+<div class="navbar-link" tabindex="0">
+<img width="28" height="28" style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="/assets/img/bot/ded.svg" alt="<%= user.tag %>'s Discord Profile Picture" onerror=this.onerror=null,this.src=&amp;quot;/img/dlogo.svg&amp;quot; type="image/svg" draggable="false">
+<span style="vertical-align: middle;">&nbsp; <%= user.tag %> </span>
+</div>
+<div id="userDropdown" class="navbar-dropdown is-hidden-touch is-right">
+<a class="navbar-item" href="/dashboard" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-user fa-swap-opacity" aria-hidden="true"></i>
+</span>
+<span>Dashboard</span>
+</a>
+<hr class="navbar-divider">
+<a id="logoutDropdown" class="navbar-item has-text-danger" href="/logout" tabindex="0">
+<span class="icon iconalign">
+<i class="fad fa-sign-out" aria-hidden="true"></i>
+</span>
+<span>Logout</span>
+</a>
+</div>
+</div>
+</div>
+</div>
 </nav>
 <script>
  $(document).ready(function() {
@@ -68,7 +188,6 @@
 twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
   // Check for click events on the navbar burger icon
   $(".navbar-burger").click(function() {
-
       // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
       $(".navbar-burger").toggleClass("is-active");
       $(".navbar-menu").toggleClass("is-active");
