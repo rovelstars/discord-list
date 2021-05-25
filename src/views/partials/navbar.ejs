@@ -24,7 +24,7 @@
                     </span>
                     <span>&nbsp;&nbsp;Listings</span>
                 </div>
-       <div class="navbar-dropdown is-hidden-touch">
+       <div class="navbar-dropdown">
           <a class="navbar-item" href="/emojis">
             <span class="icon has-text-warning"><i class="bx bxs-wink-smile"></i></span>&nbsp;&nbsp;<%= __("navbar.emojis") %>
           </a>
@@ -83,6 +83,9 @@ twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
       // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
       $(".navbar-burger").toggleClass("is-active");
       $(".navbar-menu").toggleClass("is-active");
+  });
+  $(".has-dropdown").click(function(){
+   $(".navbar-dropdown").toggleClass("is-hidden-touch");
   });
    $(".avatar").addClass("vivify popIn");
    $(".is-announcement").addClass("vivify fadeInBottom");
