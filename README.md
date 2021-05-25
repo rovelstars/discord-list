@@ -1,9 +1,13 @@
-# Rovel Discord List
-
+<h2 align='center'>
+  <img src="https://discord.rovelstars.com/assets/img/bot/logo.svg" height='100px' width='100px' />
+<br>
+Rovel Discord List </h2>
+  <p align="center">
+  The Ultimate Discord List for Emojis, Users, Servers & Bots!
+  </p>
+  
 > ## Like it? Consider Starring it! ⭐
 <br />
-
-## The Ultimate Discord List for Emojis, Users, Servers & Bots!
 
 ### Discord Theme
 
