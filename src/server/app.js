@@ -347,7 +347,9 @@ app.get("/dashboard/bots/import", async (req, res)=>{
   res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
   res.redirect("/login");
  }
+ else{
  await res.render('dashboard-importbot.ejs', {user: req.user, theme: req.theme});
+ }
 });
 
 app.get("/status", (req, res)=>{
