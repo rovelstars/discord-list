@@ -51,17 +51,16 @@
            <i class="bx bxl-github"></i><i class="bx bx-code-alt"></i>&nbsp;&nbsp;<%= __("navbar.github") %>
           </a>
     </div>
-
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="buttons">
          <% if(!user){ %>
-          <a class="button is-primary" href="/login">
+          <a class="button is-success" href="/login">
             <i class="bx bxs-chevron-right-circle"></i>&nbsp;&nbsp;<%= __("navbar.login") %></a>
             <% } else { %>
               <a class="button is-danger" href="/logout" id="logout-link">
             <i class="bx bxs-chevron-left-circle"></i>&nbsp;&nbsp;<%= __("navbar.logout") %></a>
-             <a class="button" style="background-color: #5865F2;color: #ffffff;" href="/dashboard">
+             <a class="button is-info" style="color: #ffffff;" href="/dashboard">
               <i class="bx bxs-grid-alt"></i>&nbsp;&nbsp;<%= __("navbar.dashboard") %>
              </a>
           <% } %>
