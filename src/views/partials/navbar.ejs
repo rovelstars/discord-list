@@ -89,5 +89,12 @@ twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
    $(".avatar").addClass("vivify popIn");
    $(".is-announcement").addClass("vivify fadeInBottom");
    $(".is-bot-card").addClass("vivify popIn");
+   $(".is-bot-card").hover(function(){
+    $(this).addClass("slide-fwd-center");
+    $(this).removeClass("slide-bck-center");
+   }, function(){
+    $(this).addClass("slide-bck-center");
+    $(this).removeClass("slide-fwd-center");
+   })
 });
 </script>
