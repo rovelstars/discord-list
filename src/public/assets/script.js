@@ -13,7 +13,6 @@ $(window).load(function() {
  var frames = document.getElementsByTagName('iframe');
  for (var frame of frames) {
   frame.setAttribute("sandbox", "allow-forms allow-popups");
-  frame.height="100%";
   frame.width="100%";
  }
  var online = true;
