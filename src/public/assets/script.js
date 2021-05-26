@@ -14,6 +14,7 @@ $(window).load(function() {
  for (var frame of frames) {
   frame.setAttribute("sandbox", "allow-forms allow-popups");
   frame.width="100%";
+  frame.height=frame.contentWindow.document.documentElement.scrollHeight+"px";
  }
  var online = true;
  const Toast = Swal.mixin({
@@ -26,6 +27,13 @@ $(window).load(function() {
    toast.addEventListener('mouseenter', Swal.stopTimer)
    toast.addEventListener('mouseleave', Swal.resumeTimer)
   }
+ });
+ window.addEventListener('error', function(event) {
+  Toast.fire({
+   icon: 'error',
+   title: 'Something went wrong!',
+   text: event.message
+  })
  });
  setInterval(() => {
   if (navigator.onLine != online) {
@@ -51,37 +59,37 @@ $(window).load(function() {
     title: "Hey New Visitor!",
     text: "Allow us to introduce RDL!",
     imageUrl: "https://discord.rovelstars.com/assets/img/bot/logo.svg",
-    imageWidth: 300,
-    imageHeight: 300,
+    imageWidth: 250,
+    imageHeight: 250,
     showCancelButton: false,
     showDenyButton: true,
     didRender: twemoji.parse,
-    confirmButtonText: 'Introduce to me!',
-    denyButtonText: 'I know this site 😏',
+    confirmButtonText: '<span>Introduce to me!</span>',
+    denyButtonText: '<span>I know this site 😏</span>',
     reverseButtons: true
    }).then((result) => {
     if (result.isConfirmed) {
      Swal.fire({
       title: "We are all-in-one!",
-      text: "Yeah, RDL is meant to be a list having everything from discord, from emojis, users, servers, bots (shortform E-USB)",
-      confirmButtonText: "That's cool!"
+      text: "Yeah, RDL is meant to be a list having everything from discord, from emojis, users, servers, templates & bots!",
+      confirmButtonText: "<span>That's awesome!</span>"
      }).then(() => {
       Swal.fire({
        title: "We have currency!",
        text: "Rovel Coins are used throughout the site and they are very important! But don't worry, RDL Discord Bot can provide you coins so you are ready to go!",
-       confirmButtonText: "Wow!"
+       confirmButtonText: "<span>Wow!</span>"
       }).then(() => {
        Swal.fire({
         title: "Login Fast!",
-        text: "Login if you want to add your own E-USB or want to vote any bot or server! If you're going to comment to any bot, user or any server, you will be going to login to third party service \"Discus™\" at that place.",
-        confirmButtonText: "Sure!"
+        text: "Login if you want to contribute to RDL, or just change your preferences!",
+        confirmButtonText: "<span>Sure!</span>"
        }).then(() => {
         Swal.fire({
          title: "We use cookies! 🍪",
          text: "Cause they are tasty 😋!",
          icon: "info",
          didRender: twemoji.parse,
-         confirmButtonText: "That's Awesome! 😎"
+         confirmButtonText: "<span>That's Awesome! 😎</span>"
         })
        })
       })
@@ -95,7 +103,7 @@ $(window).load(function() {
       text: "Cause they are tasty 😋!",
       icon: "info",
       didRender: twemoji.parse,
-      confirmButtonText: "That's Awesome! 😎"
+      confirmButtonText: "<span>That's Awesome! 😎</span>"
      }).then(() => { localStorage.allowcookies = "yes" })
     }
    })
@@ -105,7 +113,7 @@ $(window).load(function() {
    title: "Uh Oh!",
    text: "Your browser dosen't supports local storage! Please use another browser or update your browser!",
    icon: "error",
-   button: "RIP.."
+   confirmButtonText: "<span>RIP..</span>"
   }).then(() => {
    window.close();
   })
