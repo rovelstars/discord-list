@@ -13,8 +13,6 @@ $(window).load(function() {
  var frames = document.getElementsByTagName('iframe');
  for (var frame of frames) {
   frame.setAttribute("sandbox", "allow-forms allow-popups");
-  frame.width="100%";
-  frame.height=frame.contentWindow.document.documentElement.scrollHeight+"px";
  }
  var online = true;
  const Toast = Swal.mixin({
