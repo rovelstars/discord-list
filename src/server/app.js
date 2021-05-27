@@ -298,7 +298,7 @@ app.get("/processes",(req, res)=>{
 });
 
 app.get("/bots/:id", async (req, res)=>{
- fetch(`${process.env.DOMAIN}/api/bots/${bot.id}/sync`);
+ fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`);
  var user = req.user;
  var bot = await Bots.findOne({id: req.params.id});
  if(!bot) return await res.render("404.ejs",{user, path: req.originalUrl})
