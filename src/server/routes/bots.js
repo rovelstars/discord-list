@@ -168,13 +168,18 @@ router.post("/evaldb", (req, res) => {
 });
 
 router.get("/:id/sync", (req, res) => {
+ res.sent= false;
  Bots.findOne({ id: req.params.id }).then(user => {
   if (!user){
    res.json({ err: "not_found" });
+   res.sent=true;
   }
   else {
    fetch("https://discord.rovelstars.com/api/client/users/" + user.id).then(r => r.json()).then(u => {
-    if ((u.avatar === user.avatar) && (u.username === user.username) && (u.discriminator === user.discriminator)) return res.json({ err: "same_data" });
+    if ((u.avatar === user.avatar) && (u.username === user.username) && (u.discriminator === user.discriminator)){
+     if(!res.sent){
+     res.json({ err: "same_data" });
+    }}
     else {
      if (u.avatar !== user.avatar) {
       user.avatar = u.avatar;
