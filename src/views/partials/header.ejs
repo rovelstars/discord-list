@@ -13,7 +13,7 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="msapplication-navbutton-color" content="<%= hex %>">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<% if(imglink){ %>
+<% if(typeof imglink !== "undefined"){ %>
 <meta name="og:image" content="<%= imglink %>">
 <meta property="og:image:type" content="image/jpeg"/><meta property="og:image:width" content="1920"/><meta property="og:image:height" content="1080"/>
 <meta name="twitter:image" content="<%= imglink %>">

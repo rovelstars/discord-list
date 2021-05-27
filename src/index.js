@@ -17,6 +17,7 @@ globalThis.logerr = console.error;
 globalThis.console.error = loggy.error;
 globalThis.warnn = console.warn;
 globalThis.console.warn = loggy.warn;
+globalThis.fetch = fetch;
 
 if(!process.env.DOMAIN){
  console.error("[ERROR] No Domain Given!");
