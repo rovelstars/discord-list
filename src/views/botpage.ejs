@@ -22,7 +22,6 @@ theme
     }]
 }
 </script>
-<% fetch(`https://discord.rovelstars.com/api/bots/${bot.id}/sync`) %>
 <% if(!bot.added){ %>
 <script>
  Swal.fire({icon: "warning", title: "<%= bot.tag %> has not been listed!", text: "Please do not add this bot since it's waiting for approval. You can join our server to get informed about when <%= bot.username %> will be approved. Or just sit back here and scream!", footer: '<a href="/server">Ask us whether is bot is safe or not.</a>'});
@@ -131,6 +130,7 @@ theme
   </div>
   </section>
  <br />
+ <div class="hero hero-body">
    <% if(bot.card.title){ %>
    <div class="container" style="overflow: hidden;">
   <div class="section content">
@@ -160,8 +160,9 @@ theme
 </div>
 <% } %>
  <div class="container" style="overflow: hidden;">
-  <div class="section content is-dark">
+  <div class="section content has-background-dark">
    <%- bot.desc %>
+   </div>
    </div>
    </div>
 </body>

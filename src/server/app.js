@@ -298,9 +298,11 @@ app.get("/processes",(req, res)=>{
 });
 
 app.get("/bots/:id", async (req, res)=>{
+ fetch(`${process.env.DOMAIN}/api/bots/${bot.id}/sync`);
  var user = req.user;
  var bot = await Bots.findOne({id: req.params.id});
  if(!bot) return await res.render("404.ejs",{user, path: req.originalUrl})
+ else{
  bot.desc = await marked(bot.desc);
  bot.owner = [];
  for(const id of bot.owners){
@@ -309,7 +311,8 @@ app.get("/bots/:id", async (req, res)=>{
  });
  };
  await res.render('botpage.ejs', {user, theme: req.theme, bot});
-});
+ }
+ });
 
 app.get("/dashboard", async (req, res)=>{
  if(!req.user){
