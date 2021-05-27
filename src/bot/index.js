@@ -170,6 +170,7 @@ router.get("/contributors/:id", (req, res) => {
 router.post("/log", (req, res) => {
  try {
   if (req.body.secret === process.env.SECRET) {
+   req.body.desc = req.body.desc.slice(0, 1997)+"...";
    const msg = new Discord.MessageEmbed()
     .setTitle(req.body.title || "RDL Logging")
     .setColor(req.body.color || "#5865F2")
