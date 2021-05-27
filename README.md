@@ -14,13 +14,13 @@ Rovel Discord List </h1>
 
 ### Discord Theme
 
-<img src="https://cdn.discordapp.com/attachments/775220204699385886/841314545799528458/unknown.png" style="width: 100%"></img>
+<img src="https://cdn.discordapp.com/attachments/775225719743053844/847168826399260703/unknown.png" style="width: 100%"></img>
 
 ---
 
 ### Dracula Theme
 
-<img src="https://cdn.discordapp.com/attachments/775225719743053844/842321132874498048/unknown.png" style="width: 100%"></img>
+<img src="https://cdn.discordapp.com/attachments/775225719743053844/847168450735374416/unknown.png" style="width: 100%"></img>
 
 This List is currently a **Work In Progress** and we cannot provide an E.T.A for this reason. If you want to check the progress, or want to talk with us, please [join our server](https://discord.gg/953XCpHbKF)!
 
