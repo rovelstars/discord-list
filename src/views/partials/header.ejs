@@ -21,15 +21,17 @@
 <meta name="twitter:image" content="<%= imglink %>">
 <% } %>
 <meta name="twitter:creator" content="@rovelstars">
-<meta name="og:title" content="<%= title %>">
-<meta name="twitter:text:title" content="<%= title %>">
-<meta name="twitter:title" content="<%= title %>">
+<meta name="og:title" content="<%= (req.locale!="en")?(title+` | In ${req.language}`):title %>">
+<meta name="twitter:text:title" content="<%= (req.locale!="en")?(title+` | In ${req.language}`):title %>">
+<meta name="twitter:title" content="<%= (req.locale!="en")?(title+` | In ${req.language}`):title %>">
 <meta name="msapplication-starturl" content="/">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <link rel="shortcut icon" href="<%= img %>">
 <link rel="apple-touch-icon" type="image" sizes="256x256" href="<%= img %>">
     <meta name="description" content="<%= desc %>">
+    <meta name="og:description" content="<%= desc %>">
+    <meta name="twitter:description" content="<%= desc %>">
     <!-- end of spam -->
     
   <title><%= (req.locale!="en")?(title+` | In ${req.language}`):title %></title>
