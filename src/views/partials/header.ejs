@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <% var hex; var bgcolor; %>
-<% if(theme=="discord"){ hex="#5865F2"; bgcolor: "#2f3136" } %>
-<% if(theme=="dracula"){ hex="#bd93f9"; bgcolor: "#282a36" } %>
+<% if(theme=="discord"){ hex="#5865F2"; bgcolor= "#2f3136" } %>
+<% if(theme=="dracula"){ hex="#bd93f9"; bgcolor= "#282a36" } %>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="application-name" content="RDL">
@@ -67,6 +67,13 @@
   top:25%;
   left:42%
 }
+body {
+  background-color: <%= bgcolor %>;
+opacity: 1;
+background-image:  radial-gradient(#ffffff 2px, transparent 2px), radial-gradient(#ffffff 2px, <%= bgcolor %> 2px);
+background-size: 80px 80px;
+background-position: 0 0,40px 40px;
+ }
   </style>
   <% if((process.env.DOMAIN=="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){ %>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H94PBD65X6"></script>
@@ -80,11 +87,3 @@
   <script>
   const user = <%- (user)?JSON.stringify(user):null %>
 </script>
-<style>
- body{
-  background-color: <%= bgcolor %>;
-opacity: 1;
-background: radial-gradient(circle, transparent 20%, <%= bgcolor %> 20%, <%= bgcolor %> 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, <%= bgcolor %> 20%, <%= bgcolor %> 80%, transparent 80%, transparent) 25px 25px, linear-gradient(<%= hex %> 2px, transparent 2px) 0 -1px, linear-gradient(90deg, <%= hex %> 2px, <%= bgcolor %> 2px) -1px 0;
-background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;
- }
-</style>
