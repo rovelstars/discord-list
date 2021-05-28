@@ -2,9 +2,9 @@
 <html class="has-navbar-fixed-top" lang="<%= req.locale %>">
 <head>
 <meta charset="UTF-8">
-<% var hex; var bg-color; %>
-<% if(theme=="discord"){ hex="#5865F2"; bg-color: "#2f3136" } %>
-<% if(theme=="dracula"){ hex="#bd93f9"; bg-color: "#282a36" } %>
+<% var hex; var bgcolor; %>
+<% if(theme=="discord"){ hex="#5865F2"; bgcolor: "#2f3136" } %>
+<% if(theme=="dracula"){ hex="#bd93f9"; bgcolor: "#282a36" } %>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="application-name" content="RDL">
@@ -52,7 +52,7 @@
   position:fixed;
   text-align:center;
   padding: 10px;
-  background-color: <%= bg-color %>;
+  background-color: <%= bgcolor %>;
 }
 #text1 {
   font-style:italic;
@@ -81,8 +81,10 @@
   const user = <%- (user)?JSON.stringify(user):null %>
 </script>
 <style>
- background-color: <%= bg-color %>;
+ .body{
+  background-color: <%= bgcolor %>;
 opacity: 1;
-background-image: radial-gradient(<%= hex %> 0.9500000000000001px, #110033 0.9500000000000001px);
-background-size: 19px 19px;
+background: radial-gradient(circle, transparent 20%, <%= bgcolor %> 20%, <%= bgcolor %> 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, <%= bgcolor %> 20%, <%= bgcolor %> 80%, transparent 80%, transparent) 25px 25px, linear-gradient(<%= hex %> 2px, transparent 2px) 0 -1px, linear-gradient(90deg, <%= hex %> 2px, <%= bgcolor %> 2px) -1px 0;
+background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;
+ }
 </style>
