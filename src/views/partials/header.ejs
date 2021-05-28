@@ -2,9 +2,9 @@
 <html class="has-navbar-fixed-top" lang="<%= req.locale %>">
 <head>
 <meta charset="UTF-8">
-<% var hex; %>
-<% if(theme=="discord"){ hex="#5865F2"; } %>
-<% if(theme=="dracula"){ hex="#bd93f9"; } %>
+<% var hex; var bg-color; %>
+<% if(theme=="discord"){ hex="#5865F2"; bg-color: "#2f3136" } %>
+<% if(theme=="dracula"){ hex="#bd93f9"; bg-color: "#282a36" } %>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="application-name" content="RDL">
@@ -51,7 +51,8 @@
 .loading {
   position:fixed;
   text-align:center;
-    padding: 10px;
+  padding: 10px;
+  background-color: <%= bg-color %>;
 }
 #text1 {
   font-style:italic;
@@ -79,3 +80,9 @@
   <script>
   const user = <%- (user)?JSON.stringify(user):null %>
 </script>
+<style>
+ background-color: <%= bg-color %>;
+opacity: 1;
+background-image: radial-gradient(<%= hex %> 0.9500000000000001px, #110033 0.9500000000000001px);
+background-size: 19px 19px;
+</style>
