@@ -189,9 +189,20 @@ img.emoji {
 div.content iframe {
  width: 100%;
  height: 1000;
- border-radius: 10px;
+ border-radius: 5px;
 }
-
+div.content img {
+ border-radius: 5px;
+}
+div.content img.emoji {
+ border-radius: 0px;
+}
+div.content img.emoji-double{
+ border-radius: 0px;
+}
+div.content discord-messages {
+ border-radius: 5px;
+}
 .http-method {
  padding: 4px;
  border-radius: 20px;
@@ -215,7 +226,7 @@ select option{
  font-family: Montserrat, sans-serif;
 }
 .is-curved{
- border-radius: 10px;
+ border-radius: 5px;
 }
 code{
  color: #99aab5;
