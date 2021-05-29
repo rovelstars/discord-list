@@ -83,3 +83,9 @@ This project is open source to allow us to be transparent in our work and to pro
 If your instance is public, make sure to let us know about your website in our support server.
 
 > Thank you for your time, love and support that make this project possible!
+
+# Stargazers!
+[![Stargazers repo roster for @rovelstars/discord-list](https://reporoster.com/stars/rovelstars/discord-list)](https://github.com/rovelstars/discord-list/stargazers)
+
+# Forkers!
+[![Forkers repo roster for @rovelstars/discord-list](https://reporoster.com/forks/rovelstars/discord-list)](https://github.com/rovelstars/discord-list/network/members)
