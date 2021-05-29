@@ -14,6 +14,7 @@ function shuffle(array) {
   return array;
 }
 const {langs} = require("../data.js");
+let ping;
 const actuator = require('express-actuator');
 const marked = require("marked");
 let BotAuth = require("@models/botauth.js");
@@ -77,6 +78,18 @@ var booting = function(req, res, next){
  else next();
 }
 app.use(booting);
+
+setInterval(()=>{
+ fetch(`${process.env.DOMAIN}/api`).then(r=>{
+  globalThis.ping = r.headers.get("ping");
+  app.locals.ping = r.headers.get("ping");
+ });
+}, 1000*60);
+fetch(`${process.env.DOMAIN}/api`).then(r=>{
+  globalThis.ping = r.headers.get("ping");
+  app.locals.ping = r.headers.get("ping");
+ });
+
 var checkBanned = async function(req, res, next) {
  res.locals.req = req;
 res.locals.res = res;
@@ -364,7 +377,7 @@ app.get("/loaderio-39a018887f7a2f8e525d19a772e9defe", (req, res)=>{
 });
 
 app.get("/favicon.ico", (req, res) => {
- res.redirect("/assets/img/bot/logo.png");
+ res.redirect("/assets/img/bot/logo-36.png");
 });
 app.get("/robots.txt", (req, res)=>{
  res.sendFile(path.resolve("src/public/assets/robots.txt"));
