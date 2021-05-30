@@ -76,6 +76,13 @@ img.vert-move {
 #object {
  width: 60px;
  height: 60px;
+ margin-right: auto;
+ margin-left: auto;
+ margin-top: 60px;
+}
+#obj {
+ width: 60px;
+ height: 60px;
  background-color: #FFF;
  border-radius: 5px;
  -webkit-animation: animate 1s infinite ease-in-out;
