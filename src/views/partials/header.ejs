@@ -55,21 +55,9 @@
   <% } %>
   <script>
   const user = <%- (user)?JSON.stringify(user):null %>
-   function loadAsyncStyleSheets() {
-    var asyncStyleSheets = [
-     '/assets/css/<%= theme %>.css',
-     '/assets/css/sa2.css',
-    'https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css',
-    '/assets/css/code.css',
-    '/assets/css/vivify.css'
-    ];
-    for (var i = 0; i < asyncStyleSheets.length; i++) {
-        var link = document.createElement('link');
-        link.setAttribute('rel', 'stylesheet');
-        link.setAttribute('href', asyncStyleSheets[i]);
-        document.head.appendChild(link);
-    }
-}
-window.addEventListener('load', loadAsyncStyleSheets, false);
-Share 
 </script>
+<link rel="stylesheet" href="/assets/css/<%= theme %>.css" media="print" onload="this.media='all'; this.onload=null;">
+<link rel="stylesheet" href="/assets/css/sa2.css" media="print" onload="this.media='all'; this.onload=null;">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" media="print" onload="this.media='all'; this.onload=null;">
+<link rel="stylesheet" href="/assets/css/code.css" media="print" onload="this.media='all'; this.onload=null;">
+<link rel="stylesheet" href="/assets/css/vivify.css" media="print" onload="this.media='all'; this.onload=null;">
