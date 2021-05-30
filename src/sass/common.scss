@@ -72,50 +72,6 @@ img.vert-move {
  margin-top: -100px;
  margin-left: -100px;
 }
-
-#obj {
- width: 60px;
- height: 60px;
- background-color: #FFF;
- border-radius: 5px;
- -webkit-animation: animate 1s infinite ease-in-out;
- animation: animate 1s infinite ease-in-out;
- margin-right: auto;
- margin-left: auto;
- margin-top: 60px;
-}
-
-@-webkit-keyframes animate {
- 0% {
-  -webkit-transform: perspective(160px);
- }
-
- 50% {
-  -webkit-transform: perspective(160px) rotateY(-180deg);
- }
-
- 100% {
-  -webkit-transform: perspective(160px) rotateY(-180deg) rotateX(-180deg);
- }
-}
-
-@keyframes animate {
- 0% {
-  transform: perspective(160px) rotateX(0deg) rotateY(0deg);
-  -webkit-transform: perspective(160px) rotateX(0deg) rotateY(0deg);
- }
-
- 50% {
-  transform: perspective(160px) rotateX(-180deg) rotateY(0deg);
-  -webkit-transform: perspective(160px) rotateX(-180deg) rotateY(0deg);
- }
-
- 100% {
-  transform: perspective(160px) rotateX(-180deg) rotateY(-180deg);
-  -webkit-transform: perspective(160px) rotateX(-180deg) rotateY(-180deg);
- }
-}
-
 #scroll {
  position: fixed;
  right: 10px;
@@ -238,6 +194,7 @@ img.emoji-double {
  margin: 0 0.05em 0 0.1em;
  vertical-align: -0.229em;
 }
+
 .squares {
 	position: absolute;
 	left: 0;
