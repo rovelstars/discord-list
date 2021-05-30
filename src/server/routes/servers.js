@@ -25,4 +25,18 @@ router.get("/:id", (req, res)=>{
  });
 })
 
+router.get("/:id/invite", (req, res)=>{
+ const guild = globalThis.publicbot.guilds.cache.get(req.params.id);
+ if(!guild){
+  res.json({err: "guild_not_found"});
+ }
+ else{
+  guild.fetchInvites().then(invs=>{
+  invs = invs.map(invm=>invm.code);
+  const code = (invs[0].code!="")?invs[0].code:"not_found";
+  res.json({code})
+});
+ }
+});
+
 module.exports = router;

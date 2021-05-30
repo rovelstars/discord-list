@@ -6,6 +6,7 @@ var Bots = require("@models/bots.js");
 var Servers = require("@models/servers.js");
 var client = new Discord.Client();
 client.login(process.env.PUBLIC_TOKEN);
+globalThis.publicbot = client;
 const { fetch } = require("rovel.js");
 const { owners, emojiapprovers, mods, contributors } = require("../../data.js");
 client.owners = owners;

@@ -11,7 +11,6 @@ const Servers = new Schema({
    desc: {type: String, default: "Description is not updated."},
    owner: {type: String, required: true},
    icon: {type: String, required: true},
-   invite: {type: String, required: true},
    promoted: {type: Boolean, default: false},
    badges: [{type: String}],
   },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});

@@ -23,7 +23,7 @@ client.on('userUpdate', (olduser, newuser) => {
       },
       body: JSON.stringify({
        "secret": process.env.SECRET,
-       "secret": bot.avatarURL,
+       "img": bot.avatarURL,
        "desc": `${num}Please look into it if you didn't change anything on your end, but happened on our end.`,
        "title": `Bot ${bot.tag} Data Updated!`,
        "color": "#FEE75C",
