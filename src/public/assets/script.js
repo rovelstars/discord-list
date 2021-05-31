@@ -1,4 +1,24 @@
 $(window).load(function() {
+ $(document).ready(function() {
+  var logout = document.getElementById("logout-link");
+  if(logout){
+   logout.href=`/logout?redirect=${encodeURI(window.location)}`
+  }
+twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
+  // Check for click events on the navbar burger icon
+  $(".navbar-burger").click(function() {
+
+      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+      $(".navbar-burger").toggleClass("is-active");
+      $(".navbar-menu").toggleClass("is-active");
+  });
+  $(".has-dropdown").click(function(){
+   $(".navbar-dropdown").toggleClass("is-hidden");
+  });
+   $(".avatar").addClass("vivify popIn");
+   $(".is-announcement").addClass("vivify fadeInBottom");
+   $(".is-bot-card").addClass("vivify popIn");
+});
  var theme = document.getElementById("meta-theme");
  if (theme) {
   theme.style.display = "none";
