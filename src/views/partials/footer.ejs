@@ -26,6 +26,7 @@
 <img class="footer-img" src="/assets/img/wavedown.svg" style="width:100%;"></img>
 <script>
  $(document).ready(function() {
+  setTimeout(()=>{
   var logout = document.getElementById("logout-link");
   if(logout){
    logout.href=`/logout?redirect=${encodeURI(window.location)}`
@@ -41,5 +42,6 @@ twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
   $(".has-dropdown").click(function(){
    $(".navbar-dropdown").toggleClass("is-hidden");
   });
+  },2000);
 });
 </script>
