@@ -26,23 +26,21 @@
 <meta name="twitter:title" content="<%= (req.locale!="en")?(title+` | In ${req.language}`):title %>">
 <meta name="msapplication-starturl" content="/">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
 <link rel="shortcut icon" href="<%= img %>">
 <link rel="apple-touch-icon" type="image" sizes="256x256" href="<%= img %>">
     <meta name="description" content="<%= desc %>">
     <meta name="og:description" content="<%= desc %>">
     <meta name="twitter:description" content="<%= desc %>">
     <!-- end of spam -->
-    
   <title><%= (req.locale!="en")?(title+` | In ${req.language}`):title %></title>
-  <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.js"></script>
- <script src="https://discord.rovelstars.com/assets/script.js"></script>
- <script src="https://discord.rovelstars.com/assets/js/prism.js"></script>
-<script src="https://discord.rovelstars.com/assets/console.js"></script>
+  <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous" async></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js' async></script>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.js" async></script>
+ <script src="https://discord.rovelstars.com/assets/script.js" async></script>
+ <script src="https://discord.rovelstars.com/assets/js/prism.js" async></script>
+<script src="https://discord.rovelstars.com/assets/console.js" async></script>
   <style>
-#loading{margin:0;padding:0;background-color:#2f3136;height:100%;width:100%;position:fixed;z-index:9999;margin-top:0;top:0}#loading-center{width:100%;height:100%;position:relative}#loading-center-absolute{position:absolute;left:50%;top:50%;height:200px;width:200px;margin-top:-100px;margin-left:-100px}.loading{position:fixed;text-align:center;padding:10px;background-color:<%= bgcolor %>}#text1{font-style:italic;color:#fff;font-family:Roboto,sans-serif;font-size:25px;z-index:100;top:68%;width:100%}#object{top:25%;left:42%}body{background-color:<%= bgcolor %>}.squares{position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:50px;height:50px;animation:scale ease 1.4s infinite}.squares::before{content:'';position:absolute;width:15px;height:15px;background:<%= hex %>;top:-10px;left:-10px;animation:top ease 3s infinite}.squares::after{content:'';position:absolute;width:15px;height:15px;background:<%= hex %>;bottom:-10px;right:-10px;animation:bottom ease 3s infinite}@keyframes top{0%{top:-10px}20%{top:100%;left:-10px}40%{left:100%;top:100%;transform:rotate(180deg)}60%{top:-10px;left:100%}80%{top:-10px;transform:rotate(360deg)}100%{left:-10px}}@keyframes bottom{0%{bottom:-10px}20%{bottom:100%;right:-10px}40%{right:100%;bottom:100%;transform:rotate(180deg)}60%{bottom:-10px;right:100%}80%{bottom:-10px;transform:rotate(360deg)}100%{right:-10px}}@keyframes scale{0%{transform:scale(1)}50%{transform:scale(.7)}100%{transform:scale(1)}}#loadtext{font-style:italic;color:#fff;position:absolute;font-family:Roboto,sans-serif;font-size:15px;top:68%;width:100%;text-align:center}
+#loading{margin:0;padding:0;background-color:#2f3136;height:100%;width:100%;position:fixed;z-index:9999;margin-top:0;top:0}#loading-center{width:100%;height:100%;position:relative}#loading-center-absolute{position:absolute;left:50%;top:50%;height:200px;width:200px;margin-top:-100px;margin-left:-100px}.loading{position:fixed;text-align:center;padding:10px;background-color:<%= bgcolor %>}#text1{font-style:italic;color:#fff;font-family:Roboto,sans-serif;font-size:25px;z-index:100;top:68%;width:100%}#object{top:25%;left:42%}body{background-color:<%= bgcolor %>}.squares{position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:50px;height:50px;animation:scale ease 1.4s infinite}.squares::before{content:'';position:absolute;width:15px;height:15px;background:<%= hex %>;top:-10px;left:-10px;animation:top ease 3s infinite}.squares::after{content:'';position:absolute;width:15px;height:15px;background:<%= hex %>;bottom:-10px;right:-10px;animation:bottom ease 3s infinite}@keyframes top{0%{top:-10px}20%{top:100%;left:-10px}40%{left:100%;top:100%;transform:rotate(180deg)}60%{top:-10px;left:100%}80%{top:-10px;transform:rotate(360deg)}100%{left:-10px}}@keyframes bottom{0%{bottom:-10px}20%{bottom:100%;right:-10px}40%{right:100%;bottom:100%;transform:rotate(180deg)}60%{bottom:-10px;right:100%}80%{bottom:-10px;transform:rotate(360deg)}100%{right:-10px}}@keyframes scale{0%{transform:scale(1)}50%{transform:scale(.7)}100%{transform:scale(1)}}#loadtext{font-style:italic;color:#fff;position:absolute;font-family:Roboto,sans-serif;font-size:15px;top:68%;width:100%;text-align:center}img.emoji{height:1em;width:1em;margin:0 0.05em 0 0.1em;vertical-align:-0.229em;}
   </style>
   <% if((process.env.DOMAIN=="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){ %>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H94PBD65X6"></script>
