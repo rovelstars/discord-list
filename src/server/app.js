@@ -13,6 +13,7 @@ function shuffle(array) {
   }
   return array;
 }
+globalThis.shuffle = shuffle;
 const {langs} = require("../data.js");
 let ping;
 const actuator = require('express-actuator');

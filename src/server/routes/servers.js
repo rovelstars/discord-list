@@ -21,7 +21,7 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res)=>{
  Servers.findOne({ id: req.params.id }, { _id: false }).then(server => {
-  res.json(server);
+  res.json({server});
  });
 })
 
@@ -33,6 +33,7 @@ router.get("/:id/invite", (req, res)=>{
  else{
   guild.fetchInvites().then(invs=>{
   invs = invs.map(invm=>invm.code);
+  shuffle(invs);
   const code = invs[0] || "not_found";
   res.json({code})
 });
