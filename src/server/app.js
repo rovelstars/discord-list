@@ -228,10 +228,11 @@ app.get("/", async (req, res) => {
  await res.render('index.ejs', {user, theme: req.theme, bots});
 });
 
-let AllBots = await Bots.find({added: true});
+let AllBots;
 let TopVotedBots;
 let NewAddedBots;
 async function UpdateBots(){
+ AllBots =  await Bots.find({added: true});
  TopVotedBots = await Bots.find({added: true}).sort({votes: -1}).limit(10);
  NewAddedBots = await Bots.find({added: true});
  NewAddedBots = NewAddedBots.reverse().slice(0,10);
