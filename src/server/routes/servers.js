@@ -33,7 +33,7 @@ router.get("/:id/invite", (req, res)=>{
  else{
   guild.fetchInvites().then(invs=>{
   invs = invs.map(invm=>invm.code);
-  const code = (invs[0].code!="")?invs[0].code:"not_found";
+  const code = (invs[0]!="")?invs[0].code:"not_found";
   res.json({code})
 });
  }
