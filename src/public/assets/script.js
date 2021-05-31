@@ -57,8 +57,14 @@ $(window).load(function() {
     title: "Hey New Visitor!",
     text: "Allow us to introduce RDL!",
     imageUrl: "https://discord.rovelstars.com/assets/img/bot/logo.svg",
-    imageWidth: 250,
-    imageHeight: 250,
+    imageWidth: 100,
+    imageHeight: 100,
+    showClass:{
+     popup: ""
+    },
+    hideClass:{
+     popup: ""
+    },
     showCancelButton: false,
     showDenyButton: true,
     didRender: twemoji.parse,
