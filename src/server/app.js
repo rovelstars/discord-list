@@ -222,12 +222,13 @@ app.get('/api/*', (req, res)=>{
 })
 
 app.get("/", async (req, res) => {
- var bots = await Bots.find({added: true});
- shuffle(bots);
+ shuffle(AllBots);
+ let bots = AllBots.slice(0, 10);
  var user = req.user;
  await res.render('index.ejs', {user, theme: req.theme, bots});
 });
 
+let AllBots = await Bots.find({added: true});
 let TopVotedBots;
 let NewAddedBots;
 async function UpdateBots(){
