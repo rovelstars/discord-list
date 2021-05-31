@@ -148,6 +148,6 @@ twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
       $(".navbar-menu").toggleClass("is-active");
   });
   $(".has-dropdown").click(function(){
-   $(".navbar-dropdown").toggleClass("is-active");
+   $(".navbar-dropdown").toggleClass("is-hidden-touch");
   });
 });
