@@ -1,4 +1,5 @@
-document.addEventListener( "DOMContentLoaded", function() {
+/*document.addEventListener( "DOMContentLoaded",*/
+$(window).load(function() {
  var theme = document.getElementById("meta-theme");
  if (theme) {
   theme.style.display = "none";
@@ -122,7 +123,7 @@ document.addEventListener( "DOMContentLoaded", function() {
    window.close();
   })
  }
-}, false);
+});
 
 function onHover()
 {
