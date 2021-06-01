@@ -1,4 +1,4 @@
-$(window).load(function() {
+document.addEventListener( "DOMContentLoaded", function() {
  var theme = document.getElementById("meta-theme");
  if (theme) {
   theme.style.display = "none";
@@ -122,7 +122,7 @@ $(window).load(function() {
    window.close();
   })
  }
-});
+}, false);
 
 function onHover()
 {
