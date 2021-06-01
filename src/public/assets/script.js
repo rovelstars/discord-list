@@ -1,5 +1,6 @@
 /*document.addEventListener( "DOMContentLoaded",*/
 $(window).load(function() {
+ let bar = new Nanobar();
  let PBC;
  for(PBC=1;PBC<=100;PBC++){
   setTimeout(()=>{
