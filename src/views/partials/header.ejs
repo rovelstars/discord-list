@@ -52,7 +52,7 @@ body{display:flex;flex-direction:column;}#loading{margin:0;padding:0;background-
   </script>
   <% } %>
   <script>
-  const user = <%- (user)?JSON.stringify(user):null %>
+  const user = <%- (user)?JSON.stringify(user):"null" %>
 </script>
 <link rel="stylesheet" href="/assets/css/<%= theme %>.css" media="print" onload="this.media='all'; this.onload=null;">
 <link rel="stylesheet" href="/assets/css/sa2.css" media="print" onload="this.media='all'; this.onload=null;">
