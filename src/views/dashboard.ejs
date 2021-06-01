@@ -53,7 +53,7 @@ theme
 <div class="media-left">
 <figure class="image is-64x64 is-avatar">
 <img width="64" height="64" class="is-rounded" loading="lazy" src="<%= bot.avatarURL %>" alt="<%= bot.username %> Avatar" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
-<div class="status-<%= bot.status %>"></div>
+<div class="status-<%= (bot.status)?bot.status:"online" %>"></div>
 </figure>
 </div>
 <div style="overflow: hidden;" class="media-content">
