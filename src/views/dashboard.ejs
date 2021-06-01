@@ -51,8 +51,9 @@ theme
 <div class="box has-background-dark" style="overflow: hidden; height: 100%;">
 <article class="media">
 <div class="media-left">
-<figure class="image is-64x64">
+<figure class="image is-64x64 is-avatar">
 <img width="64" height="64" class="is-rounded" loading="lazy" src="<%= bot.avatarURL %>" alt="<%= bot.username %> Avatar" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
+<div class="status is-<%= bot.status %>"></div>
 </figure>
 </div>
 <div style="overflow: hidden;" class="media-content">
@@ -108,8 +109,9 @@ theme
 <div class="box has-background-dark" style="overflow: hidden; height: 100%;">
 <article class="media">
 <div class="media-left">
-<figure class="image is-64x64">
+<figure class="image is-64x64 is-avatar">
 <img width="64" height="64" class="is-rounded" loading="lazy" src="/assets/img/bot/profile.svg" alt="New Bot Avatar" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
+<div class="status is-online"></div>
 </figure>
 </div>
 <div style="overflow: hidden;" class="media-content">

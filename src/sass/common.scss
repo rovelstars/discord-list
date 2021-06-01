@@ -145,3 +145,29 @@ code{
  color: #99aab5;
  border-radius: 5px;
 }
+.status {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #99aab5;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+}
+.is-avatar {
+  width: 50px;
+  height: 50px;
+  position: relative;
+}
+.is-online {
+ background-color: #43b581;
+}
+.is-dnd {
+ background-color: #f04747;
+}
+.is-idle {
+ background-color: #faa61a;
+}
+.is-offline {
+ background-color: #99aab5;
+}
