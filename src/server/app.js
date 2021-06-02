@@ -268,7 +268,7 @@ app.get("/servers/:id", async(req, res)=>{
 
 app.get("/servers/:id/join", (req, res)=>{
  fetch(`${process.env.DOMAIN}/api/servers/${req.params.id}/invite`).then(r=>r.json()).then(d=>{
-  if(err) res.json({err: d.err});
+  if(d.err) res.json({err: d.err});
   else{
   res.redirect(`https://discord.gg/${d.code}`);
   }
