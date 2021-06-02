@@ -256,6 +256,15 @@ app.get("/bots", async (req, res) => {
  await res.render('bots.ejs', {user, theme: req.theme, nbots: NewAddedBots});
 });
 
+app.get("/servers/:id/join", (req, res)=>{
+ fetch(`${process.env.DOMAIN}/api/servers/${req.params.id}/invite`).then(r=>r.json()).then(d=>{
+  if(err) res.json({err: d.err});
+  else{
+  res.redirect(`https://discord.gg/${d.code}`);
+  }
+ })
+});
+
 app.get("/manifest.json", (req, res)=>{
  res.sendFile(path.resolve("src/public/assets/manifest.json"));
 });
