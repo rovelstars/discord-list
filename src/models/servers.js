@@ -18,8 +18,8 @@ const Servers = new Schema({
   Servers.virtual('iconURL').get(function(){
  var ani=false;
  if(this.icon.startsWith("a_")) ani=true;
- const aniurl=`https://cdn.discordapp.com/guilds/${this.id}/${this.icon}.gif`;
- const nonurl=`https://cdn.discordapp.com/avatars/${this.id}/${this.icon}.png`;
+ const aniurl=`https://cdn.discordapp.com/icons/${this.id}/${this.icon}.gif`;
+ const nonurl=`https://cdn.discordapp.com/icons/${this.id}/${this.icon}.png`;
  const url = (ani)?aniurl:nonurl;
  return url;
 });
