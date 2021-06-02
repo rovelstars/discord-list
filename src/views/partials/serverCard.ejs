@@ -1,0 +1,38 @@
+<div class="column is-one-third is-bot-card">
+<div class="box has-background-dark" style="overflow: hidden; height: 100%;">
+<article class="media">
+<div class="media-left">
+<figure class="image is-64x64 is-avatar">
+<img width="64" height="64" class="is-rounded" loading="lazy" src="<%= server.iconURL.replace(".png",".webp?size=64") %>" alt="<%= server.name %> Icon" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
+</figure>
+</div>
+<div style="overflow: hidden;" class="media-content">
+<div class="content">
+<p>
+<span class="is-size-4 title has-text-default is-mobile" style="font-family: discord;">
+<span><%= server.name %></span>
+</span>
+<br />
+<span class="has-text-grey-light"><%= ((server.short.length>62)?(server.short.slice(0,62)+"..."):server.short) %></span>
+</p>
+<br />
+</div>
+<div class="content-footer">
+<div class="buttons">
+<a href="/servers/<%= server.id %>" class="box button is-info is-outlined">
+<span class="icon">
+<i class="bx bxs-detail"></i>
+</span>
+<span><%= __("view") %></span>
+</a>
+ <a href="<%= bot.invite %>" target="_blank" class="box button is-link is-outlined">
+<span class="icon">
+<i class="bx bxs-down-arrow-circle"></i>
+</span>
+<span><%= __("join") %></span>
+</a>
+</div>
+</div>
+</article>
+</div>
+</div>

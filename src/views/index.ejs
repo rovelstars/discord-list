@@ -69,7 +69,16 @@ theme
                 </h2>
                 <br />
  <div class="columns is-multiline is-centered">
-  <%- bots.map(bot => include('partials/card', {bot})).join(""); %>
+  <%- bots.map(bot => include('partials/botCard', {bot})).join(""); %>
+  </div>
+</div>
+<div class="section">
+                <h2 class="is-size-3 has-text-centered">
+                    <span><img class="emoji-double" src="/assets/img/fire.svg" />&nbsp;Top Servers<%/*=*/ __("title.bots.random") %></span>
+                </h2>
+                <br />
+ <div class="columns is-multiline is-centered">
+  <%- servers.map(server => include('partials/botCard', {server})).join(""); %>
   </div>
 </div>
 </div>

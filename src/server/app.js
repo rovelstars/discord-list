@@ -225,21 +225,24 @@ app.get('/api/*', (req, res)=>{
 app.get("/", async (req, res) => {
  shuffle(AllBots);
  let bots = AllBots.slice(0, 10);
+ let servers = shuffle(AllServers).slice(0, 10);
  var user = req.user;
- await res.render('index.ejs', {user, theme: req.theme, bots});
+ await res.render('index.ejs', {user, theme: req.theme, bots, servers});
 });
 
 let AllBots;
 let TopVotedBots;
 let NewAddedBots;
-async function UpdateBots(){
+let AllServers;
+async function Update(){
  AllBots =  await Bots.find({added: true});
+ AllServers = await Servers.find();
  TopVotedBots = await Bots.find({added: true}).sort({votes: -1}).limit(10);
  NewAddedBots = await Bots.find({added: true});
  NewAddedBots = NewAddedBots.reverse().slice(0,10);
 }
-UpdateBots();
-setInterval(UpdateBots,300000);
+Update();
+setInterval(Update,300000);
 
 app.get("/comments",(req,res)=>{
  res.render("comments.ejs", {user: req.user});
