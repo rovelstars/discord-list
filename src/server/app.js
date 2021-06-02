@@ -281,9 +281,9 @@ app.get("/manifest.json", (req, res)=>{
 
 let sitemap;
 async function gensitemap(){
- const allbots = await Bots.find({});
- const botsmap = allbots.map((bot)=>{return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>hourly</changefreq></url>`}).join("\n");
- const Sitemap= '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'+`\n<url>\n<loc>${process.env.DOMAIN}/</loc>\n<priority>1.00</priority><changefreq>daily</changefreq>\n</url>`+botsmap+'</urlset>';
+ const botsmap = AllBots.map((bot)=>{return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>`}).join("\n");
+ const serversmap = AllServers.map((server)=>{return `<url>\n<loc>${process.env.DOMAIN}/servers/${server.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>`}).join("\n");
+ const Sitemap= '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'+`\n<url>\n<loc>${process.env.DOMAIN}/</loc>\n<priority>1.00</priority><changefreq>weekly</changefreq>\n</url>\n`+botsmap+serversmap+'</urlset>';
  return Sitemap;
 };
 if((process.env.DOMAIN=="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
