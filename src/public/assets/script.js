@@ -2,11 +2,12 @@
 $(window).load(function() {
  let bar = new Nanobar();
  let PBC;
+ /*
  for(PBC=1;PBC<=100;PBC++){
   setTimeout(()=>{
    bar.go(PBC);
   },(100+PBC));
- }
+ }*/
  var theme = document.getElementById("meta-theme");
  if (theme) {
   theme.style.display = "none";
