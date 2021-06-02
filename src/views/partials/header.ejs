@@ -13,14 +13,12 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="msapplication-navbutton-color" content="<%= hex %>">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<% if(typeof imglink !== "undefined"){ %>
-<meta name="og:image" content="<%= imglink %>">
+<meta name="og:image" content="<%= imglink || img %>">
 <meta name="og:site_name" content="Rovel Discord List">
 <meta name="og:image:type" content="image/jpeg"/><meta name="og:image:width" content="1920"/><meta name="og:image:height" content="1080"/>
 <meta name="twitter:card" content="summary_large_image">
 
-<meta name="twitter:image" content="<%= imglink %>">
-<% } %>
+<meta name="twitter:image" content="<%= imglink || img %>">
 <meta name="twitter:creator" content="@rovelstars">
 <meta name="og:title" content="<%= (req.locale!="en")?(title+` | In ${req.language}`):title %>">
 <meta name="twitter:text:title" content="<%= (req.locale!="en")?(title+` | In ${req.language}`):title %>">
