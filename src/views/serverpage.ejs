@@ -1,0 +1,68 @@
+<%- include('partials/header', {
+title: `${server.name} - Rovel Discord List`,
+desc: `${server.short}`,
+img: server.iconURL,
+theme
+}); %>
+<script src="https://unpkg.com/wc-discord-message@^2.0.0/dist/wc-discord-message/wc-discord-message.js"></script>
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "View Server",
+        "item": "https://discord.rovelstars.com/servers/<%= server.id %>"
+    }, {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Join Server",
+        "item": "https://discord.rovelstars.com/servers/<%= server.id %>/join"
+    }]
+}
+</script>
+</head>
+<body>
+ <%- include('partials/load', {theme}); %>
+ <%- include('partials/navbar', {user}); %>
+ <section class="hero">
+  <div class="hero-body">
+   <div class="container">
+    <div class="columns">
+     <div class="column is-2">
+      <img class="avatar image is-128x128" style="margin: auto; border-radius: 50%;" src="<%= server.iconURL %>" alt="<%= server.name %> Icon">
+     </div>
+     <div class="column is-10">
+         <h1 class="title"><%= server.name %>
+   </h1><br />
+   <h4 class="subtitle">
+    <%= server.short %>
+   </h4><br />
+   <div class="columns buttons">
+     <div class="column is-3">
+    <a href="/servers/<%= server.id %>/join" target="_blank" class="box button is-link has-background-primary">
+<span class="icon">
+<i class="bx bxs-plus-circle"></i>
+</span>
+<span>Join <%= server.name %> &nbsp;&nbsp;</span>
+</a><br />
+</div>
+</div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </section>
+ <br />
+ <div class="hero">
+ <div class="hero-body">
+ <div class="container" style="overflow: hidden;">
+  <div class="section content has-background-dark is-curved">
+   <%- server.desc %>
+   </div>
+   </div>
+   </div>
+   </div>
+</body>
+</html>

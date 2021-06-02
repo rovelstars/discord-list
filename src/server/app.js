@@ -256,6 +256,16 @@ app.get("/bots", async (req, res) => {
  await res.render('bots.ejs', {user, theme: req.theme, nbots: NewAddedBots});
 });
 
+app.get("/servers/:id", async(req, res)=>{
+ var user = req.user;
+ var server = await Servers.findOne({id: req.params.id});
+ if(!server) return await res.render("404.ejs",{user, path: req.originalUrl})
+ else{
+ server.desc = await marked(server.desc);
+ await res.render('serverpage.ejs', {user, theme: req.theme, server});
+ }
+});
+
 app.get("/servers/:id/join", (req, res)=>{
  fetch(`${process.env.DOMAIN}/api/servers/${req.params.id}/invite`).then(r=>r.json()).then(d=>{
   if(err) res.json({err: d.err});
@@ -329,17 +339,17 @@ app.get("/processes",(req, res)=>{
 app.get("/bots/:id", async (req, res)=>{
  fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`);
  var user = req.user;
- var bot = await Bots.findOne({id: req.params.id});
- if(!bot) return await res.render("404.ejs",{user, path: req.originalUrl})
- else{
- bot.desc = await marked(bot.desc);
- bot.owner = [];
- for(const id of bot.owners){
-  await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r=>r.json()).then(async d=>{
-  await bot.owner.push(d.tag);
- });
- };
- await res.render('botpage.ejs', {user, theme: req.theme, bot});
+ var bot = await Bots.findOne({ id: req.params.id });
+ if (!bot) return await res.render("404.ejs", { user, path: req.originalUrl })
+ else {
+  bot.desc = await marked(bot.desc);
+  bot.owner = [];
+  for (const id of bot.owners) {
+   await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r => r.json()).then(async d => {
+    await bot.owner.push(d.tag);
+   });
+  };
+  await res.render('botpage.ejs', { user, theme: req.theme, bot });
  }
  });
 
