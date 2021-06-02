@@ -242,6 +242,7 @@ async function Update(){
  NewAddedBots = NewAddedBots.reverse().slice(0,10);
 }
 Update();
+globalThis.updateCache = Update;
 setInterval(Update,300000);
 
 app.get("/comments",(req,res)=>{
