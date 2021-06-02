@@ -8,14 +8,15 @@ if(message.author.id===message.guild.owner.user.id){
         },
         body: JSON.stringify({
          "secret": process.env.SECRET,
-         "desc": `Server <@!${message.guild.id}> has been deleted by <@!${message.author.id}>\nThe data deleted is:\n\`\`\`\n${JSON.stringify(server)}\n\`\`\`\nIncase it was deleted accidentally, the above data may be added back again manually if the server is added back to RDL`,
+         "desc": `Server ${server.name} has been deleted by <@!${message.author.id}>\nThe data deleted is:\n\`\`\`\n${JSON.stringify(server)}\n\`\`\`\nIncase it was deleted accidentally, the above data may be added back again manually if the server is added back to RDL`,
          "title": "Server Deleted!",
          "color": "#ff0000",
          "owners": message.author.id,
-         "img": bot.avatarURL,
+         "img": server.iconURL,
          "url": `https://discord.rovelstars.com/`
         })
        });
+       Servers.deleteOne({id: message.guild.id},()=>{});
        message.reply("<:pokisad:799907571812401172> Done..");
   }
   else message.reply("Baka! This server has been already deleted/not added.");
