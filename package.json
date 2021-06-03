@@ -42,7 +42,7 @@
   "express-fileupload": "1.2.1",
   "passport": "0.4.1",
   "marked": "2.0.3",
-  "@sentry/node": "6.2.1",
+  "@sentry/node": "6.5.1",
   "@sentry/tracing": "6.2.5",
   "module-alias": "2.2.2",
   "@meanie/mongoose-to-json": "2.5.0"
