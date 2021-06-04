@@ -260,7 +260,7 @@ app.get("/servers/:id", async(req, res)=>{
  var server = await Servers.findOne({id: req.params.id});
  if(!server) return await res.render("404.ejs",{user, path: req.originalUrl})
  else{
- server.desc = await marked(server.desc);
+ server.desc = await marked(server.desc.replace(/&gt;+/g, ">"));
  await res.render('serverpage.ejs', {user, theme: req.theme, server});
  }
 });
@@ -341,7 +341,7 @@ app.get("/bots/:id", async (req, res)=>{
  var bot = await Bots.findOne({ id: req.params.id });
  if (!bot) return await res.render("404.ejs", { user, path: req.originalUrl })
  else {
-  bot.desc = await marked(bot.desc);
+  bot.desc = await marked(bot.desc.replace(/&gt;+/g, ">"));
   bot.owner = [];
   for (const id of bot.owners) {
    await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r => r.json()).then(async d => {
