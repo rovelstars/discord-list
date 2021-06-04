@@ -70,7 +70,7 @@ router.get("/", async (req, res) => {
      })
     });
      if(result.email==undefined){
-      result.email=user.email;
+      result.email=user.emailId;
       result.save();
      }
    }
