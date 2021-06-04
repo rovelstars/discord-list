@@ -91,3 +91,19 @@ $box-background-color: #2f3136;
 // media
 $media-border-color: #ffffff;
 $scheme-invert: #ffffff;
+
+@media screen and (min-width: 1024px){
+  .navbar-dropdown {
+  background-color: #2f3136;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 8px 8px rgb(255,255,255,10%);
+  display: none;
+  font-size: 0.875rem;
+  left: 0;
+  min-width: 100%;
+  position: absolute;
+  top: 100%;
+  z-index: 20;
+}
+}

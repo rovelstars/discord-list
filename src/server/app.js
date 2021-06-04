@@ -1,20 +1,22 @@
 const port = process.env.PORT || 3000;
+
 function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-  return array;
+ var currentIndex = array.length,
+  temporaryValue, randomIndex;
+ // While there remain elements to shuffle...
+ while (0 !== currentIndex) {
+  // Pick a remaining element...
+  randomIndex = Math.floor(Math.random() * currentIndex);
+  currentIndex -= 1;
+  // And swap it with the current element.
+  temporaryValue = array[currentIndex];
+  array[currentIndex] = array[randomIndex];
+  array[randomIndex] = temporaryValue;
+ }
+ return array;
 }
 globalThis.shuffle = shuffle;
-const {langs} = require("../data.js");
+const { langs } = require("../data.js");
 let ping;
 const actuator = require('express-actuator');
 const marked = require("marked");
@@ -39,9 +41,9 @@ let auth = require("@utils/auth.js");
 const authRoute = require("@routes/authclient.js");
 module.exports = { app, port };
 var cookieParser = require("cookie-parser");
-app.use(cloudflare.restore({update_on_start:true}));
+app.use(cloudflare.restore({ update_on_start: true }));
 app.disable('x-powered-by');
-app.use(cookieParser({filter: true}));
+app.use(cookieParser({ filter: true }));
 app.use(compression());
 let log = console.log;
 const rovel = require("rovel.js")
@@ -50,7 +52,7 @@ const dayjs = rovel.time;
 const rateLimit = require("express-rate-limit");
 let path = require("path");
 const bots = require('@routes/bots.js');
-setTimeout(()=>{
+setTimeout(() => {
  console.log(rovel.text.green(`Everything Started! RDL is ready to go!`))
 }, 5000);
 // ejs setting
@@ -69,34 +71,34 @@ process.on('unhandledRejection', err => {
   app.use(unre);
  }
 });
-app.use(latency({header: "ping"}));
-app.use(actuator({basePath:"/api"}));
-var booting = function(req, res, next){
- if(process.uptime()< 10){
-  if(req.originalUrl.startsWith("/assets")||req.originalUrl.startsWith("/api")) next();
+app.use(latency({ header: "ping" }));
+app.use(actuator({ basePath: "/api" }));
+var booting = function(req, res, next) {
+ if (process.uptime() < 10) {
+  if (req.originalUrl.startsWith("/assets") || req.originalUrl.startsWith("/api")) next();
   else res.sendFile(path.resolve("src/public/assets/loading.html"));
  }
  else next();
 }
 app.use(booting);
 
-setInterval(()=>{
- fetch(`${process.env.DOMAIN}/api`).then(r=>{
+setInterval(() => {
+ fetch(`${process.env.DOMAIN}/api`).then(r => {
   globalThis.ping = r.headers.get("ping");
   app.locals.ping = r.headers.get("ping");
  });
-}, 1000*60);
-fetch(`${process.env.DOMAIN}/api`).then(r=>{
-  globalThis.ping = r.headers.get("ping");
-  app.locals.ping = r.headers.get("ping");
- });
+}, 1000 * 60);
+fetch(`${process.env.DOMAIN}/api`).then(r => {
+ globalThis.ping = r.headers.get("ping");
+ app.locals.ping = r.headers.get("ping");
+});
 
 var checkBanned = async function(req, res, next) {
  res.locals.req = req;
-res.locals.res = res;
-req.language = eval(`langs.${req.locale}`);
+ res.locals.res = res;
+ req.language = eval(`langs.${req.locale}`);
  var themes = ["discord", "dracula"];
- if(!themes.includes(req.cookies['theme'])){
+ if (!themes.includes(req.cookies['theme'])) {
   req.cookies["theme"] = "discord";
   res.cookie('theme', "discord", {
    maxAge: 30 * 3600 * 24 * 1000, //30days
@@ -104,55 +106,56 @@ req.language = eval(`langs.${req.locale}`);
    secure: true
   });
  }
- req.theme = (req.cookies["theme"])?req.cookies["theme"]:"discord";
- if(req.header('RDL-key')){
+ req.locals.theme = (req.cookies["theme"]) ? req.cookies["theme"] : "discord";
+ if (req.header('RDL-key')) {
   req.query.key = req.header('RDL-key');
  }
- 
- if(req.header('RDL-code')){
+
+ if (req.header('RDL-code')) {
   req.query.code = req.header('RDL-code');
  }
- if(req.query.key){
-  req.cookies['key']=req.query.key;
+ if (req.query.key) {
+  req.cookies['key'] = req.query.key;
  }
- if(req.query.code){
-  req.cookies['code']=req.query.code;
+ if (req.query.code) {
+  req.cookies['code'] = req.query.code;
  }
- if(req.cookies['key']){
+ if (req.cookies['key']) {
   req.query.key = req.cookies['key'];
-  var user = await auth.getUser(req.cookies['key']).catch(()=>{next()});
-  if(user){
-  fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r=>r.json()).then(d=>{
-   if(d.banned){
-    res.sendFile(path.resolve("src/public/assets/banned.html"));
-    fetch(`${process.env.DOMAIN}/api/client/log`, {
-     method: "POST",
-     headers: {
-      "content-type": "application/json"
-     },
-     body: JSON.stringify({
-      "secret": process.env.SECRET,
-      "title": `Banned User ${user.tag} tried to visit us!`,
-      "color": "#ff0000",
-      "desc": `**${user.tag}** (${user.id}) was banned before, and they tried to visit our site at path:\n\`${req.path}\``
+  var user = await auth.getUser(req.cookies['key']).catch(() => { next() });
+  if (user) {
+   fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r => r.json()).then(d => {
+    if (d.banned) {
+     res.sendFile(path.resolve("src/public/assets/banned.html"));
+     fetch(`${process.env.DOMAIN}/api/client/log`, {
+      method: "POST",
+      headers: {
+       "content-type": "application/json"
+      },
+      body: JSON.stringify({
+       "secret": process.env.SECRET,
+       "title": `Banned User ${user.tag} tried to visit us!`,
+       "color": "#ff0000",
+       "desc": `**${user.tag}** (${user.id}) was banned before, and they tried to visit our site at path:\n\`${req.path}\``
+      })
      })
-    })
-   }
-   else {
-   req.user = user;
-    next()
-   }
-  });
- }}
+    }
+    else {
+     req.locals.user = user;
+     next()
+    }
+   });
+  }
+ }
  else {
-  req.user = null;
+  req.locals.user = null;
   next()
  }
 };
 app.use(checkBanned);
 var i18n = require("i18n");
 i18n.configure({
- locales: ["en", "hi", "ar", "es","tr"],
+ locales: ["en", "hi", "ar", "es", "tr"],
  cookie: "lang",
  queryParameter: "lang",
  defaultLocale: "en",
@@ -161,12 +164,13 @@ i18n.configure({
 app.use(i18n.init);
 var weblog = async function(req, res, next) {
  const weburl = process.env.WEBHOOK;
- if(req.query.code){
-  var botu = await BotAuth.findOne({code: req.query.code});
- if(botu){
-  botu=botu.id;
- }}
- const user = (req.user)?req.user.tag:"Not logined";
+ if (req.query.code) {
+  var botu = await BotAuth.findOne({ code: req.query.code });
+  if (botu) {
+   botu = botu.id;
+  }
+ }
+ const user = (req.locals.user) ? req.locals.user.tag : "Not logined";
  const geo = await geoip.lookup(req.cf_ip);
  const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.cf_ip}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\n**Location:** ${(geo)?geo.timezone:"idk"}\n**User:** ${user}\n**Bot:** \`${botu || "nope"}\`\n**Browser:** \`${(req.headers['user-agent'])?req.headers['user-agent']:"api request"}\``;
  await fetch(weburl, {
@@ -196,150 +200,148 @@ app.use('/api/comments', comments);
 app.use('/api/embeds', embeds);
 app.use('/api/preferences', prefers);
 
-app.get('/api', (req, res)=>{
- res.json({hello: "coder!"});
+app.get('/api', (req, res) => {
+ res.json({ hello: "coder!" });
 })
 
-app.get('/api/report', (req, res)=>{
- if(req.query.link){
- fetch("https://discord.rovelstars.com/api/client/log",{
-  method: "POST",
-  headers: {
-   "content-type": "application/json"
-  },
-  body: JSON.stringify({
-   secret: process.env.SECRET,
-   channel: "838067036080963584",
-   title: "Other's Deployment of RDL!",
-   desc: `**Link:** ${req.query.link}`
+app.get('/api/report', (req, res) => {
+ if (req.query.link) {
+  fetch("https://discord.rovelstars.com/api/client/log", {
+   method: "POST",
+   headers: {
+    "content-type": "application/json"
+   },
+   body: JSON.stringify({
+    secret: process.env.SECRET,
+    channel: "838067036080963584",
+    title: "Other's Deployment of RDL!",
+    desc: `**Link:** ${req.query.link}`
+   })
   })
- })
  }
 });
 
-app.get('/api/*', (req, res)=>{
- res.json({err: 404});
+app.get('/api/*', (req, res) => {
+ res.json({ err: 404 });
 })
 
 app.get("/", async (req, res) => {
  shuffle(AllBots);
  let bots = AllBots.slice(0, 10);
  let servers = shuffle(AllServers).slice(0, 10);
- var user = req.user;
- await res.render('index.ejs', {user, theme: req.theme, bots, servers});
+ await res.render('index.ejs', { bots, servers });
 });
 
 let AllBots;
 let TopVotedBots;
 let NewAddedBots;
 let AllServers;
-async function Update(){
- AllBots =  await Bots.find({added: true});
+async function Update() {
+ AllBots = await Bots.find({ added: true });
  AllServers = await Servers.find();
- TopVotedBots = await Bots.find({added: true}).sort({votes: -1}).limit(10);
- NewAddedBots = await Bots.find({added: true});
- NewAddedBots = NewAddedBots.reverse().slice(0,10);
+ TopVotedBots = await Bots.find({ added: true }).sort({ votes: -1 }).limit(10);
+ NewAddedBots = await Bots.find({ added: true });
+ NewAddedBots = NewAddedBots.reverse().slice(0, 10);
 }
 Update();
 globalThis.updateCache = Update;
-setInterval(Update,300000);
+setInterval(Update, 300000);
 
-app.get("/comments",(req,res)=>{
- res.render("comments.ejs", {user: req.user});
+app.get("/comments", (req, res) => {
+ res.render("comments.ejs");
 });
 app.use("/comments", express.static(path.resolve("src/comments")));
 
 app.get("/bots", async (req, res) => {
  shuffle(bots);
- var user = req.user;
- await res.render('bots.ejs', {user, theme: req.theme, nbots: NewAddedBots});
+ await res.render('bots.ejs', { nbots: NewAddedBots });
 });
 
-app.get("/servers/:id", async(req, res)=>{
- var user = req.user;
- var server = await Servers.findOne({id: req.params.id});
- if(!server) return await res.render("404.ejs",{user, path: req.originalUrl})
- else{
- server.desc = await marked(server.desc.replace(/&gt;+/g, ">"));
- await res.render('serverpage.ejs', {user, theme: req.theme, server});
+app.get("/servers/:id", async (req, res) => {
+ var server = await Servers.findOne({ id: req.params.id });
+ if (!server) return await res.render("404.ejs", {path: req.originalUrl })
+ else {
+  server.desc = await marked(server.desc.replace(/&gt;+/g, ">"));
+  await res.render('serverpage.ejs', { server });
  }
 });
 
-app.get("/servers/:id/join", (req, res)=>{
- fetch(`${process.env.DOMAIN}/api/servers/${req.params.id}/invite`).then(r=>r.json()).then(d=>{
-  if(d.err) res.json({err: d.err});
-  else{
-  res.redirect(`https://discord.gg/${d.code}`);
+app.get("/servers/:id/join", (req, res) => {
+ fetch(`${process.env.DOMAIN}/api/servers/${req.params.id}/invite`).then(r => r.json()).then(d => {
+  if (d.err) res.json({ err: d.err });
+  else {
+   res.redirect(`https://discord.gg/${d.code}`);
   }
  })
 });
 
-app.get("/manifest.json", (req, res)=>{
+app.get("/manifest.json", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/manifest.json"));
 });
 
 let sitemap;
-async function gensitemap(){
- const botsmap = AllBots.map((bot)=>{return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>`}).join("\n");
- const serversmap = AllServers.map((server)=>{return `<url>\n<loc>${process.env.DOMAIN}/servers/${server.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>`}).join("\n");
- const Sitemap= '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'+`\n<url>\n<loc>${process.env.DOMAIN}/</loc>\n<priority>1.00</priority><changefreq>weekly</changefreq>\n</url>\n`+botsmap+serversmap+'</urlset>';
+async function gensitemap() {
+ const botsmap = AllBots.map((bot) => { return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>` }).join("\n");
+ const serversmap = AllServers.map((server) => { return `<url>\n<loc>${process.env.DOMAIN}/servers/${server.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>` }).join("\n");
+ const Sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">' + `\n<url>\n<loc>${process.env.DOMAIN}/</loc>\n<priority>1.00</priority><changefreq>weekly</changefreq>\n</url>\n` + botsmap + serversmap + '</urlset>';
  return Sitemap;
 };
-if((process.env.DOMAIN=="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
-(async()=>{sitemap = await gensitemap();fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);});
-setInterval(async function(){sitemap = await gensitemap();fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);},3600000);
+if ((process.env.DOMAIN == "https://discord.rovelstars.com") && !(process.env.DOMAIN.includes("localhost"))) {
+ (async () => { sitemap = await gensitemap();
+  fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`); });
+ setInterval(async function() { sitemap = await gensitemap();
+  fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`); }, 3600000);
 }
-app.get("/sitemap.xml", async (req, res)=>{
- if((process.env.DOMAIN=="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
- res.header('Content-Type', 'application/xml');
- if(!sitemap){
-  sitemap = await gensitemap();
-  res.send(sitemap);
- }
- else{
-  res.send(sitemap);
- }
+app.get("/sitemap.xml", async (req, res) => {
+ if ((process.env.DOMAIN == "https://discord.rovelstars.com") && !(process.env.DOMAIN.includes("localhost"))) {
+  res.header('Content-Type', 'application/xml');
+  if (!sitemap) {
+   sitemap = await gensitemap();
+   res.send(sitemap);
+  }
+  else {
+   res.send(sitemap);
+  }
  }
  else res.redirect("https://discord.rovelstars.com/sitemap.xml");
 });
 
-app.get("/bots/:id/vote", async (req, res)=>{
- if(!req.user){
-  res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
+app.get("/bots/:id/vote", async (req, res) => {
+ if (!req.locals.user) {
+  res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
   res.redirect("/login");
  }
- else{
- var user = req.user;
- var bot = await Bots.findOne({id: req.params.id});
- if(!bot){ 
-  
-  await res.render("404.ejs", {user, path: req.originalUrl});}
- else{
- bot.owner = [];
- var u = await Users.findOne({id: user.id});
- if(!u){
-  res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
-  res.redirect("/login");
- }
- else{
-  user.bal = u.bal;
- await res.render('botvote.ejs', {user, theme: req.theme, bot});
- }}
+ else {
+  var bot = await Bots.findOne({ id: req.params.id });
+  if (!bot) {
+
+   await res.render("404.ejs", { path: req.originalUrl });
+  }
+  else {
+   var u = await Users.findOne({ id: user.id });
+   if (!u) {
+    res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
+    res.redirect("/login");
+   }
+   else {
+    req.locals.user.bal = u.bal;
+    await res.render('botvote.ejs', { bot });
+   }
+  }
  }
 });
 
-app.get("/processes",(req, res)=>{
- if((process.env.DOMAIN!="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
-  res.json({main: process.env.TOKEN, publicb: process.env.PUBLIC_TOKEN});
+app.get("/processes", (req, res) => {
+ if ((process.env.DOMAIN != "https://discord.rovelstars.com") && !(process.env.DOMAIN.includes("localhost"))) {
+  res.json({ main: process.env.TOKEN, publicb: process.env.PUBLIC_TOKEN });
  }
- else res.json({on: true});
+ else res.json({ on: true });
 });
 
-app.get("/bots/:id", async (req, res)=>{
+app.get("/bots/:id", async (req, res) => {
  fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`);
- var user = req.user;
  var bot = await Bots.findOne({ id: req.params.id });
- if (!bot) return await res.render("404.ejs", { user, path: req.originalUrl })
+ if (!bot) return await res.render("404.ejs", { path: req.originalUrl })
  else {
   bot.desc = await marked(bot.desc.replace(/&gt;+/g, ">"));
   bot.owner = [];
@@ -348,71 +350,71 @@ app.get("/bots/:id", async (req, res)=>{
     await bot.owner.push(d.tag);
    });
   };
-  await res.render('botpage.ejs', { user, theme: req.theme, bot });
+  await res.render('botpage.ejs', { bot });
  }
- });
+});
 
-app.get("/dashboard", async (req, res)=>{
- if(!req.user){
-  res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
+app.get("/dashboard", async (req, res) => {
+ if (!req.locals.user) {
+  res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
   res.redirect("/login");
  }
  else {
-  let botus =[];
-  Users.findOne({id: req.user.id}).then(async u=>{
-   req.user.bal = rovel.approx(u.bal);
-  Bots.find({$text:{$search: req.user.id}}).then(async bots=>{
-   for(const bot of bots){
-    if(bot.owners.includes(req.user.id)){
-     await botus.push(bot);
+  let botus = [];
+  Users.findOne({ id: req.locals.user.id }).then(async u => {
+   req.locals.user.bal = rovel.approx(u.bal);
+   Bots.find({ $text: { $search: req.locals.user.id } }).then(async bots => {
+    for (const bot of bots) {
+     if (bot.owners.includes(req.locals.user.id)) {
+      await botus.push(bot);
+     }
     }
-   }
-  await res.render('dashboard.ejs', {user: req.user,theme: req.theme, bots: botus});
-  });
+    await res.render('dashboard.ejs', { bots: botus });
+   });
   });
  }
 });
 
-app.get("/dashboard/bots/new", async (req, res)=>{
- if(!req.user){
-  res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
+app.get("/dashboard/bots/new", async (req, res) => {
+ if (!req.locals.user) {
+  res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
   res.redirect("/login");
  }
- else{
- await res.render('dashboard-newbot.ejs', {user: req.user, theme: req.theme});
+ else {
+  await res.render('dashboard-newbot.ejs');
  }
 });
 
-app.get("/dashboard/bots/import", async (req, res)=>{
- if(!req.user){
-  res.cookie("return", req.originalUrl,{maxAge: 1000*3600});
+app.get("/dashboard/bots/import", async (req, res) => {
+ if (!req.locals.user) {
+  res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
   res.redirect("/login");
  }
- else{
- await res.render('dashboard-importbot.ejs', {user: req.user, theme: req.theme});
+ else {
+  await res.render('dashboard-importbot.ejs');
  }
 });
 
-app.get("/status", (req, res)=>{
- res.render('status.ejs',{});
+app.get("/status", (req, res) => {
+ res.render('status.ejs');
 });
 
-app.get("/loaderio-39a018887f7a2f8e525d19a772e9defe", (req, res)=>{
+app.get("/loaderio-39a018887f7a2f8e525d19a772e9defe", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/verify.txt"));
 });
 
 app.get("/favicon.ico", (req, res) => {
  res.redirect("/assets/img/bot/logo-36.png");
 });
-app.get("/robots.txt", (req, res)=>{
+app.get("/robots.txt", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/robots.txt"));
 });
 
-app.get("/server", (req, res)=>{
+app.get("/server", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/invite.html"));
 });
 
-app.get("/email", (req, res)=>{
+app.get("/email", (req, res) => {
  res.redirect("mailto: support@rovelstars.com");
 });
 
@@ -420,21 +422,21 @@ app.get("/arc-sw.js", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/arc-sw.js"));
 });
 
-app.get("/beta", (req, res)=>{
+app.get("/beta", (req, res) => {
  res.sendFile(path.resolve("src/public/assets/join.html"));
 });
 
- app.get("/login", (req, res)=>{
-  if(req.cookies['key']){
-   res.cookie('key', req.cookies['key'], {maxAge: 0});
-  }
-  res.set("X-Robots-Tag","noindex");
+app.get("/login", (req, res) => {
+ if (req.cookies['key']) {
+  res.cookie('key', req.cookies['key'], { maxAge: 0 });
+ }
+ res.set("X-Robots-Tag", "noindex");
  res.redirect(auth.auth.link);
 });
 
-app.get("/logout", async (req, res)=>{
- if(req.cookies['key']){
-  const user = await auth.getUser(req.cookies['key']).catch(()=>{});
+app.get("/logout", async (req, res) => {
+ if (req.cookies['key']) {
+  const user = await auth.getUser(req.cookies['key']).catch(() => {});
   fetch(`${process.env.DOMAIN}/api/client/log`, {
    method: "POST",
    headers: {
@@ -445,22 +447,21 @@ app.get("/logout", async (req, res)=>{
     "title": `${(user)?user.tag:"IDK who"} Logouted!`,
     "desc": `Bye bye ${(user)?user.tag:"Unknown Guy"}\nSee you soon back on RDL!`,
     "color": "#ff0000",
-    "img": (user)?user.avatarUrl(128):`${process.env.DOMAIN}/favicon.ico`,
-    "owners": (user)?user.id:null
+    "img": (user) ? user.avatarUrl(128) : `${process.env.DOMAIN}/favicon.ico`,
+    "owners": (user) ? user.id : null
    })
   })
-  res.cookie('key', req.cookies['key'], {maxAge: 0});
-  
+  res.cookie('key', req.cookies['key'], { maxAge: 0 });
+
  }
- if(req.query.redirect){
-  res.redirect(decodeURI(req.query.redirect).replace("https://discord.rovelstars.com",""));
+ if (req.query.redirect) {
+  res.redirect(decodeURI(req.query.redirect).replace("https://discord.rovelstars.com", ""));
  }
- if(!req.query.redirect){
+ if (!req.query.redirect) {
   res.redirect("/");
  }
 });
 
 app.get("*", (req, res) => {
- var user = req.user;
- res.render("404.ejs",{user, path: req.originalUrl});
- });
+ res.render("404.ejs", { path: req.originalUrl });
+});
