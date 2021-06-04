@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
   username: {type: String, unique: true, required: true},
   avatar: {type: String, unique: true, required: true},
   discriminator: {type: String, required: true},
+  email: {type: String, unique: true},
    bal: {type: Number, default: 10},
    bio: {type: String, default: "The user doesn't have bio set!"},
    badges: [{type: String}],

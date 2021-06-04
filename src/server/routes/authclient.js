@@ -2,6 +2,7 @@ let router = require("express").Router();
 var { fetch } = require("rovel.js");
 let auth = require("@utils/auth.js");
 let Users = require("@models/users.js");
+const validate = require("validator");
 router.use(require("express").json());
 
 router.get("/", async (req, res) => {
@@ -33,6 +34,7 @@ router.get("/", async (req, res) => {
      id: user.id,
      username: user.username,
      discriminator: user.discriminator,
+     email: user.emailId,
      avatar: (user.avatarHash) ? user.avatarHash : (user.discriminator % 5)
     }).save((err, userr) => {
      if (err) return console.log(err);
@@ -46,7 +48,7 @@ router.get("/", async (req, res) => {
        "title": `${userr.tag} account created!`,
        "desc": `${userr.tag} (${user.id}) has got a new account automatically on RDL after logining for the first time! So Hey new user **${user.username}**\nWelcome to Rovel Discord List!\nHere you can add your bots, servers, emojis, find your friends, and earn money to vote for your favourite bot!\nSo let's get started on your new journey on RDL!`,
         "owners": user.id,
-       "img": user.avatarUrl,
+       "img": user.avatarUrl(128),
        "url": `${process.env.DOMAIN}/users/${user.id}`
       })
      })
@@ -66,7 +68,11 @@ router.get("/", async (req, res) => {
       "img": user.avatarUrl(128),
       "owners": user.id
      })
-    })
+    });
+     if(result.email==undefined){
+      result.email=user.email;
+      result.save();
+     }
    }
   })
   if(req.cookies["return"]){
@@ -86,6 +92,37 @@ router.get("/", async (req, res) => {
 router.get("/key", async (req, res) => {
  res.json({ key: req.cookies['key'] || null });
 });
+
+router.get("/email", async(req, res)=>{
+ if(req.query.email){
+  Users.findOne({id: req.user.id}).then(user=>{
+   if(user==undefined){
+    res.json({err: "user_not_found"});
+   }
+   else{
+    if(validate.isEmail(req.query.email)){
+   user.email = req.query.email;
+   user.save();
+   res.json({email: user.email});
+   }
+    else{
+     res.json({err: "invalid_email"});
+    }
+   }
+  });
+ }
+ else{
+  Users.findOne({id: req.user.id}).then(user=>{
+   if(user==undefined){
+    res.json({err: "user_not_found"});
+   }
+   else{
+    res.json({email: user.email});
+   }
+  });
+ }
+});
+
 router.get("/user", async (req, res) => {
  if (req.query.key || req.cookies['key']) {
   try {
