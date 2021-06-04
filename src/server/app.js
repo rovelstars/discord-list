@@ -106,7 +106,7 @@ var checkBanned = async function(req, res, next) {
    secure: true
   });
  }
- req.locals.theme = (req.cookies["theme"]) ? req.cookies["theme"] : "discord";
+ res.locals.theme = (req.cookies["theme"]) ? req.cookies["theme"] : "discord";
  if (req.header('RDL-key')) {
   req.query.key = req.header('RDL-key');
  }
@@ -141,14 +141,14 @@ var checkBanned = async function(req, res, next) {
      })
     }
     else {
-     req.locals.user = user;
+     res.locals.user = user;
      next()
     }
    });
   }
  }
  else {
-  req.locals.user = null;
+  res.locals.user = null;
   next()
  }
 };
@@ -170,7 +170,7 @@ var weblog = async function(req, res, next) {
    botu = botu.id;
   }
  }
- const user = (req.locals.user) ? req.locals.user.tag : "Not logined";
+ const user = (res.locals.user) ? res.locals.user.tag : "Not logined";
  const geo = await geoip.lookup(req.cf_ip);
  const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.cf_ip}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\n**Location:** ${(geo)?geo.timezone:"idk"}\n**User:** ${user}\n**Bot:** \`${botu || "nope"}\`\n**Browser:** \`${(req.headers['user-agent'])?req.headers['user-agent']:"api request"}\``;
  await fetch(weburl, {
@@ -307,7 +307,7 @@ app.get("/sitemap.xml", async (req, res) => {
 });
 
 app.get("/bots/:id/vote", async (req, res) => {
- if (!req.locals.user) {
+ if (!res.locals.user) {
   res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
   res.redirect("/login");
  }
@@ -324,7 +324,7 @@ app.get("/bots/:id/vote", async (req, res) => {
     res.redirect("/login");
    }
    else {
-    req.locals.user.bal = u.bal;
+    res.locals.user.bal = u.bal;
     await res.render('botvote.ejs', { bot });
    }
   }
@@ -355,17 +355,17 @@ app.get("/bots/:id", async (req, res) => {
 });
 
 app.get("/dashboard", async (req, res) => {
- if (!req.locals.user) {
+ if (!res.locals.user) {
   res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
   res.redirect("/login");
  }
  else {
   let botus = [];
-  Users.findOne({ id: req.locals.user.id }).then(async u => {
-   req.locals.user.bal = rovel.approx(u.bal);
-   Bots.find({ $text: { $search: req.locals.user.id } }).then(async bots => {
+  Users.findOne({ id: res.locals.user.id }).then(async u => {
+   res.locals.user.bal = rovel.approx(u.bal);
+   Bots.find({ $text: { $search: res.locals.user.id } }).then(async bots => {
     for (const bot of bots) {
-     if (bot.owners.includes(req.locals.user.id)) {
+     if (bot.owners.includes(res.locals.user.id)) {
       await botus.push(bot);
      }
     }
@@ -376,7 +376,7 @@ app.get("/dashboard", async (req, res) => {
 });
 
 app.get("/dashboard/bots/new", async (req, res) => {
- if (!req.locals.user) {
+ if (!res.locals.user) {
   res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
   res.redirect("/login");
  }
@@ -386,7 +386,7 @@ app.get("/dashboard/bots/new", async (req, res) => {
 });
 
 app.get("/dashboard/bots/import", async (req, res) => {
- if (!req.locals.user) {
+ if (!res.locals.user) {
   res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
   res.redirect("/login");
  }
