@@ -6,6 +6,16 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 <link rel="stylesheet" href="/assets/css/notfound.css">
 <script src="https://yonle.github.io/RickRoll.js/RickRoll.js"></script>
+</head>
+<body>
+<div class="noise"></div>
+<div class="overlay"></div>
+<div class="terminal">
+  <h1>Error <span class="errorcode" id="title">404 - Not Found</span></h1>
+  <p class="output" id="method"><%= (user)?(user.username+", "):"" %>The page you are looking for (<%= path %>) might have been removed, had its name changed or is temporarily unavailable.</p>
+  <p class="output">Please try to <a onclick="goback()">go back</a> or <a href="/">return to the homepage</a>. </p>
+  <p class="output" id="input" contenteditable="true">$ down</p>
+</div>
 <script>
  function goback(){
   window.history.go(-1);
@@ -39,15 +49,5 @@
   }
  }, 1000);
 </script>
-</head>
-<body>
-<div class="noise"></div>
-<div class="overlay"></div>
-<div class="terminal">
-  <h1>Error <span class="errorcode" id="title">404 - Not Found</span></h1>
-  <p class="output" id="method"><%= (user)?(user.username+", "):"" %>The page you are looking for (<%= path %>) might have been removed, had its name changed or is temporarily unavailable.</p>
-  <p class="output">Please try to <a onclick="goback()">go back</a> or <a href="/">return to the homepage</a>. </p>
-  <p class="output" id="input" contenteditable="true">$ down</p>
-</div>
 </body>
 </html>

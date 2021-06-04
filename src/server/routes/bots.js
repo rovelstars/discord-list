@@ -457,7 +457,7 @@ router.post("/edit", async (req, res) => {
     if (!err && req.body.desc.length < 100) err = "invalid_desc";
     else {
      bot.desc = coronaSanitizer(req.body.desc, {
-      allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages', 'img', 'iframe', 'style']),
+      allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages', 'img', 'iframe', 'style', 'h1', 'h2']),
       allowVulnerableTags: true,
       allowedAttributes: {
        '*': ["*"]
