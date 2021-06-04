@@ -211,8 +211,7 @@ app.get('/api/report', (req, res)=>{
    secret: process.env.SECRET,
    channel: "838067036080963584",
    title: "Other's Deployment of RDL!",
-   desc: `**Link:** ${req.query.link}`,
-   owners: ["602902050677981224"]
+   desc: `**Link:** ${req.query.link}`
   })
  })
  }
