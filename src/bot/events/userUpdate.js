@@ -2,7 +2,7 @@ client.on('userUpdate', (olduser, newuser) => {
  if (newuser.bot) {
   try {
    var num;
-   Bots.findOne({ id: olduser.id }).then(bot => {
+   Bots.findOne({ id: newuser.id }).then(bot => {
     if(!bot) return;
     if(bot.username!=newuser.username){
      bot.username = newuser.username;
@@ -34,7 +34,7 @@ client.on('userUpdate', (olduser, newuser) => {
    bot.save();
    })
   }
-  catch {}
+  catch (e){}
  }
  else if(!newuser.bot){
   Users.findOne({ id: newuser.id }).then(user => {
@@ -45,14 +45,18 @@ client.on('userUpdate', (olduser, newuser) => {
     if ((u.avatar === user.avatar) && (u.username === user.username) && (u.discriminator === user.discriminator)){
     }
     else {
+     var num;
      if (u.avatar !== user.avatar) {
       user.avatar = u.avatar;
+      num="Avatar Updated!\n";
      }
      if (u.username !== user.username) {
       user.username = u.username;
+      num="Username Updated!\n";
      }
      if (u.discriminator !== user.discriminator) {
       user.discriminator = u.discriminator;
+      num="Discriminator Updated!\n";
      }
      user.save();
      fetch("https://discord.rovelstars.com/api/client/log", {
@@ -63,7 +67,7 @@ client.on('userUpdate', (olduser, newuser) => {
       body: JSON.stringify({
        "secret": process.env.SECRET,
        "img": u.avatarURL,
-       "desc": `New Data Saved:\n\`\`\`json\n${JSON.stringify(user)}\n\`\`\``,
+       "desc": num,
        "title": ` User ${u.tag} Data Updated!`,
        "color": "#FEE75C",
        "url": `https://discord.rovelstars.com/users/${u.id}`

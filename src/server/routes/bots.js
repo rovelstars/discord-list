@@ -30,7 +30,7 @@ const job = schedule.scheduleJob(rule, async function() {
 
 router.get("/", (req, res) => {
  if (req.query.q) {
-  Bots.find({ $text: { $search: req.query.q } }, { _id: false }).exec((err, doc) => {
+  Bots.find({ $text: { $search: req.query.q } }, { _id: false, code: false }).exec((err, doc) => {
    if (err) return res.json({ err });
    res.json(doc);
   })
@@ -45,20 +45,17 @@ router.get("/", (req, res) => {
 
 router.get("/info", (req, res) => {
  if (!req.query.code) return res.json({ err: "no_code" });
- BotAuth.findOne({ code: req.query.code }).then(ba => {
+ Bots.findOne({ code: req.query.code }).then(ba => {
   if (!ba) return res.json({ err: "no_bot_found" });
-  Bots.findOne({ id: ba.id }).then(bot => {
-   res.json(bot);
-  });
+  else{
+   res.json(ba);
+  }
  });
 });
 
 router.post("/:id/card", (req, res) => {
  if (req.query.code) {
-  BotAuth.findOne({ id: req.params.id, code: req.query.code }).then(au => {
-   if (!au) return res.json({ err: "not_found" });
-   else {
-    Bots.findOne({ id: req.params.id }).then(bot => {
+    Bots.findOne({ id: req.params.id, code: req.params.code }).then(bot => {
      if (!bot) return res.json({ err: "bot_not_found" });
      else {
       if (req.body.img) {
@@ -75,8 +72,6 @@ router.post("/:id/card", (req, res) => {
       res.json({ card: "updated" });
      }
     });
-   }
-  })
  }
  else return res.json({ err: "no_code" });
 });
@@ -94,7 +89,6 @@ router.get("/:id/vote", async (req, res) => {
     if (use.bal < req.query.coins) return res.json({ err: "not_enough_coins" });
     Bots.findOne({ id: req.params.id }).then(async bot => {
      if (!bot) return res.json({ err: "no_bot_found" });
-     BotAuth.findOne({ id: req.params.id }).then(async ba => {
       use.bal = use.bal - req.query.coins;
       use.save();
       bot.votes = bot.votes + parseInt(Vote);
@@ -107,7 +101,7 @@ router.get("/:id/vote", async (req, res) => {
         "votes": Vote,
         "currentVotes": bot.votes
        });
-       fetch(`${bot.webhook}/vote?code=${ba.code}`, {
+       fetch(`${bot.webhook}/vote?code=${bot.code}`, {
         method: "POST",
         headers: {
          "content-type": "application/json"
@@ -148,7 +142,6 @@ router.get("/:id/vote", async (req, res) => {
      });
     });
    });
-  })
  }
 })
 
@@ -173,17 +166,21 @@ router.get("/:id/sync", (req, res) => {
    fetch("https://discord.rovelstars.com/api/client/users/" + user.id).then(r => r.json()).then(u => {
     if ((u.avatar === user.avatar) && (u.username === user.username) && (u.discriminator === user.discriminator)) return res.json({ err: "same_data" });
     else {
+     var num;
      if (u.avatar !== user.avatar) {
       user.avatar = u.avatar;
+      num="Avatar Updated!\n";
      }
      if (u.username !== user.username) {
       user.username = u.username;
+      num="Username Updated!\n";
      }
      if (u.discriminator !== user.discriminator) {
       user.discriminator = u.discriminator;
+      num="Discriminator Updated!\n";
      }
      user.save();
-     res.json({ success: true });
+     res.json({ success: true, bot: user });
      fetch("https://discord.rovelstars.com/api/client/log", {
       method: "POST",
       headers: {
@@ -192,7 +189,7 @@ router.get("/:id/sync", (req, res) => {
       body: JSON.stringify({
        "secret": process.env.SECRET,
        "img": u.avatarURL,
-       "desc": `New Data Saved:\n\`\`\`json\n${JSON.stringify(user)}\n\`\`\``,
+       "desc": num,
        "title": `Bot ${u.tag} Data Updated!`,
        "color": "#FEE75C",
        "url": `https://discord.rovelstars.com/bots/${u.id}`
@@ -214,20 +211,10 @@ router.get("/:id/code", (req, res) => {
   Bots.findOne({ id: req.params.id }).then(bot => {
    if (!bot) return res.json({ err: "no_bot_found" });
    if (bot.owners.includes(d.id)) {
-    const botauth = new BotAuth({
-     id: req.params.id,
-     code: passgen()
-    }).save((err, auth) => {
-     if (err) { //already there
-      BotAuth.findOne({ id: req.params.id }).then(key => {
-       if (req.query.regen == "true") {
-        BotAuth.updateOne({ id: req.params.id }, { $set: { code: passgen() } }).then(BotAuth.findOne({ id: req.params.id }).then(key => res.json({ key })));
-       }
-       else res.json({ key });
-      })
-     }
-     else res.json({ auth }); //not there and we made one
-    })
+    if(!bot.code){
+     bot.code = passgen();
+    }
+    res.json({code: bot.code});
    }
    if(!bot.owners.includes(d.id)){
     return res.json({err: "unauth"});
@@ -254,7 +241,7 @@ router.get("/:id", (req, res) => {
 router.post("/:id/servers", (req, res) => {
  if (!req.query.code) return res.json({ err: "no_code" });
  if (isNaN(req.body.count)) return res.json({ err: "NaN" });
- BotAuth.findOne({ code: req.query.code, id: req.params.id }).then(b => {
+ Bots.findOne({ code: req.query.code, id: req.params.id }).then(b => {
   if (!b) return res.json({ err: "invalid_code" });
   Bots.findOne({ id: b.id }).then(bot => {
    bot.servers = req.body.count;

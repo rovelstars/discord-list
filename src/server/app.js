@@ -22,7 +22,6 @@ const actuator = require('express-actuator');
 const marked = require("marked");
 const geoip = require("geoip-lite");
 var cloudflare = require('cloudflare-express');
-globalThis.BotAuth = require("@models/botauth.js");
 globalThis.Bots = require("@models/bots.js");
 globalThis.Users = require("@models/users.js");
 globalThis.Servers = require("@models/servers.js");
@@ -211,9 +210,9 @@ app.use(i18n.init);
 var weblog = async function(req, res, next) {
  const weburl = process.env.WEBHOOK;
  if (req.query.code) {
-  var botu = await BotAuth.findOne({ code: req.query.code });
+  var botu = await Bots.findOne({ code: req.query.code });
   if (botu) {
-   botu = botu.id;
+   botu = `${botu.id} (${botu.tag})`;
   }
  }
  const user = (res.locals.user) ? res.locals.user.tag : "Not logined";

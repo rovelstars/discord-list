@@ -5,7 +5,7 @@ router.use(require("express").json());
 
 router.get("/", (req, res) => {
  if (req.query.q) {
-  Users.find({ $text: { $search: req.query.q } }, { _id: false }).exec((err, doc) => {
+  Users.find({ $text: { $search: req.query.q } }, { _id: false, email: false }).exec((err, doc) => {
    if (err) return res.json({ err });
    res.json(doc);
   })
@@ -72,7 +72,7 @@ router.get("/all", async (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
- Users.findOne({ id: req.params.id }, { _id: false }).then(user => {
+ Users.findOne({ id: req.params.id }, { _id: false, email: false }).then(user => {
   res.json(user);
  });
 });
