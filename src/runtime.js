@@ -1,44 +1,17 @@
-const spawn = require('child_process').spawn;
-const {fetch} = require("rovel.js");
-var pm2 = false;
-let queue = [];
-function createChunks(str) {
-    return str.match(new RegExp('.{1,' + 2000 + '}', 'g'));
-}
-function send(data) {
-    if(!data) return;
-    fetch(process.env.WEBHOOK, {
-      method: "POST",
-      headers:{
-        "content-type": "application/json"
-      },
-      body: "```xl\n"+data+"\n```"
-    })
-}
-function sendData(data) {
-    data = escapeMarkdown(data.toString());
-    createChunks(data).filter(a => !!a && a != null).map(a => queue.push);
-}
-
-function startlog() {
-
-    if (pm2 !== false) {
-        console.log('pm2 logs process already started...');
-        return;
-    }
-    start = false;
-
-    pm2 = spawn('pm2', ['logs']);
-    pm2.on('exit', (code, signal) => {
-        console.log('PM2 EXIT');
-    })
-
-    pm2.stderr.on('data', (data) => sendData(data));
-    pm2.stdout.on('data', (data) => sendData(data));
-    return pm2;
-};
-function escapeMarkdown(text) {
-    return text.replace(/```/g, '`\u200b``');
-}
-startlog();
-setInterval(()=>send(queue.shift()),500);
+var array = [{
+  id: '603213294265958400',
+  code: 'RDL-ea1443a5-56f0-4cb9-8fb5-ac9e9eeb4c00'
+},
+{
+  id: '652938911642943498',
+  code: 'RDL-cb8dabe3-ed0e-4dfc-9c6e-a9f862c50a39'
+},
+{
+  id: '752052866809593906',
+  code: 'RDL-8cd27bec-af77-435e-b7e5-9038610ff00f'
+},
+{
+  id: '715906723982082139',
+  code: 'RDL-da2cd350-2aeb-43bb-a13b-a38eef8e8e98'
+}];
+array.map(b=>b.id);

@@ -1,6 +1,7 @@
 let router = require("express").Router();
 let path = require("path");
 let auth = require("@utils/auth.js");
+const marked = require("marked");
 
 router.get("/", async (req, res) => {
  shuffle(AllBots);
