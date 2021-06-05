@@ -20,12 +20,12 @@ const { langs } = require("../data.js");
 let ping;
 const actuator = require('express-actuator');
 const marked = require("marked");
-let BotAuth = require("@models/botauth.js");
 const geoip = require("geoip-lite");
 var cloudflare = require('cloudflare-express');
-var Bots = require("@models/bots.js");
-let Users = require("@models/users.js");
-var Servers = require("@models/servers.js");
+globalThis.BotAuth = require("@models/botauth.js");
+globalThis.Bots = require("@models/bots.js");
+globalThis.Users = require("@models/users.js");
+globalThis.Servers = require("@models/servers.js");
 const servers = require("@routes/servers.js");
 const embeds = require("@routes/embeds.js");
 const prefers = require("@routes/prefers.js");
@@ -52,6 +52,7 @@ const dayjs = rovel.time;
 const rateLimit = require("express-rate-limit");
 let path = require("path");
 const bots = require('@routes/bots.js');
+const non_api = require("@routes/non-api.js");
 setTimeout(() => {
  console.log(rovel.text.green(`Everything Started! RDL is ready to go!`))
 }, 5000);
@@ -123,10 +124,8 @@ var checkBanned = async function(req, res, next) {
  if (req.cookies['key']) {
   req.query.key = req.cookies['key'];
   let user = await auth.getUser(req.cookies['key']).catch( async () => { 
-   console.warn("126");
    try {
    let tempvalid = auth.checkValidity(req.cookies['key']);
-   console.warn("129");
    /*
    {
   expired: false,
@@ -136,7 +135,6 @@ var checkBanned = async function(req, res, next) {
 */
    if(tempvalid.expired){
     // ah yes the key really expired!
-    console.warn("139");
     const newkey = await auth.refreshToken(req.cookies['key']);
     // check whether he got email scope of not (temp case as of now)
     const tempuser = await auth.getUser(newkey);
@@ -147,12 +145,10 @@ var checkBanned = async function(req, res, next) {
    httpOnly: true,
    secure: true
   });
-  console.warn("147");
   res.redirect("/?alert=key_refreshed"); //send back to homepage because idk what would he do on other pages, and notify him that key was refreshed.
   }
     else {
      //logout him simply because he doesnt have email scope.
-     console.warn("151");
      res.redirect("/logout");
    }
    }
@@ -161,7 +157,6 @@ var checkBanned = async function(req, res, next) {
    }
    }
    catch (e){
-    console.warn("157");
     res.redirect("/logout"); //am i a joke to you visitor? ;(
    }
   });
@@ -272,243 +267,9 @@ app.get('/api/*', (req, res) => {
  res.json({ err: 404 });
 })
 
-app.get("/", async (req, res) => {
- shuffle(AllBots);
- let bots = AllBots.slice(0, 10);
- let servers = shuffle(AllServers).slice(0, 10);
- var alerts;
- if(req.query.alert){
-  alerts=req.query.alert;
- }
- await res.render('index.ejs', { bots, servers, alerts });
-});
-
-async function Update() {
- globalThis.AllBots = await Bots.find({ added: true });
- globalThis.AllServers = await Servers.find();
- globalThis.TopVotedBots = await Bots.find({ added: true }).sort({ votes: -1 }).limit(10);
- globalThis.NewAddedBots = await Bots.find({ added: true });
- globalThis.NewAddedBots = NewAddedBots.reverse().slice(0, 10);
-}
-Update();
-globalThis.updateCache = Update;
-setInterval(Update, 300000);
-
 app.get("/comments", (req, res) => {
  res.render("comments.ejs");
 });
 app.use("/comments", express.static(path.resolve("src/comments")));
 
-app.get("/bots", async (req, res) => {
- shuffle(bots);
- await res.render('bots.ejs', { nbots: NewAddedBots });
-});
-
-app.get("/servers/:id", async (req, res) => {
- var server = await Servers.findOne({ id: req.params.id });
- if (!server) return await res.render("404.ejs", {path: req.originalUrl })
- else {
-  server.desc = await marked(server.desc.replace(/&gt;+/g, ">"));
-  await res.render('serverpage.ejs', { server });
- }
-});
-
-app.get("/servers/:id/join", (req, res) => {
- fetch(`${process.env.DOMAIN}/api/servers/${req.params.id}/invite`).then(r => r.json()).then(d => {
-  if (d.err) res.json({ err: d.err });
-  else {
-   res.redirect(`https://discord.gg/${d.code}`);
-  }
- })
-});
-
-app.get("/manifest.json", (req, res) => {
- res.sendFile(path.resolve("src/public/assets/manifest.json"));
-});
-
-let sitemap;
-async function gensitemap() {
- const botsmap = AllBots.map((bot) => { return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>` }).join("\n");
- const serversmap = AllServers.map((server) => { return `<url>\n<loc>${process.env.DOMAIN}/servers/${server.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>` }).join("\n");
- const Sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">' + `\n<url>\n<loc>${process.env.DOMAIN}/</loc>\n<priority>1.00</priority><changefreq>weekly</changefreq>\n</url>\n` + botsmap + serversmap + '</urlset>';
- return Sitemap;
-};
-if ((process.env.DOMAIN == "https://discord.rovelstars.com") && !(process.env.DOMAIN.includes("localhost"))) {
- (async () => { sitemap = await gensitemap();
-  fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`); });
- setInterval(async function() { sitemap = await gensitemap();
-  fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`); }, 3600000);
-}
-app.get("/sitemap.xml", async (req, res) => {
- if ((process.env.DOMAIN == "https://discord.rovelstars.com") && !(process.env.DOMAIN.includes("localhost"))) {
-  res.header('Content-Type', 'application/xml');
-  if (!sitemap) {
-   sitemap = await gensitemap();
-   res.send(sitemap);
-  }
-  else {
-   res.send(sitemap);
-  }
- }
- else res.redirect("https://discord.rovelstars.com/sitemap.xml");
-});
-
-app.get("/bots/:id/vote", async (req, res) => {
- if (!res.locals.user) {
-  res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
-  res.redirect("/login");
- }
- else {
-  var bot = await Bots.findOne({ id: req.params.id });
-  if (!bot) {
-
-   await res.render("404.ejs", { path: req.originalUrl });
-  }
-  else {
-   var u = await Users.findOne({ id: res.locals.user.id });
-   if (!u) {
-    res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
-    res.redirect("/login");
-   }
-   else {
-    res.locals.user.bal = u.bal;
-    await res.render('botvote.ejs', { bot });
-   }
-  }
- }
-});
-
-app.get("/processes", (req, res) => {
- if ((process.env.DOMAIN != "https://discord.rovelstars.com") && !(process.env.DOMAIN.includes("localhost"))) {
-  res.json({ main: process.env.TOKEN, publicb: process.env.PUBLIC_TOKEN });
- }
- else res.json({ on: true });
-});
-
-app.get("/bots/:id", async (req, res) => {
- fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`);
- var bot = await Bots.findOne({ id: req.params.id });
- if (!bot) return await res.render("404.ejs", { path: req.originalUrl })
- else {
-  bot.desc = await marked(bot.desc.replace(/&gt;+/g, ">"));
-  bot.owner = [];
-  for (const id of bot.owners) {
-   await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r => r.json()).then(async d => {
-    await bot.owner.push(d.tag);
-   });
-  };
-  await res.render('botpage.ejs', { bot });
- }
-});
-
-app.get("/dashboard", async (req, res) => {
- if (!res.locals.user) {
-  res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
-  res.redirect("/login");
- }
- else {
-  let botus = [];
-  Users.findOne({ id: res.locals.user.id }).then(async u => {
-   res.locals.user.bal = rovel.approx(u.bal);
-   Bots.find({ $text: { $search: res.locals.user.id } }).then(async bots => {
-    for (const bot of bots) {
-     if (bot.owners.includes(res.locals.user.id)) {
-      await botus.push(bot);
-     }
-    }
-    await res.render('dashboard.ejs', { bots: botus });
-   });
-  });
- }
-});
-
-app.get("/dashboard/bots/new", async (req, res) => {
- if (!res.locals.user) {
-  res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
-  res.redirect("/login");
- }
- else {
-  await res.render('dashboard-newbot.ejs');
- }
-});
-
-app.get("/dashboard/bots/import", async (req, res) => {
- if (!res.locals.user) {
-  res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
-  res.redirect("/login");
- }
- else {
-  await res.render('dashboard-importbot.ejs');
- }
-});
-
-app.get("/status", (req, res) => {
- res.render('status.ejs');
-});
-
-app.get("/loaderio-39a018887f7a2f8e525d19a772e9defe", (req, res) => {
- res.sendFile(path.resolve("src/public/assets/verify.txt"));
-});
-
-app.get("/favicon.ico", (req, res) => {
- res.redirect("/assets/img/bot/logo-36.png");
-});
-app.get("/robots.txt", (req, res) => {
- res.sendFile(path.resolve("src/public/assets/robots.txt"));
-});
-
-app.get("/server", (req, res) => {
- res.sendFile(path.resolve("src/public/assets/invite.html"));
-});
-
-app.get("/email", (req, res) => {
- res.redirect("mailto: support@rovelstars.com");
-});
-
-app.get("/arc-sw.js", (req, res) => {
- res.sendFile(path.resolve("src/public/assets/arc-sw.js"));
-});
-
-app.get("/beta", (req, res) => {
- res.sendFile(path.resolve("src/public/assets/join.html"));
-});
-
-app.get("/login", (req, res) => {
- if (req.cookies['key']) {
-  res.cookie('key', req.cookies['key'], { maxAge: 0 });
- }
- res.set("X-Robots-Tag", "noindex");
- res.redirect(auth.auth.link);
-});
-
-app.get("/logout", async (req, res) => {
- if (req.cookies['key']) {
-  const user = await auth.getUser(req.cookies['key']).catch(() => {});
-  fetch(`${process.env.DOMAIN}/api/client/log`, {
-   method: "POST",
-   headers: {
-    "content-type": "application/json"
-   },
-   body: JSON.stringify({
-    "secret": process.env.SECRET,
-    "title": `${(user)?user.tag:"IDK who"} Logouted!`,
-    "desc": `Bye bye ${(user)?user.tag:"Unknown Guy"}\nSee you soon back on RDL!`,
-    "color": "#ff0000",
-    "img": (user) ? user.avatarUrl(128) : `${process.env.DOMAIN}/favicon.ico`,
-    "owners": (user) ? user.id : null
-   })
-  })
-  res.cookie('key', req.cookies['key'], { maxAge: 0 });
-
- }
- if (req.query.redirect) {
-  res.redirect(decodeURI(req.query.redirect).replace("https://discord.rovelstars.com", ""));
- }
- if (!req.query.redirect) {
-  res.redirect("/");
- }
-});
-
-app.get("*", (req, res) => {
- res.render("404.ejs", { path: req.originalUrl });
-});
+app.use("/", non_api);

@@ -1,6 +1,3 @@
-let Bots = require("@models/bots.js");
-let Users = require("@models/users.js");
-let BotAuth = require("@models/botauth.js");
 const validator = require("validator");
 const { owners } = require("../../data.js");
 const passgen = require("@utils/passgen.js");

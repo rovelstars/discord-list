@@ -1,7 +1,5 @@
 let router = require("express").Router();
 var {fetch} = require("rovel.js");
-let Users = require("@models/users.js");
-let Servers = require("@models/servers.js");
 router.use(require("express").json());
 
 router.get("/", (req, res) => {

@@ -1,6 +1,5 @@
 let router = require("express").Router();
 var { fetch } = require("rovel.js");
-const Bots = require("@models/bots.js");
 
 router.get("/bots/:id/status", (req, res) => {
  Bots.findOne({ id: req.params.id }).then(bot => {

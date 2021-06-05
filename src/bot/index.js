@@ -2,8 +2,6 @@ const Discord = require("discord.js");
 const fs = require("fs");
 require("./publicbot/index.js");
 const normalText = require("diacritics").remove;
-var Bots = require("@models/bots.js");
-var Users = require("@models/users.js");
 var client = new Discord.Client({ ws: { intents: Discord.Intents.ALL}});
 client.login(process.env.TOKEN);
 globalThis.privatebot = client;
