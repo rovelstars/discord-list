@@ -123,7 +123,7 @@ var checkBanned = async function(req, res, next) {
  if (req.cookies['key']) {
   req.query.key = req.cookies['key'];
   var user = await auth.getUser(req.cookies['key']).catch(() => { next() });
-  console.log(auth.checkValidity(myUserKey));
+  console.log(auth.checkValidity(req.cookies['key']));
   if (user) {
    fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r => r.json()).then(d => {
     if (d.banned) {
