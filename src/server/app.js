@@ -122,8 +122,40 @@ var checkBanned = async function(req, res, next) {
  }
  if (req.cookies['key']) {
   req.query.key = req.cookies['key'];
-  var user = await auth.getUser(req.cookies['key']).catch(() => { next() });
-  console.log(auth.checkValidity(req.cookies['key']));
+  var user = await auth.getUser(req.cookies['key']).catch( async () => { 
+   try {
+   let tempvalid = auth.checkValidity(req.cookies['key']);
+   /*
+   {
+  expired: false,
+  expiresIn: 538994851,
+  expireTimestamp: 1623434339257
+}
+*/
+   if(tempvalid.expired){
+    // ah yes the key really expired!
+    const newkey = await auth.refreshToken(req.cookies['key']);
+    // check whether he got email scope of not (temp case as of now)
+    const tempuser = await auth.getUser(newkey);
+    if(tempuser.emailId){
+     //he got it!
+     res.cookie('key', newkey, {
+   maxAge: 30 * 3600 * 24 * 1000, //30days
+   httpOnly: true,
+   secure: true
+  });
+  res.redirect("/"); //send back to homepage because idk what would he do on other pages 
+  }
+    else {
+     //login him with email scope (for temp)
+     res.redirect("/login");
+   }
+   }
+   }
+   catch (e){
+    next()
+   }
+  });
   if (user) {
    fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r => r.json()).then(d => {
     if (d.banned) {
@@ -142,8 +174,13 @@ var checkBanned = async function(req, res, next) {
      })
     }
     else {
+     if(!user.emailId){
+      /* wip */
+     }
+     else {
      res.locals.user = user;
-     next()
+     next();
+     }
     }
    });
   }
