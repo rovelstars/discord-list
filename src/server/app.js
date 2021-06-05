@@ -144,15 +144,17 @@ var checkBanned = async function(req, res, next) {
    httpOnly: true,
    secure: true
   });
+  console.warn("147");
   res.redirect("/"); //send back to homepage because idk what would he do on other pages 
   }
     else {
      //login him with email scope (for temp)
-     res.redirect("/login");
+     console.warn("151");
    }
    }
    }
    catch (e){
+    console.warn("157");
     next()
    }
   });
