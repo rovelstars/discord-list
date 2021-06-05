@@ -318,7 +318,7 @@ app.get("/bots/:id/vote", async (req, res) => {
    await res.render("404.ejs", { path: req.originalUrl });
   }
   else {
-   var u = await Users.findOne({ id: user.id });
+   var u = await Users.findOne({ id: res.locals.user.id });
    if (!u) {
     res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
     res.redirect("/login");
