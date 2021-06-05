@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
  try {
   const key = await auth.getAccess(req.query.code);
   res.cookie('key', key, {
-   maxAge: 30 * 3600 * 24 * 1000, //30days
+   maxAge: 90 * 3600 * 24 * 1000, //90days
    httpOnly: true,
    secure: true
   });

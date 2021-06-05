@@ -122,7 +122,7 @@ var checkBanned = async function(req, res, next) {
  }
  if (req.cookies['key']) {
   req.query.key = req.cookies['key'];
-  var user = await auth.getUser(req.cookies['key']).catch( async () => { 
+  let user = await auth.getUser(req.cookies['key']).catch( async () => { 
    console.warn("126");
    try {
    let tempvalid = auth.checkValidity(req.cookies['key']);
@@ -143,22 +143,26 @@ var checkBanned = async function(req, res, next) {
     if(tempuser.emailId){
      //he got it!
      res.cookie('key', newkey, {
-   maxAge: 30 * 3600 * 24 * 1000, //30days
+   maxAge: 90 * 3600 * 24 * 1000, //90days
    httpOnly: true,
    secure: true
   });
   console.warn("147");
-  res.redirect("/"); //send back to homepage because idk what would he do on other pages 
+  res.redirect("/?alert=key_refreshed"); //send back to homepage because idk what would he do on other pages, and notify him that key was refreshed.
   }
     else {
-     //login him with email scope (for temp)
+     //logout him simply because he doesnt have email scope.
      console.warn("151");
+     res.redirect("/logout");
    }
+   }
+   else{
+    res.redirect("/logout"); //he deauthorized my app thats why bro ;(
    }
    }
    catch (e){
     console.warn("157");
-    next()
+    res.redirect("/logout"); //am i a joke to you visitor? ;(
    }
   });
   if (user) {
