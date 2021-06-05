@@ -85,6 +85,7 @@ theme
  <%- include('partials/footer'); %>
  <% if(alerts){ %>
  <script>
+ var alerts = "<%= alerts %>";
  var text;
   if(alerts=="key_refreshed") text = "Your Discord OAuth2 key was updated successfully!";
   if(alerts=="logout") text = "We deleted your key from your cookies (Logged you out!) Because your key was invalid, or it was missing required permissions (scopes). Please log in again! 🙂"
