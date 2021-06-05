@@ -46,7 +46,7 @@ app.disable('x-powered-by');
 app.use(cookieParser({ filter: true }));
 app.use(compression());
 let log = console.log;
-const rovel = require("rovel.js")
+globalThis.rovel = require("rovel.js")
 const fetch = rovel.fetch;
 const dayjs = rovel.time;
 const rateLimit = require("express-rate-limit");
