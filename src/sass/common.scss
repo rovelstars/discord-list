@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=K2D&display=swap');
 
 @font-face {
  font-family: discord;
@@ -185,4 +186,7 @@ code{
   width: 50px;
   height: 50px;
   position: relative;
+}
+span.tag{
+ font-family: "K2D", sans-serif;
 }
