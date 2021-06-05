@@ -149,15 +149,18 @@ var checkBanned = async function(req, res, next) {
   }
     else {
      //logout him simply because he doesnt have email scope.
-     res.redirect("/logout");
+     res.cookie('key', req.cookies['key'], { maxAge: 0 });
+     res.redirect("/?alert=logout");
    }
    }
    else{
-    res.redirect("/logout"); //he deauthorized my app thats why bro ;(
+    res.cookie('key', req.cookies['key'], { maxAge: 0 });
+    res.redirect("/?alert=logout");
    }
    }
    catch (e){
-    res.redirect("/logout"); //am i a joke to you visitor? ;(
+    res.cookie('key', req.cookies['key'], { maxAge: 0 });
+    res.redirect("/?alert=logout");
    }
   });
   if (user) {
