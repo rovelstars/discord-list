@@ -1,4 +1,5 @@
 let router = require("express").Router();
+let path = require("path");
 
 router.get("/", async (req, res) => {
  shuffle(AllBots);
@@ -17,6 +18,9 @@ async function Update() {
  globalThis.TopVotedBots = await Bots.find({ added: true }).sort({ votes: -1 }).limit(10);
  globalThis.NewAddedBots = await Bots.find({ added: true });
  globalThis.NewAddedBots = NewAddedBots.reverse().slice(0, 10);
+ client.guilds.cache.get("602906543356379156").fetchBans().then(list => {
+  globalThis.BannedList = list;
+ });
 }
 Update();
 globalThis.updateCache = Update;

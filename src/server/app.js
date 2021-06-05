@@ -164,8 +164,10 @@ var checkBanned = async function(req, res, next) {
    }
   });
   if (user) {
-   fetch(`${process.env.DOMAIN}/api/client/bannedusers/${user.id}`).then(r => r.json()).then(d => {
-    if (d.banned) {
+   let list = BannedList;
+   let ban = list.map(user => user.user.id);
+  const Isbanned = (ban.includes(req.params.id))?true:false;
+    if (Isbanned) {
      res.sendFile(path.resolve("src/public/assets/banned.html"));
      fetch(`${process.env.DOMAIN}/api/client/log`, {
       method: "POST",
@@ -182,14 +184,13 @@ var checkBanned = async function(req, res, next) {
     }
     else {
      if(!user.emailId){
-      /* wip */
+     /*wip*/
      }
      else {
      res.locals.user = user;
      next();
      }
     }
-   });
   }
  }
  else {
