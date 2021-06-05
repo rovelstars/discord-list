@@ -27,4 +27,7 @@
 <script>$(document).on("click", "a", function() {
     $("#object").fadeOut();
     $("#loading").fadeOut();
-});</script>
+});
+function gtElInit() {var lib = new google.translate.TranslateService();lib.translatePage('en', 'hi', function () {});}
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=gtElInit&client=wt"></script>
