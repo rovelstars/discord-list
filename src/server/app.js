@@ -123,8 +123,10 @@ var checkBanned = async function(req, res, next) {
  if (req.cookies['key']) {
   req.query.key = req.cookies['key'];
   var user = await auth.getUser(req.cookies['key']).catch( async () => { 
+   console.warn("126");
    try {
    let tempvalid = auth.checkValidity(req.cookies['key']);
+   console.warn("129");
    /*
    {
   expired: false,
@@ -134,6 +136,7 @@ var checkBanned = async function(req, res, next) {
 */
    if(tempvalid.expired){
     // ah yes the key really expired!
+    console.warn("139");
     const newkey = await auth.refreshToken(req.cookies['key']);
     // check whether he got email scope of not (temp case as of now)
     const tempuser = await auth.getUser(newkey);
