@@ -59,12 +59,6 @@ $(window).load(function() {
     imageUrl: "https://discord.rovelstars.com/assets/img/bot/logo.svg",
     imageWidth: 100,
     imageHeight: 100,
-    showClass:{
-     popup: ""
-    },
-    hideClass:{
-     popup: ""
-    },
     showCancelButton: false,
     showDenyButton: true,
     didRender: twemoji.parse,

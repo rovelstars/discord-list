@@ -276,19 +276,19 @@ app.get("/", async (req, res) => {
  shuffle(AllBots);
  let bots = AllBots.slice(0, 10);
  let servers = shuffle(AllServers).slice(0, 10);
- await res.render('index.ejs', { bots, servers });
+ var alerts;
+ if(req.query.alert){
+  alerts=req.query.alert;
+ }
+ await res.render('index.ejs', { bots, servers, alerts });
 });
 
-let AllBots;
-let TopVotedBots;
-let NewAddedBots;
-let AllServers;
 async function Update() {
- AllBots = await Bots.find({ added: true });
- AllServers = await Servers.find();
- TopVotedBots = await Bots.find({ added: true }).sort({ votes: -1 }).limit(10);
- NewAddedBots = await Bots.find({ added: true });
- NewAddedBots = NewAddedBots.reverse().slice(0, 10);
+ globalThis.AllBots = await Bots.find({ added: true });
+ globalThis.AllServers = await Servers.find();
+ globalThis.TopVotedBots = await Bots.find({ added: true }).sort({ votes: -1 }).limit(10);
+ globalThis.NewAddedBots = await Bots.find({ added: true });
+ globalThis.NewAddedBots = NewAddedBots.reverse().slice(0, 10);
 }
 Update();
 globalThis.updateCache = Update;

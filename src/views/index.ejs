@@ -83,5 +83,12 @@ theme
 </div>
 </div>
  <%- include('partials/footer'); %>
+ <% if(alerts){ %>
+ <script>
+ var text;
+  if(alerts=="key_refreshed") text = "Your Discord OAuth2 key was updated successfully!";
+  Swal.fire({title: alerts.split("_").join(" "), text, icon:"info"});
+  </script>
+ <% } %>
 </body>
 </html>
