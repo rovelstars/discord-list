@@ -285,12 +285,12 @@ app.post("/api/translate", (req, res)=>{
  translate(req.body.text, {to: req.body.to}).then(tt=>{
   var text = tt.text.split("‎");
   console.log(text);console.log(req.body);
-  if(req.body.text.length==text.length){
-  res.json({text});
+  /*if(req.body.text.length==text.length){*/
+  res.json({text});/*
   }
   else{
    res.json({err: "Invalid Characters given for Translation."});
-  }
+  }*/
  }).catch(err=>{
   res.json({err: "Failed to Translate!"});
  })
