@@ -55,11 +55,11 @@
          <a class="button is-warning">🏸<span class="tt">Ping <%= ping %></span></a>
          <% if(!user){ %>
           <a class="button is-success" href="/login">
-            <i class="bx bxs-chevron-right-circle"></i><span>Login</span></a>
+            <i class="bx bxs-chevron-right-circle"></i><span class="tt">Login</span></a>
             <% } else { %>
-              <a class="button is-danger tt" href="/logout" id="logout-link">
+              <a class="button is-danger" href="/logout" id="logout-link">
             <i class="bx bxs-chevron-left-circle"></i><span class="tt">Logout</span></a>
-             <a class="button is-info tt" style="color: #ffffff;" href="/dashboard">
+             <a class="button is-info" style="color: #ffffff;" href="/dashboard">
               <i class="bx bxs-grid-alt"></i><span class="tt">Dashboard</span>
              </a>
           <% } %>
