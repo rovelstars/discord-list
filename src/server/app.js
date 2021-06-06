@@ -283,9 +283,15 @@ app.post("/api/translate", (req, res)=>{
  var words = ["</>"];
  shuffle(words);
  words=words[0];
+ req.body.text = req.body.text.map(text=>{
+  require("html-entities").decode(text);
+ })
  req.body.text = req.body.text.join("</>");
  translate(req.body.text, {to: req.body.to}).then(tt=>{
-  res.json({text: tt.text.split("</>")});
+  var text = tt.text.split("</>").map(texts=>{
+   require("html-entities").encode(texts);
+  })
+  res.json({text});
  }).catch(err=>{
   res.json({err});
  })
