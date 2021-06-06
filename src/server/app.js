@@ -279,6 +279,7 @@ app.post("/api/translate", (req, res)=>{
  if(!req.body.from){
   req.body.from="auto";
  }
+ console.log(req.body.text);
  var words = ["|$_$|", "#$_$#", "*&*", "_&-&_"];
  shuffle(words);
  words=words[0];
