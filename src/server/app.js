@@ -279,16 +279,19 @@ app.post("/api/translate", (req, res)=>{
  if(!req.body.from){
   req.body.from="auto";
  }
- req.body.text = req.body.text.join("‎");
+ req.body.text = req.body.text.map(t=>{
+  t.replaceAll("+","\+").replaceAll("‎","");
+ }).join("+");
  translate(req.body.text, {to: req.body.to}).then(tt=>{
-  var text = tt.text.split("‎");
-  console.log("hmm"+text);
-  /*if(req.body.text.length==text.length){*/
-  res.json({text});/*
+  var text = tt.text.replaceAll("\+","‎").split("+").map(t=>{
+   t.replaceAll("‎","+");
+  });
+  if(req.body.text.length==text.length){
+  res.json({text});
   }
   else{
    res.json({err: "Invalid Characters given for Translation."});
-  }*/
+  }
  }).catch(err=>{
   res.json({err: "Failed to Translate!"});
  })
