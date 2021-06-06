@@ -124,7 +124,7 @@ var checkBanned = async function(req, res, next) {
  }
  if (req.cookies['key']) {
   req.query.key = req.cookies['key'];
-  let user = await auth.getUser(req.cookies['key']).catch( async () => { 
+  let user = await auth.getUser(req.cookies['key']).catch( async () => {
    try {
    let tempvalid = auth.checkValidity(req.cookies['key']);
    /*
@@ -279,17 +279,14 @@ app.post("/api/translate", (req, res)=>{
  if(!req.body.from){
   req.body.from="auto";
  }
- const oldtext = req.body.text;
- req.body.text = req.body.text.map(t=>{
-  t.replaceAll("+","\+");
- });
+ req.body.text = req.body.text.map(t => encodeURIComponent(t));
  req.body.text=req.body.text.join("+");
  translate(req.body.text, {to: req.body.to}).then(tt=>{
   var text = tt.text.replaceAll("\+","::")
-  text=text.split("+");
-  text = text.join("\.");
-  text = text.replaceAll("::", "+");
-  text = text.split("\.");
+    .split("+")
+    .join("\.")
+    .replaceAll("::", "+")
+    .split("\.");
   console.log(text);
   //if(req.body.text.length==text.length){
   res.json({text});/*
