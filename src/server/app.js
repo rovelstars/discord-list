@@ -280,12 +280,12 @@ app.post("/api/translate", (req, res)=>{
   req.body.from="auto";
  }
  console.log(req.body.text);
- var words = ["|$_$|", "#$_$#", "*&*", "_&-&_"];
+ var words = ["</>"];
  shuffle(words);
  words=words[0];
- req.body.text = req.body.text.join(words);
+ req.body.text = req.body.text.join("</>");
  translate(req.body.text, {to: req.body.to}).then(tt=>{
-  res.json({text: tt.text.split(words[0])});
+  res.json({text: tt.text.split("</>")});
  }).catch(err=>{
   res.json({err});
  })

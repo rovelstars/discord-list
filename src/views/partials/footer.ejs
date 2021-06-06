@@ -30,7 +30,7 @@
 });
 var parts = document.getElementsByClassName("tt");
 var ttarr =[];
-for(const part of part){
+for(const part of parts){
  ttarr.push(part.innerText);
 }
 <% if(req.locale!="en"){ %>
@@ -45,7 +45,7 @@ fetch("/api/translate",{
  })
 }).then(r=>r.json()).then(res=>{
  if(res.err){
-  Swal.fire({icon:"error", "Translation Error", text: res.err})
+  Swal.fire({icon:"error", title: "Translation Error", text: res.err})
  }
  else{
 const transd = res.text;
