@@ -290,7 +290,7 @@ app.post("/api/translate", (req, res)=>{
   text = text.join("\.");
   text = text.replaceAll("::", "+");
   text = text.split("\.");
-  console.log(oldtext.length+","+text.length);
+  console.log(text);
   //if(req.body.text.length==text.length){
   res.json({text});/*
   }
