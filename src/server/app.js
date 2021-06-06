@@ -279,12 +279,10 @@ app.post("/api/translate", (req, res)=>{
  if(!req.body.from){
   req.body.from="auto";
  }
- req.body.text = req.body.text.map(t=>{
-  t.split("‎").join("");
- }).join("‎");
+ req.body.text = req.body.text.join("‎");
  translate(req.body.text, {to: req.body.to}).then(tt=>{
   var text = tt.text.split("‎");
-  console.log(text);console.log(req.body);
+  console.log("hmm"+text);
   /*if(req.body.text.length==text.length){*/
   res.json({text});/*
   }
