@@ -47,7 +47,7 @@ fetch("/api/translate",{
  })
 }).then(r=>r.json()).then(res=>{
  if(res.err){
-  Swal.fire({icon:"error", title: "Translation Error", text: res.err.google_free})
+  Swal.fire({icon:"error", title: "Translation Error", text: res.err})
  }
  else{
 const transd = res.text;
@@ -55,7 +55,6 @@ for(var i=0;i<transd.length;i++){
 parts[i].innerText = transd[i];
 }
   twemoji.parse(document.body);
- // $(".navbar-dropdown").toggleClass("is-hidden-touch");
  }
 });
 }
