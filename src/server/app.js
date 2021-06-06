@@ -279,7 +279,7 @@ app.post("/api/translate", (req, res)=>{
  if(!req.body.from){
   req.body.from="auto";
  }
- const words = ["|$_$|", "#$_$#", "*&*", "_&-&_"];
+ var words = ["|$_$|", "#$_$#", "*&*", "_&-&_"];
  shuffle(words);
  words=words[0];
  req.body.text = req.body.text.join(words);
