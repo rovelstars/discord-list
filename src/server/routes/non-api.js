@@ -29,8 +29,7 @@ globalThis.updateCache = Update;
 setInterval(Update, 300000);
 
 router.get("/bots", async (req, res) => {
- shuffle(bots);
- await res.render('bots.ejs', { nbots: NewAddedBots });
+ await res.render('bots.ejs', { bots: NewAddedBots });
 });
 
 router.get("/servers/:id", async (req, res) => {
