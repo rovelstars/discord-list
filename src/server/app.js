@@ -280,17 +280,9 @@ app.post("/api/translate", (req, res)=>{
   req.body.from="auto";
  }
  console.log(req.body.text);
- var words = ["</>"];
- shuffle(words);
- words=words[0];
- req.body.text = req.body.text.map(text=>{
-  require("html-entities").decode(text);
- })
  req.body.text = req.body.text.join("</>");
  translate(req.body.text, {to: req.body.to}).then(tt=>{
-  var text = tt.text.split("</>").map(texts=>{
-   require("html-entities").encode(texts);
-  })
+  var text = tt.text.split("</>");
   res.json({text});
  }).catch(err=>{
   res.json({err});
