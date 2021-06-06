@@ -28,6 +28,26 @@
     $("#object").fadeOut();
     $("#loading").fadeOut();
 });
-function gtElInit() {var lib = new google.translate.TranslateService();lib.translatePage('en', 'hi', function () {});}
+var parts = document.getElementsByClassName("tt");
+var ttarr =[];
+for(const part of part){
+ ttarr.push(part.innerText);
+}
+<% if(req.locale!="en"){ %>
+fetch("/api/translate",{
+ method: "POST",
+ headers: {
+  "content-type": "application/json"
+ },
+ body: JSON.stringify({
+  to: "<%= req.locale %>",
+  text: ttarr
+ })
+}).then(r=>r.json()).then(res=>{
+const transd = res.text;
+for(var i=0;i<=transd.length;i++){
+parts[i].innerText = transd[i];
+}
+});
+<% } %>
 </script>
-<script src="https://translate.google.com/translate_a/element.js?cb=gtElInit&client=wt"></script>

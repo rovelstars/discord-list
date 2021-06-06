@@ -31,6 +31,7 @@ const prefers = require("@routes/prefers.js");
 const users = require("@routes/users.js");
 const comments = require("@routes/comments.js");
 var latency = require("response-time");
+globalThis.translate = require("translatte");
 const info = require("@utils/info.js");
 const app = require("express")();
 const express = require("express");
@@ -58,6 +59,7 @@ setTimeout(() => {
 // ejs setting
 app.set('view engine', 'ejs');
 app.set('views', path.resolve("src/views"));
+app.use(express.json());
 const limiter = rateLimit({
  windowMs: 30 * 1000, // 30 secs
  max: 300 // limit each IP to 300 requests per windowMs
@@ -263,6 +265,29 @@ app.get('/api/report', (req, res) => {
     desc: `**Link:** ${req.query.link}`
    })
   })
+ }
+});
+
+app.post("/api/translate", (req, res)=>{
+ if(!req.body.text){
+  res.json({err: "no_text"});
+ }
+ else{
+ if(!req.body.to){
+  req.body.to="en";
+ }
+ if(!req.body.from){
+  req.body.from="auto";
+ }
+ const words = ["|$_$|", "#$_$#", "*&*", "_&-&_"];
+ shuffle(words);
+ words=words[0];
+ req.body.text = req.body.text.join(words);
+ translate(req.body.text, {to: req.body.to}).then(tt=>{
+  res.json({text: tt.text.split(words[0])});
+ }).catch(err=>{
+  res.json({err});
+ })
  }
 });
 
