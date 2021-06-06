@@ -34,6 +34,7 @@ for(const part of parts){
  ttarr.push(part.innerText);
 }
 <% if(req.locale!="en"){ %>
+function translate(){
 document.getElementById("loadtext").innerText="Translating RDL into <%= req.locale %>";
 fetch("/api/translate",{
  method: "POST",
@@ -57,5 +58,7 @@ parts[i].innerText = transd[i];
   $(".navbar-dropdown").toggleClass("is-hidden-touch");
  }
 });
+}
+translate();
 <% } %>
 </script>
