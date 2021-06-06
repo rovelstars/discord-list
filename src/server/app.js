@@ -279,6 +279,7 @@ app.post("/api/translate", (req, res)=>{
  if(!req.body.from){
   req.body.from="auto";
  }
+ const oldtext = req.body.text;
  req.body.text = req.body.text.map(t=>{
   t.replaceAll("+","\+").replaceAll("‎","");
  }).join("+");
@@ -286,6 +287,7 @@ app.post("/api/translate", (req, res)=>{
   var text = tt.text.replaceAll("\+","‎").split("+").map(t=>{
    t.replaceAll("‎","+");
   });
+  console.log(oldtext.length+","+text.length);
   if(req.body.text.length==text.length){
   res.json({text});
   }
