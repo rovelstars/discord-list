@@ -287,9 +287,9 @@ app.post("/api/translate", (req, res)=>{
  translate(req.body.text, {to: req.body.to}).then(tt=>{
   var text = tt.text.replaceAll("\+","::")
   text=text.split("+");
-  res = res.join("\.");
-  res = res.replaceAll("::", "+");
-  res = res.split("\.");
+  text = text.join("\.");
+  text = text.replaceAll("::", "+");
+  text = text.split("\.");
   console.log(oldtext.length+","+text.length);
   if(req.body.text.length==text.length){
   res.json({text});
