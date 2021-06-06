@@ -299,6 +299,7 @@ app.post("/api/translate", (req, res)=>{
   }
  }).catch(err=>{
   res.json({err: "Failed to Translate!"});
+  console.log(err);
  })
  }
 });
