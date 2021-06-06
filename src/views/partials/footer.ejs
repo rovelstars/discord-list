@@ -44,10 +44,14 @@ fetch("/api/translate",{
   text: ttarr
  })
 }).then(r=>r.json()).then(res=>{
+ if(res.err){
+  Swal.fire({icon:"error", "Translation Error", text: res.err})
+ }
+ else{
 const transd = res.text;
 for(var i=0;i<=transd.length;i++){
 parts[i].innerText = transd[i];
-}
+}}
 });
 <% } %>
 </script>
