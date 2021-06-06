@@ -281,12 +281,15 @@ app.post("/api/translate", (req, res)=>{
  }
  const oldtext = req.body.text;
  req.body.text = req.body.text.map(t=>{
-  t.replaceAll("+","\+").replaceAll("‎","");
- }).join("+");
+  t.replaceAll("+","\+");
+ });
+ req.body.text=req.body.text.join("+");
  translate(req.body.text, {to: req.body.to}).then(tt=>{
-  var text = tt.text.replaceAll("\+","‎").split("+").map(t=>{
-   t.replaceAll("‎","+");
-  }).split("+");
+  var text = tt.text.replaceAll("\+","::")
+  text=text.split("+");
+  res = res.join("\.");
+  res = res.replaceAll("::", "+");
+  res = res.split("\.");
   console.log(oldtext.length+","+text.length);
   if(req.body.text.length==text.length){
   res.json({text});
