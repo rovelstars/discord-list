@@ -291,12 +291,12 @@ app.post("/api/translate", (req, res)=>{
   text = text.replaceAll("::", "+");
   text = text.split("\.");
   console.log(oldtext.length+","+text.length);
-  if(req.body.text.length==text.length){
-  res.json({text});
+  //if(req.body.text.length==text.length){
+  res.json({text});/*
   }
   else{
    res.json({err: "Invalid Characters given for Translation."});
-  }
+  }*/
  }).catch(err=>{
   res.json({err: "Failed to Translate!"});
   console.log(err);
