@@ -280,13 +280,14 @@ app.post("/api/translate", async (req, res) => {
   if (!req.body.from) {
    req.body.from = "auto";
   }
+  if(typeof req.body.text=="object"){
   var arr = res.body.text;
   const a = arr;
   arr = arr.map(t => {
    return t.split("+").join("/+/");
   });
   arr = arr.join("++");
-  translate(arr, { to: req.body.lang }).then(r => {
+  translate(arr, { to: req.body.lang, from: req.body.from }).then(r => {
    r.text = r.text.split("++").map((t, i) => {
     t = t.split("/ + /").join("+").trim();
     if ((t.includes(" +")) && (!a[i].includes(" +"))) {
@@ -296,6 +297,12 @@ app.post("/api/translate", async (req, res) => {
    });
    res.json({text: r.text})
   });
+  }
+  if(typeof req.body.text == "string"){
+   translate(req.body.text, {to: req.body.to, from: req.body.from}).then(r=>{
+    res.json({text: r.text});
+   })
+  }
  }
 });
 
