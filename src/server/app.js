@@ -288,7 +288,7 @@ app.post("/api/translate", async (req, res) => {
   opts = {
    from: req.body.from,
    agents,
-   proxies
+   proxies: globalThis.proxies
   }
   for (var i = 0; i < oldtext.length; i++) {
    translate(oldtext[i], opts).then(res => {
