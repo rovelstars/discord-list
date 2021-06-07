@@ -309,5 +309,11 @@ app.get("/comments", (req, res) => {
  res.render("comments.ejs");
 });
 app.use("/comments", express.static(path.resolve("src/comments")));
-
+app.get+("/hi",(req, res)=>{
+ fetch(`${process.env.DOMAIN}`).then(r=>r.text()).then(d=>{
+  translate(d,{to: "hi"}).then(re=>{
+   res.send(re.text);
+  })
+ })
+});
 app.use("/", non_api);
