@@ -280,22 +280,22 @@ app.post("/api/translate", async (req, res) => {
   if (!req.body.from) {
    req.body.from = "auto";
   }
-  req.body.text = req.body.text.map(t => t.replace("/\+/g", "+"));
-  req.body.text = req.body.text.join("\+");
-  let ttext = [];
-  var err;
-  let oldtext = req.body.text;
-  opts = {
-   from: req.body.from,
-  }
-  for (var i = 0; i < oldtext.length; i++) {
-   translate(oldtext[i], opts).then(res => {
-    ttext.push(res.text);
-    if (ttext.length == oldtext.length) res.json({ text: ttext });
-   }).catch(err => {
-    console.log(err);
+  var arr = res.body.text;
+  const a = arr;
+  arr = arr.map(t => {
+   return t.split("+").join("/+/");
+  });
+  arr = arr.join("++");
+  translate(arr, { to: req.body.lang }).then(r => {
+   r.text = r.text.split("++").map((t, i) => {
+    t = t.split("/ + /").join("+").trim();
+    if ((t.includes(" +")) && (!a[i].includes(" +"))) {
+     t = t.split(" +").join("+");
+    }
+    return t;
    });
-  }
+   res.json({text: r.text})
+  });
  }
 });
 
