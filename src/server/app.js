@@ -282,11 +282,11 @@ app.post("/api/translate", (req, res)=>{
  req.body.text = req.body.text.map(t => encodeURIComponent(t));
  req.body.text=req.body.text.join("+");
  translate(req.body.text, {to: req.body.to}).then(tt=>{
-  var text = tt.text.replaceAll("\+","::")
+  var text = decodeURIComponent(tt.text)/*.replaceAll("\+","::")*/
     .split("+")
-    .join("\.")
+    /*.join("\.")
     .replaceAll("::", "+")
-    .split("\.");
+    .split("\.");*/
   console.log(text);
   //if(req.body.text.length==text.length){
   res.json({text});/*
