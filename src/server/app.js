@@ -287,7 +287,7 @@ app.post("/api/translate", async (req, res) => {
    return t.split("+").join("/+/");
   });
   arr = arr.join("++");
-  translate(arr, { to: req.body.lang, from: req.body.from }).then(r => {
+  translate(arr, { to: req.body.to, from: req.body.from }).then(r => {
    r.text = r.text.split("++").map((t, i) => {
     t = t.split("/ + /").join("+").trim();
     if ((t.includes(" +")) && (!a[i].includes(" +"))) {
