@@ -36,6 +36,7 @@ const info = require("@utils/info.js");
 const app = require("express")();
 const express = require("express");
 var compression = require("compression");
+var agents = require("@utils/agents.json");
 let client = require("@bot/index.js");
 let auth = require("@utils/auth.js");
 const authRoute = require("@routes/authclient.js");
@@ -124,42 +125,42 @@ var checkBanned = async function(req, res, next) {
  }
  if (req.cookies['key']) {
   req.query.key = req.cookies['key'];
-  let user = await auth.getUser(req.cookies['key']).catch( async () => {
+  let user = await auth.getUser(req.cookies['key']).catch(async () => {
    try {
-   let tempvalid = auth.checkValidity(req.cookies['key']);
-   /*
+    let tempvalid = auth.checkValidity(req.cookies['key']);
+    /*
    {
   expired: false,
   expiresIn: 538994851,
   expireTimestamp: 1623434339257
 }
 */
-   if(tempvalid.expired){
-    // ah yes the key really expired!
-    const newkey = await auth.refreshToken(req.cookies['key']);
-    // check whether he got email scope of not (temp case as of now)
-    const tempuser = await auth.getUser(newkey);
-    if(tempuser.emailId){
-     //he got it!
-     res.cookie('key', newkey, {
-   maxAge: 90 * 3600 * 24 * 1000, //90days
-   httpOnly: true,
-   secure: true
-  });
-  res.redirect("/?alert=key_refreshed"); //send back to homepage because idk what would he do on other pages, and notify him that key was refreshed.
-  }
+    if (tempvalid.expired) {
+     // ah yes the key really expired!
+     const newkey = await auth.refreshToken(req.cookies['key']);
+     // check whether he got email scope of not (temp case as of now)
+     const tempuser = await auth.getUser(newkey);
+     if (tempuser.emailId) {
+      //he got it!
+      res.cookie('key', newkey, {
+       maxAge: 90 * 3600 * 24 * 1000, //90days
+       httpOnly: true,
+       secure: true
+      });
+      res.redirect("/?alert=key_refreshed"); //send back to homepage because idk what would he do on other pages, and notify him that key was refreshed.
+     }
+     else {
+      //logout him simply because he doesnt have email scope.
+      res.cookie('key', req.cookies['key'], { maxAge: 0 });
+      res.redirect("/?alert=logout");
+     }
+    }
     else {
-     //logout him simply because he doesnt have email scope.
      res.cookie('key', req.cookies['key'], { maxAge: 0 });
      res.redirect("/?alert=logout");
+    }
    }
-   }
-   else{
-    res.cookie('key', req.cookies['key'], { maxAge: 0 });
-    res.redirect("/?alert=logout");
-   }
-   }
-   catch (e){
+   catch (e) {
     res.cookie('key', req.cookies['key'], { maxAge: 0 });
     res.redirect("/?alert=logout");
    }
@@ -167,31 +168,31 @@ var checkBanned = async function(req, res, next) {
   if (user) {
    let list = BannedList;
    let ban = list.map(user => user.user.id);
-  const Isbanned = (ban.includes(req.params.id))?true:false;
-    if (Isbanned) {
-     res.sendFile(path.resolve("src/public/assets/banned.html"));
-     fetch(`${process.env.DOMAIN}/api/client/log`, {
-      method: "POST",
-      headers: {
-       "content-type": "application/json"
-      },
-      body: JSON.stringify({
-       "secret": process.env.SECRET,
-       "title": `Banned User ${user.tag} tried to visit us!`,
-       "color": "#ff0000",
-       "desc": `**${user.tag}** (${user.id}) was banned before, and they tried to visit our site at path:\n\`${req.path}\``
-      })
+   const Isbanned = (ban.includes(req.params.id)) ? true : false;
+   if (Isbanned) {
+    res.sendFile(path.resolve("src/public/assets/banned.html"));
+    fetch(`${process.env.DOMAIN}/api/client/log`, {
+     method: "POST",
+     headers: {
+      "content-type": "application/json"
+     },
+     body: JSON.stringify({
+      "secret": process.env.SECRET,
+      "title": `Banned User ${user.tag} tried to visit us!`,
+      "color": "#ff0000",
+      "desc": `**${user.tag}** (${user.id}) was banned before, and they tried to visit our site at path:\n\`${req.path}\``
      })
+    })
+   }
+   else {
+    if (!user.emailId) {
+     /*wip*/
     }
     else {
-     if(!user.emailId){
-     /*wip*/
-     }
-     else {
      res.locals.user = user;
      next();
-     }
     }
+   }
   }
  }
  else {
@@ -268,36 +269,36 @@ app.get('/api/report', (req, res) => {
  }
 });
 
-app.post("/api/translate", (req, res)=>{
- if(!req.body.text){
-  res.json({err: "no_text"});
+app.post("/api/translate", async (req, res) => {
+ if (!req.body.text) {
+  res.json({ err: "no_text" });
  }
- else{
- if(!req.body.to){
-  req.body.to="en";
- }
- if(!req.body.from){
-  req.body.from="auto";
- }
- req.body.text = req.body.text.map(t =>t.replace("/\+/g","+"));
- req.body.text=req.body.text.join("\+");
- translate(req.body.text, {to: req.body.to}).then(tt=>{
-  var text = tt.text.split("\+");
-  /*.replaceAll("\+","::")*/
-    /*.join("\.")
-    .replaceAll("::", "+")
-    .split("\.");*/
-  console.log(text);
-  //if(req.body.text.length==text.length){
-  res.json({text});/*
+ else {
+  if (!req.body.to) {
+   req.body.to = "en";
   }
-  else{
-   res.json({err: "Invalid Characters given for Translation."});
-  }*/
- }).catch(err=>{
-  res.json({err: "Failed to Translate!"});
-  console.log(err);
- })
+  if (!req.body.from) {
+   req.body.from = "auto";
+  }
+  req.body.text = req.body.text.map(t => t.replace("/\+/g", "+"));
+  req.body.text = req.body.text.join("\+");
+  let ttext = [];
+  var err;
+  let oldtext = req.body.text;
+  opts = {
+   from: req.body.from,
+   agents,
+   proxies
+  }
+  for (var i = 0; i < oldtext.length; i++) {
+   translate(oldtext[i], opts).then(res => {
+    ttext.push(res.text);
+    if (ttext.length == oldtext.length) res.json({ text: ttext });
+   }).catch(err => {
+    err = "Failed to translate!";
+    console.log(err);
+   });
+  }
  }
 });
 
@@ -309,9 +310,9 @@ app.get("/comments", (req, res) => {
  res.render("comments.ejs");
 });
 app.use("/comments", express.static(path.resolve("src/comments")));
-app.get+("/hi",(req, res)=>{
- fetch(`${process.env.DOMAIN}`).then(r=>r.text()).then(d=>{
-  translate(d,{to: "hi"}).then(re=>{
+app.get + ("/hi", (req, res) => {
+ fetch(`${process.env.DOMAIN}`).then(r => r.text()).then(d => {
+  translate(d, { to: "hi" }).then(re => {
    res.send(re.text);
   })
  })

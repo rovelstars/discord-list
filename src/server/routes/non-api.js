@@ -2,6 +2,7 @@ let router = require("express").Router();
 let path = require("path");
 let auth = require("@utils/auth.js");
 const marked = require("marked");
+var proxy = require("proxy-list-random");
 
 router.get("/", async (req, res) => {
  shuffle(AllBots);
@@ -15,6 +16,10 @@ router.get("/", async (req, res) => {
 });
 
 async function Update() {
+ proxy().then(res=>{
+  res = res.map(t=>`LOGIN:PASSWORD@${t}`);
+  globalThis.proxies = res;
+ });
  globalThis.AllBots = await Bots.find({ added: true });
  globalThis.AllServers = await Servers.find();
  globalThis.TopVotedBots = await Bots.find({ added: true }).sort({ votes: -1 }).limit(10);
