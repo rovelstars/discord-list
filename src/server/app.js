@@ -281,7 +281,7 @@ app.post("/api/translate", async (req, res) => {
    req.body.from = "auto";
   }
   if(typeof req.body.text=="object"){
-  var arr = res.body.text;
+  var arr = req.body.text;
   const a = arr;
   arr = arr.map(t => {
    return t.split("+").join("/+/");
