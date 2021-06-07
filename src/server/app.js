@@ -283,7 +283,7 @@ app.post("/api/translate", (req, res)=>{
  req.body.text=req.body.text.join("+");
  translate(req.body.text, {to: req.body.to}).then(tt=>{
   var text = tt.text.split("+");
-  text = text.map(t=>decodeURIComponent(t));/*.replaceAll("\+","::")*/
+  /*.replaceAll("\+","::")*/
     /*.join("\.")
     .replaceAll("::", "+")
     .split("\.");*/
