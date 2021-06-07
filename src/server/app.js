@@ -295,7 +295,6 @@ app.post("/api/translate", async (req, res) => {
     ttext.push(res.text);
     if (ttext.length == oldtext.length) res.json({ text: ttext });
    }).catch(err => {
-    err = "Failed to translate!";
     console.log(err);
    });
   }
