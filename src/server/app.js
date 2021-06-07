@@ -287,7 +287,6 @@ app.post("/api/translate", async (req, res) => {
   let oldtext = req.body.text;
   opts = {
    from: req.body.from,
-   agents
   }
   for (var i = 0; i < oldtext.length; i++) {
    translate(oldtext[i], opts).then(res => {
