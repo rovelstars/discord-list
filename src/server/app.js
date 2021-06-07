@@ -279,10 +279,10 @@ app.post("/api/translate", (req, res)=>{
  if(!req.body.from){
   req.body.from="auto";
  }
- req.body.text = req.body.text.map(t => encodeURIComponent(t));
- req.body.text=req.body.text.join("+");
+ req.body.text = req.body.text.map(t =>t.replace("/\+/g","+"));
+ req.body.text=req.body.text.join("\+");
  translate(req.body.text, {to: req.body.to}).then(tt=>{
-  var text = tt.text.replaceAll("% 20"," ").split("+");
+  var text = tt.text.split("\+");
   /*.replaceAll("\+","::")*/
     /*.join("\.")
     .replaceAll("::", "+")
