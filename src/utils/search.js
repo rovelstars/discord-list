@@ -14,7 +14,7 @@ Search = (array, string) => {
  }
  var indexes = [];
  for(var i = 0; i < array.length; i++){
-  if(checkName(array, string)){
+  if(checkName(array[i], string)){
    indexes.push(i);
   }
  }
