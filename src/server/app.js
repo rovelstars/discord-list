@@ -30,6 +30,7 @@ const embeds = require("@routes/embeds.js");
 const prefers = require("@routes/prefers.js");
 const users = require("@routes/users.js");
 const comments = require("@routes/comments.js");
+globalThis.Search = require("@utils/search.js");
 var latency = require("response-time");
 globalThis.translate = require("translatte");
 const info = require("@utils/info.js");

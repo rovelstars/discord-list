@@ -30,16 +30,10 @@ const job = schedule.scheduleJob(rule, async function() {
 
 router.get("/", (req, res) => {
  if (req.query.q) {
-  Bots.find({ $text: { $search: req.query.q } }, { _id: false, code: false }).exec((err, doc) => {
-   if (err) return res.json({ err });
-   res.json(doc);
-  })
+  res.json(Search(AllBots, req.query.q));
  }
  else {
-  Bots.find({}, { _id: false }).exec(function(err, bots) {
-   if (err) return console.error(err);
-   res.send(bots);
-  })
+  res.json(AllBots);
  }
 });
 

@@ -1,17 +1,61 @@
-var array = [{
-  id: '603213294265958400',
-  code: 'RDL-ea1443a5-56f0-4cb9-8fb5-ac9e9eeb4c00'
-},
-{
-  id: '652938911642943498',
-  code: 'RDL-cb8dabe3-ed0e-4dfc-9c6e-a9f862c50a39'
-},
-{
-  id: '752052866809593906',
-  code: 'RDL-8cd27bec-af77-435e-b7e5-9038610ff00f'
-},
-{
-  id: '715906723982082139',
-  code: 'RDL-da2cd350-2aeb-43bb-a13b-a38eef8e8e98'
-}];
-array.map(b=>b.id);
+var arr = ["hey", "hello", "hmm", "heylo", "yellow"];
+
+arr.filter((name, index) => {
+ if (checkName(name, "h")) {
+  return name;
+ }
+});
+
+function earch(arr, string) {
+ const copied = arr;
+ if (typeof arr[0] == "object") {
+  arr = arr.map(i => {
+   return JSON.stringify(i);
+  })
+ }
+ const checkName = (name, str) => {
+  var pattern = str.split("").map((x) => {
+   return `(?=.*${x})`
+  }).join("");
+  var regex = new RegExp(`${pattern}`, "g")
+  return name.match(regex);
+ }
+ const ind = arr.filter((name, index) => {
+  if (checkName(name, string)) {
+   return index;
+  }
+ });
+ var array = [];
+ for (var i = 0; i < ind.length; i++) {
+  const g = ind[i];
+  array.push(copied[g]);
+ }
+ return array;
+}
+const b = [{ id: "hmm", name: "hmm" }, { id: "ok", name: "heylo" }]
+
+
+Search = (array, string) => {
+ const checkName = (name, str) => {
+  var pattern = str.split("").map((x) => {
+   return `(?=.*${x})`
+  }).join("");
+  var regex = new RegExp(`${pattern}`, "g")
+  return name.match(regex);
+ }
+ const copied = [...array];
+ if (typeof array[0] == "object") {
+  array = array.map(i => {
+   return JSON.stringify(i);
+  })
+ }
+ var indexes = [];
+ for(var i = 0; i < array.length; i++){
+  if(checkName(array, string)){
+   indexes.push(i);
+  }
+ }
+ return indexes.map(index=>{
+  return copied[index];
+ });
+}
