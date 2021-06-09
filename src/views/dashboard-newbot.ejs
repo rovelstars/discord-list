@@ -74,7 +74,9 @@ General Information
   <p>
    <div class="desc-live">
    <!--<textarea style="width:100%;" class="textarea" name="botdesc" id="botdesc" placeholder="Supports markdown, html, css styles and iframe. Javascript not supported."></textarea>-->
-   <pre><code class="language-xml"></code></pre>
+   <pre class="line-numbers"><code id="botdesc">
+    # This Is A Wonderful Bot!
+   </code></pre>
    </div>
   <br />
   <p>Background Image</p>
@@ -277,7 +279,10 @@ botgithub.addEventListener("keyup", async(e)=>{
 var botinvite = document.getElementById("botinvite");
 
 botdesc.addEventListener("keyup",async (e) => {
-   const dirtyhtml = marked(botdesc.value.replace(/&gt;+/g, ">"));
+ var innerText = botdesc.innerHTML;
+ if(innerText[innerText.length-1] === '\n'){
+     innerText = innerText.slice(0,-1);}
+   const dirtyhtml = marked(innerText.replaceAll(/&gt;+/g, ">").replaceAll(/&lt;+/g, "<"));
    const noicehtml = sanitizeHtml(dirtyhtml, {
      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['discord-message','discord-messages', 'img','iframe', 'style', 'h1', 'h2', 'link']),
      allowVulnerableTags: true,
