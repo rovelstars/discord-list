@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=K2D&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
 
 @font-face {
  font-family: discord;
@@ -145,6 +146,14 @@ select option{
 code{
  color: #99aab5;
  border-radius: 5px;
+ font-family: 'JetBrains Mono', monospace;
+}
+pre{
+ border-radius: 5px;
+}
+pre code{
+ border-radius: 0px; /*dont want to see multiple rounded*/
+ font-family: 'JetBrains Mono', monospace;
 }
 .status-online {
   width: 15px;
