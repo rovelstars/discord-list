@@ -73,10 +73,7 @@ General Information
   <p>Long Description</p>
   <p>
    <div class="desc-live">
-   <!--<textarea style="width:100%;" class="textarea" name="botdesc" id="botdesc" placeholder="Supports markdown, html, css styles and iframe. Javascript not supported."></textarea>-->
-   <pre class="line-numbers"><code id="botdesc" contenteditable="true">
-    # This Is A Wonderful Bot!
-   </code></pre>
+   <textarea style="width:100%;" class="textarea" name="botdesc" id="botdesc" placeholder="Supports markdown, html, css styles and iframe. Javascript not supported."></textarea>
    </div>
   <br />
   <p>Background Image</p>
@@ -279,10 +276,7 @@ botgithub.addEventListener("keyup", async(e)=>{
 var botinvite = document.getElementById("botinvite");
 
 botdesc.addEventListener("keyup",async (e) => {
- var innerText = botdesc.innerHTML;
- if(innerText[innerText.length-1] === '\n'){
-     innerText = innerText.slice(0,-1);}
-   const dirtyhtml = marked(innerText.replaceAll(/&gt;+/g, ">").replaceAll(/&lt;+/g, "<"));
+   const dirtyhtml = marked(botdesc.innerText.replaceAll(/&gt;+/g, ">").replaceAll(/&lt;+/g, "<"));
    const noicehtml = sanitizeHtml(dirtyhtml, {
      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['discord-message','discord-messages', 'img','iframe', 'style', 'h1', 'h2', 'link']),
      allowVulnerableTags: true,
