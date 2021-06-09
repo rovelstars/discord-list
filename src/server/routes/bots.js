@@ -30,7 +30,7 @@ const job = schedule.scheduleJob(rule, async function() {
 
 router.get("/", (req, res) => {
  if (req.query.q) {
-  res.json(Search(AllBots, req.query.q));
+  res.json(shuffle(Search(AllBots, req.query.q)).slice(0, 10));
  }
  else {
   res.json(AllBots);
