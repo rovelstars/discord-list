@@ -150,10 +150,12 @@ code{
 }
 pre{
  border-radius: 5px;
+ color: #99aab5;
 }
 pre code{
  border-radius: 0px; /*dont want to see multiple rounded*/
  font-family: 'JetBrains Mono', monospace;
+ color: #99aab5;
 }
 .status-online {
   width: 15px;
