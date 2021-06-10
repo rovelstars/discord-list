@@ -116,7 +116,7 @@ router.get("/users/:id", (req, res) => {
  var user = client.users.cache.get(req.params.id);
  if (user == null) {
   client.users.fetch(req.params.id).then(d =>{
-   if(d.avatar==null) d.avatar=(u.discriminator%5);
+   if(d.avatar==null) d.avatar=(d.discriminator%5);
   res.json(d)});
  }
  else {

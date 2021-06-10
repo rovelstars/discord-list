@@ -31,7 +31,7 @@ const prefers = require("@routes/prefers.js");
 const users = require("@routes/users.js");
 const comments = require("@routes/comments.js");
 (async()=>{
-globalThis.browser = await puppeteer.launch({
+globalThis.browser = await require("puppeteer").launch({
   'args' : [
     '--no-sandbox',
     '--disable-setuid-sandbox'
