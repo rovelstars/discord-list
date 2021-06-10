@@ -30,14 +30,6 @@ const embeds = require("@routes/embeds.js");
 const prefers = require("@routes/prefers.js");
 const users = require("@routes/users.js");
 const comments = require("@routes/comments.js");
-(async()=>{
-globalThis.browser = await require("puppeteer").launch({
-  'args' : [
-    '--no-sandbox',
-    '--disable-setuid-sandbox'
-  ]
-});
-});
 globalThis.Search = require("@utils/search.js");
 var latency = require("response-time");
 globalThis.translate = require("translatte");
