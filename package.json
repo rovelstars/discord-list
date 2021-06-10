@@ -17,6 +17,7 @@
   "gray-matter": "4.0.3",
   "translatte": "3.0.0",
   "html-entities": "2.3.2",
+  "nodemailer": "6.6.1",
   "proxy-list-random": "1.0.2",
   "fetch-base64": "2.1.2",
   "diacritics": "1.3.0",

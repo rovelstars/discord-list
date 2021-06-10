@@ -30,13 +30,6 @@ This List is currently a **Work In Progress** and we cannot provide an E.T.A for
 
 ---
 
-# 🤓 Translation!
-
-> We are looking for translators for translating RDL in every language of the world!
-Please join our server and DM `Progamer 😎#3286` with your crowdin username and the languages you will be translating. He shall give you the invite link to join the translator team!
-
----
-
 # License Notice
 
 ![License Notice](https://i.ibb.co/Q8vQDTs/image.png)
@@ -62,16 +55,7 @@ Please join our server and DM `Progamer 😎#3286` with your crowdin username an
 
 ---
 
-## Requirements
-
-- Node.js v16 or newer
-- At least 8GB of ram
-- Dedicated Servers and network connection above 100mbps
-- Topgg token
-- DMOD.gg token
-- Run on Linux (Ubuntu preferred)
-
----
+# WARNING ⚠️!
 
 We will **not** assist or answer any questions about the setup of your own instance. If you ever post anything related to your deployment, you are straight away **BANNED**.
 
