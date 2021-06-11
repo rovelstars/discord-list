@@ -16,7 +16,7 @@ const Bots = new Schema({
    title: String,
    msg: String
   },
-  username: {type: String, unique: true, required: true},
+  username: {type: String, required: true},
   avatar: {type: String, required: true},
   discriminator: {type: String, required: true},
   status: String,

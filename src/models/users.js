@@ -6,10 +6,10 @@ const mongoose = require('mongoose');
     default: () => new Date(),
     type: Date
   }, //added at
-  username: {type: String, unique: true, required: true},
+  username: {type: String, required: true},
   avatar: {type: String, required: true},
   discriminator: {type: String, required: true},
-  email: {type: String, unique: true},
+  email: {type: String},
    bal: {type: Number, default: 10},
    bio: {type: String, default: "The user doesn't have bio set!"},
    badges: [{type: String}],
