@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
     type: Date
   }, //added at
   username: {type: String, unique: true, required: true},
-  avatar: {type: String, unique: true, required: true},
+  avatar: {type: String, required: true},
   discriminator: {type: String, required: true},
   email: {type: String, unique: true},
    bal: {type: Number, default: 10},
