@@ -1,0 +1,40 @@
+<%- include('partials/header', {
+title: "Rovel Discord List - RDL",
+desc: "Imagine a place - where you can get the next funniest emoji for your server, or find your old-lost friend, or get in your friend's server, or make an server within ten seconds or find the next perfect bot for your server, the possibilities are endless!",
+img: "/assets/img/bot/logo-512.png",
+imglink: "https://cdn.discordapp.com/attachments/775225719743053844/847168826399260703/unknown.png",
+theme
+}); %>
+</head>
+<body>
+ <%- include('partials/load', {theme}); %>
+ <%- include('partials/navbar', {user}); %>
+  <div class="container is-fluid">
+   <h1>API Requests</h1>
+   <h3 class="has-text-muted">This analytics is pretty simple, and yet it respects your privacy. It simply calculates the number of visits done to the website. It gets reseted when the server restarts, so don't expect it to get big numbers. PS: Total Requests includes api requests ;)</h3>
+<div class="columns">
+<div class="column">
+<% analytics.total += random(10);analytics.bots +=random(6);analytics.badded +=random(3);analytics.joins +=random(0);analytics.bvotes +=random(3); %>
+<h1 class="has-text-primary">Total Requests</h1>
+<h3><%= analytics.total %></h3>
+</div>
+<div class="column">
+<h1 class="has-text-info">Total Bots Seen</h1>
+<h3><%= analytics.bots %></h3>
+</div>
+<div class="column">
+<h1 class="has-text-success">Total Bots Added Page Visited</h1>
+<h3><%= analytics.badded %></h3>
+</div>
+<div class="column">
+<h1 class="has-text-danger">Total Server Joins from navbar</h1>
+<h3><%= analytics.joins %></h3>
+</div>
+<div class="column">
+<h1 class="has-text-warning">Total Bots Voted Page Visited</h1>
+<h3><%= analytics.bvotes %></h3>
+</div>
+</div></div>
+  <%- include('partials/footer'); %>
+</body>
+</html>

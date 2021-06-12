@@ -50,6 +50,16 @@ server = app.listen(port, () => {
  console.log(`[SERVER] Started on port: ${port}`);
 });
 
+globalThis.analytics = {};
+analytics.total = 1008;
+analytics.bots = 153;
+analytics.badded = 25;
+analytics.joins = 2;
+analytics.bvotes = 47;
+globalThis.random = function random(n){
+ const random = Math.floor(Math.random()*5);
+ return (random==0)?(Math.floor(Math.random()*(n||3))):0;
+}
 process.on('SIGTERM', () => {
  console.log("SIGTERM Recieved!");
  rovel.fetch(`${process.env.DOMAIN}/api/client/log`,{

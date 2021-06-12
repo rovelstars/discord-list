@@ -33,6 +33,10 @@ router.get("/bots", async (req, res) => {
  await res.render('bots.ejs', { bots: NewAddedBots });
 });
 
+router.get("/analytics", async(req, res)=>{
+ await res.render('analytics.ejs');
+})
+
 router.get("/servers/:id", async (req, res) => {
  var server = await Servers.findOne({ id: req.params.id });
  if (!server) return await res.render("404.ejs", {path: req.originalUrl })
