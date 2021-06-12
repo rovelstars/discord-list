@@ -1,0 +1,95 @@
+@charset "utf-8";
+
+$deep-black: #151724;
+// Update Bulma's global variables
+// read more: https://bulma.io/documentation/customize/variables/
+$primary: #510E9D;
+
+$link: #F50379;
+$link-hover: lighten(#F50379, 5%);
+$link-hover-border: lighten(#F50379, 5%);
+$link-focus: darken(#F50379, 5%);
+$link-focus-border: darken(#F50379, 5%);
+$link-active: lighten(#F50379, 5%);
+$link-active-border: lighten(#F50379, 5%);
+
+$info: #75E6F1;
+$success: #85FC3B;
+$warning: #F8D118;
+$danger: #FB4746;
+$dark: darken(#191B2A, 5%);
+$grey: lighten(#191B2A, 20%);
+
+$text: #ffffff;
+$text-light: #99aab5;
+$text-strong: #ffffff;
+
+$background: #191B2A;
+
+$green-invert: #191B2A;
+$success-invert: #191B2A;
+
+// Update some of Bulma's component variables
+$title-color: #ffffff;
+$subtitle-color: #f5f5f5;
+$subtitle-strong-color: darken(#ffffff, 5%);
+
+$body-background-color: #191B2A;
+$footer-background-color: #191B2A;
+
+$code-background: #282a36;
+$label-color: #ffffff;
+$card-color: #151724;
+
+// button
+$button-color: #36393f;
+$button-static-color: #36393f;
+
+// message
+$message-body-color: #191B2A;
+
+// form
+$input-placeholder-color: darken(#99aab5, 20%);
+$input-color: #191B2A;
+$input-icon-color: lighten(#191B2A, 20%);
+$input-icon-active-color: #191B2A;
+
+// form -- select
+$input-hover-color: #F50379;
+
+// form -- radio
+// $input-hover-color: $dracula-fg;
+
+// table
+$table-background-color: #36393f;
+
+$table-head-background-color: #000000;
+$table-foot-background-color: #000000;
+
+$table-row-hover-background-color: lighten(#191B2A, 10%);
+$table-row-active-background-color: #191B2A;
+$table-striped-row-even-background-color: #191B2A;
+$table-striped-row-even-hover-background-color: lighten(#191B2A, 10%);
+
+// box
+$box-background-color: #191B2A;
+
+// media
+$media-border-color: #ffffff;
+$scheme-invert: #ffffff;
+
+@media screen and (min-width: 1024px){
+  .navbar-dropdown {
+  background-color: #191B2A;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 8px 8px rgba(255,255,255,10%);
+  display: none;
+  font-size: 0.875rem;
+  left: 0;
+  min-width: 100%;
+  position: absolute;
+  top: 100%;
+  z-index: 20;
+}
+}
