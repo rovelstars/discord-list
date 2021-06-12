@@ -58,7 +58,7 @@ analytics.joins = 2;
 analytics.bvotes = 47;
 globalThis.random = function random(n){
  const random = Math.floor(Math.random()*5);
-  const ans = Math.floor(Math.random()*(n||3))
+  const ans = Math.floor(Math.random()*(n||3));
  if(random==0) analytics.total+=ans;
  return (random==0)?ans:0;
 }
