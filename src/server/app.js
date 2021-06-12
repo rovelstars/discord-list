@@ -101,7 +101,7 @@ var checkBanned = async function(req, res, next) {
  res.locals.req = req;
  res.locals.res = res;
  req.language = eval(`langs.${req.locale}`);
- var themes = ["discord", "dracula"];
+ var themes = ["discord", "dracula", "paranoid"];
  if (!themes.includes(req.cookies['theme'])) {
   req.cookies["theme"] = "discord";
   res.cookie('theme', "discord", {
