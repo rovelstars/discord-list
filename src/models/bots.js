@@ -53,6 +53,9 @@ Bots.virtual('avatarURL').get(function(){
 Bots.virtual('tag').get(function(){
  return `${this.username}#${this.discriminator}`;
 });
+Bots.virtual('mainowner').get(function(){
+ return `${this.owners[0]}`
+});
 Bots.virtual('timestamp').get(function(){
  return `${~~(this._id / 1000)}`
 })

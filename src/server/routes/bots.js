@@ -253,7 +253,7 @@ router.delete("/:id", async (req, res) => {
 
   await Bots.findOne({ id: req.params.id }).then(bot => {
    if (!bot) return res.json({ err: "no_bot_found" });
-   if (bot.owners.includes(d.id)) {
+   if (bot.mainowner==d.id){
     Bots.deleteOne({ id: req.params.id }, function(err) {
      if (err) return res.json(err);
      res.json({ deleted: true });
@@ -406,7 +406,7 @@ router.post("/edit", async (req, res) => {
  let err;
  if (!req.body.id) return res.json({ err: "no_id" });
  Bots.findOne({ id: req.body.id }).then(async bot => {
-  if (!err && !bot) err = "not_bot_found";
+  if (!err && !bot) err = "bot_not_found";
   await fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(async d => {
    if (!err && d.err) err = "invalid_key";
    if (!err && !bot.owners.includes(d.id)) "unauth"

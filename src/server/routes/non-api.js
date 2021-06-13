@@ -165,6 +165,22 @@ router.get("/dashboard/bots/new", async (req, res) => {
  }
 });
 
+router.get("/dashboard/bots/:id/edit", async (req, res) => {
+ if (!res.locals.user) {
+  res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
+  res.redirect("/login");
+ }
+ else {
+  const bot = await Bots.findOne({id: req.params.id});
+  if(bot.owners.include(res.locals.user.id)){
+  await res.render('editbot.ejs',{bot})
+  }
+  else{
+   res.json({err:"unauth"});
+  }
+ }
+});
+
 router.get("/dashboard/bots/import", async (req, res) => {
  if (!res.locals.user) {
   res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
