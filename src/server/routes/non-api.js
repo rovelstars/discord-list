@@ -165,14 +165,14 @@ router.get("/dashboard/bots/new", async (req, res) => {
  }
 });
 
-router.get("/dashboard/bots/:id/edit", async (req, res) => {
+router.get("/dashboard/bots/edit/:id", async (req, res) => {
  if (!res.locals.user) {
   res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
   res.redirect("/login");
  }
  else {
   const bot = await Bots.findOne({id: req.params.id});
-  if(bot.owners.include(res.locals.user.id)){
+  if(bot.owners.includes(res.locals.user.id)){
   await res.render('editbot.ejs',{bot})
   }
   else{
