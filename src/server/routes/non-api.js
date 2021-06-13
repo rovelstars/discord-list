@@ -173,7 +173,7 @@ router.get("/dashboard/bots/edit/:id", async (req, res) => {
  else {
   const bot = await Bots.findOne({id: req.params.id});
   if(bot.owners.includes(res.locals.user.id)){
-   bot.mainowner = bot.owners[0]; /*idk why mainowner is undefined */
+   bot = bot.toObject(); //get virtuals then
   await res.render('editbot.ejs',{bot})
   }
   else{
