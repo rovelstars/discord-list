@@ -87,15 +87,24 @@ body {
  font-family: 'Montserrat', sans-serif;
  min-height: 100vh;
 }
-footer, .footer-img{
+
+footer,
+.footer-img {
  margin-top: auto;
 }
-h1, .h1,
-h2, .h2,
-h3, .h3,
-h4, .h4,
-h5, .h5,
-h6, .h6 {
+
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
  font-family: discord, sans-serif;
 }
 
@@ -104,24 +113,30 @@ div.content iframe {
  height: 1000;
  border-radius: 5px;
 }
+
 div.content img {
  border-radius: 5px;
 }
+
 div.content img.emoji {
  border-radius: 0px;
 }
-div.content img.emoji-double{
+
+div.content img.emoji-double {
  border-radius: 0px;
 }
+
 div.content discord-messages {
  border-radius: 5px;
 }
+
 .http-method {
  padding: 4px;
  border-radius: 20px;
  font-family: discord;
 }
-.section{
+
+.section {
  padding: 3rem 0.5rem;
 }
 
@@ -130,75 +145,91 @@ div.content discord-messages {
  height: 30;
  width: 30;
 }
+
 textarea {
  color: #ffffff;
  font-family: Montserrat, sans-serif;
 }
-select option{
+
+select option {
  background-color: #ffffff;
  font-family: Montserrat, sans-serif;
 }
-.is-curved{
+
+.is-curved {
  border-radius: 5px;
 }
-code{
+
+code {
  color: #99aab5;
  border-radius: 5px;
  font-family: 'JetBrains Mono', monospace;
 }
-pre{
+
+pre {
  border-radius: 5px;
- font-family: 'JetBrains Mono', monospace;
 }
-pre code{
- border-radius: 0px;
-}
+
 .status-online {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #43b581;
-  bottom: 0;
-  right: 0;
-  position: absolute;
+ width: 15px;
+ height: 15px;
+ border-radius: 50%;
+ background-color: #43b581;
+ bottom: 0;
+ right: 0;
+ position: absolute;
 }
+
 .status-dnd {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #f04747;
-  bottom: 0;
-  right: 0;
-  position: absolute;
+ width: 15px;
+ height: 15px;
+ border-radius: 50%;
+ background-color: #f04747;
+ bottom: 0;
+ right: 0;
+ position: absolute;
 }
+
 .status-idle {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #faa61a;
-  bottom: 0;
-  right: 0;
-  position: absolute;
+ width: 15px;
+ height: 15px;
+ border-radius: 50%;
+ background-color: #faa61a;
+ bottom: 0;
+ right: 0;
+ position: absolute;
 }
+
 .status-offline {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #99aab5;
-  bottom: 0;
-  right: 0;
-  position: absolute;
+ width: 15px;
+ height: 15px;
+ border-radius: 50%;
+ background-color: #99aab5;
+ bottom: 0;
+ right: 0;
+ position: absolute;
 }
+
 .is-avatar {
-  width: 50px;
-  height: 50px;
-  position: relative;
+ width: 50px;
+ height: 50px;
+ position: relative;
 }
-span.tag{
+
+span.tag {
  font-family: "K2D", sans-serif;
 }
 
-.textarea{
+.textarea {
  border-radius: 5px;
+ font-family: 'JetBrains Mono', monospace;
+}
+
+pre span[class],
+pre span,
+pre code {
+ color: #99aab5;
+ background-color: #282A36;
+ border-radius: 0px;
  font-family: 'JetBrains Mono', monospace;
 }
