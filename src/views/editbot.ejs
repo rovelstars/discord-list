@@ -5,6 +5,7 @@ img: "https://discord.rovelstars.com/assets/img/bot/logo-512.png",
 theme,
 imglink: undefined
 }); %>
+<% bot.owners.shift() %>
 <script src="https://unpkg.com/wc-discord-message@^2.0.0/dist/wc-discord-message/wc-discord-message.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.3/marked.min.js" integrity="sha512-t1jq1b5U4hgz4lQoeyRD9QiVu99KxjyA939fnND+R+gLOHmuT5F9YFHJI1Nse1B1QG6/U11SPAc8fshYshb6MA==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.27.5/sanitize-html.min.js" integrity="sha512-1WdDeZGPykoWawFKD3NGJfZM+4hq2+OxUF8ZJrrqFBNU3J+Q5Tgvn+XwHNt8HaVs1MRFFlAgtOgyJr6/mqN/xw==" crossorigin="anonymous"></script>
@@ -47,7 +48,7 @@ General Information
   <p>Bot Owners</p>
   <p class="has-text-grey-light">Separate owner IDs with comma "," also don't give your id, cause you're the owner already.</p>
   <p class="control has-icons-left">
-   <input class="input has-background-black has-text-white" id="botowners" placeholder="1234567890,1234567890" value="<%= bot.owners.shift().join(",") %>">
+   <input class="input has-background-black has-text-white" id="botowners" placeholder="1234567890,1234567890" value="<%= bot.owners.join(",") %>">
    <span class="icon is-small is-left">
     <i class="bx bxs-crown"></i>
    </span>
