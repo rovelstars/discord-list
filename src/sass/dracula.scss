@@ -11,3 +11,8 @@ $kbc-button-warning: $warning;
 $kbc-button-danger: $danger;
 $kbc-button-light: $grey;
 $kbc-button-dark: $dark;
+
+.textarea{
+ background-color: darken($background, 20%);
+ color: #99aab5;
+}
