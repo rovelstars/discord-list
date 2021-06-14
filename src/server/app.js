@@ -25,6 +25,7 @@ var cloudflare = require('cloudflare-express');
 globalThis.Bots = require("@models/bots.js");
 globalThis.Users = require("@models/users.js");
 globalThis.Servers = require("@models/servers.js");
+globalThis.shell = require("shelljs");
 const servers = require("@routes/servers.js");
 const embeds = require("@routes/embeds.js");
 const prefers = require("@routes/prefers.js");
