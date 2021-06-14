@@ -4,6 +4,7 @@ client.once('ready', () => {
  ch.messages.fetch({ limit: 1 }).then(messages => {
   let lastMessage = messages.first();
    if(lastMessage.author.id==client.user.id){
+    const res = shell.exec('git log -n1 --format="%h"');
   const embed2 = new Discord.MessageEmbed()
   .setTitle(`Failed to Pull!`)
   .setURL(lastMessage.embeds[0].url)
