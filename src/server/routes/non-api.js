@@ -171,7 +171,7 @@ router.get("/dashboard/bots/edit/:id", async (req, res) => {
   res.redirect("/login");
  }
  else {
-  const bot = await Bots.findOne({id: req.params.id});
+  var bot = await Bots.findOne({id: req.params.id});
   if(bot.owners.includes(res.locals.user.id)){
    bot = bot.toObject(); //get virtuals then
   await res.render('editbot.ejs',{bot})
