@@ -17,7 +17,7 @@ client.on("message", message => {
   .setDescription(`\`Already up to date.\``)
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
-  .setColor("#57F287");
+  .setColor("#ED4245");
    msg1.edit(embed2)
    }
    else{
