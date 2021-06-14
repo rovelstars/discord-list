@@ -64,18 +64,6 @@ globalThis.random = function random(n){
 }
 process.on('SIGTERM', () => {
  console.log("SIGTERM Recieved!");
- rovel.fetch(`${process.env.DOMAIN}/api/client/log`,{
-  method: "POST",
-  headers: {
-   "content-type": "application/json"
-  },
-  body: JSON.stringify({
-   "secret": process.env.SECRET,
-   "desc": "**SIGTERM** process recieved!\nClosing the server, database and bot as soon as possible!",
-   "title": "Stopping Process!",
-   "color": "#ff0000"
-  })
- }).then(r=>r.text()).then(d=>{
  console.log('Closing http server.');
  server.close(() => {
   console.log('Http server closed.');
@@ -85,7 +73,6 @@ process.on('SIGTERM', () => {
    process.exit(0);
   });
  });
- }, 3000);
 });
 
 if((process.env.DOMAIN!="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){

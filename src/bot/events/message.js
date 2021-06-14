@@ -3,7 +3,7 @@ client.on("message", message => {
   const embed1 = new Discord.MessageEmbed()
   .setTitle(`Starting To Pull The Latest Commit!`)
   .setURL(message.embeds[0].url)
-  .setDescription(`Progress [1/3] - Preparing...`)
+  .setDescription(`Pulling...`)
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#5865F2");
@@ -24,7 +24,7 @@ client.on("message", message => {
     const embed2 = new Discord.MessageEmbed()
   .setTitle(`Pulled Successfully.`)
   .setURL(message.embeds[0].url)
-  .setDescription(`\`\`\`sh\n${res.stdout}\n\`\`\`\n\nProgress [2/3] - Checking Dependencies...`)
+  .setDescription(`\`\`\`sh\n${res.stdout}\n\`\`\`\n\nChecking Dependencies...`)
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#5865F2");
@@ -36,7 +36,7 @@ client.on("message", message => {
    const embed3 = new Discord.MessageEmbed()
   .setTitle(`Installing Dependencies!`)
   .setURL(message.embeds[0].url)
-  .setDescription(`\`\`\`sh\n${ress.stdout}\n\`\`\`\n\nProgress [3/3] - Building...`)
+  .setDescription(`\`\`\`sh\n${ress.stdout}\n\`\`\`\n\nBuilding...`)
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#57F287");
