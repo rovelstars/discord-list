@@ -12,6 +12,7 @@ client.once('ready', () => {
   .setColor("#57F287");
   msg.edit(embed);
  }
+ 
  activities_list = [
   "with all the bots on RDL",
   "with the members on RDL",
