@@ -6,7 +6,7 @@ client.once('ready', () => {
    if(lastMessage.author.id==client.user.id){
     const res = shell.exec('git log -n1 --format="%h"');
   const embed2 = new Discord.MessageEmbed()
-  .setTitle(`Failed to Pull!`)
+  .setTitle(`New Deployment!`)
   .setURL(lastMessage.embeds[0].url)
   .setDescription(`RDL is ready!\n**Version:** \`${res.stdout.replace("\n","")}\``)
   .setThumbnail("https://discord.rovelstars.com/assets/img/bot/loading.png")
