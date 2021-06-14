@@ -5,7 +5,7 @@ client.on("message", message => {
   .setURL(message.embeds[0].url)
   .setDescription(`Progress [1/3] - Preparing...`)
   .setTimestamp()
-  .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
+  .setAuthor(message.embeds[0].author.name)
   .setColor("#5865F2");
   
   message.channel.send(embed1).then(msg1=>{
@@ -16,7 +16,7 @@ client.on("message", message => {
   .setURL(message.embeds[0].url)
   .setDescription(`\`Already up to date.\``)
   .setTimestamp()
-  .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
+  .setAuthor(message.embeds[0].author.name)
   .setColor("#57F287");
    msg1.edit(embed2)
    }
@@ -26,7 +26,7 @@ client.on("message", message => {
   .setURL(message.embeds[0].url)
   .setDescription(`\`\`\`sh\n${res.stdout}\n\`\`\`\n\nProgress [2/3] - Checking Dependencies...`)
   .setTimestamp()
-  .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
+  .setAuthor(message.embeds[0].author.name)
   .setColor("#5865F2");
   msg1.edit(embed2);
   
@@ -38,7 +38,7 @@ client.on("message", message => {
   .setURL(message.embeds[0].url)
   .setDescription(`\`\`\`sh\n${ress.stdout}\n\`\`\`\n\nProgress [3/3] - Building...`)
   .setTimestamp()
-  .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
+  .setAuthor(message.embeds[0].author.name)
   .setColor("#57F287");
   msg1.edit(embed2);
   if(message.embeds[0].description.includes("build")){
@@ -48,7 +48,7 @@ client.on("message", message => {
   .setURL(message.embeds[0].url)
   .setDescription("```\nsh\n"+(res.stdout || res.stderr)+"\n```")
   .setTimestamp()
-  .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
+  .setAuthor(message.embeds[0].author.name)
   .setColor("#FEE75C");
   }
   }
@@ -58,7 +58,7 @@ client.on("message", message => {
   .setURL(message.embeds[0].url)
   .setDescription(`\`\`\`\n${ress.stderr}\n\`\`\``)
   .setTimestamp()
-  .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
+  .setAuthor(message.embeds[0].author.name)
   .setColor("#57F287");
    msg1.edit(embed2);
    }
