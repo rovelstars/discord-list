@@ -4,7 +4,7 @@ client.on("message", message => {
   .setTitle(`Starting To Pull The Latest Commit!`)
   .setURL(message.embeds[0].url)
   .setDescription(`Progress [1/3] - Preparing...`)
-  .setTimeStamp()
+  .setTimestamp()
   .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
   .setColor("#5865F2");
   
@@ -15,7 +15,7 @@ client.on("message", message => {
   .setTitle(`Failed to Pull!`)
   .setURL(message.embeds[0].url)
   .setDescription(`\`Already up to date.\``)
-  .setTimeStamp()
+  .setTimestamp()
   .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
   .setColor("#57F287");
    msg1.edit(embed2)
@@ -25,7 +25,7 @@ client.on("message", message => {
   .setTitle(`Pulled Successfully.`)
   .setURL(message.embeds[0].url)
   .setDescription(`\`\`\`sh\n${res.stdout}\n\`\`\`\n\nProgress [2/3] - Checking Dependencies...`)
-  .setTimeStamp()
+  .setTimestamp()
   .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
   .setColor("#5865F2");
   msg1.edit(embed2);
@@ -37,7 +37,7 @@ client.on("message", message => {
   .setTitle(`Installing Dependencies!`)
   .setURL(message.embeds[0].url)
   .setDescription(`\`\`\`sh\n${ress.stdout}\n\`\`\`\n\nProgress [3/3] - Building...`)
-  .setTimeStamp()
+  .setTimestamp()
   .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
   .setColor("#57F287");
   msg1.edit(embed2);
@@ -47,7 +47,7 @@ client.on("message", message => {
   .setTitle(`Building!`)
   .setURL(message.embeds[0].url)
   .setDescription("```\nsh\n"+(res.stdout || res.stderr)+"\n```")
-  .setTimeStamp()
+  .setTimestamp()
   .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
   .setColor("#FEE75C");
   }
@@ -57,7 +57,7 @@ client.on("message", message => {
   .setTitle(`Failed to install dependencies!`)
   .setURL(message.embeds[0].url)
   .setDescription(`\`\`\`\n${ress.stderr}\n\`\`\``)
-  .setTimeStamp()
+  .setTimestamp()
   .setAuthor(message.embeds[0].author.name, message.embeds[0].author.url)
   .setColor("#57F287");
    msg1.edit(embed2);
