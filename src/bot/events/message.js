@@ -9,6 +9,7 @@ client.on("message", message => {
   .setColor("#5865F2");
   
   message.channel.send(embed1).then(msg1=>{
+   shell.exec("git reset --hard origin/master");
    const res = shell.exec("git pull");
    if(res.stdout=="Already up to date.\n"){
    const embed2 = new Discord.MessageEmbed()
