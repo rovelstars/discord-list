@@ -1,1 +1,0 @@
-web: pm2-runtime src/index.js --name main --watch

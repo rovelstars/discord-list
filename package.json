@@ -5,7 +5,7 @@
  "scripts": {
   "build": "run-p css-compile resize",
   "resize": "chmod +x run.sh && ./run.sh",
-  "main": "pm2-runtime src/index.js --name main --watch",
+  "start": "pm2-runtime src/index.js --name main --watch --ignore-watch=\"\\.git|rdl|src/assets|src/sass|src/views|README.md|.github|TODO.md|sdk.js\"",
   "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed"
  },
  "engines": {
