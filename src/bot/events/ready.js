@@ -6,11 +6,11 @@ client.once('ready', () => {
    if(lastMessage.author.id==client.user.id){
   const embed2 = new Discord.MessageEmbed()
   .setTitle(`Failed to Pull!`)
-  .setURL(message.embeds[0].url)
+  .setURL(lastMessage.embeds[0].url)
   .setDescription(`RDL is ready!\n**Version:** \`${res.stdout.replace("\n","")}\``)
   .setThumbnail("https://discord.rovelstars.com/assets/img/bot/loading.png")
   .setTimestamp()
-  .setAuthor(message.embeds[0].author.name)
+  .setAuthor(lastMessage.embeds[0].author.name)
   .setColor("#57F287");
   lastMessage.edit(embed2);
  }
