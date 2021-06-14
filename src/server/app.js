@@ -26,6 +26,7 @@ globalThis.Bots = require("@models/bots.js");
 globalThis.Users = require("@models/users.js");
 globalThis.Servers = require("@models/servers.js");
 globalThis.shell = require("shelljs");
+shell.exec("git clone --no-checkout https://github.com/rovelstars/discord-list.git rdl\nmv rdl/.git ./.git\nrm -rf rdl\necho \"Git Directory Successfully Copied!\"")
 const servers = require("@routes/servers.js");
 const embeds = require("@routes/embeds.js");
 const prefers = require("@routes/prefers.js");
