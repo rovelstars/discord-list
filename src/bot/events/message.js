@@ -1,5 +1,5 @@
 client.on("message", message => {
- if(message.channel.id("790208177568350208")&&(message.author.id=="790208063104876574")&&(message.embeds[0].title.includes("[discord-list:master]"))&&(message.embeds[0].title.includes("commit"))){
+ if((message.channel.id=="790208177568350208")&&(message.author.id=="790208063104876574")&&(message.embeds[0].title.includes("[discord-list:master]"))&&(message.embeds[0].title.includes("commit"))){
   const embed1 = new Discord.MessageEmbed()
   .setTitle(`Starting To Pull The Latest Commit!`)
   .setURL(message.embeds[0].url)
