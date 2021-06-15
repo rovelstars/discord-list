@@ -2,7 +2,7 @@ module.exports = {
   apps: [{
     name: "main",
     script: "src/index.js",
-    watch: ["server", "client"],
+    watch: true,
     // Delay between restart
     watch_delay: 1000,
     ignore_watch : [".git", "rdl", "src/public", "sdk.js", "README.md", "TODO.md"],
