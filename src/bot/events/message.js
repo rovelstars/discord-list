@@ -19,7 +19,7 @@ client.on("message", message => {
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#ED4245");
-   msg1.edit(embed2)
+   msg1.channel.send(embed2)
    }
    else{
     const embed2 = new Discord.MessageEmbed()
@@ -29,7 +29,7 @@ client.on("message", message => {
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#5865F2");
-  msg1.edit(embed2);
+  msg1.channel.send(embed2);
   
   if((message.embeds[0].description.includes("npm"))||(message.embeds[0].description.includes("pkg"))||(message.embeds[0].description.includes("package"))){
    const ress = shell.exec("npm i");
@@ -41,7 +41,7 @@ client.on("message", message => {
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#57F287");
-  msg1.edit(embed2);
+  msg1.channel.send(embed2);
   if(message.embeds[0].description.includes("build")){
    const re = shell.exec("npm run build");
    const embed3 = new Discord.MessageEmbed()
@@ -61,7 +61,7 @@ client.on("message", message => {
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#57F287");
-   msg1.edit(embed2);
+   msg1.channel.send(embed2);
    }
   }
    }

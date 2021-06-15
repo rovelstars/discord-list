@@ -13,7 +13,7 @@ client.once('ready', () => {
   .setTimestamp()
   .setAuthor(lastMessage.embeds[0].author.name)
   .setColor("#57F287");
-  lastMessage.edit(embed2);
+  lastMessage.channel.send(embed2);
  }
 })
 .catch(console.error);
