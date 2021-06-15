@@ -10,6 +10,7 @@ mongoose.connect(process.env.DB, {
  useCreateIndex: true
 });
 const loggy = require("@utils/loggy.js");
+
 globalThis.logg = console.log;
 globalThis.console.log = loggy.log;
 globalThis.logerr = console.error;
