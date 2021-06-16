@@ -6,6 +6,7 @@ module.exports = {
     // Delay between restart
     kill_timeout: 10000,
     watch_delay: 5000,
+    wait_ready: true,
     exec_mode : "cluster",
     ignore_watch : [".git", "rdl", "src/public", "sdk.js", "README.md", "TODO.md"],
     watch_options: {
