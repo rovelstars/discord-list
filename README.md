@@ -12,13 +12,13 @@ Rovel Discord List </h1>
 
 <br />
 
-### Discord Theme
+## Discord Theme
 
 <img src="https://cdn.discordapp.com/attachments/775225719743053844/847168826399260703/unknown.png" style="width: 100%"></img>
 
 ---
 
-### Dracula Theme
+## Dracula Theme
 
 <img src="https://cdn.discordapp.com/attachments/775225719743053844/847168450735374416/unknown.png" style="width: 100%"></img>
 
