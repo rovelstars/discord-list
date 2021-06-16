@@ -1,2 +1,2 @@
-pm2 stop main
-pm2 start main
+pm2-runtime stop main
+pm2-runtime start main
