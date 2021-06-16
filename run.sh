@@ -11,6 +11,7 @@ resize-img logo-512.png --width 96 > logo-96.png
 echo "96x96 done!"
 resize-img logo-512.png --width 144 > logo-144.png
 echo "144x144 done!"
+rm -rf ./.git
 git clone --no-checkout https://github.com/rovelstars/discord-list.git rdl
 mv rdl/.git ./.git
 rm -rf rdl

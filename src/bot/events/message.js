@@ -22,15 +22,7 @@ client.on("message", message => {
    msg1.channel.send(embed2)
    }
    else{
-     console.log("SIGTERM Recieved!");
- console.log('Closing http server.');
- globalThis.express_server.close(() => {
-  console.log('Http server closed.');
-  // boolean means [force], see in mongoose doc
-  globalThis.db.close(false, () => {
-   console.log('MongoDb connection closed.');
-  });
- });
+    shell.exec("chmod +x restart.sh && ./restart.sh");
     const embed2 = new Discord.MessageEmbed()
   .setTitle(`Pulled Successfully.`)
   .setURL(message.embeds[0].url)
