@@ -74,6 +74,19 @@ process.on('SIGTERM', () => {
  });
 });
 
+process.on('SIGINT', () => {
+ console.log("SIGINT Recieved!");
+ console.log('Closing http server.');
+ server.close(() => {
+  console.log('Http server closed.');
+  // boolean means [force], see in mongoose doc
+  db.close(false, () => {
+   console.log('MongoDb connection closed.');
+   process.exit(0);
+  });
+ });
+});
+
 if((process.env.DOMAIN!="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
  console.warn(rovel.text.red("[NOTIFICATION] I noticed that you're running your own deployment of RDL. We don't support it, and also, we won't help you setup your own deployment. Please run this only for testing and fixing."));
  rovel.fetch(`https://discord.rovelstars.com/api/report?link=${process.env.DOMAIN}`);
