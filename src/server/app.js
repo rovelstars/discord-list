@@ -88,17 +88,6 @@ var booting = function(req, res, next) {
 }
 app.use(booting);
 
-setInterval(() => {
- fetch(`${process.env.DOMAIN}/api`).then(r => {
-  globalThis.ping = r.headers.get("ping");
-  app.locals.ping = r.headers.get("ping");
- });
-}, 1000 * 60);
-fetch(`${process.env.DOMAIN}/api`).then(r => {
- globalThis.ping = r.headers.get("ping");
- app.locals.ping = r.headers.get("ping");
-});
-
 const extendTimeoutMiddleware = (req, res, next) => {
   const space = ' ';
   let isFinished = false;
@@ -157,7 +146,7 @@ const extendTimeoutMiddleware = (req, res, next) => {
   }
 };
 
-//app.use(extendTimeoutMiddleware);
+app.use(extendTimeoutMiddleware);
 
 var checkBanned = async function(req, res, next) {
  res.locals.req = req;
