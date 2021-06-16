@@ -55,7 +55,7 @@ client.on("message", message => {
    const embed3 = new Discord.MessageEmbed()
   .setTitle(`Building!`)
   .setURL(message.embeds[0].url)
-  .setDescription("```\nsh\n"+(res.stdout || res.stderr)+"\n```")
+  .setDescription("```\nsh\n"+(re.stdout || re.stderr)+"\n```")
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#FEE75C");
