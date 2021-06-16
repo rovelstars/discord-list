@@ -47,6 +47,7 @@ let server;
 const { app, port } = require("@server/app.js");
 server = app.listen(port, () => {
  console.log(`[SERVER] Started on port: ${port}`);
+ process.send("ready");
 });
 
 globalThis.analytics = {};
