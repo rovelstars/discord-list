@@ -22,7 +22,6 @@ client.on("message", message => {
    msg1.channel.send(embed2)
    }
    else{
-    shell.exec("chmod +x restart.sh && ./restart.sh");
     const embed2 = new Discord.MessageEmbed()
   .setTitle(`Pulled Successfully.`)
   .setURL(message.embeds[0].url)
@@ -30,7 +29,11 @@ client.on("message", message => {
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#5865F2");
-  msg1.channel.send(embed2);
+  msg1.channel.send(embed2).then(()=>{
+  if(!(message.embeds[0].description.includes("npm"))&&!(message.embeds[0].description.includes("pkg"))&&!(message.embeds[0].description.includes("package"))&&!(message.embeds[0].description.includes("build"))){
+   console.log("SIGTERM Recieved!");console.log('Closing http server.');server.close(()=>{console.log('Http server closed.');db.close(false, () => {console.log('MongoDb connection closed.');process.exit(0); }); });;
+  }
+  });
   
   if((message.embeds[0].description.includes("npm"))||(message.embeds[0].description.includes("pkg"))||(message.embeds[0].description.includes("package"))){
    const ress = shell.exec("npm i");
@@ -38,11 +41,15 @@ client.on("message", message => {
    const embed3 = new Discord.MessageEmbed()
   .setTitle(`Installing Dependencies!`)
   .setURL(message.embeds[0].url)
-  .setDescription(`\`\`\`sh\n${ress.stdout}\n\`\`\`\n\nBuilding...`)
+  .setDescription(`\`\`\`sh\n${ress.stdout.slice(0, 1997)+"..."}\n\`\`\`\n\n`)
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#57F287");
-  msg1.channel.send(embed2);
+  msg1.channel.send(embed2).then(()=>{
+   if(!message.embeds[0].description.includes("build")){
+    console.log("SIGTERM Recieved!");console.log('Closing http server.');server.close(()=>{console.log('Http server closed.');db.close(false, () => {console.log('MongoDb connection closed.');process.exit(0); }); });
+  }})
+  
   if(message.embeds[0].description.includes("build")){
    const re = shell.exec("npm run build");
    const embed3 = new Discord.MessageEmbed()
@@ -52,6 +59,7 @@ client.on("message", message => {
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#FEE75C");
+  msg1.channel.send(embed3).then(()=>{console.log("SIGTERM Recieved!");console.log('Closing http server.');server.close(()=>{console.log('Http server closed.');db.close(false, () => {console.log('MongoDb connection closed.');process.exit(0); }); });});
   }
   }
    else{
@@ -62,7 +70,7 @@ client.on("message", message => {
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#57F287");
-   msg1.channel.send(embed2);
+   msg1.channel.send(embed2).then(()=>{console.log("SIGTERM Recieved!");console.log('Closing http server.');server.close(()=>{console.log('Http server closed.');db.close(false, () => {console.log('MongoDb connection closed.');process.exit(0); }); });})
    }
   }
    }
