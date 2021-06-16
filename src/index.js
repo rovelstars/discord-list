@@ -25,7 +25,7 @@ if(!process.env.DOMAIN){
 if(process.env.DOMAIN.endsWith("/")){
  process.env.DOMAIN = process.env.DOMAIN.slice(0, -1);
 }
-const db = mongoose.connection;
+globalThis.db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
@@ -43,9 +43,9 @@ console.log("[SENTRY] Initialized!\nAll issues and performance are being sent!")
 process.on('unhandledRejection', error => {
  console.warn('An Error Occurred!\n' + error);
 });
-let server;
+
 const { app, port } = require("@server/app.js");
-server = app.listen(port, () => {
+globalThis.express_server = app.listen(port, () => {
  console.log(`[SERVER] Started on port: ${port}`);
  process.send("ready");
 });
@@ -62,10 +62,11 @@ globalThis.random = function random(n){
  if(random==0) analytics.total+=ans;
  return (random==0)?ans:0;
 }
+/*
 process.on('SIGTERM', () => {
  console.log("SIGTERM Recieved!");
  console.log('Closing http server.');
- server.close(() => {
+ globalThis.express_server.close(() => {
   console.log('Http server closed.');
   // boolean means [force], see in mongoose doc
   db.close(false, () => {
@@ -78,7 +79,7 @@ process.on('SIGTERM', () => {
 process.on('SIGINT', () => {
  console.log("SIGINT Recieved!");
  console.log('Closing http server.');
- server.close(() => {
+ globalThis.express_server.close(() => {
   console.log('Http server closed.');
   // boolean means [force], see in mongoose doc
   db.close(false, () => {
@@ -86,6 +87,13 @@ process.on('SIGINT', () => {
    process.exit(0);
   });
  });
+});
+*/
+process.on('SIGINT', ()=>{
+ process.exit(0);
+});
+process.on('SIGTERM', ()=>{
+ process.exit(0);
 });
 
 if((process.env.DOMAIN!="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
