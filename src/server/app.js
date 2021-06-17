@@ -1,4 +1,9 @@
-shell.exec("rm -rf .git && git clone --no-checkout https://github.com/rovelstars/discord-list.git rdl\nmv rdl/.git ./.git\nrm -rf rdl\necho \"Git Directory Successfully Copied!\"")
+if(!shell.exec("ls -a").stdout.includes(".git")){
+shell.exec("git clone --no-checkout https://github.com/rovelstars/discord-list.git rdl\nmv rdl/.git ./.git\nrm -rf rdl\necho \"Git Directory Successfully Copied!\"")
+}
+else{
+ shell.echo("Git Directory Found, therefore not cloning it again ;)");
+}
 const port = process.env.PORT || 3000;
 function shuffle(array) {
  var currentIndex = array.length,
