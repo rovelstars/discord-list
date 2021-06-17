@@ -1,4 +1,81 @@
 client.on("message", message => {
+ if((message.channel.id=="790208177568350208")&&(message.author.id=="790208063104876574")&&(message.embeds[0].title.includes("[discord-list:master]"))&&(message.embeds[0].title.includes("commit"))){
+  const embed1 = new Discord.MessageEmbed()
+  .setTitle(`Starting To Pull The Latest Commit!`)
+  .setURL(message.embeds[0].url)
+  .setDescription(`Pulling...`)
+  .setTimestamp()
+  .setAuthor(message.embeds[0].author.name)
+  .setColor("#5865F2");
+  
+  message.channel.send(embed1).then(msg1=>{
+   shell.exec("git reset --hard origin/master");
+   const res = shell.exec("git pull");
+   if(res.stdout=="Already up to date.\n"){
+   const embed2 = new Discord.MessageEmbed()
+  .setTitle(`Failed to Pull!`)
+  .setURL(message.embeds[0].url)
+  .setDescription(`\`Already up to date.\``)
+  .setTimestamp()
+  .setAuthor(message.embeds[0].author.name)
+  .setColor("#ED4245");
+   msg1.channel.send(embed2)
+   }
+   else{
+    const embed2 = new Discord.MessageEmbed()
+  .setTitle(`Pulled Successfully.`)
+  .setURL(message.embeds[0].url)
+  .setDescription(`\`\`\`sh\n${res.stdout}\n\`\`\`\n\nChecking Dependencies...`)
+  .setTimestamp()
+  .setAuthor(message.embeds[0].author.name)
+  .setColor("#5865F2");
+  msg1.channel.send(embed2).then(()=>{
+  if(!(message.embeds[0].description.includes("npm"))||!(message.embeds[0].description.includes("pkg"))||!(message.embeds[0].description.includes("package"))||!(message.embeds[0].description.includes("build"))){
+   console.log("SIGTERM Recieved!");console.log('Closing http server.');server.close(()=>{console.log('Http server closed.');db.close(false, () => {console.log('MongoDb connection closed.');process.exit(0); }); });;
+  }
+  });
+  
+  if((message.embeds[0].description.includes("npm"))||(message.embeds[0].description.includes("pkg"))||(message.embeds[0].description.includes("package"))){
+   const ress = shell.exec("npm i");
+   if(!ress.stderr){
+   const embed3 = new Discord.MessageEmbed()
+  .setTitle(`Installing Dependencies!`)
+  .setURL(message.embeds[0].url)
+  .setDescription(`\`\`\`sh\n${ress.stdout.slice(0, 1997)+"..."}\n\`\`\`\n\n`)
+  .setTimestamp()
+  .setAuthor(message.embeds[0].author.name)
+  .setColor("#57F287");
+  msg1.channel.send(embed2).then(()=>{
+   if(!message.embeds[0].description.includes("build")){
+    console.log("SIGTERM Recieved!");console.log('Closing http server.');server.close(()=>{console.log('Http server closed.');db.close(false, () => {console.log('MongoDb connection closed.');process.exit(0); }); });
+  }})
+  
+  if(message.embeds[0].description.includes("build")){
+   const re = shell.exec("npm run build");
+   const embed3 = new Discord.MessageEmbed()
+  .setTitle(`Building!`)
+  .setURL(message.embeds[0].url)
+  .setDescription("```sh\n"+(re.stdout || re.stderr)+"\n```")
+  .setTimestamp()
+  .setAuthor(message.embeds[0].author.name)
+  .setColor("#FEE75C");
+  msg1.channel.send(embed3).then(()=>{console.log("SIGTERM Recieved!");console.log('Closing http server.');server.close(()=>{console.log('Http server closed.');db.close(false, () => {console.log('MongoDb connection closed.');process.exit(0); }); });});
+  }
+  }
+   else{
+    const embed2 = new Discord.MessageEmbed()
+  .setTitle(`Failed to install dependencies!`)
+  .setURL(message.embeds[0].url)
+  .setDescription(`\`\`\`\n${ress.stderr}\n\`\`\``)
+  .setTimestamp()
+  .setAuthor(message.embeds[0].author.name)
+  .setColor("#57F287");
+   msg1.channel.send(embed2).then(()=>{console.log("SIGTERM Recieved!");console.log('Closing http server.');server.close(()=>{console.log('Http server closed.');db.close(false, () => {console.log('MongoDb connection closed.');process.exit(0); }); });})
+   }
+  }
+   }
+  });
+ }
  if (message.content.startsWith("https://discord.com/channels/")) {
   message.content = message.content.replace("https://discord.com/channels/", "");
   const ar = message.content.split("/");

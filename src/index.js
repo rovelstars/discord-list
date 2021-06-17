@@ -9,6 +9,7 @@ mongoose.connect(process.env.DB, {
  useFindAndModify: false,
  useCreateIndex: true
 });
+globalThis.shell = require("shelljs");
 const loggy = require("@utils/loggy.js");
 
 globalThis.logg = console.log;

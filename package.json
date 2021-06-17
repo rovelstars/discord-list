@@ -13,6 +13,8 @@
  },
  "dependencies": {
   "i18n": "0.13.3",
+  "shelljs": "0.8.4",
+  "jsdom": "16.6.0",
   "rdl-i18n": "github:rovelstars/rdl-i18n",
   "gray-matter": "4.0.3",
   "translatte": "3.0.0",
