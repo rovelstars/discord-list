@@ -146,7 +146,7 @@ const extendTimeoutMiddleware = (req, res, next) => {
   }
 };
 
-app.use(extendTimeoutMiddleware);
+//app.use(extendTimeoutMiddleware);
 
 var checkBanned = async function(req, res, next) {
  res.locals.req = req;
