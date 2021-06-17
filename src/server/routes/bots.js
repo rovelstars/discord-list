@@ -458,7 +458,7 @@ router.post("/edit", async (req, res) => {
     req.body.support = req.body.support.replace("discord.gg", "");
     req.body.support.replace("https://", "");
     if (req.body.support !== "") {
-     fetch(`https://discord.com/api/v8/invites/${req.body.support}`).then(r => r.json()).then(d => {
+     fetch(`https://discord.com/api/v7/invites/${req.body.support}`).then(r => r.json()).then(d => {
       if ((d.code == 10006 || d.code == 0) || d.code != req.body.support) err = "invalid_support";
      })
     }
@@ -516,7 +516,7 @@ router.post("/new", async (req, res) => {
   if (!err && !result) {
    try {
     if (!err && !req.body.id) err = "no_id";
-    await fetch(`https://discord.com/api/v8/users/${req.body.id}`, {
+    await fetch(`https://discord.com/api/v7/users/${req.body.id}`, {
      headers: {
       "Authorization": `Bot ${process.env.TOKEN}`
      }
@@ -552,7 +552,7 @@ router.post("/new", async (req, res) => {
       req.body.support = req.body.support.replace("discord.com/invite/", "");
       req.body.support = req.body.support.replace("https://", "");
       if (!err) {
-       fetch(`https://discord.com/api/v8/invites/${req.body.support}`).then(r => r.json()).then(d => {
+       fetch(`https://discord.com/api/v7/invites/${req.body.support}`).then(r => r.json()).then(d => {
         if ((d.code == 10006 || d.code == 0) || d.code != req.body.support) err = "invalid_support"
        })
       }

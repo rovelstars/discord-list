@@ -1,24 +1,8 @@
 client.once('ready', () => {
  console.log(`[BOT] Logined as ${client.user.tag}`);
- const ch = client.channels.cache.get("790208177568350208");
- ch.messages.fetch({ limit: 1 }).then(messages => {
-  let lastMessage = messages.first();
-   if(lastMessage.author.id==client.user.id){
-    const res = shell.exec('git log -n1 --format="%h"');
-  const embed2 = new Discord.MessageEmbed()
-  .setTitle(`New Deployment!`)
-  .setURL(lastMessage.embeds[0].url)
-  .setDescription(`RDL is ready!\n**Version:** \`${res.stdout.replace("\n","")}\``)
-  .setThumbnail("https://discord.rovelstars.com/assets/img/bot/loading.png")
-  .setTimestamp()
-  .setAuthor(lastMessage.embeds[0].author.name)
-  .setColor("#57F287");
-  lastMessage.channel.send(embed2);
- }
-})
-.catch(console.error);
-
- 
+ setTimeout(() => {
+  client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(`>>> Rovel Discord List has Started!\nWith ${client.users.cache.size} users, in ${client.channels.cache.size} channels of ${client.guilds.cache.size} guilds.`);
+ }, 2000);
  activities_list = [
   "with all the bots on RDL",
   "with the members on RDL",

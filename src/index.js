@@ -10,6 +10,7 @@ mongoose.connect(process.env.DB, {
  useCreateIndex: true
 });
 const loggy = require("@utils/loggy.js");
+
 globalThis.logg = console.log;
 globalThis.console.log = loggy.log;
 globalThis.logerr = console.error;
@@ -25,7 +26,7 @@ if(!process.env.DOMAIN){
 if(process.env.DOMAIN.endsWith("/")){
  process.env.DOMAIN = process.env.DOMAIN.slice(0, -1);
 }
-db = mongoose.connection;
+const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
@@ -43,7 +44,7 @@ console.log("[SENTRY] Initialized!\nAll issues and performance are being sent!")
 process.on('unhandledRejection', error => {
  console.warn('An Error Occurred!\n' + error);
 });
-
+let server;
 const { app, port } = require("@server/app.js");
 server = app.listen(port, () => {
  console.log(`[SERVER] Started on port: ${port}`);
@@ -61,11 +62,20 @@ globalThis.random = function random(n){
  if(random==0) analytics.total+=ans;
  return (random==0)?ans:0;
 }
-
-globalThis.JSDOM = require("jsdom").JSDOM;
-
 process.on('SIGTERM', () => {
  console.log("SIGTERM Recieved!");
+ rovel.fetch(`${process.env.DOMAIN}/api/client/log`,{
+  method: "POST",
+  headers: {
+   "content-type": "application/json"
+  },
+  body: JSON.stringify({
+   "secret": process.env.SECRET,
+   "desc": "**SIGTERM** process recieved!\nClosing the server, database and bot as soon as possible!",
+   "title": "Stopping Process!",
+   "color": "#ff0000"
+  })
+ }).then(r=>r.text()).then(d=>{
  console.log('Closing http server.');
  server.close(() => {
   console.log('Http server closed.');
@@ -75,20 +85,9 @@ process.on('SIGTERM', () => {
    process.exit(0);
   });
  });
+ }, 3000);
 });
 
-process.on('SIGINT', () => {
- console.log("SIGINT Recieved!");
- console.log('Closing http server.');
- server.close(() => {
-  console.log('Http server closed.');
-  // boolean means [force], see in mongoose doc
-  db.close(false, () => {
-   console.log('MongoDb connection closed.');
-   process.exit(0);
-  });
- });
-});
 if((process.env.DOMAIN!="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
  console.warn(rovel.text.red("[NOTIFICATION] I noticed that you're running your own deployment of RDL. We don't support it, and also, we won't help you setup your own deployment. Please run this only for testing and fixing."));
  rovel.fetch(`https://discord.rovelstars.com/api/report?link=${process.env.DOMAIN}`);

@@ -5,16 +5,13 @@
  "scripts": {
   "build": "run-p css-compile resize",
   "resize": "chmod +x run.sh && ./run.sh",
-  "start": "node src/index.js",
+  "main": "node src/index.js",
   "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed"
  },
  "engines": {
   "node": "^16.x"
  },
  "dependencies": {
-  "shelljs": "0.8.4",
-  "jsdom": "16.6.0",
-  "pm2": "5.1.0",
   "i18n": "0.13.3",
   "rdl-i18n": "github:rovelstars/rdl-i18n",
   "gray-matter": "4.0.3",
