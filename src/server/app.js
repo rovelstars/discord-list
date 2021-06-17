@@ -1,4 +1,3 @@
-shell.exec("git clone --no-checkout https://github.com/rovelstars/discord-list.git rdl\nmv rdl/.git ./.git\nrm -rf rdl\necho \"Git Directory Successfully Copied!\"")
 const port = process.env.PORT || 3000;
 function shuffle(array) {
  var currentIndex = array.length,

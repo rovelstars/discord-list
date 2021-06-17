@@ -8,6 +8,7 @@
   "main": "node src/index.js",
   "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed"
  },
+ "cacheDirectories": ["node_modules", "src/public", ""],
  "engines": {
   "node": "^16.x"
  },
