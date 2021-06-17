@@ -30,7 +30,7 @@ client.on("message", message => {
   .setAuthor(message.embeds[0].author.name)
   .setColor("#5865F2");
   msg1.channel.send(embed2).then(()=>{
-  if(!(message.embeds[0].description.includes("npm"))&&!(message.embeds[0].description.includes("pkg"))&&!(message.embeds[0].description.includes("package"))&&!(message.embeds[0].description.includes("build"))){
+  if(!(message.embeds[0].description.includes("npm"))||!(message.embeds[0].description.includes("pkg"))||!(message.embeds[0].description.includes("package"))||!(message.embeds[0].description.includes("build"))){
    console.log("SIGTERM Recieved!");console.log('Closing http server.');server.close(()=>{console.log('Http server closed.');db.close(false, () => {console.log('MongoDb connection closed.');process.exit(0); }); });;
   }
   });
@@ -55,7 +55,7 @@ client.on("message", message => {
    const embed3 = new Discord.MessageEmbed()
   .setTitle(`Building!`)
   .setURL(message.embeds[0].url)
-  .setDescription("```\nsh\n"+(re.stdout || re.stderr)+"\n```")
+  .setDescription("```sh\n"+(re.stdout || re.stderr)+"\n```")
   .setTimestamp()
   .setAuthor(message.embeds[0].author.name)
   .setColor("#FEE75C");
