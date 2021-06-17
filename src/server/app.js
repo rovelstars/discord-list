@@ -86,17 +86,6 @@ var booting = function(req, res, next) {
 }
 app.use(booting);
 
-setInterval(() => {
- fetch(`${process.env.DOMAIN}/api`).then(r => {
-  globalThis.ping = r.headers.get("ping");
-  app.locals.ping = r.headers.get("ping");
- });
-}, 1000 * 60);
-fetch(`${process.env.DOMAIN}/api`).then(r => {
- globalThis.ping = r.headers.get("ping");
- app.locals.ping = r.headers.get("ping");
-});
-
 var checkBanned = async function(req, res, next) {
  res.locals.req = req;
  res.locals.res = res;
