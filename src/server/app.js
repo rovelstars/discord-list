@@ -299,8 +299,6 @@ app.post("/api/translate", async (req, res) => {
  }
 });
 
-app.get("/api/test", (req, res)=>{});
-
 app.get('/api/*', (req, res) => {
  res.json({ err: 404 });
 })
