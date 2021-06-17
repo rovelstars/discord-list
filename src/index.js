@@ -62,7 +62,7 @@ globalThis.random = function random(n){
  return (random==0)?ans:0;
 }
 
-globalthis.JSDOM = require("jsdom").JSDOM;
+globalThis.JSDOM = require("jsdom").JSDOM;
 
 process.on('SIGTERM', () => {
  console.log("SIGTERM Recieved!");
