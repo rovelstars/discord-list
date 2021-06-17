@@ -16,7 +16,11 @@ $kbc-button-dark: $dark;
  background-color: darken($background, 20%);
  color: #99aab5;
 }
-::-moz-selection, ::selection {
+::-moz-selection{
+  color: white;
+  background: $primary;
+}
+::selection {
   color: white;
   background: $primary;
 }
