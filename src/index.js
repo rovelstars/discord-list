@@ -61,6 +61,9 @@ globalThis.random = function random(n){
  if(random==0) analytics.total+=ans;
  return (random==0)?ans:0;
 }
+
+globalthis.JSDOM = require("jsdom").JSDOM;
+
 process.on('SIGTERM', () => {
  console.log("SIGTERM Recieved!");
  console.log('Closing http server.');
