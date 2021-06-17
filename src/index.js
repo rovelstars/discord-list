@@ -27,7 +27,7 @@ if(!process.env.DOMAIN){
 if(process.env.DOMAIN.endsWith("/")){
  process.env.DOMAIN = process.env.DOMAIN.slice(0, -1);
 }
-const db = mongoose.connection;
+globalThis.db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
@@ -47,7 +47,7 @@ process.on('unhandledRejection', error => {
 });
 let server;
 const { app, port } = require("@server/app.js");
-server = app.listen(port, () => {
+globalThis.server = app.listen(port, () => {
  console.log(`[SERVER] Started on port: ${port}`);
 });
 
