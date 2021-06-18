@@ -1,17 +1,16 @@
 {
  "name": "rovel-discord-list",
  "description": "Rovel Discord List",
- "version": "0.0.2",
+ "version": "0.0.3",
  "scripts": {
-  "build": "run-p css-compile resize",
-  "resize": "chmod +x run.sh && ./run.sh",
-  "main": "node src/index.js",
-  "css-compile": "node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed"
+  "start": "node src/index.js",
+  "poststart": "node build.js"
  },
- "cacheDirectories": ["node_modules", "src/public", ""],
+ "cacheDirectories": ["node_modules", "src/public"],
  "engines": {
   "node": "^16.x"
  },
+ "checkCache": "true",
  "dependencies": {
   "i18n": "0.13.3",
   "shelljs": "0.8.4",

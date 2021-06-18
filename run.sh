@@ -1,6 +1,4 @@
 #!/bin/sh
-npm i rdl-i18n
-npm i shelljs -g
 cd src/public/assets/img/bot
 resize-img logo-512.png --width 36 > logo-36.png
 echo "36x36 done!"
@@ -12,3 +10,5 @@ resize-img logo-512.png --width 96 > logo-96.png
 echo "96x96 done!"
 resize-img logo-512.png --width 144 > logo-144.png
 echo "144x144 done!"
+cd
+node-sass src/sass/ -r  -o src/public/assets/css/ --output-style compressed
