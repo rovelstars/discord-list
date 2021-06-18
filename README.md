@@ -36,7 +36,8 @@ This List is currently a **Work In Progress** and we cannot provide an E.T.A for
 
 - Keep your repository open source, with the same license.
 - Link our repository on the website.
-- Therefore, you should not edit the footer, or we will take down your deployment.
+- You should not edit the footer, because the default footer follows the AGPL-3.0 license, or we may be report you.
+- Do not make a new repository on github and upload your own deployment codes there, instead fork out repository and do changes there.
 
 ---
 
@@ -45,19 +46,17 @@ This List is currently a **Work In Progress** and we cannot provide an E.T.A for
 ### Self-hosting Agreement
 
 - You may not use our logo, or any of our images, `@sayantan300` made them, so it's our copyright and we may report you if you used it.
-- We have partnered and used many other's projects in RDL, with taking their permissions first. Therefore, you're not allowed to use their projects without asking them.
-- You may not host a public version of RDL.
-- You may not ask for help.
 - You may not charge for the usage of your instance of RDL.
 - You may not provide support for RDL.
 - You may not remove any credits to the original authors anywhere within this project. We know what code we've written, and we will recognize it.
-- You may not report any of your bugs in our issues or in our server.
 
 ---
 
 # WARNING ⚠️!
 
-We will **not** assist or answer any questions about the setup of your own instance. If you ever post anything related to your deployment, you are straight away **BANNED**.
+We now thought of helping people setup their own instance, but we are not going to spoonfeed you code. Always remember to search the error on google and stack overflow before asking us. We believe in FOSS but we are not going to spoonfeed you. Also do not spam for getting your help, we are humans, not bots, therefore we are not always available 24/7. So do not spam for getting your attention.
+
+Also note that this codebase is under development, so it's not meant for public usage at the moment (Its usable for us, but not for other's deployments).
 
 Please keep **bugs**, **issues** and **code related subjects** in our issues and pull requests. If they are posted on our Discord server they will be **IGNORED**. The website feedback looks at your likes, dislikes and suggestions on the front end, but not for bugfixes or other problems. Please bring them here if you really want help/to help.
 
