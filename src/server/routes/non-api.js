@@ -155,6 +155,27 @@ router.get("/dashboard", async (req, res) => {
  }
 });
 
+router.get("/beta/dashboard", async (req, res) => {
+ if (!res.locals.user) {
+  res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
+  res.redirect("/login");
+ }
+ else {
+  let botus = [];
+  Users.findOne({ id: res.locals.user.id }).then(async u => {
+   res.locals.user.bal = rovel.approx(u.bal);
+   Bots.find({ $text: { $search: res.locals.user.id } }).then(async bots => {
+    for (const bot of bots) {
+     if (bot.owners.includes(res.locals.user.id)) {
+      await botus.push(bot);
+     }
+    }
+    await res.render('dashboard.ejs', { bots: botus });
+   });
+  });
+ }
+});
+
 router.get("/dashboard/bots/new", async (req, res) => {
  if (!res.locals.user) {
   res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
