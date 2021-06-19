@@ -170,7 +170,7 @@ router.get("/beta/dashboard", async (req, res) => {
       await botus.push(bot);
      }
     }
-    await res.render('dashboard.ejs', { bots: botus });
+    await res.render('newdashboard.ejs', { bots: botus });
    });
   });
  }
