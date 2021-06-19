@@ -14,6 +14,7 @@ function shuffle(array) {
  }
  return array;
 }
+globalThis.jsdom = require("jsdom").JSDOM;
 globalThis.shuffle = shuffle;
 const { langs } = require("../data.js");
 let ping;
