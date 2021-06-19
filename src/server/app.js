@@ -34,8 +34,42 @@ globalThis.Search = require("@utils/search.js");
 var latency = require("response-time");
 globalThis.translate = require("translatte");
 const info = require("@utils/info.js");
-const app = require("express")();
 const express = require("express");
+const minifyhtml = require("html-minifier").minify;
+
+express.response.render = function render(view, options, callback) {
+  var tapp = this.req.app;
+  var done = callback;
+  var opts = options || {};
+  var req = this.req;
+  var self = this;
+
+  // support callback function as second arg
+  if (typeof options === 'function') {
+    done = options;
+    opts = {};
+  }
+
+  // merge res.locals
+  opts._locals = self.locals;
+
+  // default callback to respond
+  done = done || function (err, str) {
+    if (err) return req.next(err);
+    self.send(minifyhtml(str),{
+     caseSensitive: true,
+     continueOnParseError: true,
+     keepClosingSlash: true,
+     minifyCSS: true,
+     minifyJS: true
+    });
+  };
+
+  // render
+  tapp.render(view, opts, done);
+}
+
+const app = express();
 var compression = require("compression");
 var agents = require("@utils/agents.json");
 let client = require("@bot/index.js");
