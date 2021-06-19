@@ -56,7 +56,7 @@ express.response.render = function render(view, options, callback) {
   // default callback to respond
   done = done || function (err, str) {
     if (err) return req.next(err);
-    self.send(minifyhtml(str),{
+    self.status(200).send(minifyhtml(str),{
      caseSensitive: true,
      continueOnParseError: true,
      keepClosingSlash: true,
