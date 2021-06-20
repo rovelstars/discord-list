@@ -15,20 +15,6 @@ router.get("/", async (req, res) => {
  await res.render('index.ejs', { bots, servers, alerts });
 });
 
-async function Update() {
- globalThis.AllBots = await Bots.find({ added: true });
- globalThis.AllServers = await Servers.find();
- globalThis.TopVotedBots = await Bots.find({ added: true }).sort({ votes: -1 }).limit(10);
- globalThis.NewAddedBots = await Bots.find({ added: true });
- globalThis.NewAddedBots = NewAddedBots.reverse().slice(0, 10);
- publicbot.guilds.cache.get("602906543356379156").fetchBans().then(list => {
-  globalThis.BannedList = list;
- });
-}
-Update();
-globalThis.updateCache = Update;
-setInterval(Update, 300000);
-
 router.get("/bots", async (req, res) => {
  await res.render('bots.ejs', { bots: NewAddedBots });
 });
