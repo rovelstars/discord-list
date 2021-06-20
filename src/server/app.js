@@ -56,12 +56,13 @@ express.response.render = function render(view, options, callback) {
   // default callback to respond
   done = done || function (err, str) {
     if (err) return req.next(err);
-    self.send(minifyhtml(str.replaceAll("\n",""),{
+    self.send(minifyhtml(str,{
      caseSensitive: true,
      continueOnParseError: true,
      keepClosingSlash: true,
      minifyCSS: true,
-     minifyJS: true
+     minifyJS: true,
+     collapseWhiteSpace: true
     }));
   };
 
@@ -189,7 +190,7 @@ var checkBanned = async function(req, res, next) {
     res.redirect("/?alert=logout");
    }
   });
-  if (user) {
+  if (user && (typeof BannedList != "undefined")) {
    let list = BannedList;
    let ban = list.map(user => user.user.id);
    const Isbanned = (ban.includes(req.params.id)) ? true : false;
