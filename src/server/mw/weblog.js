@@ -21,6 +21,5 @@ module.exports = async function(req, res, next) {
    "content": logweb
   })
  });
- req.language = eval(`langs.${req.locale}`);
  next();
 }

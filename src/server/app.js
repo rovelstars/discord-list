@@ -134,7 +134,7 @@ app.use(booting);
 var checkBanned = require("@mw/checkBanned.js");
 var userSetup = require("@mw/user-setup.js");
 app.use(userSetup);
-app.use(checkBanned);
+//app.use(checkBanned);
 
 var i18n = require("i18n");
 i18n.configure({
@@ -144,7 +144,8 @@ i18n.configure({
  defaultLocale: "en",
  directory: path.resolve("node_modules/rdl-i18n/site")
 });
-app.use(i18n.init);
+//app.use(i18n.init);
+
 var weblog = require("@mw/weblog.js");
 app.use(weblog);
 
