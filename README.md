@@ -30,6 +30,12 @@ This List is currently a **Work In Progress** and we cannot provide an E.T.A for
 
 ---
 
+# Can I contribute ?
+
+Yes! And we welcome people who really want to contribute us! Whether it's just a typo in the code or in readme, or you're making a big change for RDL, we welcome your contributions!
+
+---
+
 # License Notice
 
 ![License Notice](https://i.ibb.co/Q8vQDTs/image.png)
@@ -43,8 +49,6 @@ This List is currently a **Work In Progress** and we cannot provide an E.T.A for
 
 ## Note
 
-### Self-hosting Agreement
-
 - You may not use our logo, or any of our images, `@sayantan300` made them, so it's our copyright and we may report you if you used it.
 - You may not charge for the usage of your instance of RDL.
 - You may not provide support for RDL.
@@ -54,7 +58,8 @@ This List is currently a **Work In Progress** and we cannot provide an E.T.A for
 
 # WARNING ⚠️!
 
-We now thought of helping people setup their own instance, but we are not going to spoonfeed you code. Always remember to search the error on google and stack overflow before asking us. We believe in FOSS but we are not going to spoonfeed you. Also do not spam for getting your help, we are humans, not bots, therefore we are not always available 24/7. So do not spam for getting your attention.
+We are sure that the people who know coding are the ones who can contribute us. And we are also sure that they dont need help setting up this list for testing. If you're one of the programmers who have experience in coding and want to run this, we will help you. But we are also sure the ones who don't code and just come to ask help to setup, only to show off others that they made the list themselves. And we don't support them. And we know who are they.
+Always remember to search the error on google and stack overflow before asking us. We believe in FOSS but we are not going to spoonfeed you. Also do not spam for getting your help, we are humans, not bots, therefore we are not always available 24/7. So do not spam for getting your attention.
 
 Also note that this codebase is under development, so it's not meant for public usage at the moment (Its usable for us, but not for other's deployments).
 
