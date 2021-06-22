@@ -1,4 +1,4 @@
-const { langs } = require("../data.js");
+const { langs } = require("../../data.js");
 
 module.exports = async function(req, res, next){
  res.locals.req = req;
