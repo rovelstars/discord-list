@@ -144,7 +144,7 @@ i18n.configure({
  defaultLocale: "en",
  directory: path.resolve("node_modules/rdl-i18n/site")
 });
-//app.use(i18n.init);
+app.use(i18n.init);
 
 var weblog = require("@mw/weblog.js");
 app.use(weblog);
