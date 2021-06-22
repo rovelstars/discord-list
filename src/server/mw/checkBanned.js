@@ -22,15 +22,11 @@ module.exports = async function(req, res, next) {
   }
   }
   else {
-   if (!user.emailId) {
-    /*wip*/
-   }
-   else {
+   console.log("[WARN] BannedList is not initialized. No user checkup will be done.");
     next();
-   }
   }
  }
  else {
-  next()
+  next();
  }
 };
