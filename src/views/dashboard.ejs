@@ -9,68 +9,6 @@ imglink: undefined
 <body>
  <%- include('partials/load', {theme}); %>
  <%- include('partials/navbar', {user}); %>
- <div class="is-widescreen">
-      <div class="columns">
-<aside class="menu">
-          <p class="menu-label">
-            General
-          </p>
-          <ul class="menu-list">
-            <li><a>Dashboard</a></li>
-            <li><a>Customers</a></li>
-          </ul>
-          <p class="menu-label">
-            Administration
-          </p>
-          <ul class="menu-list">
-            <li><a>Team Settings</a></li>
-            <li>
-              <a class="is-active">Manage Team</a>
-              <ul>
-                <li><a>Members</a></li>
-                <li><a>Plugins</a></li>
-                <li><a>Add a member</a></li>
-                <li><a>Members</a></li>
-                <li><a>Plugins</a></li>
-                <li><a>Add a member</a></li>
-                <li><a>Members</a></li>
-                <li><a>Plugins</a></li>
-                <li><a>Add a member</a></li>
-                <li><a>Members</a></li>
-                <li><a>Plugins</a></li>
-                <li><a>Add a member</a></li>
-                <li><a>Members</a></li>
-                <li><a>Plugins</a></li>
-                <li><a>Add a member</a></li>
-              </ul>
-            </li>
-            <li><a>Invitations</a></li>
-            <li><a>Cloud Storage Environment Settings</a></li>
-            <li><a>Authentication</a></li>
-          </ul>
-          <p class="menu-label">
-            Transactions
-          </p>
-          <ul class="menu-list">
-            <li><a>Payments</a></li>
-            <li><a>Transfers</a></li>
-            <li><a>Balance</a></li>
-          </ul>
-        </aside>
-</div></div>
-<style>
-.menu {
-  position: sticky;
-  display: inline-block;
-  vertical-align: top;
-  max-height: 100vh;
-  overflow-y: auto;
-  width: 200px;
-  top: 0;
-  bottom: 0;
-  padding: 30px;
-}
-</style>
  <section class="hero has-background-black">
   <div class="hero-body">
   <div class="container">
@@ -209,7 +147,7 @@ imglink: undefined
   </div>
   </div>
    <script>
-  var sync = function(){
+  var sync = functio(){
    var sc = document.getElementById("sync");
    sc.innerText="In Progress...";
    fetch("https://discord.rovelstars.com/api/users/<%= user.id %>/sync").then(r=>r.json()).then(d=>{
