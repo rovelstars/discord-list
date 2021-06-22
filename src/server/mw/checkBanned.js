@@ -1,10 +1,8 @@
 module.exports = async function(req, res, next) {
  var user = res.locals.user;
- console.log("one")
  if (user) {
   if (typeof BannedList != "undefined") {
    let list = BannedList;
-   console.log("two")
    let ban = list.map(user => user.user.id);
    const Isbanned = (ban.includes(req.params.id)) ? true : false;
    if (Isbanned) {
@@ -22,15 +20,16 @@ module.exports = async function(req, res, next) {
      })
     })
    }
+   else{
+    next();
+   }
   }
   else {
    console.log("[WARN] BannedList is not initialized. No user checkup will be done.");
    next();
-   console.log("three")
   }
  }
  else {
-  console.log("four")
   next();
  }
 };
