@@ -20,7 +20,6 @@ const { langs } = require("../data.js");
 let ping;
 const actuator = require('express-actuator');
 const marked = require("marked");
-const geoip = require("geoip-lite");
 var cloudflare = require('cloudflare-express');
 
 globalThis.Bots = require("@models/bots.js");
@@ -129,120 +128,14 @@ process.on('unhandledRejection', err => {
 });
 app.use(latency({ header: "ping" }));
 app.use(actuator({ basePath: "/api" }));
-var booting = function(req, res, next) {
- if (process.uptime() < 10) {
-  if (req.originalUrl.startsWith("/assets") || req.originalUrl.startsWith("/api")) next();
-  else res.sendFile(path.resolve("src/public/assets/loading.html"));
- }
- else next();
-}
+var booting = require("@mw/booting.js");
 app.use(booting);
 
-var checkBanned = async function(req, res, next) {
- res.locals.req = req;
- res.locals.res = res;
- req.language = eval(`langs.${req.locale}`);
- var themes = ["discord", "dracula", "paranoid"];
- if (!themes.includes(req.cookies['theme'])) {
-  req.cookies["theme"] = "discord";
-  res.cookie('theme', "discord", {
-   maxAge: 30 * 3600 * 24 * 1000, //30days
-   httpOnly: true,
-   secure: true
-  });
- }
- res.locals.theme = (req.cookies["theme"]) ? req.cookies["theme"] : "discord";
- if (req.header('RDL-key')) {
-  req.query.key = req.header('RDL-key');
- }
-
- if (req.header('RDL-code')) {
-  req.query.code = req.header('RDL-code');
- }
- if (req.query.key) {
-  req.cookies['key'] = req.query.key;
- }
- if (req.query.code) {
-  req.cookies['code'] = req.query.code;
- }
- if (req.cookies['key']) {
-  req.query.key = req.cookies['key'];
-  let user = await auth.getUser(req.cookies['key']).catch(async () => {
-   try {
-    let tempvalid = auth.checkValidity(req.cookies['key']);
-    /*
-   {
-  expired: false,
-  expiresIn: 538994851,
-  expireTimestamp: 1623434339257
-}
-*/
-    if (tempvalid.expired) {
-     // ah yes the key really expired!
-     const newkey = await auth.refreshToken(req.cookies['key']);
-     // check whether he got email scope of not (temp case as of now)
-     const tempuser = await auth.getUser(newkey);
-     if (tempuser.emailId) {
-      //he got it!
-      res.cookie('key', newkey, {
-       maxAge: 90 * 3600 * 24 * 1000, //90days
-       httpOnly: true,
-       secure: true
-      });
-      res.redirect("/?alert=key_refreshed"); //send back to homepage because idk what would he do on other pages, and notify him that key was refreshed.
-     }
-     else {
-      //logout him simply because he doesnt have email scope.
-      res.cookie('key', req.cookies['key'], { maxAge: 0 });
-      res.redirect("/?alert=logout");
-     }
-    }
-    else {
-     res.cookie('key', req.cookies['key'], { maxAge: 0 });
-     res.redirect("/?alert=logout");
-    }
-   }
-   catch (e) {
-    res.cookie('key', req.cookies['key'], { maxAge: 0 });
-    res.redirect("/?alert=logout");
-   }
-  });
-  if (user && (typeof BannedList != "undefined")) {
-   let list = BannedList;
-   let ban = list.map(user => user.user.id);
-   const Isbanned = (ban.includes(req.params.id)) ? true : false;
-   if (Isbanned) {
-    res.sendFile(path.resolve("src/public/assets/banned.html"));
-    fetch(`${process.env.DOMAIN}/api/client/log`, {
-     method: "POST",
-     headers: {
-      "content-type": "application/json"
-     },
-     body: JSON.stringify({
-      "secret": process.env.SECRET,
-      "title": `Banned User ${user.tag} tried to visit us!`,
-      "color": "#ff0000",
-      "desc": `**${user.tag}** (${user.id}) was banned before, and they tried to visit our site at path:\n\`${req.path}\``
-     })
-    })
-   }
-   else {
-    if (!user.emailId) {
-     /*wip*/
-    }
-    else {
-     res.locals.user = user;
-     next();
-    }
-   }
-  }
- }
- else {
-  res.locals.user = null;
-  next()
- }
-};
+var checkBanned = require("@mw/checkBanned.js");
+var userSetup = require("@mw/user-setup.js");
+app.use(userSetup);
 app.use(checkBanned);
+
 var i18n = require("i18n");
 i18n.configure({
  locales: ["en", "hi", "ar", "es", "tr"],
@@ -252,30 +145,7 @@ i18n.configure({
  directory: path.resolve("node_modules/rdl-i18n/site")
 });
 app.use(i18n.init);
-var weblog = async function(req, res, next) {
- const weburl = process.env.WEBHOOK;
- if (req.query.code) {
-  var botu = await Bots.findOne({ code: req.query.code });
-  if (botu) {
-   botu = `${botu.id} (${botu.tag})`;
-  }
- }
- const user = (res.locals.user) ? res.locals.user.tag : "Not logined";
- const geo = await geoip.lookup(req.cf_ip);
- const logweb = `**New Log!**\n**Time:** \`${dayjs().format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**IP:** ||${req.cf_ip}||\n**Path requested:** \`${req.originalUrl}\`\n**Request type:** \`${req.method}\`\n**Location:** ${(geo)?geo.timezone:"idk"}\n**User:** ${user}\n**Bot:** \`${botu || "nope"}\`\n**Browser:** \`${(req.headers['user-agent'])?req.headers['user-agent']:"api request"}\``;
- await fetch(weburl, {
-  method: "POST",
-  headers: {
-   "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-   "username": "RDL logging",
-   "content": logweb
-  })
- });
- req.language = eval(`langs.${req.locale}`);
- next();
-}
+var weblog = require("@mw/weblog.js");
 app.use(weblog);
 
 log("[SERVER] Started!\n[SERVER] Webhooks started!");
