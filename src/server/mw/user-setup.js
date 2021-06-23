@@ -42,22 +42,14 @@ module.exports = async function(req, res, next){
     if (tempvalid.expired) {
      // ah yes the key really expired!
      const newkey = await auth.refreshToken(req.cookies['key']);
-     // check whether he got email scope of not (temp case as of now)
+     
      const tempuser = await auth.getUser(newkey);
-     if (tempuser.emailId) {
-      //he got it!
       res.cookie('key', newkey, {
        maxAge: 90 * 3600 * 24 * 1000, //90days
        httpOnly: true,
        secure: true
       });
-      res.redirect("/?alert=key_refreshed"); //send back to homepage because idk what would he do on other pages, and notify him that key was refreshed.
-     }
-     else {
-      //logout him simply because he doesnt have email scope.
-      res.cookie('key', req.cookies['key'], { maxAge: 0 });
-      res.redirect("/?alert=logout");
-     }
+      res.redirect("/?alert=key_refreshed");
     }
     else {
      res.cookie('key', req.cookies['key'], { maxAge: 0 });

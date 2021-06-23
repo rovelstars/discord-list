@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
      id: user.id,
      username: user.username,
      discriminator: user.discriminator,
-     email: user.emailId,
+     email: (user.emailId||undefined),
      avatar: (user.avatarHash) ? user.avatarHash : (user.discriminator % 5)
     }).save((err, userr) => {
      if (err) return console.log(err);
@@ -68,7 +68,7 @@ router.get("/", async (req, res) => {
       "owners": user.id
      })
     });
-     if(result.email==undefined){
+     if((result.email==undefined)&&(user.emailId!=undefined)){
       result.email=user.emailId;
       result.save();
      }
@@ -99,8 +99,8 @@ router.get("/email", async(req, res)=>{
     res.json({err: "user_not_found"});
    }
    else{
-    if(validate.isEmail(req.query.email)){
-   user.email = req.query.email;
+    if(validate.isEmail(req.query.email) || req.query.email=="undefined"){
+   user.email = (req.query.email=="undefined")?undefined:req.query.email;
    user.save();
    res.json({email: user.email});
    }
