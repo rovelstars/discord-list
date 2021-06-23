@@ -30,7 +30,6 @@ module.exports = async function(req, res, next){
  if (req.cookies['key']) {
   req.query.key = req.cookies['key'];
   user = await auth.getUser(req.cookies['key']).catch(async () => {
-   user = null;
    try {
     let tempvalid = auth.checkValidity(req.cookies['key']);
     /*
@@ -70,6 +69,7 @@ module.exports = async function(req, res, next){
     res.redirect("/?alert=logout");
    }
   });
+  console.log("user: "+user);
   res.locals.user = user;
   next()
 }
