@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
    catch(e){
     console.log(e);
    }*/
-  Users.findOne({ id: user.id }).then(result => {
+  Users.findOne({ id: user.id }).then(async result => {
    if (!result) {
     /*
         tempdis = user.discriminator;
