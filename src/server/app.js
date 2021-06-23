@@ -133,8 +133,8 @@ app.use(booting);
 
 var checkBanned = require("@mw/checkBanned.js");
 var userSetup = require("@mw/user-setup.js");
-//app.use(userSetup);
-//app.use(checkBanned);
+app.use(userSetup);
+app.use(checkBanned);
 
 var i18n = require("i18n");
 i18n.configure({

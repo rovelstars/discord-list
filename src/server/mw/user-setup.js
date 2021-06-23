@@ -69,8 +69,7 @@ module.exports = async function(req, res, next){
     res.redirect("/?alert=logout");
    }
   });
-  console.log("user: "+user);
-  res.locals.user = user;
-  next()
 }
+res.locals.user = user;
+next();
 }
