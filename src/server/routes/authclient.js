@@ -54,6 +54,16 @@ router.get("/", async (req, res) => {
       httpOnly: true,
       secure: true
      });
+     
+     if (req.cookies["return"]) {
+   try {
+    await res.cookie("return", req.cookies["return"], { maxAge: 0 });
+    await res.redirect(req.cookies["return"]);
+   } catch (e) {}
+  }
+  else {
+   await res.redirect("/");
+  }
     });
    }
    if (result) {
@@ -80,9 +90,8 @@ router.get("/", async (req, res) => {
      result.email = user.emailId;
      result.save();
     }
-   }
-  })
-  if (req.cookies["return"]) {
+    
+    if (req.cookies["return"]) {
    try {
     await res.cookie("return", req.cookies["return"], { maxAge: 0 });
     await res.redirect(req.cookies["return"]);
@@ -91,6 +100,8 @@ router.get("/", async (req, res) => {
   else {
    await res.redirect("/");
   }
+   }
+  })
  } catch (e) {
   res.redirect("/");
   console.log(e);
