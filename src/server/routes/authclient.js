@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
      discriminator: user.discriminator,
      email: (user.emailId || undefined),
      avatar: (user.avatarHash) ? user.avatarHash : (user.discriminator % 5)
-    }).save((err, userr) => {
+    }).save(async (err, userr) => {
      if (err) return console.log(err);
      fetch(`${process.env.DOMAIN}/api/client/log`, {
       method: "POST",
