@@ -11,6 +11,7 @@ router.get("/", async (req, res) => {
    console.log(e);
    return res.redirect("/logout");
   });
+  console.log(user.tag);
   /* try{
     fetch(`https://discord.com/api/v7/`)
    }
