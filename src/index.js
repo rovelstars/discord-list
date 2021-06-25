@@ -1,4 +1,9 @@
 require("module-alias/register");
+const v = process.version.slice(1,3);
+if(v<16){
+ console.error("[ERROR] Node.js v16 or above is required.");
+ process.exit(1);
+}
 var rovel = require("rovel.js");
 rovel.env.config();
 const mongoose = require('mongoose');
@@ -10,7 +15,6 @@ mongoose.connect(process.env.DB, {
  useCreateIndex: true
 });
 globalThis.shell = require("shelljs");
-shell.exec("node build.js");
 const loggy = require("@utils/loggy.js");
 
 globalThis.logg = console.log;
