@@ -24,3 +24,16 @@ $kbc-button-dark: $dark;
   color: white;
   background: $primary;
 }
+#rdl-widget{
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  border-radius: 100vh;
+  background-color: $primary;
+  border: none;
+  outline: none;
+  color: white;
+  margin: 10px;
+  width: 50px;
+  height: 50px;
+}
