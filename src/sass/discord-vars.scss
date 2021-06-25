@@ -34,9 +34,9 @@ $danger: #ED4245;
 $dark: darken(#2f3136, 5%);
 $grey: lighten(#36393F, 20%);
 
-$text: #6F7276;
+$text: #FFFFFF;
 $text-light: #99aab5;
-$text-strong: #6F7276;
+$text-strong: #FFFFFF;
 
 $background: #36393F;
 
@@ -44,15 +44,15 @@ $green-invert: #36393F;
 $success-invert: #36393F;
 
 // Update some of Bulma's component variables
-$title-color: #6F7276;
+$title-color: #FFFFFF;
 $subtitle-color: #f5f5f5;
-$subtitle-strong-color: darken(#6F7276, 5%);
+$subtitle-strong-color: darken(#FFFFFF, 5%);
 
 $body-background-color: #36393F;
 $footer-background-color: #36393F;
 
 $code-background: #282a36;
-$label-color: #6F7276;
+$label-color: #FFFFFF;
 $card-color: #212226;
 
 // button
@@ -89,8 +89,8 @@ $table-striped-row-even-hover-background-color: lighten(#5865F2, 10%);
 $box-background-color: #36393F;
 
 // media
-$media-border-color: #6F7276;
-$scheme-invert: #6F7276;
+$media-border-color: #FFFFFF;
+$scheme-invert: #FFFFFF;
 
 @media screen and (min-width: 1024px){
   .navbar-dropdown {
