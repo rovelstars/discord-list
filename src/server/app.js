@@ -1,4 +1,5 @@
 const port = process.env.PORT || 3000;
+process.env.ANNOUNCE = "No Announcements to show!";
 function shuffle(array) {
  var currentIndex = array.length,
   temporaryValue, randomIndex;
