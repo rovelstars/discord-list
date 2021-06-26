@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 require("./publicbot/index.js");
 const normalText = require("diacritics").remove;
-var client = new Discord.Client({ ws: { intents: Discord.Intents.ALL}});
+var client = new Discord.Client({ ws: { intents: Discord.Intents.ALL } });
 client.login(process.env.TOKEN);
 globalThis.privatebot = client;
 const { fetch } = require("rovel.js");
@@ -25,47 +25,49 @@ function getMention(mention) {
  }
  return client.users.cache.get(mention);
 }
-function searchCommand(name){
-  for(var i=0; i< client.commands.length; i++){
-    if(client.commands[i].name == name) return client.commands[i];
-  }
+
+function searchCommand(name) {
+ for (var i = 0; i < client.commands.length; i++) {
+  if (client.commands[i].name == name) return client.commands[i];
+ }
 }
 
-function reload(){
+function reload() {
  delete client.commands;
- client.commands=[];
-var commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
-let ci = 0;
-let cj = commandFiles.length;
-for (var file of commandFiles) {
- const command = fs.readFileSync(`${__dirname}/commands/${file}`,{encoding: "utf8", flag: "r"});
- ci += 1;
- console.log(`[BOT] Command Loaded - ${file} (${ci}/${cj})`);
- file = file.replace(".js","");
- const desc = fs.readFileSync(`${__dirname}/desc/${file}.md`,{encoding: "utf8",flag: "r"});
- client.commands.push({name: file, code: command, desc});
-}
+ client.commands = [];
+ var commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
+ let ci = 0;
+ let cj = commandFiles.length;
+ for (var file of commandFiles) {
+  const command = fs.readFileSync(`${__dirname}/commands/${file}`, { encoding: "utf8", flag: "r" });
+  ci += 1;
+  console.log(`[BOT] Command Loaded - ${file} (${ci}/${cj})`);
+  file = file.replace(".js", "");
+  const desc = fs.readFileSync(`${__dirname}/desc/${file}.md`, { encoding: "utf8", flag: "r" });
+  client.commands.push({ name: file, code: command, desc });
+ }
 }
 reload();
-var eventFiles = fs.readdirSync(__dirname+'/events').filter(file=>file.endsWith('.js'));
+var eventFiles = fs.readdirSync(__dirname + '/events').filter(file => file.endsWith('.js'));
 let ei = 0;
 let ej = eventFiles.length;
 for (var file of eventFiles) {
- const event = fs.readFileSync(`${__dirname}/events/${file}`,{encoding: "utf8", flag: "r"});
+ const event = fs.readFileSync(`${__dirname}/events/${file}`, { encoding: "utf8", flag: "r" });
  ei += 1;
  console.log(`[BOT] Event Loaded - ${file} (${ei}/${ej})`);
  eval(event);
 }
-function DiscordLog({title, desc, color}){
- const msg = new Discord.MessageEmbed()
-    .setTitle(title)
-    .setColor(color || "#5865F2")
-    .setDescription(desc)
-    .setURL("https://discord.rovelstars.com")
-    .setTimestamp()
-    .setThumbnail("https://discord.rovelstars.com/favicon.ico");
 
-   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
+function DiscordLog({ title, desc, color }) {
+ const msg = new Discord.MessageEmbed()
+  .setTitle(title)
+  .setColor(color || "#5865F2")
+  .setDescription(desc)
+  .setURL("https://discord.rovelstars.com")
+  .setTimestamp()
+  .setThumbnail("https://discord.rovelstars.com/favicon.ico");
+
+ client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
 }
 
 let router = require("express").Router();
@@ -73,17 +75,17 @@ router.use(require("express").json());
 router.get("/", (req, res) => {
  res.send("hmm");
 });
-router.post("/eval",(req, res)=>{
- if(!req.body.secret){
-  res.json({err:"no_secret"});
+router.post("/eval", (req, res) => {
+ if (!req.body.secret) {
+  res.json({ err: "no_secret" });
  }
- else{
-  if(req.body.secret==process.env.SECRET){
+ else {
+  if (req.body.secret == process.env.SECRET) {
    const resp = eval(req.body.code);
-   res.json({resp});
+   res.json({ resp });
   }
-  else{
-   res.json({err:"unauth"});
+  else {
+   res.json({ err: "unauth" });
   }
  }
 });
@@ -107,25 +109,27 @@ router.get("/bannedusers", (req, res) => {
 
 router.get("/bannedusers/:id", (req, res) => {
  let list = BannedList;
-  let ban = list.map(user => user.user.id);
-  if (ban.includes(req.params.id)) res.json({ banned: true });
-  else res.json({ banned: false });
+ let ban = list.map(user => user.user.id);
+ if (ban.includes(req.params.id)) res.json({ banned: true });
+ else res.json({ banned: false });
 });
 
 router.get("/users/:id", (req, res) => {
- try{
- var user = client.users.cache.get(req.params.id);
- if (user == null) {
-  client.users.fetch(req.params.id).then(d =>{
-   if(d.avatar==null) d.avatar=(d.discriminator%5);
-  res.json(d)});
+ try {
+  var user = client.users.cache.get(req.params.id);
+  if (user == null) {
+   client.users.fetch(req.params.id).then(d => {
+    if (d.avatar == null) d.avatar = (d.discriminator % 5);
+    res.json(d)
+   });
+  }
+  else {
+   if (user.avatar == null) user.avatar = (user.discriminator % 5).toString();
+   res.json(user);
+  }
  }
- else {
-  if(user.avatar==null) user.avatar=(user.discriminator%5).toString();
-  res.json(user);}
- }
- catch(e){
-  res.json({err: "invalid_user"});
+ catch (e) {
+  res.json({ err: "invalid_user" });
  }
 });
 router.get("/owners", (req, res) => {
@@ -171,7 +175,9 @@ router.get("/contributors/:id", (req, res) => {
 router.post("/log", (req, res) => {
  try {
   if (req.body.secret === process.env.SECRET) {
-   req.body.desc = req.body.desc.slice(0, 1997)+"...";
+   if (req.body.desc.length > 2000) {
+    req.body.desc = req.body.desc.slice(0, 1997) + "...";
+   }
    const msg = new Discord.MessageEmbed()
     .setTitle(req.body.title || "RDL Logging")
     .setColor(req.body.color || "#5865F2")
@@ -179,12 +185,26 @@ router.post("/log", (req, res) => {
     .setImage(req.body.attachment)
     .setURL(req.body.url || "https://discord.rovelstars.com")
     .setTimestamp()
-    .setThumbnail(req.body.img || "https://discord.rovelstars.com/favicon.ico");
+    .setThumbnail(req.body.img || "https://discord.rovelstars.com/assets/img/bot/logo-512.png");
 
    client.guilds.cache.get("602906543356379156").channels.cache.get(req.body.channel || "775231877433917440").send(msg)
    if (req.body.owners) {
     for (const owner of req.body.owners) {
-     client.users.cache.get(owner).send(msg).catch(()=>{});
+     client.users.cache.get(owner).send(msg).catch((e) => {
+      const embed = new Discord.MessageEmbed()
+       .setTitle(`Failed to Send DM: ${req.body.title || "RDL Logging"}`)
+       .setColor(req.body.color || "#5865F2")
+       .setDescription(req.body.desc || "No description provided.\n:/&&")
+       .setImage(req.body.attachment)
+       .setURL(req.body.url || "https://discord.rovelstars.com")
+       .setTimestamp()
+       .setThumbnail(req.body.img || "https://discord.rovelstars.com/assets/img/bot/logo-512.png")
+       .setFooter(`${client.users.cache.get(owner).username}, If you have read this message, click tick to delete this notification.`);
+
+      client.guilds.cache.get("602906543356379156").channels.cache.get("858200098612838430").send(`<@!${client.users.cache.get(owner).id}>`,{embed}).then(msg=>{
+       msg.react("✅");
+      });
+     });
     }
    }
    res.json({ code: "worked" });
