@@ -34,7 +34,7 @@ async function Update() {
  globalThis.NewAddedBots = await Bots.find({ added: true });
  globalThis.NewAddedBots = NewAddedBots.reverse().slice(0, 10);
  publicbot.guilds.cache.get("602906543356379156").fetchBans().then(list => {
-  globalThis.BannedList = list;
+  globalThis.BannedList = list.map(b=>b.user.id);
  });
 }
 Update();

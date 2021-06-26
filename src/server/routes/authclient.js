@@ -18,6 +18,7 @@ router.get("/", async (req, res) => {
    catch(e){
     console.log(e);
    }*/
+   if(!BannedList.includes(user.id)){
   Users.findOne({ id: user.id }).then(async result => {
    if (!result) {
     /*
@@ -102,6 +103,24 @@ router.get("/", async (req, res) => {
   }
    }
   })
+   }
+   else{
+    res.cookie('key', key, {
+      maxAge: 90 * 3600 * 24 * 1000, //90days
+      httpOnly: true,
+      secure: true
+     });
+     
+     if (req.cookies["return"]) {
+   try {
+    await res.cookie("return", req.cookies["return"], { maxAge: 0 });
+    await res.redirect(req.cookies["return"]);
+   } catch (e) {}
+  }
+  else {
+   await res.redirect("/");
+  }
+   }
  } catch (e) {
   res.redirect("/");
   console.log(e);

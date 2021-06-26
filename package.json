@@ -3,7 +3,8 @@
  "description": "Rovel Discord List",
  "version": "0.0.3",
  "scripts": {
-  "start": "node src/index.js"
+  "start": "node src/index.js",
+  "build": "node build.js"
  },
  "cacheDirectories": ["node_modules", "src/public"],
  "engines": {

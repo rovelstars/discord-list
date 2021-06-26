@@ -108,9 +108,7 @@ router.get("/bannedusers", (req, res) => {
 });
 
 router.get("/bannedusers/:id", (req, res) => {
- let list = BannedList;
- let ban = list.map(user => user.user.id);
- if (ban.includes(req.params.id)) res.json({ banned: true });
+ if (BannedList.includes(req.params.id)) res.json({ banned: true });
  else res.json({ banned: false });
 });
 
