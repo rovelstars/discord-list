@@ -113,6 +113,7 @@ router.get("/bannedusers/:id", (req, res) => {
 });
 
 router.get("/users/:id", (req, res) => {
+ try{
  var user = client.users.cache.get(req.params.id);
  if (user == null) {
   client.users.fetch(req.params.id).then(d =>{
@@ -122,6 +123,10 @@ router.get("/users/:id", (req, res) => {
  else {
   if(user.avatar==null) user.avatar=(user.discriminator%5).toString();
   res.json(user);}
+ }
+ catch(e){
+  res.json({err: "invalid_user"});
+ }
 });
 router.get("/owners", (req, res) => {
  res.json({ owners: client.owners });
@@ -179,7 +184,7 @@ router.post("/log", (req, res) => {
    client.guilds.cache.get("602906543356379156").channels.cache.get(req.body.channel || "775231877433917440").send(msg)
    if (req.body.owners) {
     for (const owner of req.body.owners) {
-     client.users.cache.get(owner).send(msg);
+     client.users.cache.get(owner).send(msg).catch(()=>{});
     }
    }
    res.json({ code: "worked" });
