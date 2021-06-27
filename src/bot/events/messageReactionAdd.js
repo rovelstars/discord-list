@@ -1,5 +1,5 @@
 client.on("messageReactionAdd", function(reaction, user) {
- if(reaction.message!==undefined){
+ try{
  if (reaction.message.channel.id == "858200098612838430") {
   const id = reaction.message.content.replace("<@!","").replace(">","");
   if(id===user.id){
@@ -7,4 +7,5 @@ client.on("messageReactionAdd", function(reaction, user) {
   }
  }
  }
+ catch(e){}
 });
