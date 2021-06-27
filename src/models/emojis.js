@@ -7,6 +7,7 @@ const Emojis = new Schema({
     type: Date
   }, //added at
    desc: String,
+   owner: String,
    gif: {type: Boolean, default: false},
   },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
   var emojis;
