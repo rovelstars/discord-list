@@ -207,6 +207,7 @@ router.get("/:id/code", (req, res) => {
    if (bot.owners.includes(d.id)) {
     if(!bot.code){
      bot.code = passgen();
+     bot.save();
     }
     res.json({code: bot.code});
    }
