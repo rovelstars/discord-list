@@ -18,7 +18,9 @@
 <meta name="og:site_name" content="Rovel Discord List">
 <% if(imglink){ %>
 <meta name="twitter:card" content="summary_large_image">
-<meta name="og:image:type" content="image/<%= imglink.endsWith(".gif")?"gif":"jpeg" %>"/><meta name="og:image:width" content="1920"/><meta name="og:image:height" content="1080"/>
+<meta name="og:image:type" content="image/<%= imglink.endsWith(".gif")?"gif":"jpeg" %>"/>
+<meta name="og:image:width" content="<%= width || "1920" %>"/>
+<meta name="og:image:height" content="<%= height || "1080" %>"/>
 <% } %>
 <meta name="twitter:image" content="<%= imglink || img %>">
 <meta name="twitter:creator" content="@rovelstars">
