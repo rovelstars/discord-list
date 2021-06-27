@@ -133,7 +133,9 @@ var booting = require("@mw/booting.js");
 app.use(booting);
 
 var checkBanned = require("@mw/checkBanned.js");
-var userSetup = require("@mw/user-setup.js");
+var userSetup = require("@mw/userSetup.js");
+var keepAlive = require("@mw/keepAlive.js");
+app.use(keepAlive);
 app.use(userSetup);
 app.use(checkBanned);
 
