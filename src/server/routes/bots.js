@@ -202,17 +202,17 @@ router.get("/:id/code", (req, res) => {
  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(d => {
   if (d.err) return res.json({ err: "invalid_key" });
 
-  Bots.findOne({ id: req.params.id }).then(bot => {
-   if (!bot) return res.json({ err: "no_bot_found" });
+  Bots.findOne({ id: req.params.id }).then(async bot => {
+   if (!bot) return await res.json({ err: "no_bot_found" });
    if (bot.owners.includes(d.id)) {
     if(!bot.code){
-     bot.code = passgen();
-     bot.save();
+     bot.code = await passgen();
+     await bot.save();
     }
-    res.json({code: bot.code});
+    await res.json({code: bot.code});
    }
    if(!bot.owners.includes(d.id)){
-    return res.json({err: "unauth"});
+    return await res.json({err: "unauth"});
    }
   });
  });
