@@ -111,7 +111,7 @@ router.get("/bots/:id", async (req, res) => {
   bot.owner = [];
   for (const id of bot.owners) {
    await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r => r.json()).then(async d => {
-    await owner.push(d.tag);
+    await bot.owner.push(d.tag);
    });
   };
   await res.render('botpage.ejs', { bot });
