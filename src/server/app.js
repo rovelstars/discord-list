@@ -26,7 +26,7 @@ var cloudflare = require('cloudflare-express');
 globalThis.Bots = require("@models/bots.js");
 globalThis.Users = require("@models/users.js");
 globalThis.Servers = require("@models/servers.js");
-//require("../cache.js");
+require("../cache.js");
 async function Update() {
  publicbot.guilds.cache.get("602906543356379156").fetchBans().then(list => {
   globalThis.BannedList = list.map(b=>b.user.id);
