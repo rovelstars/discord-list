@@ -61,7 +61,7 @@
  }
 
  Bots.findByOwner = function(id) {
-  return AllBots[AllBots.findIndex(b => b.includes(id))];
+  return AllBots[AllBots.findIndex(b => b.owners.includes(id))];
  }
 
 })();
