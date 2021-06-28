@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <% var hex; var bgcolor; %>
+<% if(typeof imglink == "undefined"){imglink=undefined} %>
+<% if(typeof width == "undefined"){width=undefined} %>
+<% if(typeof height == "undefined"){height=undefined} %>
 <% if(theme=="discord"){ hex="#5865F2"; bgcolor= "#36393F" } %>
 <% if(theme=="dracula"){ hex="#bd93f9"; bgcolor= "#282a36" } %>
 <% if(theme=="paranoid"){ hex="#A702F2"; bgcolor= "#191B2A" } %>
