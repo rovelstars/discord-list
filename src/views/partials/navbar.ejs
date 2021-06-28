@@ -48,18 +48,18 @@
             <span class="icon" style="color: #5865F2;"><i class="fab fa-discord"></i></span><span class="tt">Join Server</span>
           </a>
           <a class="navbar-item" href="https://github.com/rovelstars/rovel-discord-list">
-           <span class="icon"></span><i class="fab fa-github"></i><i class="fad fa-code"></i></span><span class="tt">Source Code</span>
+           <span class="icon"><i class="fab fa-github"></i><i class="fad fa-code"></i></span><span class="tt">Source Code</span>
           </a>
           <div class="navbar-item">
         <div class="buttons">
          <% if(!user){ %>
           <a class="button is-success" href="/login">
-            <i class="fad fa-sign-in-alt"></i><span class="tt">Login</span></a>
+            <span class="icon"><i class="fad fa-sign-in-alt"></i></span><span class="tt">Login</span></a>
             <% } else { %>
               <a class="button is-danger" href="/logout" id="logout-link">
-            <i class="fad fa-sign-out-alt"></i><span class="tt">Logout</span></a>
+            <span class"icon"><i class="fad fa-sign-out-alt"></i></span><span class="tt">Logout</span></a>
              <a class="button is-info" style="color: #ffffff;" href="/dashboard">
-              <i class="fad fa-tachometer-alt-fast"></i><span class="tt">Dashboard</span>
+              <span class="icon"><i class="fad fa-tachometer-alt-fast"></i></span><span class="tt">Dashboard</span>
              </a>
           <% } %>
         </div>
