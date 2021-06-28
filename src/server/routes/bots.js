@@ -30,18 +30,18 @@ const job = schedule.scheduleJob(rule, async function() {
 
 router.get("/", (req, res) => {
  if (req.query.q) {
-  res.json(shuffle(Search(AllBots, req.query.q)).slice(0, 10));
+  res.json(shuffle(Search(Cache.AllBots, req.query.q)).slice(0, 10));
  }
  else {
-  res.json(AllBots);
+  res.json(Cache.AllBots);
  }
 });
 
 router.get("/info", (req, res) => {
  if (!req.query.code) return res.json({ err: "no_code" });
- Bots.findOne({ code: req.query.code }).then(ba => {
+ Cache.Bots.findOneByCode(req.query.code).then(ba => {
   if (!ba) return res.json({ err: "no_bot_found" });
-  else{
+  else {
    res.json(ba);
   }
  });
@@ -49,23 +49,23 @@ router.get("/info", (req, res) => {
 
 router.post("/:id/card", (req, res) => {
  if (req.query.code) {
-    Bots.findOne({ id: req.params.id, code: req.params.code }).then(bot => {
-     if (!bot) return res.json({ err: "bot_not_found" });
-     else {
-      if (req.body.img) {
-       if (!validator.isURL(req.body.img)) return res.json({ err: "invalid_img" });
-       else bot.card.img = req.body.img;
-      }
-      if (req.body.title) {
-       bot.card.title = req.body.title;
-      }
-      if (req.body.msg) {
-       bot.card.msg = req.body.msg;
-      }
-      bot.save();
-      res.json({ card: "updated" });
-     }
-    });
+  Cache.Bots.findOneByBoth(req.params.id, req.params.code).then(bot => {
+   if (!bot) return res.json({ err: "bot_not_found" });
+   else {
+    if (req.body.img) {
+     if (!validator.isURL(req.body.img)) return res.json({ err: "invalid_img" });
+     else bot.card.img = req.body.img;
+    }
+    if (req.body.title) {
+     bot.card.title = req.body.title;
+    }
+    if (req.body.msg) {
+     bot.card.msg = req.body.msg;
+    }
+    bot.save();
+    res.json({ card: "updated" });
+   }
+  });
  }
  else return res.json({ err: "no_code" });
 });
@@ -81,61 +81,60 @@ router.get("/:id/vote", async (req, res) => {
    Users.findOne({ id: d.id }).then(use => {
     if (!use) return res.json({ err: "no_user_found" });
     if (use.bal < req.query.coins) return res.json({ err: "not_enough_coins" });
-    Bots.findOne({ id: req.params.id }).then(async bot => {
-     if (!bot) return res.json({ err: "no_bot_found" });
-      use.bal = use.bal - req.query.coins;
-      use.save();
-      bot.votes = bot.votes + parseInt(Vote);
-      bot.save();
-      res.json({ bot });
-      if (bot.webhook) {
-       const hmm = JSON.stringify({
-        "user": d,
-        "coins": parseInt(req.query.coins),
-        "votes": Vote,
-        "currentVotes": bot.votes
-       });
-       fetch(`${bot.webhook}/vote?code=${bot.code}`, {
+    var bot = Cache.Bots.findOneById(req.params.id);
+    if (!bot) return res.json({ err: "no_bot_found" });
+    use.bal = use.bal - req.query.coins;
+    use.save();
+    bot.votes = bot.votes + parseInt(Vote);
+    bot.save();
+    res.json({ bot });
+    if (bot.webhook) {
+     const hmm = JSON.stringify({
+      "user": d,
+      "coins": parseInt(req.query.coins),
+      "votes": Vote,
+      "currentVotes": bot.votes
+     });
+     fetch(`${bot.webhook}/vote?code=${bot.code}`, {
+      method: "POST",
+      headers: {
+       "content-type": "application/json"
+      },
+      body: hmm
+     }).then(r => r.json()).then(d => {
+      if (!d.ok) {
+       fetch(`${process.env.DOMAIN}/api/client/log`, {
         method: "POST",
         headers: {
          "content-type": "application/json"
         },
-        body: hmm
-       }).then(r => r.json()).then(d => {
-        if (!d.ok) {
-         fetch(`${process.env.DOMAIN}/api/client/log`, {
-          method: "POST",
-          headers: {
-           "content-type": "application/json"
-          },
-          body: JSON.stringify({
-           "secret": process.env.SECRET,
-           "title": `Failed to send data to ${bot.tag}`,
-           "desc": `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
-           "owners": bot.owners,
-           "img": bot.avatarURL
-          })
-         })
-        }
-       }).catch(e => {
-        fetch(`${process.env.DOMAIN}/api/client/log`, {
-         method: "POST",
-         headers: {
-          "content-type": "application/json"
-         },
-         body: JSON.stringify({
-          "secret": process.env.SECRET,
-          "title": `Failed to send data to ${bot.tag}`,
-          "desc": `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
-          "owners": bot.owners,
-          "img": bot.avatarURL
-         })
+        body: JSON.stringify({
+         "secret": process.env.SECRET,
+         "title": `Failed to send data to ${bot.tag}`,
+         "desc": `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+         "owners": bot.owners,
+         "img": bot.avatarURL
         })
        })
       }
-     });
-    });
+     }).catch(e => {
+      fetch(`${process.env.DOMAIN}/api/client/log`, {
+       method: "POST",
+       headers: {
+        "content-type": "application/json"
+       },
+       body: JSON.stringify({
+        "secret": process.env.SECRET,
+        "title": `Failed to send data to ${bot.tag}`,
+        "desc": `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+        "owners": bot.owners,
+        "img": bot.avatarURL
+       })
+      })
+     })
+    }
    });
+  });
  }
 })
 
@@ -152,69 +151,67 @@ router.post("/evaldb", (req, res) => {
 });
 
 router.get("/:id/sync", (req, res) => {
- Bots.findOne({ id: req.params.id }).then(user => {
-  if (!user){
-   res.json({ err: "not_found" });
-  }
-  else {
-   fetch("https://discord.rovelstars.com/api/client/users/" + user.id).then(r => r.json()).then(u => {
-    if ((u.avatar === user.avatar) && (u.username === user.username) && (u.discriminator === user.discriminator)) return res.json({ err: "same_data" });
-    else {
-     var num;
-     if (u.avatar !== user.avatar) {
-      user.avatar = u.avatar;
-      num="Avatar Updated!\n";
-     }
-     if (u.username !== user.username) {
-      user.username = u.username;
-      num="Username Updated!\n";
-     }
-     if (u.discriminator !== user.discriminator) {
-      user.discriminator = u.discriminator;
-      num="Discriminator Updated!\n";
-     }
-     user.save();
-     res.json({ success: true, bot: user });
-     fetch("https://discord.rovelstars.com/api/client/log", {
-      method: "POST",
-      headers: {
-       "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-       "secret": process.env.SECRET,
-       "img": u.avatarURL,
-       "desc": num,
-       "title": `Bot ${u.tag} Data Updated!`,
-       "color": "#FEE75C",
-       "url": `https://discord.rovelstars.com/bots/${u.id}`
-      })
-     });
+ var user = Cache.Bots.findOneById(req.params.id);
+ if (!user) {
+  res.json({ err: "not_found" });
+ }
+ else {
+  fetch("https://discord.rovelstars.com/api/client/users/" + user.id).then(r => r.json()).then(u => {
+   if ((u.avatar === user.avatar) && (u.username === user.username) && (u.discriminator === user.discriminator)) return res.json({ err: "same_data" });
+   else {
+    var num;
+    if (u.avatar !== user.avatar) {
+     user.avatar = u.avatar;
+     num = "Avatar Updated!\n";
     }
-   });
-   
-  }
- });
+    if (u.username !== user.username) {
+     user.username = u.username;
+     num = "Username Updated!\n";
+    }
+    if (u.discriminator !== user.discriminator) {
+     user.discriminator = u.discriminator;
+     num = "Discriminator Updated!\n";
+    }
+    user.save();
+    res.json({ success: true, bot: user });
+    fetch("https://discord.rovelstars.com/api/client/log", {
+     method: "POST",
+     headers: {
+      "Content-Type": "application/json"
+     },
+     body: JSON.stringify({
+      "secret": process.env.SECRET,
+      "img": u.avatarURL,
+      "desc": num,
+      "title": `Bot ${u.tag} Data Updated!`,
+      "color": "#FEE75C",
+      "url": `https://discord.rovelstars.com/bots/${u.id}`
+     })
+    });
+   }
+  });
+
+ }
 });
 
 router.get("/:id/code", (req, res) => {
  if (!req.query.key) return res.json({ err: "no_key" });
 
- fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(d => {
+ fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(async d => {
   if (d.err) return res.json({ err: "invalid_key" });
 
-  Bots.findOne({ id: req.params.id }).then(async bot => {
-   if (!bot) return await res.json({ err: "no_bot_found" });
-   if (bot.owners.includes(d.id)) {
-    if(!bot.code){
-     bot.code = await passgen();
-     await bot.save();
-    }
-    await res.json({code: bot.code});
+  var bot = Cache.Bots.findOneById(req.params.id);
+  if (!bot) return await res.json({ err: "no_bot_found" });
+  if (bot.owners.includes(d.id)) {
+   if (!bot.code) {
+    bot.code = await passgen();
+    await bot.save();
    }
-   if(!bot.owners.includes(d.id)){
-    return await res.json({err: "unauth"});
-   }
-  });
+   await res.json({ code: bot.code });
+  }
+  if (!bot.owners.includes(d.id)) {
+   return await res.json({ err: "unauth" });
+  }
  });
 });
 /*router.get("/:id/stats", (req, res) => {
@@ -228,9 +225,8 @@ router.get("/:id/code", (req, res) => {
  else res.json({ err: "no_key" })
 })*/
 router.get("/:id", (req, res) => {
- Bots.findOne({ id: req.params.id }, { _id: false }).then(bot => {
-  res.json(bot);
- });
+ Cache.Bots.clean(Cache.Bots.findOneById(req.params.id));
+ Cache.Bots.refreshOne(req.params.id);
 });
 
 router.post("/:id/servers", (req, res) => {
@@ -254,7 +250,7 @@ router.delete("/:id", async (req, res) => {
 
   await Bots.findOne({ id: req.params.id }).then(bot => {
    if (!bot) return res.json({ err: "no_bot_found" });
-   if (bot.mainowner==d.id){
+   if (bot.mainowner == d.id) {
     Bots.deleteOne({ id: req.params.id }, function(err) {
      if (err) return res.json(err);
      res.json({ deleted: true });
@@ -330,36 +326,37 @@ router.get("/import/del/:id", (req, res) => {
  if (req.query.key) {
   fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(user => {
    fetch(`https://api.discordextremelist.xyz/v2/bot/${req.params.id}`).then(r => r.json()).then(bot => {
-    if(bot.error){
-     res.json({err: bot.message});
-    }
-    else{
-    if (bot.bot.owner.id == user.id) {
-     var abot = {
-      id: bot.bot.id,
-      lib: (bot.bot.library == "") ? null : bot.bot.library,
-      prefix: bot.bot.prefix,
-      short: bot.bot.shortDesc,
-      desc: bot.bot.longDesc,
-      owners: [bot.bot.owner.id],
-      invite: bot.bot.links.invite,
-      support: bot.bot.links.support,
-      github: bot.bot.links.repo,
-      website: bot.bot.links.website
-     }
-     fetch(`${process.env.DOMAIN}/api/bots/new`, {
-      method: "POST",
-      headers: {
-       "content-type": "application/json"
-      },
-      body: JSON.stringify(abot)
-     }).then(r => r.json()).then(d => {
-      res.json(d);
-     })
+    if (bot.error) {
+     res.json({ err: bot.message });
     }
     else {
-     return res.json({ err: "unauth_owner" });
-    }}
+     if (bot.bot.owner.id == user.id) {
+      var abot = {
+       id: bot.bot.id,
+       lib: (bot.bot.library == "") ? null : bot.bot.library,
+       prefix: bot.bot.prefix,
+       short: bot.bot.shortDesc,
+       desc: bot.bot.longDesc,
+       owners: [bot.bot.owner.id],
+       invite: bot.bot.links.invite,
+       support: bot.bot.links.support,
+       github: bot.bot.links.repo,
+       website: bot.bot.links.website
+      }
+      fetch(`${process.env.DOMAIN}/api/bots/new`, {
+       method: "POST",
+       headers: {
+        "content-type": "application/json"
+       },
+       body: JSON.stringify(abot)
+      }).then(r => r.json()).then(d => {
+       res.json(d);
+      })
+     }
+     else {
+      return res.json({ err: "unauth_owner" });
+     }
+    }
    });
   })
  }
@@ -579,51 +576,51 @@ router.post("/new", async (req, res) => {
       })
      }
      if (!err) {
-       if (!user.avatar) {
-        user.avatar = (user.discriminator % 5).toString();
-       }
-       fetch(`${process.env.DOMAIN}/api/client/mainserver/${req.body.id}`).then(r => r.json()).then(dd => {
-        const bot = new Bots({
-         id: req.body.id,
-         webhook: req.body.webhook,
-         username: user.username,
-         discriminator: user.discriminator,
-         avatar: user.avatar,
-         owners: req.body.owners,
-         added: dd.condition,
-         short: req.body.short,
-         desc: req.body.desc,
-         prefix: req.body.prefix,
-         verified: false,
-         lib: req.body.lib,
-         support: (req.body.support == "") ? null : req.body.support,
-         bg: (req.body.bg) ? null : req.body.bg,
-         github: (req.body.github == "") ? null : req.body.github,
-         website: (req.body.website == "") ? null : req.body.website,
-         donate: (req.body.donate == "") ? null : req.body.donate,
-         invite: req.body.invite
-        }).save((err, bot) => {
-         if (err) { console.log("err" + err); return res.send({ err }); }
-         if (!err) {
-          res.send({ success: true });
-          fetch("https://discord.rovelstars.com/api/client/log", {
-           method: "POST",
-           headers: {
-            "Content-Type": "application/json"
-           },
-           body: JSON.stringify({
-            "secret": process.env.SECRET,
-            "img": bot.avatarURL,
-            "desc": `**${user.username}** has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${(dd.condition==true)?"\nThe bot has been already added to the server, so they are saved as 'added'":""}`,
-            "title": "New Bot Added!",
-            "color": "#31CB00",
-            "owners": bot.owners,
-            "url": `https://discord.rovelstars.com/bots/${bot.id}`
-           })
-          });
-         }
-        });
+      if (!user.avatar) {
+       user.avatar = (user.discriminator % 5).toString();
+      }
+      fetch(`${process.env.DOMAIN}/api/client/mainserver/${req.body.id}`).then(r => r.json()).then(dd => {
+       const bot = new Bots({
+        id: req.body.id,
+        webhook: req.body.webhook,
+        username: user.username,
+        discriminator: user.discriminator,
+        avatar: user.avatar,
+        owners: req.body.owners,
+        added: dd.condition,
+        short: req.body.short,
+        desc: req.body.desc,
+        prefix: req.body.prefix,
+        verified: false,
+        lib: req.body.lib,
+        support: (req.body.support == "") ? null : req.body.support,
+        bg: (req.body.bg) ? null : req.body.bg,
+        github: (req.body.github == "") ? null : req.body.github,
+        website: (req.body.website == "") ? null : req.body.website,
+        donate: (req.body.donate == "") ? null : req.body.donate,
+        invite: req.body.invite
+       }).save((err, bot) => {
+        if (err) { console.log("err" + err); return res.send({ err }); }
+        if (!err) {
+         res.send({ success: true });
+         fetch("https://discord.rovelstars.com/api/client/log", {
+          method: "POST",
+          headers: {
+           "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+           "secret": process.env.SECRET,
+           "img": bot.avatarURL,
+           "desc": `**${user.username}** has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${(dd.condition==true)?"\nThe bot has been already added to the server, so they are saved as 'added'":""}`,
+           "title": "New Bot Added!",
+           "color": "#31CB00",
+           "owners": bot.owners,
+           "url": `https://discord.rovelstars.com/bots/${bot.id}`
+          })
+         });
+        }
        });
+      });
      }
      if (err) {
       res.json({ err });

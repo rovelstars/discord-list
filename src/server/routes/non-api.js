@@ -5,18 +5,16 @@ const marked = require("marked");
 var proxy = require("proxy-list-random");
 
 router.get("/", async (req, res) => {
- shuffle(AllBots);
- let bots = AllBots.slice(0, 10);
  let servers = shuffle(AllServers).slice(0, 10);
  var alerts;
  if(req.query.alert){
   alerts=req.query.alert;
  }
- await res.render('index.ejs', { bots, servers, alerts });
+ await res.render('index.ejs', { bots: Cache.Bots.sortTopVoted(), servers, alerts });
 });
 
 router.get("/bots", async (req, res) => {
- await res.render('bots.ejs', { bots: NewAddedBots });
+ await res.render('bots.ejs', { bots: Cache.Bots.sortNewAdded() });
 });
 
 router.get("/analytics", async(req, res)=>{
@@ -47,8 +45,8 @@ router.get("/manifest.json", (req, res) => {
 
 let sitemap;
 async function gensitemap() {
- const botsmap = AllBots.map((bot) => { return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>` }).join("\n");
- const serversmap = AllServers.map((server) => { return `<url>\n<loc>${process.env.DOMAIN}/servers/${server.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>` }).join("\n");
+ const botsmap = Cache.AllBots.map((bot) => { return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>` }).join("\n");
+ const serversmap = Cache.AllServers.map((server) => { return `<url>\n<loc>${process.env.DOMAIN}/servers/${server.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>` }).join("\n");
  const Sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">' + `\n<url>\n<loc>${process.env.DOMAIN}/</loc>\n<priority>1.00</priority><changefreq>weekly</changefreq>\n</url>\n` + botsmap + serversmap + '</urlset>';
  return Sitemap;
 };
@@ -78,7 +76,7 @@ router.get("/bots/:id/vote", async (req, res) => {
   res.redirect("/login");
  }
  else {
-  var bot = await Bots.findOne({ id: req.params.id });
+  var bot = Cache.Bots.findOneById(req.params.id);
   if (!bot) {
 
    await res.render("404.ejs", { path: req.originalUrl });
@@ -106,17 +104,18 @@ router.get("/processes", (req, res) => {
 
 router.get("/bots/:id", async (req, res) => {
  fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`);
- var bot = await Bots.findOne({ id: req.params.id });
+ var bot = Cache.Bots.findOneById(req.params.id);
  if (!bot) return await res.render("404.ejs", { path: req.originalUrl })
  else {
   bot.desc = await marked(bot.desc.replace(/&gt;+/g, ">"));
   bot.owner = [];
   for (const id of bot.owners) {
    await fetch(`${process.env.DOMAIN}/api/client/users/${id}`).then(r => r.json()).then(async d => {
-    await bot.owner.push(d.tag);
+    await owner.push(d.tag);
    });
   };
   await res.render('botpage.ejs', { bot });
+  await Cache.Bots.refreshOne(bot.id);
  }
 });
 
@@ -129,15 +128,9 @@ router.get("/dashboard", async (req, res) => {
   let botus = [];
   Users.findOne({ id: res.locals.user.id }).then(async u => {
    res.locals.user.bal = rovel.approx(u.bal);
-   Bots.find({ $text: { $search: res.locals.user.id } }).then(async bots => {
-    for (const bot of bots) {
-     if (bot.owners.includes(res.locals.user.id)) {
-      await botus.push(bot);
-     }
-    }
+   const bots = Cache.Bots.findByOwner(u.id);
     await res.render('dashboard.ejs', { bots: botus });
    });
-  });
  }
 });
 
@@ -178,10 +171,11 @@ router.get("/dashboard/bots/edit/:id", async (req, res) => {
   res.redirect("/login");
  }
  else {
-  var bot = await Bots.findOne({id: req.params.id});
+  var bot = Cache.Bots.findOneById(req.params.id);
   if(bot.owners.includes(res.locals.user.id)){
    bot = bot.toObject(); //get virtuals then
-  await res.render('editbot.ejs',{bot})
+  await res.render('editbot.ejs',{bot});
+  await Cache.Bots.refreshOne(req.params.id);
   }
   else{
    res.json({err:"unauth"});
