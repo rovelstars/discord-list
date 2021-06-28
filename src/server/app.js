@@ -32,7 +32,6 @@ async function Update() {
   globalThis.BannedList = list.map(b=>b.user.id);
  });
 }
-Update();
 globalThis.updateCache = Update;
 setInterval(Update, 300000);
 
