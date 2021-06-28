@@ -26,7 +26,7 @@ var cloudflare = require('cloudflare-express');
 globalThis.Bots = require("@models/bots.js");
 globalThis.Users = require("@models/users.js");
 globalThis.Servers = require("@models/servers.js");
-//require("../cache.js");
+require("../cache.js");
 async function Update() {
  globalThis.AllBots = await Bots.find({ added: true });
  globalThis.AllServers = await Servers.find();

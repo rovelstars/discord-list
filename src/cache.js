@@ -4,22 +4,37 @@ users = require("@models/users.js");
 servers = require("@models/servers.js");
 globalThis.Cache = {};
 console.log("[CACHE] Started!");
-Cache.AllBots = await bots.find();
-Cache.AllUsers = await users.find();
-Cache.AllServers = await servers.find();
+
+/*only Arrays, Objects, Functions are referenced.
+Others are not*/
+
+AllBots = await bots.find();
+AllUsers = await users.find();
+AllServers = await servers.find();
+
+Bots = {};
+
+Cache.AllBots = await AllBots;
+Cache.AllUsers = await AllUsers;
+Cache.AllServers = await AllServers;
 Cache.models = {bots, users, servers};
-Cache.Bots = {};
-Cache.Bots.findOneById = function (q){
- return Bots[Bots.findIndex(b=>b.id==q)];
+Cache.Bots = Bots;
+
+Bots.findOneById = function (q){
+ return AllBots[AllBots.findIndex(b=>b.id==q)];
 }
 
-Cache.Bots.findOneByCode = function (q){
- return Bots[Bots.findIndex(b=>b.code==q)];
+Bots.findOneByCode = function (q){
+ return AllBots[AllBots.findIndex(b=>b.code==q)];
 }
 
-Cache.Bots.clean = function(arg){
+Bots.clean = function(arg){
   const {_id, code, ...bot} = arg;
   return bot;
+}
+
+Bots.findByOwners = function(id){
+ return AllBots[AllBots.findIndex(b=>b.includes(id))];
 }
 
 })();
