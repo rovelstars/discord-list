@@ -8,6 +8,19 @@ console.log("[CACHE] Started!");
 /*only Arrays, Objects, Functions are referenced.
 Others are not*/
 
+async function Update() {
+ globalThis.TopVotedBots = await Bots.find({ added: true }).sort({ votes: -1 }).limit(10);
+ globalThis.NewAddedBots = await Bots.find({ added: true });
+ globalThis.NewAddedBots = NewAddedBots.reverse().slice(0, 10);
+ publicbot.guilds.cache.get("602906543356379156").fetchBans().then(list => {
+  globalThis.BannedList = list.map(b=>b.user.id);
+ });
+}
+Update();
+globalThis.updateCache = Update;
+setInterval(Update, 300000);
+
+
 AllBots = await bots.find();
 AllUsers = await users.find();
 AllServers = await servers.find();
@@ -19,6 +32,8 @@ Cache.AllUsers = await AllUsers;
 Cache.AllServers = await AllServers;
 Cache.models = {bots, users, servers};
 Cache.Bots = Bots;
+
+Bots.sortNewAddedBots = function ()
 
 Bots.findOneById = function (q){
  return AllBots[AllBots.findIndex(b=>b.id==q)];
