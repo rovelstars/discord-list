@@ -12,15 +12,15 @@
  AllUsers = await users.find();
  AllServers = await servers.find();
 
- CBots = {};
+ Bots = {};
 
  Cache.AllBots = await AllBots;
  Cache.AllUsers = await AllUsers;
  Cache.AllServers = await AllServers;
- Cache.models = { CBots, users, servers };
- Cache.Bots = CBots;
+ Cache.models = { bots, users, servers };
+ Cache.Bots = Bots;
 
- CBots.sortNewAdded = function() {
+ Bots.sortNewAdded = function() {
   return AllBots.reverse().slice(0, 9);
  }
 
@@ -34,33 +34,33 @@
   return 0;
  }
 
- CBots.sortTopVoted = function() {
+ Bots.sortTopVoted = function() {
   return AllBots.sort((a, b) => compare(a, b, "votes")).reverse().slice(0, 9);
  }
 
- CBots.findOneById = function(q) {
+ Bots.findOneById = function(q) {
   return AllBots[AllBots.findIndex(b => b.id == q)];
  }
 
- CBots.refreshOne = function(id) {
-  var bot = CBots.findOneById(id);
-  CBots.findOne({ id }).then(botu => bot = botu);
+ Bots.refreshOne = function(id) {
+  var bot = Bots.findOneById(id);
+  bots.findOne({ id }).then(botu => bot = botu);
  }
 
- CBots.findOneByCode = function(q) {
+ Bots.findOneByCode = function(q) {
   return AllBots[AllBots.findIndex(b => b.code == q)];
  }
 
- CBots.findOneByBoth = function(q, c) {
+ Bots.findOneByBoth = function(q, c) {
   return AllBots[AllBots.findIndex(b => (b.id == q && b.code === c))];
  }
 
- CBots.clean = function(arg) {
+ Bots.clean = function(arg) {
   const { _id, code, ...bot } = arg;
   return bot;
  }
 
- CBots.findByOwner = function(id) {
+ Bots.findByOwner = function(id) {
   return AllBots[AllBots.findIndex(b => b.owners.includes(id))];
  }
 
