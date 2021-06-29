@@ -44,8 +44,8 @@
 
  Bots.findOneById = function(q) {
   return AllBots[AllBots.findIndex(b => b.id == q)];
- }&&
-
+ }
+ 
  Bots.refreshOne = function(id) {
   var bot = Bots.findOneById(id);
   bots.findOne({ id }).then(botu => bot = botu);
