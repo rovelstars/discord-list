@@ -20,6 +20,8 @@
  Cache.models = { bots, users, servers };
  Cache.Bots = Bots;
 
+ Bots.findOne = bots.findOne;
+
  Bots.sortNewAdded = function() {
   return AllBots.reverse().slice(0, 9);
  }
