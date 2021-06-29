@@ -129,7 +129,7 @@ router.get("/dashboard", async (req, res) => {
   Users.findOne({ id: res.locals.user.id }).then(async u => {
    res.locals.user.bal = rovel.approx(u.bal);
    const bots = Cache.Bots.findByOwner(u.id);
-    await res.render('dashboard.ejs', { bots: botus });
+    await res.render('dashboard.ejs', { bots });
    });
  }
 });

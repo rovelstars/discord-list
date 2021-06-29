@@ -64,8 +64,12 @@
   return bot;
  }
 
- Bots.findByOwner = function(id) {
+ Bots.findOneByOwner = function(id) {
   return AllBots[AllBots.findIndex(b => b.owners.includes(id))];
  }
-
+ 
+ Bots.findByOwner = function (id){
+  return AllBots.map((bot, index)=>{
+if(bot.owners.includes(message.author.id)){return bot}}).filter(Boolean);
+ }
 })();
