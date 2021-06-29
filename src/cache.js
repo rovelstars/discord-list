@@ -20,7 +20,9 @@
  Cache.models = { bots, users, servers };
  Cache.Bots = Bots;
 
- Bots.findOne = bots.findOne;
+ Bots.findOne = function(q) {
+  return AllBots[AllBots.findIndex(b => b.id == q.id)];
+ }
 
  Bots.sortNewAdded = function() {
   return AllBots.reverse().slice(0, 9);
@@ -42,7 +44,7 @@
 
  Bots.findOneById = function(q) {
   return AllBots[AllBots.findIndex(b => b.id == q)];
- }
+ }&&
 
  Bots.refreshOne = function(id) {
   var bot = Bots.findOneById(id);
