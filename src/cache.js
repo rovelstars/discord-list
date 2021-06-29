@@ -25,7 +25,7 @@
  }
 
  Bots.sortNewAdded = function() {
-  return AllBots.slice().reverse().slice(0, 9);
+  return [...AllBots].reverse().slice(0, 9);
  }
 
  function compare(a, b, on) {
