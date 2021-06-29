@@ -70,6 +70,6 @@
  
  Bots.findByOwner = function (id){
   return AllBots.map((bot, index)=>{
-if(bot.owners.includes(message.author.id)){return bot}}).filter(Boolean);
+if(bot.owners.includes(id)){return bot}}).filter(Boolean);
  }
 })();
