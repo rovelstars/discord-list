@@ -21,7 +21,7 @@
  Cache.Bots = Bots;
 
  Bots.findOne = async function(q) {
-  return AllBots[AllBots.findIndex(b => b.id == q.id)];
+  return [...AllBots[AllBots.findIndex(b => b.id == q.id)]]
  }
 
  Bots.sortNewAdded = function() {
