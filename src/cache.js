@@ -21,11 +21,11 @@
  Cache.Bots = Bots;
 
  Bots.findOne = async function(q) {
-  return [...AllBots[AllBots.findIndex(b => b.id == q.id)]]
+  return AllBots[AllBots.findIndex(b => b.id == q.id)];
  }
 
  Bots.sortNewAdded = function() {
-  return AllBots.reverse().slice(0, 9);
+  return [...AllBots.reverse().slice(0, 9)];
  }
 
  function compare(a, b, on) {
