@@ -20,7 +20,7 @@
  Cache.models = { bots, users, servers };
  Cache.Bots = Bots;
 
- Bots.findOne = function(q) {
+ Bots.findOne = async function(q) {
   return AllBots[AllBots.findIndex(b => b.id == q.id)];
  }
 
