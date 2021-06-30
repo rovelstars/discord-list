@@ -53,7 +53,7 @@ process.on('unhandledRejection', error => {
 
 const { app, port } = require("@server/app.js");
 globalThis.app = app;
-gloabalThis.port = port;
+globalThis.port = port;
 
 globalThis.analytics = {};
 analytics.total = 1008;
