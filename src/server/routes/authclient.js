@@ -18,6 +18,12 @@ router.get("/", async (req, res) => {
    catch(e){
     console.log(e);
    }*/
+   if(BannedList.includes(user.id)){
+    try{
+    Users.deleteOne({id: user.id});
+    }
+    catch(e){}
+   }
    if(!BannedList.includes(user.id)){
   Users.findOne({ id: user.id }).then(async result => {
    if (!result) {
