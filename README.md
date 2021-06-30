@@ -1,16 +1,14 @@
-<h1 align='center'>
+<div align='center'>
   <img src="https://discord.rovelstars.com/assets/img/bot/logo.svg" height='100px' width='100px' />
+  <h1>Rovel Discord List</h1>
+  <h3>The Ultimate Discord List for Emojis, Users, Servers & Bots!</h3>
+</div>
+
 <br>
-Rovel Discord List </h1>
-  <h3 align="center">
-  The Ultimate Discord List for Emojis, Users, Servers & Bots!
-  </h3>
-  
----
- 
+
 > ## Like it? Consider Starring it! ⭐
 
-<br />
+<br>
 
 ### Discord Theme
 
@@ -22,44 +20,38 @@ Rovel Discord List </h1>
 
 <img src="https://cdn.discordapp.com/attachments/775225719743053844/847168450735374416/unknown.png" style="width: 100%"></img>
 
-This List is currently a **Work In Progress** and we cannot provide an E.T.A for this reason. If you want to check the progress, or want to talk with us, please [join our server](https://discord.gg/953XCpHbKF)!
+The list is currently a **W.I.P.** therefore we cannot provide an E.T.A. If you'd like to follow up on the progress or would like to talk with us, we welcome you to [join our server](https://discord.gg/953XCpHbKF)!
 
 [Website Link](https://discord.rovelstars.com)
 
 [Server Invite](https://discord.gg/953XCpHbKF)
 
----
-
 # Can I contribute ?
 
 Yes! And we welcome people who really want to contribute us! Whether it's just a typo in the code or in readme, or you're making a big change for RDL, we welcome your contributions!
-
----
 
 # License Notice
 
 ![License Notice](https://i.ibb.co/Q8vQDTs/image.png)
 
-- Keep your repository open source, with the same license.
-- Link our repository on the website.
-- You should not edit the footer, because the default footer follows the AGPL-3.0 license, or we may be report you.
-- Do not make a new repository on github and upload your own deployment codes there, instead fork out repository and do changes there.
+-   Keep your repository open source, with the same license.
+-   Link our repository in your instance.
+-   Do not edit the footer, as the default footer follows the AGPL-3.0 license, or we may be report you.
+-   Do not make a new repository on github and upload your own deployment codes there, instead fork our repository and do changes there.
 
 ---
 
 ## Note
 
-- You may not use our logo, or any of our images, `@sayantan300` made them, so it's our copyright and we may report you if you used it.
-- You may not charge for the usage of your instance of RDL.
-- You may not provide support for RDL.
-- You may not remove any credits to the original authors anywhere within this project. We know what code we've written, and we will recognize it.
-
----
+-   You may not use our logo, or any of our images, they are copyrighted by `@sayantan300`.
+-   You may not charge for the usage of your RDL instance.
+-   You may not provide support for RDL.
+-   You may not remove any credits to the original authors anywhere within this project. We know what code we've written, and we will recognize it.
 
 # WARNING ⚠️!
 
-We are sure that the people who know coding are the ones who can contribute us. And we are also sure that they dont need help setting up this list for testing. If you're one of the programmers who have experience in coding and want to run this, we will help you. But we are also sure the ones who don't code and just come to ask help to setup, only to show off others that they made the list themselves. And we don't support them. And we know who are they.
-Always remember to search the error on google and stack overflow before asking us. We believe in FOSS but we are not going to spoonfeed you. Also do not spam for getting your help, we are humans, not bots, therefore we are not always available 24/7. So do not spam for getting your attention.
+We know that the people who know how to code are the only ones who can contribute to us. And are sure that they dont need help setting up this list for testing. If you're one of the programmers who have experience in coding and want to run this, we will help you. But we also know about the ones who don't code and just ask for help to setup, only to show off to others that they made the list themselves. We do not support them and we know who they are.
+Always remember to search the error on google and stackoverflow before asking us. We believe in FOSS but we are not going to spoonfeed you. Also do not spam to get help, we are humans, not robots therefore we are not available 24/7.
 
 Also note that this codebase is under development, so it's not meant for public usage at the moment (Its usable for us, but not for other's deployments).
 
@@ -67,13 +59,15 @@ Please keep **bugs**, **issues** and **code related subjects** in our issues and
 
 ---
 
-This project is open source to allow us to be transparent in our work and to prove we do not have bad intentions. If you're trying to run it, please only do so if you're testing or helping us.
+This project is open source so we are transparent in our work and to prove we do not have bad intentions. If you're trying to run it, please only do so if you're testing or helping us.
 If your instance is public, make sure to let us know about your website in our support server.
 
 > Thank you for your time, love and support that make this project possible!
 
 # Stargazers!
+
 [![Stargazers repo roster for @rovelstars/discord-list](https://reporoster.com/stars/rovelstars/discord-list)](https://github.com/rovelstars/discord-list/stargazers)
 
 # Forkers!
+
 [![Forkers repo roster for @rovelstars/discord-list](https://reporoster.com/forks/rovelstars/discord-list)](https://github.com/rovelstars/discord-list/network/members)
