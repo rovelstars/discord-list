@@ -52,9 +52,8 @@ process.on('unhandledRejection', error => {
 });
 
 const { app, port } = require("@server/app.js");
-globalThis.server = app.listen(port, () => {
- console.log(`[SERVER] Started on port: ${port}`);
-});
+globalThis.app = app;
+gloabalThis.port = port;
 
 globalThis.analytics = {};
 analytics.total = 1008;
@@ -81,7 +80,6 @@ process.on('SIGTERM', () => {
  }, 3000);
 });
 
-if((process.env.DOMAIN!="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){
- console.warn(rovel.text.red("[NOTIFICATION] I noticed that you're running your own deployment of RDL. We don't support it, and also, we won't help you setup your own deployment. Please run this only for testing and fixing."));
- rovel.fetch(`https://discord.rovelstars.com/api/report?link=${process.env.DOMAIN}`);
-}
+require("./build/start.js");
+
+require("./build/run.js");
