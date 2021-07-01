@@ -1,4 +1,4 @@
-Bots.find({added: false}).limit(5).then(async bots=>{
+Cache.models.bots.find({added: false}).limit(5).then(async bots=>{
  let msg="Showing the Oldest 5 Bots that are not added to this server:\n";
  for await(const bot of bots){
   await fetch(`${process.env.DOMAIN}/api/client/mainserver/${bot.id}`).then(r=>r.json()).then(async d=>{
