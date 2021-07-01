@@ -580,7 +580,7 @@ router.post("/new", async (req, res) => {
        user.avatar = (user.discriminator % 5).toString();
       }
       fetch(`${process.env.DOMAIN}/api/client/mainserver/${req.body.id}`).then(r => r.json()).then(dd => {
-       const bot = new Bots({
+       const bot = new Cache.models.bots({
         id: req.body.id,
         webhook: req.body.webhook,
         username: user.username,
@@ -602,6 +602,7 @@ router.post("/new", async (req, res) => {
        }).save((err, bot) => {
         if (err) { console.log("err" + err); return res.send({ err }); }
         if (!err) {
+         Cache.AllBots.push(bot);
          res.send({ success: true });
          fetch("https://discord.rovelstars.com/api/client/log", {
           method: "POST",
