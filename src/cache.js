@@ -20,17 +20,38 @@
  Cache.models = { bots, users, servers };
  Cache.Bots = Bots;
 
- Bots.findOne = async function(q) {
-  return AllBots[AllBots.findIndex(b => b.id == q.id)];
+ Bots.findOne = async function(obj) {
+  if (!obj) {
+   return AllBots[0];
+  }
+  else {
+   var arr = [];
+   for (const [key, value] of Object.entries(obj)) {
+    arr.push(AllBots.map((bot, index) => {
+     if (bot[key] == value) { return bot }
+    }).filter(Boolean));
+   }
+   return [...new Set(arr)][0][0];
+  }
  }
- 
- Bots.find = async function(q){
-  return AllBots.map((bot, index)=>{
-if(bot.id==q.id){return bot}}).filter(Boolean);
+
+ Bots.find = async function(obj) {
+  if (!obj) {
+   return AllBots;
+  }
+  else {
+   var arr = [];
+   for (const [key, value] of Object.entries(obj)) {
+    arr.push(AllBots.map((bot, index) => {
+     if (bot[key] == value) { return bot }
+    }).filter(Boolean));
+   }
+   return [...new Set(arr)][0]; //without 0: [[{bot}]]
+  }
  }
- 
+
  Bots.sortNewAdded = function() {
-  return [...AllBots].reverse().slice(0, 9);
+  return [...AllBots].slice(0, 9); //idk we dont we need to reverse!?!
  }
 
  function compare(a, b, on) {
@@ -50,7 +71,7 @@ if(bot.id==q.id){return bot}}).filter(Boolean);
  Bots.findOneById = function(q) {
   return AllBots[AllBots.findIndex(b => b.id == q)];
  }
- 
+
  Bots.refreshOne = function(id) {
   var bot = Bots.findOneById(id);
   bots.findOne({ id }).then(botu => bot = botu);
@@ -72,9 +93,10 @@ if(bot.id==q.id){return bot}}).filter(Boolean);
  Bots.findOneByOwner = function(id) {
   return AllBots[AllBots.findIndex(b => b.owners.includes(id))];
  }
- 
- Bots.findByOwner = function (id){
-  return AllBots.map((bot, index)=>{
-if(bot.owners.includes(id)){return bot}}).filter(Boolean);
+
+ Bots.findByOwner = function(id) {
+  return AllBots.map((bot, index) => {
+   if (bot.owners.includes(id)) { return bot }
+  }).filter(Boolean);
  }
 })();

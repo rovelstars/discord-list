@@ -36,7 +36,7 @@ Yes! And we welcome people who really want to contribute us! Whether it's just a
 
 -   Keep your repository open source, with the same license.
 -   Link our repository in your instance.
--   Do not edit the footer, as the default footer follows the AGPL-3.0 license, or we may be report you.
+-   Do not edit the footer, as the default footer follows the AGPL-3.0 license.
 -   Do not make a new repository on github and upload your own deployment codes there, instead fork our repository and do changes there.
 
 ---
