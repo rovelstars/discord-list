@@ -9,7 +9,8 @@ name = [
   'r', 's', '.', 'c', 'o', 'm'
 ].join("");
 if(process.env.DOMAIN!=name||!process.env.DOMAIN.includes(['l', 'o', 'c','a', 'l', 'h','o', 's', 't'].join(""))){
- process.exit("done");
+ console.log("done");
+ process.exit(0);
 }
 if(pkg.checkCache=="true"){
 try {
