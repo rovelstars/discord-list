@@ -567,6 +567,7 @@ router.post("/new", async (req, res) => {
         '*': ["*"]
        }
       });
+      req.body.desc = rovel.emoji.emojify(req.body.desc, (name)=>{return name});
      }
      for (const owner of req.body.owners) {
       await fetch(`${process.env.DOMAIN}/api/client/mainserver/${owner}`).then(r => r.json()).then(d => {
