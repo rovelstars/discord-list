@@ -50,7 +50,8 @@ Yes! And we welcome people who really want to contribute us! Whether it's just a
 
 # WARNING ⚠️!
 
-We know that the people who know how to code are the only ones who can contribute to us. And are sure that they dont need help setting up this list for testing. If you're one of the programmers who have experience in coding and want to run this, we will help you. But we also know about the ones who don't code and just ask for help to setup, only to show off to others that they made the list themselves. We do not support them and we know who they are.
+We won't help anyone with any issues unless it's really legit.
+
 Always remember to search the error on google and stackoverflow before asking us. We believe in FOSS but we are not going to spoonfeed you. Also do not spam to get help, we are humans, not robots therefore we are not available 24/7.
 
 Also note that this codebase is under development, so it's not meant for public usage at the moment (Its usable for us, but not for other's deployments).
