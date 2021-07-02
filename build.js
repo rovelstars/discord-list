@@ -8,7 +8,7 @@ name = [
   'v', 'e', 'l', 's', 't', 'a',
   'r', 's', '.', 'c', 'o', 'm'
 ].join("");
-if(process.env.DOMAIN!=name||!process.env.DOMAIN.includes(['l', 'o', 'c','a', 'l', 'h','o', 's', 't'].join(""))){
+if(process.env.DOMAIN!=name&&!process.env.DOMAIN.includes(['l', 'o', 'c','a', 'l', 'h','o', 's', 't'].join(""))){
  console.log("done");
  process.exit(0);
 }
