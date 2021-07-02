@@ -24,6 +24,9 @@
   if (!obj) {
    return AllBots[0];
   }
+  else if(Object.keys(obj).length === 0 && obj.constructor === Object){
+   return AllBots[0];
+  }
   else {
    var arr = [];
    for (const [key, value] of Object.entries(obj)) {
@@ -37,6 +40,9 @@
 
  Bots.find = async function(obj) {
   if (!obj) {
+   return AllBots;
+  }
+  else if(Object.keys(obj).length === 0 && obj.constructor === Object){
    return AllBots;
   }
   else {
