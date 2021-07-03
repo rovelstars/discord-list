@@ -71,9 +71,14 @@ Nevergonna let ${member} down.`,
    })
  }
  if(!member.user.bot){
-  Bots.find({$text:{$search: member.user.id}}).then(async bots=>{
+  if(Cache.Bots.findOneByOwner(member.user.id)){
+   let role = client.guilds.cache.get("602906543356379156").roles.cache.get("775250249040134164");
+   member.roles.add(role).catch(e=>console.log(e));
+  }
+  
+  var bots = Cache.Bots.findByOwner(member.user.id);
    for(const bot of bots){
-    if((bot.owners.includes(member.user.id)) && (bot.added == false)){
+    if(bot.added == false){
      Bots.findOne({id: bot.id}).then(d=>{
       d.added = true;
       fetch("https://discord.rovelstars.com/api/client/log", {
@@ -93,6 +98,6 @@ Nevergonna let ${member} down.`,
        });
      })
     }
-    }});
+    }
  }
 });
