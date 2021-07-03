@@ -6,7 +6,10 @@
   "start": "node src/index.js",
   "build": "node build.js"
  },
- "cacheDirectories": ["node_modules", "src/public"],
+ "cacheDirectories": [
+  "node_modules",
+  "src/public"
+ ],
  "engines": {
   "node": "^16.x"
  },
@@ -39,7 +42,7 @@
   "express-rate-limit": "5.2.6",
   "compression": "1.7.4",
   "mongodb": "3.6.4",
-  "mongoose": "5.11.15",
+  "mongoose": "5.13.1",
   "express": "4.17.1",
   "ejs": "3.1.6",
   "rovel.js": "1.2.0",
