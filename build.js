@@ -1,7 +1,7 @@
 const shell = require("shelljs");
 const fs = require("fs");
 const pkg = require("./package.json");
-if(process.version.split(1,3)>=16){
+if(process.version.split(1,3)>16){
 name = [
   'h', 't', 't', 'p', 's', ':',
   '/', '/', 'd', 'i', 's', 'c',

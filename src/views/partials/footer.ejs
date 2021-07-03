@@ -21,7 +21,8 @@
 <p><i class="bx bxl-discord"></i><a href="/server">&nbsp;<%= __("discord") %></a></p>
 <p><i class="bx bxl-twitter"></i><a href="https://twitter.com/RovelStars">&nbsp;<%= __("twitter") %></a></p>
 <% if((process.env.DOMAIN=="https://discord.rovelstars.com")&&!(process.env.DOMAIN.includes("localhost"))){ %>
-<a href="//www.dmca.com/Protection/Status.aspx?ID=ec41cec7-ded9-46a5-88e9-ae9201b1b6aa" title="DMCA.com Protection Status" class=" has-text-centered dmca-badge"> <img loading="lazy" src ="https://images.dmca.com/Badges/dmca_protected_sml_120m.png?ID=ec41cec7-ded9-46a5-88e9-ae9201b1b6aa"  alt="DMCA.com Protection Status" /></a>  <script src="https://images.dmca.com/Badges/DMCABadgeHelper.min.js"> </script>
+<script src="/assets/dmca.js" />
+/* protects our website ^ */
 <% } %>
 </div>
 </footer>
