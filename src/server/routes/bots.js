@@ -39,13 +39,12 @@ router.get("/", (req, res) => {
 
 router.get("/info", (req, res) => {
  if (!req.query.code) return res.json({ err: "no_code" });
- Cache.Bots.findOneByCode(req.query.code).then(ba => {
+ var ba = Cache.Bots.findOneByCode(req.query.code)
   if (!ba) return res.json({ err: "no_bot_found" });
   else {
    res.json(ba);
   }
  });
-});
 
 router.post("/:id/card", (req, res) => {
  if (req.query.code) {

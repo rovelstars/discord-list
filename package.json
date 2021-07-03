@@ -52,7 +52,9 @@
   "@sentry/tracing": "6.2.5",
   "module-alias": "2.2.2",
   "@meanie/mongoose-to-json": "2.5.0",
-  "bitcoin-conversion": "0.1.5"
+  "bitcoin-conversion": "0.1.5",
+  "simplebtc": "4.2.0",
+  "@babel/runtime": "7.14.6"
  },
  "devDependencies": {
   "keyboard-css": "1.2.4",

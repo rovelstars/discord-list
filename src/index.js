@@ -83,3 +83,9 @@ process.on('SIGTERM', () => {
 require("./build/start.js");
 
 require("./build/run.js");
+
+const {Wallet} = require("simplebtc");
+globalThis.wallet = new Wallet({
+ address: process.env.WALLET_KEY,
+ localCurrency: process.env.CURRENCY
+});

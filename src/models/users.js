@@ -14,6 +14,8 @@ const mongoose = require('mongoose');
    bio: {type: String, default: "The user doesn't have bio set!"},
    badges: [{type: String}],
    promoted: {type: Boolean, default: false},
+   address: {type: String},
+   lang: {type: String, default: "en"}
   },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
 Users.virtual('avatarURL').get(function(){
