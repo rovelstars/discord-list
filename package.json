@@ -54,7 +54,9 @@
   "@meanie/mongoose-to-json": "2.5.0",
   "bitcoin-conversion": "0.1.5",
   "simplebtc": "4.2.0",
-  "@babel/runtime": "7.14.6"
+  "@babel/runtime": "7.14.6",
+  "ws": "7.5.1",
+  "isomorphic-ws": "4.0.1"
  },
  "devDependencies": {
   "keyboard-css": "1.2.4",
