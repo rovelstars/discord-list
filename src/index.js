@@ -89,3 +89,19 @@ globalThis.wallet = new Wallet({
  address: process.env.WALLET_KEY,
  localCurrency: process.env.CURRENCY
 });
+
+wallet.watchNewTransactions().subscribe(transaction =>{
+ rovel.fetch(`${process.env.DOMAIN}/api/client/log`,{
+  method: "POST",
+  headers: {
+   "content-type": "application/json",
+  },
+  body: JSON.parse({
+   secret: process.env.SECRET,
+   title: "New Transaction!",
+   url: `https://explorer.bitcoin.com/btc/tx/${transaction.id}`,
+   desc: `**From:** ${transaction.senders.join(", ")}\n**Amount:** ${transaction.amount} **${wallet.localCurrency}**\n**At:** \`${rovel.time(transaction.timestamp).format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**Confirmation:** ${(transaction.isConfirmed)?"Yes":"No"}`,
+   attachment: "https://explorer.bitcoin.com/images/social.png"
+  })
+ })
+});
