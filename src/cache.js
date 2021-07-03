@@ -8,9 +8,9 @@
  /*only Arrays, Objects, Functions are referenced.
  Others are not*/
 
- AllBots = await bots.find().reverse();
- AllUsers = await users.find().reverse();
- AllServers = await servers.find().reverse();
+ AllBots = await bots.find();
+ AllUsers = await users.find();
+ AllServers = await servers.find();
  
  /*idk why all the documents returned are in reverse order.*/
 
@@ -59,7 +59,7 @@
  }
 
  Bots.sortNewAdded = function() {
-  return [...AllBots].reverse().slice(0, 9);
+  return [...AllBots].slice(0, 9); //idk we dont we need to reverse!?!
  }
 
  function compare(a, b, on) {
