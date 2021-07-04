@@ -39,7 +39,7 @@ const Bots = new Schema({
  promoted: { type: Boolean, default: false },
  votes: { type: Number, default: 0 },
  badges: [{ type: String }],
- slug: {type: String, default: this.id, unique: true},
+ slug: {type: String, default: function(){return this.id}, unique: true},
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
 Bots.virtual('avatarURL').get(function(){
