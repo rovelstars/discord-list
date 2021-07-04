@@ -39,6 +39,7 @@ const Bots = new Schema({
  promoted: { type: Boolean, default: false },
  votes: { type: Number, default: 0 },
  badges: [{ type: String }],
+ slug: {type: String, default: this.id, unique: true},
 },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
 Bots.virtual('avatarURL').get(function(){
@@ -53,6 +54,9 @@ Bots.virtual('avatarURL').get(function(){
 
 Bots.virtual('tag').get(function(){
  return `${this.username}#${this.discriminator}`;
+});
+Bots.virtual('vanity').get(function(){
+ return `https://dscrdly.com/b/${this.slug}`;
 });
 Bots.virtual('mainowner').get(function(){
  return `${this.owners[0]}`

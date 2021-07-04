@@ -129,10 +129,12 @@ app.use(booting);
 var checkBanned = require("@mw/checkBanned.js");
 var userSetup = require("@mw/userSetup.js");
 var keepAlive = require("@mw/keepAlive.js");
+var ls = require("@mw/linkService.js");
 var dnd = require("@mw/doOrDoNot.js");
 app.use(keepAlive);
 app.use(userSetup);
 app.use(checkBanned);
+app.use(ls);
 app.use(dnd);
 
 var i18n = require("i18n");
