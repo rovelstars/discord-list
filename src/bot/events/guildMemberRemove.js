@@ -9,7 +9,7 @@ client.on("guildMemberRemove", (member)=>{
   Bots.find({$text:{$search: member.user.id}}).then(async bots=>{
    for(const bot of bots){
     if(bot.owners[0]==member.user.id){
-     Bots.deleteOne({id: bot.id},function(err){
+     Cache.Bots.deleteOne({id: bot.id},function(err){
       fetch("https://discord.rovelstars.com/api/client/log", {
         method: "POST",
         headers: {

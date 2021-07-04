@@ -107,4 +107,25 @@
    if (bot.owners.includes(id)) { return bot }
   }).filter(Boolean);
  }
+ 
+ Bots.deleteOne = function(bot, callback){
+  let err=undefined;
+  if (!obj) {
+   return undefined;
+  }
+  else if(Object.keys(obj).length === 0 && obj.constructor === Object){
+   return undefined;
+  }
+  else{
+  Cache.models.bots.deleteOne(bot, callback);
+  deletedbot = Cache.Bots.findOne(bot);
+  const i = AllBots.findIndex(b=>b==deletedbot);
+  if(i > -1){
+   return AllBots.splice(i, 1);
+  }
+  else{
+   return undefined;
+  }
+ }
+ }
 })();
