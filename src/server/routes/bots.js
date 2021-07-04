@@ -217,7 +217,7 @@ router.get("/:id/code", (req, res) => {
 
 router.get("/:id/slug", (req, res) => {
  if (!req.query.key) return res.json({ err: "no_key" });
-
+ const sluggy = require("@utils/sluggy.js");
  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(async d => {
   if (d.err) return res.json({ err: "invalid_key" });
 
@@ -225,7 +225,7 @@ router.get("/:id/slug", (req, res) => {
   if (!bot) return await res.json({ err: "no_bot_found" });
   if (bot.owners.includes(d.id)) {
    if(req.query.slug){
-    bot.slug = (req.query.slug=='')?bot.id:req.query.slug;
+    bot.slug = sluggy((req.query.slug=='')?bot.id:req.query.slug);
    }
    await res.json({ slug: bot.slug });
   }

@@ -1,5 +1,3 @@
-'use strict'
-
 const specials = 'ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüû:'
 const mapped = 'AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuu '
 
