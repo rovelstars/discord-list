@@ -226,6 +226,7 @@ router.get("/:id/slug", (req, res) => {
   if (bot.owners.includes(d.id)) {
    if(req.query.slug){
     bot.slug = sluggy((req.query.slug=='')?bot.id:req.query.slug);
+    bot.save();
    }
    await res.json({ slug: bot.slug });
   }
