@@ -13,6 +13,7 @@ rule.minute = 0;
 var gitregex = /(https?:\/\/)?github.com\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+/i;
 const job = schedule.scheduleJob(rule, async function() {
  const hmm = await Bots.updateMany({}, { votes: 0 });
+ Cache.Bots.refresh();
  fetch(`${process.env.DOMAIN}/api/client/log`, {
   method: "POST",
   headers: {

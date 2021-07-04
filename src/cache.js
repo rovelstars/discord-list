@@ -84,7 +84,11 @@
   var bot = Bots.findOneById(id);
   Cache.models.bots.findOne({ id }).then(botu => bot = botu);
  }
-
+ 
+ Bots.refresh = async function(){
+  Cache.AllBots = await bots.find();
+ }
+ 
  Bots.findOneByCode = function(q) {
   return AllBots[AllBots.findIndex(b => b.code == q)];
  }
