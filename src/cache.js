@@ -118,7 +118,7 @@
   }
   else{
   Cache.models.bots.deleteOne(obj, callback);
-  deletedbot = Cache.Bots.findOne(obj);
+  Cache.Bots.findOne(obj).then(deletedbot=>{
   const i = AllBots.findIndex(b=>b==deletedbot);
   if(i > -1){
    return AllBots.splice(i, 1);
@@ -126,6 +126,7 @@
   else{
    return undefined;
   }
+  });
  }
  }
 })();
