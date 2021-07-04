@@ -82,7 +82,7 @@
 
  Bots.refreshOne = function(id) {
   var bot = Bots.findOneById(id);
-  bots.findOne({ id }).then(botu => bot = botu);
+  Cache.models.bots.findOne({ id }).then(botu => bot = botu);
  }
 
  Bots.findOneByCode = function(q) {
