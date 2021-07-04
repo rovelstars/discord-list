@@ -108,7 +108,7 @@
   }).filter(Boolean);
  }
  
- Bots.deleteOne = function(bot, callback){
+ Bots.deleteOne = function(obj, callback){
   let err=undefined;
   if (!obj) {
    return undefined;
@@ -117,8 +117,8 @@
    return undefined;
   }
   else{
-  Cache.models.bots.deleteOne(bot, callback);
-  deletedbot = Cache.Bots.findOne(bot);
+  Cache.models.bots.deleteOne(obj, callback);
+  deletedbot = Cache.Bots.findOne(obj);
   const i = AllBots.findIndex(b=>b==deletedbot);
   if(i > -1){
    return AllBots.splice(i, 1);
