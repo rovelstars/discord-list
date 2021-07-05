@@ -98,8 +98,13 @@
  }
 
  Bots.clean = function(arg) {
+  if(arg==undefined){
+   return {err: "not_found"};
+  }
+  else{
   const { _id, code, ...bot } = arg;
   return bot;
+  }
  }
 
  Bots.findOneByOwner = function(id) {

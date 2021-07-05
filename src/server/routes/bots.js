@@ -247,7 +247,7 @@ router.get("/:id/slug", (req, res) => {
  else res.json({ err: "no_key" })
 })*/
 router.get("/:id", (req, res) => {
- Cache.Bots.clean(Cache.Bots.findOneById(req.params.id));
+ res.json(Cache.Bots.clean(Cache.Bots.findOneById(req.params.id)));
  Cache.Bots.refreshOne(req.params.id);
 });
 
