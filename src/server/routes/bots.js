@@ -225,10 +225,18 @@ router.get("/:id/slug", (req, res) => {
   if (!bot) return await res.json({ err: "no_bot_found" });
   if (bot.owners.includes(d.id)) {
    if(req.query.slug){
+    Cache.Bots.findOne({slug:req.params.slug}).then(bb=>{
+    if(bb){
+     res.json({err:"used_slug"});
+    }
+    else{
     bot.slug = sluggy((req.query.slug=='')?bot.id:req.query.slug);
     bot.save();
+    await res.json({slug: bot.slug});
    }
-   await res.json({ slug: bot.slug });
+  })
+   }
+   else res.json({slug: bot.slug});
   }
   if (!bot.owners.includes(d.id)) {
    return await res.json({ err: "unauth" });
