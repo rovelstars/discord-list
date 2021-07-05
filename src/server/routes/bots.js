@@ -226,7 +226,7 @@ router.get("/:id/slug", (req, res) => {
   if (bot.owners.includes(d.id)) {
    if(req.query.slug){
     Cache.Bots.findOne({slug:req.query.slug}).then(async bb=>{
-    if(bb){
+    if(bb && (bb?.id!=bot.id)){
      res.json({err:"used_slug"});
     }
     else{
