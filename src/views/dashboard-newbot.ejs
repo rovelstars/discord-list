@@ -278,7 +278,7 @@ var botinvite = document.getElementById("botinvite");
 botdesc.addEventListener("keyup",async (e) => {
    const dirtyhtml = marked(botdesc.value.replaceAll(/&gt;+/g, ">").replaceAll(/&lt;+/g, "<"));
    const noicehtml = sanitizeHtml(dirtyhtml, {
-     allowedTags: sanitizeHtml.defaults.allowedTags.concat(['discord-message','discord-messages', 'img','iframe', 'style', 'h1', 'h2', 'link', 'mark']),
+     allowedTags: sanitizeHtml.defaults.allowedTags.concat(['discord-message','discord-messages', 'img','iframe', 'style', 'h1', 'h2', 'link', 'mark', 'svg']),
      allowVulnerableTags: true,
      allowedAttributes: {
       '*': ["*"]
