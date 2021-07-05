@@ -73,7 +73,7 @@
  }
 
  Bots.sortTopVoted = function() {
-  return AllBots.sort((a, b) => compare(a, b, "votes")).reverse().slice(0, 9);
+  return [...AllBots].sort((a, b) => compare(a, b, "votes")).reverse().slice(0, 9);
  }
 
  Bots.findOneById = function(q) {
