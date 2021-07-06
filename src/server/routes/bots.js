@@ -226,7 +226,7 @@ router.get("/:id/slug", (req, res) => {
   if (bot.owners.includes(d.id)) {
    if (req.query.slug) {
     Cache.Bots.findOne({ slug: req.query.slug }).then(async bb => {
-     if (bb && (bb ? .id != bot.id)) {
+     if (bb && (bb?.id != bot.id)) {
       res.json({ err: "used_slug" });
      }
      else {
@@ -457,12 +457,12 @@ router.post("/edit", async (req, res) => {
     if (!err && !cond) err = "owner_not_in_server";
     if (!err && cond) {
      let role = client.guilds.cache.get("602906543356379156").roles.cache.get("775250249040134164");
-     bot.owners.forEach((member)=>{
-     member.roles.remove(role).catch(e => console.log(e));
+     bot.owners.forEach((member) => {
+      member.roles.remove(role).catch(e => console.log(e));
      });
      bot.owners = req.body.owners;
-     bot.owners.forEach((member)=>{
-     member.roles.add(role).catch(e => console.log(e));
+     bot.owners.forEach((member) => {
+      member.roles.add(role).catch(e => console.log(e));
      });
     }
    }
