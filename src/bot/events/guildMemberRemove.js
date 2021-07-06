@@ -6,8 +6,8 @@ client.on("guildMemberRemove", (member)=>{
  }
  
  if(!member.user.bot){
-  Bots.find({$text:{$search: member.user.id}}).then(async bots=>{
-   for(const bot of bots){
+  var bots = Cache.Bots.findByOwner(menber.user.id);
+     for(const bot of bots){
     if(bot.owners[0]==member.user.id){
      Cache.Bots.deleteOne({id: bot.id},function(err){
       fetch("https://discord.rovelstars.com/api/client/log", {
@@ -28,7 +28,7 @@ client.on("guildMemberRemove", (member)=>{
      });
     }
     else if(bot.owners.includes(member.user.id)){
-     Bots.findOne({id: bot.id}).then(d=>{
+     Cache.Bots.findOne({id: bot.id}).then(d=>{
       d.added = false;
       d.save();
       fetch("https://discord.rovelstars.com/api/client/log", {
@@ -48,10 +48,10 @@ client.on("guildMemberRemove", (member)=>{
        });
      })
     }
-    }});
+    };
  }
  if(member.user.bot){
-   Bots.findOne({id: member.user.id}).then(bot=>{
+   Cache.Bots.findOne({id: member.user.id}).then(bot=>{
     if(!bot) return;
     if(bot.added){
      bot.added = false;
