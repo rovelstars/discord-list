@@ -41,11 +41,11 @@ router.get("/", (req, res) => {
 router.get("/info", (req, res) => {
  if (!req.query.code) return res.json({ err: "no_code" });
  var ba = Cache.Bots.findOneByCode(req.query.code)
-  if (!ba) return res.json({ err: "no_bot_found" });
-  else {
-   res.json(ba);
-  }
- });
+ if (!ba) return res.json({ err: "no_bot_found" });
+ else {
+  res.json(ba);
+ }
+});
 
 router.post("/:id/card", (req, res) => {
  if (req.query.code) {
@@ -224,19 +224,19 @@ router.get("/:id/slug", (req, res) => {
   var bot = Cache.Bots.findOneById(req.params.id);
   if (!bot) return await res.json({ err: "no_bot_found" });
   if (bot.owners.includes(d.id)) {
-   if(req.query.slug){
-    Cache.Bots.findOne({slug:req.query.slug}).then(async bb=>{
-    if(bb && (bb?.id!=bot.id)){
-     res.json({err:"used_slug"});
-    }
-    else{
-    bot.slug = sluggy((req.query.slug=='')?bot.id:req.query.slug);
-    bot.save();
-    await res.json({slug: bot.slug});
+   if (req.query.slug) {
+    Cache.Bots.findOne({ slug: req.query.slug }).then(async bb => {
+     if (bb && (bb ? .id != bot.id)) {
+      res.json({ err: "used_slug" });
+     }
+     else {
+      bot.slug = sluggy((req.query.slug == '') ? bot.id : req.query.slug);
+      bot.save();
+      await res.json({ slug: bot.slug });
+     }
+    })
    }
-  })
-   }
-   else res.json({slug: bot.slug});
+   else res.json({ slug: bot.slug });
   }
   if (!bot.owners.includes(d.id)) {
    return await res.json({ err: "unauth" });
@@ -455,7 +455,16 @@ router.post("/edit", async (req, res) => {
      })
     }
     if (!err && !cond) err = "owner_not_in_server";
-    if (!err && cond) bot.owners = req.body.owners;
+    if (!err && cond) {
+     let role = client.guilds.cache.get("602906543356379156").roles.cache.get("775250249040134164");
+     bot.owners.forEach((member)=>{
+     member.roles.remove(role).catch(e => console.log(e));
+     });
+     bot.owners = req.body.owners;
+     bot.owners.forEach((member)=>{
+     member.roles.add(role).catch(e => console.log(e));
+     });
+    }
    }
   }
   if (!err && req.body.desc) {
@@ -463,7 +472,7 @@ router.post("/edit", async (req, res) => {
     if (!err && req.body.desc.length < 100) err = "invalid_desc";
     else {
      bot.desc = coronaSanitizer(req.body.desc, {
-      allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages', 'img', 'iframe', 'style', 'h1', 'h2', 'link', 'mark','svg']),
+      allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages', 'img', 'iframe', 'style', 'h1', 'h2', 'link', 'mark', 'svg']),
       allowVulnerableTags: true,
       allowedAttributes: {
        '*': ["*"]
@@ -597,7 +606,7 @@ router.post("/new", async (req, res) => {
         '*': ["*"]
        }
       });
-      req.body.desc = rovel.emoji.emojify(req.body.desc, (name)=>{return name});
+      req.body.desc = rovel.emoji.emojify(req.body.desc, (name) => { return name });
      }
      for (const owner of req.body.owners) {
       await fetch(`${process.env.DOMAIN}/api/client/mainserver/${owner}`).then(r => r.json()).then(d => {
@@ -633,7 +642,11 @@ router.post("/new", async (req, res) => {
        }).save((err, bot) => {
         if (err) { console.log("err" + err); return res.send({ err }); }
         if (!err) {
-         Cache.AllBots.push(bot);
+         Cache.AllBots.unshift(bot);
+         let role = client.guilds.cache.get("602906543356379156").roles.cache.get("775250249040134164");
+         bot.owners.forEach((member) => {
+          member.roles.add(role).catch(e => console.log(e));
+         });
          res.send({ success: true });
          fetch("https://discord.rovelstars.com/api/client/log", {
           method: "POST",
