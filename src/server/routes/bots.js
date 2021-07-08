@@ -576,7 +576,6 @@ router.post("/edit", async (req, res) => {
  });
 });
 router.post("/new", async (req, res) => {
- console.log("dead");
  let err;
  Cache.Bots.findOne({ id: req.body.id }).then(async result => {
   if (result) err = "bot_already_added";
@@ -604,6 +603,7 @@ router.post("/new", async (req, res) => {
      if(req.body.owned!="no"){
      req.body.owners = [...new Set(req.body.owners)];
      }
+     console.log("pp");
      if (!err && !req.body.short) err = "no_short"
      if (!err && (req.body.short.length < 11)) err = "invalid_short"
      if (!err && (req.body.short.length > 150)) {
