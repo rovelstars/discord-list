@@ -631,7 +631,8 @@ router.post("/new", async (req, res) => {
       if (!err && (req.body.support.length >= 18)) err: "invalid_support"
      }
      if (!err && req.body.github) {
-      if (!req.body.github.match(gitregex)) err = "invalid_github"
+      //if (!req.body.github.match(gitregex)) err = "invalid_github"
+      if(!req.body.github.startsWith("https://github.com/")) err="invalid_github"; //lemme add my dank memer bot
      }
      if (!err && req.body.desc) {
       req.body.desc = coronaSanitizer(req.body.desc, {
