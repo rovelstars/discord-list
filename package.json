@@ -42,7 +42,7 @@
   "express-rate-limit": "5.2.6",
   "compression": "1.7.4",
   "mongodb": "3.6.10",
-  "mongoose": "5.11.15",
+  "mongoose": "5.13.2",
   "express": "4.17.1",
   "ejs": "3.1.6",
   "rovel.js": "1.2.0",
@@ -50,9 +50,7 @@
   "express-session": "1.17.1",
   "express-fileupload": "1.2.1",
   "passport": "0.4.1",
-
   "@sentry/node": "6.7.1",
-
   "marked": "2.1.1",
   "@sentry/tracing": "6.7.1",
   "module-alias": "2.2.2",
