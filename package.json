@@ -21,7 +21,7 @@
   "jsdom": "16.6.0",
   "rdl-i18n": "github:rovelstars/rdl-i18n",
   "gray-matter": "4.0.3",
-  "translatte": "3.0.0",
+  "translatte": "3.0.1",
   "html-entities": "2.3.2",
   "nodemailer": "6.6.2",
   "proxy-list-random": "1.0.2",
