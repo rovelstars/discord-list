@@ -21,6 +21,7 @@ const Bots = new Schema({
   discriminator: {type: String, required: true},
   status: String,
  owners: [{type: String}], //owners
+ owned: {type: Boolean, default: true},
  lib: {type: String},
  short: String, //short desc
  desc: String, //description

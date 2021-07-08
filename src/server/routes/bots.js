@@ -306,6 +306,41 @@ router.delete("/:id", async (req, res) => {
  });
 });
 
+router.get("/import/not-owned/:id", (req, res)=>{
+ fetch(`https://top.gg/api/bots/${req.params.id}`, {
+    method: "GET",
+    headers: {
+     "Authorization": `${process.env.TOPTOKEN}`
+    }
+   }).then(r => r.json()).then(bot => {
+    if (bot.error) return res.json({ err: bot.error.toLowerCase().split(" ").join("_") });
+    else {
+     var abot = {
+      id: bot.id,
+      lib: (bot.lib == "") ? null : bot.lib,
+      prefix: bot.prefix,
+      short: bot.shortdesc,
+      desc: bot.longdesc,
+      support: bot.support,
+      owners: bot.owners,
+      owned: "no",
+      invite: bot.invite,
+      github: bot.github,
+      website: bot.website
+     }
+     fetch(`${process.env.DOMAIN}/api/bots/new`, {
+      method: "POST",
+      headers: {
+       "content-type": "application/json"
+      },
+      body: JSON.stringify(abot)
+     }).then(r => r.json()).then(d => {
+      res.json(d);
+     })
+    }
+})
+});
+
 router.get("/import/topgg/:id", (req, res) => {
  if (req.query.key) {
   var userid;
@@ -563,7 +598,7 @@ router.post("/new", async (req, res) => {
      if (!err && req.body.bg) {
       if (!validator.isURL(req.body.bg)) err = "invalid_bg"
      }
-     if (!err && !req.body.owners) err = "no_owners"
+     if (!err && !req.body.owners && (req.body.owned!="no")) err = "no_owners"
 
      req.body.owners = [...new Set(req.body.owners)];
 
@@ -608,12 +643,16 @@ router.post("/new", async (req, res) => {
       });
       req.body.desc = rovel.emoji.emojify(req.body.desc, (name) => { return name });
      }
+     if(req.body.owned!="no"){
      for (const owner of req.body.owners) {
       await fetch(`${process.env.DOMAIN}/api/client/mainserver/${owner}`).then(r => r.json()).then(d => {
        if (!err && !d.condition) {
         err = "owner_not_in_server"
        }
       })
+     }}
+     if(req.body.owned=="no"){
+      req.body.owners=[];
      }
      if (!err) {
       if (!user.avatar) {
@@ -627,6 +666,7 @@ router.post("/new", async (req, res) => {
         discriminator: user.discriminator,
         avatar: user.avatar,
         owners: req.body.owners,
+        owned: (req.body.owned!="no")? true: false,
         added: dd.condition,
         short: req.body.short,
         desc: req.body.desc,
@@ -656,7 +696,7 @@ router.post("/new", async (req, res) => {
           body: JSON.stringify({
            "secret": process.env.SECRET,
            "img": bot.avatarURL,
-           "desc": `**${user.username}** has been added by <@!${bot.owners[0]}>\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${(dd.condition==true)?"\nThe bot has been already added to the server, so they are saved as 'added'":""}`,
+           "desc": `**${user.username}** has been added by ${(req.body.owned=="no")?"No One":("<@!"+bot.owners[0]+">")}\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${(dd.condition==true)?"\nThe bot has been already added to the server, so they are saved as 'added'":""}${(req.body.owned=="no")?"\nSince there's no owner of the bot, this bot will be added without owners and we are open for DMs from the real bot owner.":""}`,
            "title": "New Bot Added!",
            "color": "#31CB00",
            "owners": bot.owners,

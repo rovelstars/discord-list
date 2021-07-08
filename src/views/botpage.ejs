@@ -89,7 +89,7 @@ imglink: bot.bg
   <div class="control" id="owners">
     <div class="tags has-addons">
     <span class="tag is-dark"><i class="bx bxs-crown"></i>&nbsp;Made by</span>
-    <span class="tag is-success"><%= bot.owner.join(", ") %></span>
+    <span class="tag is-success"><%= (bot.owned)?bot.owner.join(", "):"None. DM our team of you're the owner of this bot." %></span>
     </div>
   </div><br />
   <div class="control" id="servers">
