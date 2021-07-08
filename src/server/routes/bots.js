@@ -599,9 +599,9 @@ router.post("/new", async (req, res) => {
       if (!validator.isURL(req.body.bg)) err = "invalid_bg"
      }
      if (!err && !req.body.owners && (req.body.owned!="no")) err = "no_owners"
-
+     if(req.body.owned!="no"){
      req.body.owners = [...new Set(req.body.owners)];
-
+     }
      if (!err && !req.body.short) err = "no_short"
      if (!err && (req.body.short.length < 11)) err = "invalid_short"
      if (!err && (req.body.short.length > 150)) {
@@ -654,6 +654,7 @@ router.post("/new", async (req, res) => {
      if(req.body.owned=="no"){
       req.body.owners=[];
      }
+     console.log("cough");
      if (!err) {
       if (!user.avatar) {
        user.avatar = (user.discriminator % 5).toString();
