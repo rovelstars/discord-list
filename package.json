@@ -34,7 +34,7 @@
   "cloudflare-express": "1.0.1",
   "response-time": "2.3.2",
   "validator": "13.6.0",
-  "sanitize-html": "2.3.3",
+  "sanitize-html": "2.4.0",
   "node-schedule": "2.0.0",
   "helmet": "4.6.0",
   "cookie-parser": "1.4.5",
@@ -50,9 +50,7 @@
   "express-session": "1.17.1",
   "express-fileupload": "1.2.1",
   "passport": "0.4.1",
-
   "@sentry/node": "6.7.1",
-
   "marked": "2.1.1",
   "@sentry/tracing": "6.7.1",
   "module-alias": "2.2.2",
