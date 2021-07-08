@@ -683,7 +683,7 @@ router.post("/new", async (req, res) => {
         if (err) { console.log("err" + err); return res.send({ err }); }
         if (!err) {
          Cache.AllBots.unshift(bot);
-         let role = client.guilds.cache.get("602906543356379156").roles.cache.get("775250249040134164");
+         let role = privatebot.guilds.cache.get("602906543356379156").roles.cache.get("775250249040134164");
          bot.owners.forEach((member) => {
           member.roles.add(role).catch(e => console.log(e));
          });
