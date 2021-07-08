@@ -577,8 +577,9 @@ router.post("/edit", async (req, res) => {
 });
 router.post("/new", async (req, res) => {
  let err;
- Bots.findOne({ id: req.body.id }).then(async result => {
+ Cache.Bots.findOne({ id: req.body.id }).then(async result => {
   if (result) err = "bot_already_added";
+  console.log("bruhhh");
   if (!err) {
    if (req.body.github == "") req.body.github = null;
    if (req.body.bg == "") req.body.bg = null;
