@@ -659,6 +659,7 @@ router.post("/new", async (req, res) => {
        user.avatar = (user.discriminator % 5).toString();
       }
       fetch(`${process.env.DOMAIN}/api/client/mainserver/${req.body.id}`).then(r => r.json()).then(dd => {
+       console.log("im here");
        const bot = new Cache.models.bots({
         id: req.body.id,
         webhook: req.body.webhook,
@@ -666,7 +667,7 @@ router.post("/new", async (req, res) => {
         discriminator: user.discriminator,
         avatar: user.avatar,
         owners: req.body.owners,
-        owned: (req.body.owned!="no")? true: false,
+        owned: (req.body.owned!="no")?true:false,
         added: dd.condition,
         short: req.body.short,
         desc: req.body.desc,
@@ -683,10 +684,12 @@ router.post("/new", async (req, res) => {
         if (err) { console.log("err" + err); return res.send({ err }); }
         if (!err) {
          Cache.AllBots.unshift(bot);
+         if(req.body.owned!="no"){
          let role = privatebot.guilds.cache.get("602906543356379156").roles.cache.get("775250249040134164");
          bot.owners.forEach((member) => {
           member.roles.add(role).catch(e => console.log(e));
          });
+         }
          res.send({ success: true });
          fetch("https://discord.rovelstars.com/api/client/log", {
           method: "POST",
