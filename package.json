@@ -6,7 +6,10 @@
   "start": "node src/index.js",
   "build": "node build.js"
  },
- "cacheDirectories": ["node_modules", "src/public"],
+ "cacheDirectories": [
+  "node_modules",
+  "src/public"
+ ],
  "engines": {
   "node": "^16.x"
  },
@@ -38,7 +41,7 @@
   "disco-oauth": "5.1.0",
   "express-rate-limit": "5.2.6",
   "compression": "1.7.4",
-  "mongodb": "3.6.4",
+  "mongodb": "3.6.10",
   "mongoose": "5.11.15",
   "express": "4.17.1",
   "ejs": "3.1.6",
@@ -47,9 +50,11 @@
   "express-session": "1.17.1",
   "express-fileupload": "1.2.1",
   "passport": "0.4.1",
-  "marked": "2.0.3",
+
   "@sentry/node": "6.7.1",
-  "@sentry/tracing": "6.2.5",
+
+  "marked": "2.1.1",
+  "@sentry/tracing": "6.7.1",
   "module-alias": "2.2.2",
   "@meanie/mongoose-to-json": "2.5.0",
   "bitcoin-conversion": "0.1.5",
