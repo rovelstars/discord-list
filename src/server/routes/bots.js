@@ -579,7 +579,6 @@ router.post("/new", async (req, res) => {
  let err;
  Cache.Bots.findOne({ id: req.body.id }).then(async result => {
   if (result) err = "bot_already_added";
-  console.log("bruhhh");
   if (!err) {
    if (req.body.github == "") req.body.github = null;
    if (req.body.bg == "") req.body.bg = null;
@@ -603,7 +602,6 @@ router.post("/new", async (req, res) => {
      if(req.body.owned!="no"){
      req.body.owners = [...new Set(req.body.owners)];
      }
-     console.log("pp");
      if (!err && !req.body.short) err = "no_short"
      if (!err && (req.body.short.length < 11)) err = "invalid_short"
      if (!err && (req.body.short.length > 150)) {
@@ -656,13 +654,11 @@ router.post("/new", async (req, res) => {
      if(req.body.owned=="no"){
       req.body.owners=[];
      }
-     console.log("cough");
      if (!err) {
       if (!user.avatar) {
        user.avatar = (user.discriminator % 5).toString();
       }
       fetch(`${process.env.DOMAIN}/api/client/mainserver/${req.body.id}`).then(r => r.json()).then(dd => {
-       console.log("im here");
        const bot = new Cache.models.bots({
         id: req.body.id,
         webhook: req.body.webhook,
