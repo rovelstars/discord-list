@@ -23,14 +23,14 @@ imglink: bot.bg
     }]
 }
 </script>
-<% if(!bot.added){ %>
+</head>
+<body>
+ <%- include('partials/load', {theme}); %>
+ <% if(!bot.added){ %>
 <script>
  Swal.fire({icon: "warning", title: "<%= bot.tag %> has not been listed!", text: "Please do not add this bot since it's waiting for approval. You can join our server to get informed about when <%= bot.username %> will be approved. Or just sit back here and scream!", footer: '<a href="/server">Ask us whether is bot is safe or not.</a>'});
 </script>
 <% } %>
-</head>
-<body>
- <%- include('partials/load', {theme}); %>
  <%- include('partials/navbar', {user}); %>
  <section class="hero" style="background-image: url(<%= bot.bg %>); background-size: cover;">
   <div class="hero-body">
@@ -89,7 +89,7 @@ imglink: bot.bg
   <div class="control" id="owners">
     <div class="tags has-addons">
     <span class="tag is-dark"><i class="bx bxs-crown"></i>&nbsp;Made by</span>
-    <span class="tag is-success"><%= (bot.owned)?bot.owner.join(", "):"None. DM our team of you're the owner of this bot." %></span>
+    <span class="tag is-success"><%= (bot.owned)?bot.owner.join(", "):"None" %></span>
     </div>
   </div><br />
   <div class="control" id="servers">
