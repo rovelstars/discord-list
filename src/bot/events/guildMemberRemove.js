@@ -6,7 +6,7 @@ client.on("guildMemberRemove", (member)=>{
  }
  
  if(!member.user.bot){
-  var bots = Cache.Bots.findByOwner(menber.user.id);
+  var bots = Cache.Bots.findByOwner(member.user.id);
      for(const bot of bots){
     if(bot.owners[0]==member.user.id){
      Cache.Bots.deleteOne({id: bot.id},function(err){
