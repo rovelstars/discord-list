@@ -317,7 +317,7 @@ router.get("/import/not-owned/:id", (req, res)=>{
     else {
      var abot = {
       id: bot.id,
-      lib: (bot.lib == "") ? null : bot.lib,
+      lib: (bot.lib == "") ? "none" : bot.lib,
       prefix: bot.prefix,
       short: bot.shortdesc,
       desc: bot.longdesc,
@@ -356,7 +356,7 @@ router.get("/import/topgg/:id", (req, res) => {
     if (bot.owners.includes(userid)) {
      var abot = {
       id: bot.id,
-      lib: (bot.lib == "") ? null : bot.lib,
+      lib: (bot.lib == "") ? "none" : bot.lib,
       prefix: bot.prefix,
       short: bot.shortdesc,
       desc: bot.longdesc,
@@ -398,7 +398,7 @@ router.get("/import/del/:id", (req, res) => {
      if (bot.bot.owner.id == user.id) {
       var abot = {
        id: bot.bot.id,
-       lib: (bot.bot.library == "") ? null : bot.bot.library,
+       lib: (bot.bot.library == "") ? "none" : bot.bot.library,
        prefix: bot.bot.prefix,
        short: bot.bot.shortDesc,
        desc: bot.bot.longDesc,
