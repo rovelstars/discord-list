@@ -1,6 +1,6 @@
 require("module-alias/register");
+Error.stackTraceLimit = Infinity;
 globalThis.WebSocket = require('isomorphic-ws')
-
 const v = process.version.slice(1,3);
 if(v<16){
  console.error("[ERROR] Node.js v16 or above is required.");
