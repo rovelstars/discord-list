@@ -632,7 +632,7 @@ router.post("/new", async (req, res) => {
      }
      if (!err && req.body.github) {
       //if (!req.body.github.match(gitregex)) err = "invalid_github"
-      if(!req.body.github.startsWith("https://github.com/")||!req.body.github.startsWith("https://gitlab.com/")) err="invalid_github"; //lemme add my dank memer bot
+      if((!req.body.github.startsWith("https://github.com/"))||(!req.body.github.startsWith("https://gitlab.com/"))) err="invalid_github"; //lemme add my dank memer bot
      }
      if (!err && req.body.desc) {
       req.body.desc = coronaSanitizer(req.body.desc, {
