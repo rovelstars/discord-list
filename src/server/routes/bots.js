@@ -717,7 +717,7 @@ router.post("/new", async (req, res) => {
    }
    catch (e) {
     res.json({ err: e });
-    console.error("error:"+e);
+    console.error("error: "+e.stack);
    }
   }
  });
