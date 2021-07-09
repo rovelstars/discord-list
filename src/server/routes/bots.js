@@ -615,6 +615,7 @@ router.post("/new", async (req, res) => {
       if (!validator.isURL(req.body.donate)) err = "invalid_donate"
      }
      if (!err && !req.body.desc) err = "no_desc"
+     if (!err && !req.body.lib) err = "no_lib"
      if (!err && req.body.lib.length > 11) err = "invalid_lib"
      if (!err && (req.body.desc.length < 100)) err = "invalid_desc"
      if (!err && !req.body.prefix) err = "no_prefix"
