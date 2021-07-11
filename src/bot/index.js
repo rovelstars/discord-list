@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 require("./publicbot/index.js");
 const normalText = require("diacritics").remove;
-var client = new Discord.Client({ ws: { intents: Discord.Intents.ALL } });
+var client = new Discord.Client({ ws: { intents: new Discord.Intents(Discord.Intents.ALL) } });
 client.login(process.env.TOKEN);
 globalThis.privatebot = client;
 const { fetch } = require("rovel.js");
