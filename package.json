@@ -59,7 +59,7 @@
   "simplebtc": "4.2.0",
   "translatte": "^3.0.1",
   "validator": "13.6.0",
-  "ws": "^7.5.2"
+  "ws": "^7.5.3"
  },
  "devDependencies": {
   "autoprefixer": "^10.2.0",
