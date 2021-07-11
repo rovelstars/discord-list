@@ -492,11 +492,13 @@ router.post("/edit", async (req, res) => {
     if (!err && !cond) err = "owner_not_in_server";
     if (!err && cond) {
      let role = privatebot.guilds.cache.get("602906543356379156").roles.cache.get("775250249040134164");
-     bot.owners.forEach((member) => {
+     bot.owners.forEach((meme) => {
+      member = privatebot.guilds.cache.get("602906543356379156").members.cache.get(meme);
       member.roles.remove(role).catch(e => console.log(e));
      });
      bot.owners = req.body.owners;
-     bot.owners.forEach((member) => {
+     bot.owners.forEach((meme) => {
+      member = privatebot.guilds.cache.get("602906543356379156").members.cache.get(meme);
       member.roles.add(role).catch(e => console.log(e));
      });
     }
@@ -687,7 +689,8 @@ router.post("/new", async (req, res) => {
          Cache.AllBots.unshift(bot);
          if(req.body.owned!="no"){
          let role = privatebot.guilds.cache.get("602906543356379156").roles.cache.get("775250249040134164");
-         bot.owners.forEach((member) => {
+         bot.owners.forEach((meme) => {
+          member = privatebot.guilds.cache.get("602906543356379156").members.cache.get(meme);
           member.roles.add(role).catch(e => console.log(e));
          });
          }
