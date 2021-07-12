@@ -10,7 +10,7 @@ const Servers = new Schema({
    name: {type: String, required: true},
    desc: {type: String, default: "Description is not updated."},
    owner: {type: String, required: true},
-   icon: {type: String, required: true},
+   icon: {type: String, default: function(){return `https://ui-avatars.com/api/?name=${message.guild.name.replaceAll(" ","+")}&bold=true&color=ffffff&format=svg&background=5865f2`}},
    promoted: {type: Boolean, default: false},
    badges: [{type: String}],
   },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
