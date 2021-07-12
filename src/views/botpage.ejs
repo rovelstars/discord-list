@@ -37,12 +37,12 @@ imglink: bot.bg
    <div class="container">
     <div class="columns">
      <div class="column is-2">
-      <img class="avatar image is-128x128" style="margin: auto; border-radius: 50%;" src="<%= bot.avatarURL %>" alt="<%= bot.tag %> Avatar">
+      <img class="avatar image is-128x128 bot-img" style="margin: auto; border-radius: 50%;" src="<%= bot.avatarURL %>" alt="<%= bot.tag %> Avatar">
      </div>
      <div class="column is-10">
-         <h1 class="title"><%= bot.username %>
+         <h1 class="title bot-name"><%= bot.username %>
    </h1><br />
-   <h4 class="subtitle">
+   <h4 class="subtitle bot-description">
     <%= bot.short %>
    </h4><br />
    <div class="columns buttons">
@@ -141,7 +141,7 @@ imglink: bot.bg
 <article class="media">
 <div class="media-left">
 <figure class="image is-64x64">
-<img width="64" height="64" class="is-rounded bot-img" loading="lazy" src="<%= bot.card.img %>" alt="<%= bot.card.title %>" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
+<img width="64" height="64" class="is-rounded" loading="lazy" src="<%= bot.card.img %>" alt="<%= bot.card.title %>" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
 </figure>
 </div>
 <div style="overflow: hidden;" class="media-content">
@@ -162,7 +162,7 @@ imglink: bot.bg
 </div>
 <% } %>
  <div class="container" style="overflow: hidden;">
-  <div class="section content has-background-dark is-curved">
+  <div class="section content has-background-dark is-curved longdescription">
    <%- bot.desc %>
    </div>
    </div>
