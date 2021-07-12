@@ -2,7 +2,7 @@ module.exports = async function(req, res, next) {
  var user = res.locals.user;
  if (user) {
   if (typeof BannedList != "undefined") {
-   const Isbanned = (BannedList.includes(req.params.id)) ? true : false;
+   const Isbanned = (BannedList.includes(user.id)) ? true : false;
    if (Isbanned) {
     res.sendFile(path.resolve("src/public/assets/banned.html"));
     fetch(`${process.env.DOMAIN}/api/client/log`, {
