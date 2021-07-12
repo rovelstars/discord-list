@@ -142,7 +142,7 @@ router.get("/beta/dashboard", async (req, res) => {
   let botus = [];
   Users.findOne({ id: res.locals.user.id }).then(async u => {
    res.locals.user.bal = rovel.approx(u.bal);
-   Bots.find({ $text: { $search: res.locals.user.id } }).then(async bots => {
+   Cache.models.bots.findOne({ $text: { $search: res.locals.user.id } }).then(async bots => {
     for (const bot of bots) {
      if (bot.owners.includes(res.locals.user.id)) {
       await botus.push(bot);
@@ -171,7 +171,7 @@ router.get("/dashboard/bots/edit/:id", async (req, res) => {
  }
  else {
   var bot = Cache.Bots.findOneById(req.params.id);
-  if(bot.owners.includes(res.locals.user.id)){
+  if(bot.owners.includes(res.locals.user.id) || privatebot.owners.includes(res.locals.user.id)){
    bot = bot.toObject(); //get virtuals then
   await res.render('editbot.ejs',{bot});
   await Cache.Bots.refreshOne(req.params.id);

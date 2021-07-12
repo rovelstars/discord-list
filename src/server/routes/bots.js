@@ -472,7 +472,7 @@ router.post("/edit", async (req, res) => {
   if (!err && !bot) err = "bot_not_found";
   await fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(async d => {
    if (!err && d.err) err = "invalid_key";
-   if (!err && !bot.owners.includes(d.id)) "unauth"
+   if (!err && !bot.owners.includes(d.id) && !privatebot.owners.includes(d.id)) err = "unauth"
   });
   if (!err && req.body.webhook) {
    if (!err && req.body.webhook !== bot.webhook) {
