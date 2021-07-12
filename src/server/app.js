@@ -114,7 +114,7 @@ const limiter = rateLimit({
 });
 app.set('trust proxy', 1);
 app.all("/", (req, res, next)=>{
- if(req.originalPath.startsWith("/assets")){
+ if(req.originalUrl.startsWith("/assets")){
  res.writeHead(202).catch(e=>console.log(e.stack));
  res.write(' ');
  }
