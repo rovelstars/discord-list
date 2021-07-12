@@ -10,18 +10,23 @@ const Servers = new Schema({
    name: {type: String, required: true},
    desc: {type: String, default: "Description is not updated."},
    owner: {type: String, required: true},
-   icon: {type: String, default: function(){return `https://ui-avatars.com/api/?name=${message.guild.name.replaceAll(" ","+")}&bold=true&color=ffffff&format=svg&background=5865f2`}},
+   icon: {type: String},
    promoted: {type: Boolean, default: false},
    badges: [{type: String}],
   },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
   
   Servers.virtual('iconURL').get(function(){
+   if(!this.icon){
+    return `https://ui-avatars.com/api/?name=${this.name.replaceAll(" ","+")}&bold=true&color=ffffff&format=svg&background=5865f2`
+   }
+   else{
  var ani=false;
  if(this.icon.startsWith("a_")) ani=true;
  const aniurl=`https://cdn.discordapp.com/icons/${this.id}/${this.icon}.gif`;
  const nonurl=`https://cdn.discordapp.com/icons/${this.id}/${this.icon}.png`;
  const url = (ani)?aniurl:nonurl;
  return url;
+   }
 });
   
   var servers;
