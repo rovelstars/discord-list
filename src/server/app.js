@@ -113,6 +113,14 @@ const limiter = rateLimit({
  max: 300 // limit each IP to 300 requests per windowMs
 });
 app.set('trust proxy', 1);
+app.all("/", (req, res, next)=>{
+ if(req.originalPath.startsWith("/assets")){
+ res.writeHead(202).catch(e=>console.log(e.stack));
+ res.write(' ');
+ }
+ //make the server giving respond fast
+ next();
+});
 app.use("/api", limiter);
 process.on('unhandledRejection', err => {
  var unre = function(req, res, next) {
