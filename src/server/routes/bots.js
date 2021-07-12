@@ -686,7 +686,7 @@ router.post("/new", async (req, res) => {
        }).save((err, bot) => {
         if (err) { console.log("err" + err); return res.send({ err }); }
         if (!err) {
-         Cache.AllBots.unshift(bot);
+         Cache.AllBots.push(bot);
          if(req.body.owned!="no"){
          let role = privatebot.guilds.cache.get("602906543356379156").roles.cache.get("775250249040134164");
          bot.owners.forEach((meme) => {

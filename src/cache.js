@@ -59,7 +59,7 @@
  }
 
  Bots.sortNewAdded = function() {
-  return [...AllBots].slice(0, 9); //idk we dont we need to reverse!?!
+  return [...AllBots].reverse().slice(0, 9); //idk we dont we need to reverse!?!
  }
 
  function compare(a, b, on) {
