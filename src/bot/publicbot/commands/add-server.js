@@ -9,7 +9,7 @@ if (message.member.hasPermission("ADMINISTRATOR")) {
       id: message.guild.id,
       owner: message.guild.ownerID,
       name: message.guild.name,
-      icon: message.guild.icon,
+      icon: message.guild.icon||`https://ui-avatars.com/api/?name=${message.guild.name.replaceAll(" ","+")}&bold=true&color=ffffff&format=svg&background=5865f2`,
       short: (message.guild.description|| "Short description is not Updated.")
      }).save((err, ser) => {
       if (err) message.reply("Nani?! An Error Occurred!\nI cannot add your server to RDL!\n" + err);
