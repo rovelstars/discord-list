@@ -482,7 +482,7 @@ router.post("/edit", async (req, res) => {
   }
   if (!err && req.body.owners) {
    req.body.owners = [...new Set(req.body.owners)];
-   if (!err && (req.body.owners !== bot.owners)) {
+   if (!err && (req.body.owners !== bot.owners) && bot.owned) {
     var cond = true;
     for (const owner of req.body.owners) {
      await fetch(`${process.env.DOMAIN}/api/client/mainserver/${owner}`).then(r => r.json()).then(d => {
