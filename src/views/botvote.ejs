@@ -15,6 +15,7 @@ imglink: bot.bg
    fetch(`https://discord.rovelstars.com/api/bots/<%= bot.id %>/vote?coins=${coins.value}`).then(r=>r.json()).then(d=>{
     submitbutton.classList.remove("is-loading");
     if(d.err){
+     if(d.err=="coins_not_divisible") d.err="your coins is not divisible by 10. remember: r$10 = 1 vote"
      var title = d.err.split("_").join(" ").toUpperCase()
      Swal.fire({icon: "error", title,  footer: '<a href="/server">Why do I have this error?</a>'});
     }
