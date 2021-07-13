@@ -1,5 +1,5 @@
 if(message.author.id===message.guild.owner.user.id){
- Servers.findOne({id: message.guild.id}).then(server=>{
+ Cache.models.servers.findOne({id: message.guild.id}).then(server=>{
   if(server){
    fetch("https://discord.rovelstars.com/api/client/log", {
         method: "POST",
@@ -16,7 +16,7 @@ if(message.author.id===message.guild.owner.user.id){
          "url": `https://discord.rovelstars.com/`
         })
        });
-       Servers.deleteOne({id: message.guild.id},()=>{});
+       Cache.models.servers.deleteOne({id: message.guild.id},()=>{});
        message.reply("<:pokisad:799907571812401172> Done..");
   }
   else message.reply("Baka! This server has been already deleted/not added.");

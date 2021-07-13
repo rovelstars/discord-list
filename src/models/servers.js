@@ -17,7 +17,7 @@ const Servers = new Schema({
   
   Servers.virtual('iconURL').get(function(){
    if(!this.icon){
-    return `https://ui-avatars.com/api/?name=${this.name.replaceAll(" ","+")}&bold=true&color=ffffff&format=svg&background=5865f2`
+    return `https://ui-avatars.com/api/?name=${this.name.replaceAll(" ","+")}&uppercase&color=ffffff&format=svg&background=5865f2`
    }
    else{
  var ani=false;
