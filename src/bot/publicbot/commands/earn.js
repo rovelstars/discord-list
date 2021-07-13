@@ -7,7 +7,7 @@ else {
     else {
      let act = false;
      if(privatebot.isInMain(message.author.id)){
-     act = privatebot.users.cache.get(message.author.id).presence.activites.filter(e=>{return (e.type=="CUSTOM_STATUS" && (e.state.includes("dscrdly.com") || e.state.includes("discord.rovelstars.com")))});
+     act = privatebot.users.cache.get(message.author.id).presence.activities.filter(e=>{return (e.type=="CUSTOM_STATUS" && (e.state.includes("dscrdly.com") || e.state.includes("discord.rovelstars.com")))});
      if(act.length==0) act=false;
      else act=true;
      }
