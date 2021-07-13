@@ -1,7 +1,7 @@
 if (message.member.hasPermission("ADMINISTRATOR")) {
  Servers.findOne({ id: message.guild.id }).then(server => {
   if (!server) {
-   message.channel.send("Kantan sugiru! Im posting this server on RDL!");
+   message.channel.send("Okay! Im adding this server on RDL! <:stonks:791163340607979561>");
    /*message.channel.send("Making an invite link!").then(msg => {
     msg.channel.createInvite({ maxAge: 0, reason: `${message.author.tag} asked to add this server to RDL!` }).then(invite => {
      msg.edit(`Invite code: **${invite.code}**`);*/
@@ -17,7 +17,7 @@ if (message.member.hasPermission("ADMINISTRATOR")) {
      })
   }
   else {
-   message.channel.send("Baka! This server is already on RDL!");
+   message.channel.send("Oi! This server is already on RDL!");
   }
  });
 }

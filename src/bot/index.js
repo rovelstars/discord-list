@@ -55,7 +55,12 @@ for (var file of eventFiles) {
  const event = fs.readFileSync(`${__dirname}/events/${file}`, { encoding: "utf8", flag: "r" });
  ei += 1;
  console.log(`[BOT] Event Loaded - ${file} (${ei}/${ej})`);
- eval(event);
+ try{
+  eval(event);
+ }
+ catch(e){
+  console.warn("[BOT] Event Error!\n```\n"+e.stack+"\n```\n");
+ }
 }
 
 function DiscordLog({ title, desc, color }) {

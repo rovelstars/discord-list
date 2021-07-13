@@ -1,5 +1,5 @@
 if (!client.owners.some(x => x === message.author.id)) {
-   message.channel.send("Baka! You are denied to use this function!");
+   message.channel.send("Oi! You are denied to use this function!");
   }
   if (client.owners.some(x => x === message.author.id)) {
    try {
@@ -14,7 +14,7 @@ if (!client.owners.some(x => x === message.author.id)) {
     if (typeof code !== 'string')
      code = require('util').inspect(code, { depth: 0 });
      if(code==process.env.TOKEN){
-      code="Anata wa atama ga yo sugiru?\nBut im intelligent too <:smart:794453219605610509>"
+      code="Fool!\nI'm intelligent too <:smart:794453219605610509>"
      }
      message.channel.send("**Evaluation**\n📥 **INPUT**\n```\n"+codein+"\n```\n📤 **OUTPUT**\n");
      if(code.length <='1990'){

@@ -1,5 +1,5 @@
 if(cooldownearn.has(message.author.id)){
-  message.reply("Come after a minute!");
+  message.reply("Oi! Come after a minute!");
 }
 else {
   Users.findOne({id: message.author.id}).then(user=>{
@@ -8,7 +8,7 @@ else {
      const c = Math.floor(Math.random()*10)+1;
       user.bal+=c;
       user.save();
-      message.channel.send(`Nani o matsu?! You recieved R$ ${c}!\nThat's nothing compared to me-`);
+      message.channel.send(`Lol?! You recieved R$ ${c}!\nThat's nothing compared to me- <:trolled:790458256958554173>`);
       cooldownearn.add(message.author.id);
   setTimeout(()=>{
     cooldownearn.delete(message.author.id);

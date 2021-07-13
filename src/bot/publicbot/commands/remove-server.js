@@ -19,9 +19,9 @@ if(message.author.id===message.guild.owner.user.id){
        Cache.models.servers.deleteOne({id: message.guild.id},()=>{});
        message.reply("<:pokisad:799907571812401172> Done..");
   }
-  else message.reply("Baka! This server has been already deleted/not added.");
+  else message.reply("Oi! This server has been already deleted/not added.");
  });
 }
 else{
- message.reply("Baka! This server can be removed only by the owner for security purposes.");
+ message.reply("Oi! This server can be removed only by the owner for security purposes.");
 }

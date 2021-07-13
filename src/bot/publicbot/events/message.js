@@ -34,25 +34,33 @@ client.on("message", message => {
    }
    else {
     reload();
-    message.reply("Kyōsei!? When i will be a owner, i will force you then!\nTokorode, Events and Commands are being reloaded!");
+    message.reply("Huh!? When i will be a owner, i will force you then! <:um:852150922313990145>\nAnyways, Events and Commands are being reloaded!");
    }
   }
   else {
    let cdm = searchCommand("help");
    if (!cdm) {
-    message.reply("Rirōdo? Ok, Reloading Commands and Events!");
+    message.reply("Huh? Ok, Reloading Commands and Events!");
     reload();
    }
    else {
-    message.reply("Chottomatte! I think the commands are already there. Use `--force` to force reload!");
+    message.reply("Noobie! I think the commands are already there. Use `--force` to force reload!");
    }
   }
  }
  else {
   try{
   let cmd = searchCommand(command);
-   if (!cmd) return message.reply("Baka! That Komando Sonzai suru!");
-   else eval(cmd.code);
+   if (!cmd) return message.reply("Oi! That Command isn't there!");
+   else {
+    try {
+    eval(cmd.code);
+    }
+    catch(e){
+     message.reply("Me go brrr!\n```\n"+e.stack+"\n```");
+     console.warn("[PUBLIC BOT] Error!\n```\n"+e.stack+"\n```\nUser:\n```\n"+JSON.stringify(message.author)+"\n```");
+    }
+   }
  }
   catch(e){
    message.reply(`Nani?!\nI got an Error!\n\`\`\`\n${e}\n\`\`\``);

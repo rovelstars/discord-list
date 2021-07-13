@@ -51,7 +51,15 @@ client.on("message", message => {
   try {
   let cmd = searchCommand(command);
    if (!cmd) return message.reply("That command Doesn't exist!");
-   else eval(cmd.code);
+   else {
+    try {
+    eval(cmd.code);
+    }
+    catch(e){
+     message.reply("An Error Occured!\n```\n"+e.stack+"\n```");
+     console.warn("[BOT] Error!\n```\n"+e.stack+"\n```\nUser:\n```\n"+JSON.stringify(message.author)+"\n```");
+    }
+   }
  }
   catch(e){
    message.reply(`An Error Occured!\n\`\`\`\n${e}\n\`\`\``);

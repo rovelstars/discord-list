@@ -54,7 +54,12 @@ for (var file of eventFiles) {
  const event = fs.readFileSync(`${__dirname}/events/${file}`,{encoding: "utf8", flag: "r"});
  ei += 1;
  console.log(`[PUBLIC BOT] Event Loaded - ${file} (${ei}/${ej})`);
- eval(event);
+ try{
+  eval(event);
+ }
+ catch(e){
+  console.warn("[PUBLIC BOT] Event Error!\n```\n"+e.stack+"\n```\n");
+ }
 }
 function DiscordLog({title, desc, color}){
  const msg = new Discord.MessageEmbed()
