@@ -1,8 +1,7 @@
 <%- include('partials/header', {
 title: `${server.name} Discord Server`,
 desc: `${server.short}`,
-img: (server.iconURL.startsWith("https://ui-avatars.com"))?server
-iconURL.replace("&format=svg","&size=512"):server.iconURL,
+img: (server.iconURL.startsWith("https://ui-avatars.com"))?server.iconURL.replace("&format=svg","&size=512"):server.iconURL,
 theme,
 imglink: undefined
 }); %>
