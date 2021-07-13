@@ -108,6 +108,18 @@ router.get("/mainserver/:id", (req, res) => {
  const condition = (user) ? true : false;
  res.json({ condition });
 });
+
+client.isInMain = function(id){
+ let user;
+ try {
+  user = client.guilds.cache.get("602906543356379156").members.cache.get(id).user;
+ } catch {
+  user = null;
+ }
+ const condition = (user) ? true : false;
+ return condition;
+}
+
 router.get("/bannedusers", (req, res) => {
  res.json(BannedList);
 });
