@@ -5,9 +5,12 @@ else {
   Users.findOne({id: message.author.id}).then(user=>{
     if(!user) message.reply("Nani?! You're not logined!\nPlease login to RDL to make an account in order to recieve money!\nLogin link:\nhttps://discord.rovelstars.com/login");
     else {
+     let act = false;
+     if(message.guild.id=="602906543356379156"){
      act = privatebot.users.cache.get(message.author.id).presence.activites.filter(e=>{return (e.type=="CUSTOM_STATUS" && (e.state.includes("dscrdly.com") || e.state.includes("discord.rovelstars.com")))});
      if(act.length==0) act=false;
      else act=true;
+     }
      const c = Math.floor(Math.random()*10)+1;
       user.bal+=c;
       if(act) user.bal+=10;
