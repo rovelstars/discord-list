@@ -267,7 +267,7 @@ router.post("/:id/servers", (req, res) => {
   Bots.findOne({ id: b.id }).then(bot => {
    bot.servers = req.body.count;
    bot.save();
-   res.json({ success: "true" });
+   res.json({ success: true });
   })
  })
 });
