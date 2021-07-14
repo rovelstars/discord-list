@@ -171,8 +171,8 @@ select option {
  border-radius: 5px;
 }
 
-code {
- color: #18191C;
+code , pre code{
+ background-color: #18191C;
  border-radius: 5px;
  font-family: 'JetBrains Mono', monospace;
 }
