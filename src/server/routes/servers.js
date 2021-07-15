@@ -88,7 +88,7 @@ router.post("/:id/edit",(req, res)=>{
      if(req.body.desc.length<200) err="invalid_desc";
      if(!err){
       server.desc = coronaSanitizer(req.body.desc, {
-      allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages', 'img', 'iframe', 'style', 'h1', 'h2', 'link', 'mark', 'svg']),
+      allowedTags: coronaSanitizer.defaults.allowedTags.concat(['discord-message', 'discord-messages', 'img', 'iframe', 'style', 'h1', 'h2', 'link', 'mark', 'svg', 'span']),
       allowVulnerableTags: true,
       allowedAttributes: {
        '*': ["*"]
