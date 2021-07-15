@@ -333,12 +333,6 @@ body {
  padding: 5px 10px
 }
 
-.bot-card .top-bar p.username {
- color: $white;
- font-size: 20px;
- font-weight: 500
-}
-
 .bot-card .bc-content {
  position: absolute;
  top: 20px;
@@ -349,45 +343,6 @@ body {
  height: calc(100% - 20px);
  width: 100%;
  overflow: hidden
-}
-
-.bot-card .bc-content .stats {
- margin: 10px 0 10px 82px;
- padding: 2px;
- -webkit-user-select: none;
- -moz-user-select: none;
- -ms-user-select: none;
- user-select: none
-}
-
-.bot-card .bc-content .stats .stat {
- display: inline-block;
- font-size: 14px
-}
-
-.bot-card .bc-content .stats .stat p {
- opacity: .8
-}
-
-.bot-card .bc-content .stats .stat.rating span {
- color: $white;
- font-weight: 700
-}
-
-.bot-card .bc-content .stats .stat.rating .positive span {
- color: $success;
-}
-
-.bot-card .bc-content .stats .stat.rating .mixed span {
- color: $warning;
-}
-
-.bot-card .bc-content .stats .stat.rating .negative span {
- color: $danger;
-}
-
-.bot-card .bc-content .stats .stat:not(:last-child) {
- padding-right: 16px
 }
 
 .bot-card .bc-content .description {
@@ -433,4 +388,26 @@ body {
 
 .bot-card .bc-content .bc-buttons .button:not(:first-child) {
  margin-left: 10px
+}
+
+.bot-card .bc-content .info {
+ margin: 10px 0 10px 82px;
+ padding: 2px;
+ -webkit-user-select: none;
+ -moz-user-select: none;
+ -ms-user-select: none;
+ user-select: none
+}
+.bot-card .bc-content .info .control {
+display: inline-block;
+padding-right: 16px;
+}
+
+.bot-card .username {
+ font-family: discord;
+ position: absolute;
+ z-index: 2;
+ padding: 0px 10px;
+ left: 92px;
+ font-size: 2em;
 }

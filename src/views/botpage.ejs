@@ -49,7 +49,7 @@ imglink: bot.bg
      <div class="column is-3">
     <a href="<%= bot.invite %>" target="_blank" class="box button is-link has-background-primary">
 <span class="icon">
-<i class="bx bxs-plus-circle"></i>
+<i class="fad fa-plus-circle has-text-link"></i>
 </span>
 <span>Add</span>
 </a><br />
@@ -57,7 +57,7 @@ imglink: bot.bg
 <div class="column is-3">
     <a href="/bots/<%= bot.id %>/vote" class="box button is-success has-background-info">
 <span class="icon">
-<i class="bx bxs-chevron-up-circle"></i>
+<i class="fad fa-caret-circle-up has-text-info"></i>
 </span>
 <span>Vote</span>
 </a><br />
@@ -94,14 +94,14 @@ imglink: bot.bg
   </div><br />
   <div class="control" id="servers">
     <div class="tags has-addons">
-    <span class="tag is-dark"><i class="bx bxs-server"></i>&nbsp;In</span>
+    <span class="tag is-dark"><i class="fad fa-server has-text-link"></i>&nbsp;In</span>
     <span class="tag is-link"><%= (bot.servers)?((bot.servers!=1)?bot.servers:"???"):"???" %> Servers
     </span>
     </div>
   </div><br />
   <div class="control" id="votes">
     <div class="tags has-addons">
-    <span class="tag is-dark"><i class="bx bxs-chevron-up-circle"></i>&nbsp;Votes</span>
+    <span class="tag is-dark"><i class="fad fa-caret-circle-up has-text-info"></i>&nbsp;Votes</span>
     <span class="tag is-info"><%= bot.votes %></span>
     </div>
   </div><br /><% if(bot.support){ %>

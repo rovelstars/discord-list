@@ -1,28 +1,44 @@
 <div class="bot-card">
- <img src="https://cdn.discordapp.com/avatars/159985870458322944/b50adff099924dd5e6b72d13f77eb9d7.webp?size=128" alt="Avatar" loading="lazy" class="bc-avatar">
- <div class="top-bar"><p class="username">MEE6</p>
- </div>
- <div class="bc-content">
-  <div class="stats">
-   <div class="stat rating">
-   <p title="Based on 274 reviews" class="positive">Rating: <span>79%</span>
-   </p>
-   </div>
-   <div class="stat">
-    <p>Invites: 2,431</p>
+<figure class="image is-64x64 is-avatar bc-avatar">
+<img width="64" height="64" class="" loading="lazy" src="<%= bot.avatarURL.replace(".png",".webp") %>" alt="<%= bot.username %> Avatar" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
+<div class="status-<%= (bot.status)?bot.status:"online" %>"></div>
+</figure>
+ <span class="username">
+<span><%= bot.username %><span class="has-text-grey-light">#<%= bot.discriminator %></span></span>
+</span>
+ <div class="bc-content has-background-dark" 
+style="background-image:url(<%= bot.bg || "https://discord.rovelstars.com/assets/img/default-bg.svg" %>);background-size:cover">
+  <div class="info">
+   <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-black"><i class="fad fa-server has-text-link"></i>&nbsp;In</span>
+    <span class="tag is-link"><%= (bot.servers)?((bot.servers!=1)?bot.servers:"???"):"???" %> Servers
+    </span>
     </div>
-    <div class="stat">
-     <p title="Levels, Livestreams, Moderation, Music, Notifications, Utility, Web Dashboard">Tags: 7</p>
+  </div>
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-black"><i class="fad fa-caret-circle-up has-text-info"></i>&nbsp;Votes</span>
+    <span class="tag is-info"><%= bot.votes %></span>
     </div>
+  </div>
    </div>
-   <div class="description">
-    <p>MEE6 is a Discord bot looking to bring great new features to your Discord server!</p>
+   <div class="description has-background-dark is-curved" style="opacity: 0.9;">
+    <p style="font-family: K2D;font-size: 1.3em;padding: 10px 10px;"><%= bot.short %></p>
    </div>
    <div class="bc-buttons">
-    <a href="/bots/159985870458322944" class="button is-primary">
-    <i class="fa fa-address-card"></i>View Bot</a>
-    <button class="button is-primary">
-   <i class="fa fa-user-plus"></i>Add to Server</button>
-  </div>
+<a href="/bots/<%= bot.id %>" class="box button is-info is-outlined" style=":hover{border-color:#9b84ee;}">
+<span class="icon">
+<i class="fad fa-newspaper has-text-info"></i>
+</span>
+<span>View</span>
+</a>
+ <a href="<%= bot.invite %>" target="_blank" class="box button is-link is-outlined">
+<span class="icon">
+<i class="fad fa-plus-circle has-text-link"></i>
+</span>
+<span>Add</span>
+</a>
+    </div>
  </div>
 </div>

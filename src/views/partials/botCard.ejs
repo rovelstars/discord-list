@@ -20,14 +20,14 @@
  <div class="field is-grouped is-grouped-multiline">
   <div class="control">
     <div class="tags has-addons">
-    <span class="tag is-black"><i class="bx bxs-server"></i>&nbsp;In</span>
+    <span class="tag is-black"><i class="fad fa-server has-text-link"></i>&nbsp;In</span>
     <span class="tag is-link"><%= (bot.servers)?((bot.servers!=1)?bot.servers:"???"):"???" %> Servers
     </span>
     </div>
   </div><br />
   <div class="control">
     <div class="tags has-addons">
-    <span class="tag is-black"><i class="bx bxs-chevron-up-circle"></i>&nbsp;Votes</span>
+    <span class="tag is-black"><i class="fad fa-caret-circle-up has-text-info"></i>&nbsp;Votes</span>
     <span class="tag is-info"><%= bot.votes %></span>
     </div>
   </div><br />
@@ -37,13 +37,13 @@
 <div class="buttons">
 <a href="/bots/<%= bot.id %>" class="box button is-info is-outlined" style=":hover{border-color:#9b84ee;}">
 <span class="icon">
-<i class="bx bxs-detail"></i>
+<i class="fad fa-newspaper has-text-info"></i>
 </span>
 <span>View</span>
 </a>
  <a href="<%= bot.invite %>" target="_blank" class="box button is-link is-outlined">
 <span class="icon">
-<i class="bx bxs-plus-circle"></i>
+<i class="fad fa-plus-circle has-text-link"></i>
 </span>
 <span>Add</span>
 </a>
