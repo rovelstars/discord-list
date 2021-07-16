@@ -299,7 +299,7 @@ body {
 .bot-card {
  position: relative;
  width: 280px;
- height: 320px;
+ height: 360px;
 }
 
 .bot-card .bc-avatar {
@@ -342,7 +342,8 @@ body {
  height: 120px;
  margin: 10px 2px 0;
  overflow-x: hidden;
- overflow-y: auto
+ overflow-y: auto;
+ margin-top: 50px;
 }
 
 .bot-card .bc-content .description::-webkit-scrollbar {
@@ -394,6 +395,7 @@ body {
 .bot-card .bc-content .info .control {
 display: inline-block;
 padding-right: 16px;
+margin-top: 10px;
 }
 
 .bot-card .username {
@@ -403,4 +405,8 @@ padding-right: 16px;
  font-size: 1.2em;
  padding: 7px 10px;
  left: 92px;
+}
+
+code{
+padding: 1px;
 }
