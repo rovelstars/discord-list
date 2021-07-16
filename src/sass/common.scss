@@ -299,7 +299,7 @@ body {
 .bot-card {
  position: relative;
  width: 280px;
- height: 320px;
+ height: 360px;
 }
 
 .bot-card .bc-avatar {
@@ -400,7 +400,13 @@ padding-right: 16px;
  font-family: discord;
  position: absolute;
  z-index: 2;
- padding: 0px 10px;
+ padding: 5px 10px;
  left: 92px;
- font-size: 2em;
+ font-size: 1.5em;
+}
+.bot-card:not(:first-child){
+ margin-left: 10px;
+}
+.bot-card{
+ margin-bottom: 10px;
 }

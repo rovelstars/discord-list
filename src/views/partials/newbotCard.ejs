@@ -1,11 +1,10 @@
 <div class="bot-card">
 <figure class="image is-64x64 is-avatar bc-avatar">
-<img width="64" height="64" class="" loading="lazy" src="<%= bot.avatarURL.replace(".png",".webp") %>" alt="<%= bot.username %> Avatar" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
+<img width="64" height="64" class="is-rounded" loading="lazy" src="<%= bot.avatarURL.replace(".png",".webp") %>" alt="<%= bot.username %> Avatar" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
 <div class="status-<%= (bot.status)?bot.status:"online" %>"></div>
 </figure>
  <span class="username">
-<span><%= bot.username %><span class="has-text-grey-light">#<%= bot.discriminator %></span></span>
-</span>
+<span><%= bot.username %></span>
  <div class="bc-content has-background-dark" 
 style="background-image:url(<%= bot.bg || "https://discord.rovelstars.com/assets/img/default-bg.svg" %>);background-size:cover">
   <div class="info">
