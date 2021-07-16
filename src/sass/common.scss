@@ -300,7 +300,7 @@ body {
  position: relative;
  width: 280px;
  height: 320px;
- margin-top: 10px;
+ margin-top: 20px;
 }
 
 .bot-card .bc-avatar {
@@ -412,6 +412,6 @@ code{
 padding: 1px;
 }
 
-.bot-card:not(:first-child){
- margin-left: 10px;
+.bot-card{
+ margin-left: 30px;
 }

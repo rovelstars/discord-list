@@ -1,5 +1,5 @@
 <div class="bot-card">
-<figure class="image is-64x64 is-avatar bc-avatar">
+<figure class="image is-64x64 bc-avatar is-avatar">
 <img width="64" height="64" class="is-rounded" loading="lazy" src="<%= bot.avatarURL.replace(".png",".webp") %>" alt="<%= bot.username %> Avatar" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
 <div class="status-<%= (bot.status)?bot.status:"online" %>"></div>
 </figure>
