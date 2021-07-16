@@ -339,7 +339,7 @@ body {
 }
 
 .bot-card .bc-content .description {
- height: 150px;
+ height: 120px;
  margin: 10px 2px 0;
  overflow-x: hidden;
  overflow-y: auto
@@ -400,7 +400,7 @@ padding-right: 16px;
  font-family: discord;
  position: absolute;
  z-index: 2;
- padding: 0px 10px;
+ font-size: 1.2em;
+ padding: 7px 10px;
  left: 92px;
- font-size: 2em;
 }
