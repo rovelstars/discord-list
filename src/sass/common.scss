@@ -171,7 +171,8 @@ select option {
  border-radius: 5px;
 }
 
-code , pre code{
+code,
+pre code {
  background-color: #18191C;
  border-radius: 5px;
  font-family: 'JetBrains Mono', monospace;
@@ -305,15 +306,12 @@ body {
 
 .bot-card .bc-avatar {
  margin: 0 4px 0 14px;
- background-color: $white;
- box-shadow: 1px 1px 2px 1px $deep-black;
  display: block;
- width: 64px;
- height: 64px
+ z-index: 2;
+ position: absolute;
 }
 
-.bot-card .bc-avatar,
-.bot-card .top-bar {
+.bot-card, .bot-card .top-bar {
  position: absolute;
  border-radius: 4px;
  z-index: 2
@@ -393,10 +391,11 @@ body {
  -ms-user-select: none;
  user-select: none
 }
+
 .bot-card .bc-content .info .control {
-display: inline-block;
-padding-right: 16px;
-margin-top: 10px;
+ display: inline-block;
+ padding-right: 16px;
+ margin-top: 10px;
 }
 
 .bot-card .username {
@@ -408,10 +407,10 @@ margin-top: 10px;
  left: 92px;
 }
 
-code{
-padding: 1px;
+code {
+ padding: 1px;
 }
 
-.bot-card{
- margin-left: 30px;
+.bot-card {
+ margin-left: 20px;
 }
