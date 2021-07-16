@@ -299,7 +299,8 @@ body {
 .bot-card {
  position: relative;
  width: 280px;
- height: 360px;
+ height: 320px;
+ margin-top: 10px;
 }
 
 .bot-card .bc-avatar {
@@ -343,7 +344,7 @@ body {
  margin: 10px 2px 0;
  overflow-x: hidden;
  overflow-y: auto;
- margin-top: 50px;
+ margin-top: 20px;
 }
 
 .bot-card .bc-content .description::-webkit-scrollbar {
@@ -409,4 +410,8 @@ margin-top: 10px;
 
 code{
 padding: 1px;
+}
+
+.bot-card:not(:first-child){
+ margin-left: 10px;
 }
