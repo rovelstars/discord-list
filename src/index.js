@@ -114,7 +114,12 @@ globalThis.wss = new wsServer({server});
 
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
-    console.log('[WS] Recieved: %s', message);
-    ws.send(message);
+   try{
+    var msg = JSON.parse(message)
+   }
+    catch(e){
+     ws.close("Parse Error!");
+    }
+    if(msg=="ping") ws.send("pong");
   });
 });
