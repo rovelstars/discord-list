@@ -128,7 +128,7 @@ router.get("/:id/vote", async (req, res) => {
       },
       body: hmm
      }).then(r => r.json()).then(d => {
-      if (!d.ok) {
+      if (!d.ok || d?.ok!="true") {
        fetch(`${process.env.DOMAIN}/api/client/log`, {
         method: "POST",
         headers: {

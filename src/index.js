@@ -107,3 +107,14 @@ wallet.watchNewTransactions().subscribe(transaction =>{
   })
  })
 });
+
+const {Server: wsServer} = require("ws");
+
+globalThis.wss = new wsServer({server});
+
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(message) {
+    console.log('[WS] Recieved: %s', message);
+    ws.send(message);
+  });
+});
