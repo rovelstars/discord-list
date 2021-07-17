@@ -201,8 +201,9 @@ router.post("/log", (req, res) => {
     .setURL(req.body.url || "https://discord.rovelstars.com")
     .setTimestamp()
     .setThumbnail(req.body.img || "https://discord.rovelstars.com/assets/img/bot/logo-512.png");
-
-   client.guilds.cache.get("602906543356379156").channels.cache.get(req.body.channel || "775231877433917440").send(msg)
+    if(req.body.channel!="private"){
+   client.guilds.cache.get("602906543356379156").channels.cache.get(req.body.channel || "775231877433917440").send(msg).catch(e=>{});
+    }
    if (req.body.owners) {
     for (const owner of req.body.owners) {
      client.users.cache.get(owner).send(msg).catch((e) => {

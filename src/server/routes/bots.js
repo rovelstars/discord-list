@@ -38,6 +38,32 @@ router.get("/", (req, res) => {
  }
 });
 
+router.get("/report", (req, res)=>{
+ if(req.query.leaked){
+  var bot = Cache.Bots.findOneByCode(req.query.leaked);
+  if(bot){
+   fetch(`${process.env.DOMAIN}/api/client/log`,{
+    method: "POST",
+    headers: {
+     "content-type": "application/json",
+    },
+    body: JSON.stringify({
+     secret: process.env.SECRET,
+     title: `${bot.tag} Code Leaked!`,
+     desc: `We would like to inform you that your bot code was leaked. Hopefully it was reported by one of our SDKs about it. We have Reseted your token. Do update it in your bot's code. Never share your bot's code with anyone!\nPlease get the new token from [here]<${process.env.DOMAIN}/api/bots/${bot.id}/code> \nThank you.`,
+     owners: bot.owners,
+     attachment: bot.avatarURL,
+     channel: "private"
+    })
+   })
+  }
+  else{
+   res.json({err: "invalid_code"});
+  }
+ }
+ else res.json({err: "no_key"});
+})
+
 router.get("/info", (req, res) => {
  if (!req.query.code) return res.json({ err: "no_code" });
  var ba = Cache.Bots.findOneByCode(req.query.code)
