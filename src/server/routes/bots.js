@@ -720,7 +720,7 @@ router.post("/new", async (req, res) => {
     });
    }
    catch (e) {
-    res.json({ err: e });
+    res.json({ err: e.stack });
     console.error("error: "+e.stack);
    }
   }

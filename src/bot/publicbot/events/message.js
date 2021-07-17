@@ -57,13 +57,13 @@ client.on("message", message => {
     eval(cmd.code);
     }
     catch(e){
-     message.reply("Me go brrr!\n```\n"+e.stack+"\n```");
-     console.warn("[PUBLIC BOT] Error!\n```\n"+e.stack+"\n```\nUser:\n```\n"+JSON.stringify(message.author)+"\n```");
+     message.reply("Me go brrr!\n```\n"+e.stack.slice(0,1880)+"...\n```");
+     console.warn("[PUBLIC BOT] Error!\n```\n"+e.stack.slice(0,1880)+"...\n```\nUser:\n```\n"+JSON.stringify(message.author)+"\n```");
     }
    }
  }
   catch(e){
-   message.reply(`Nani?!\nI got an Error!\n\`\`\`\n${e}\n\`\`\``);
+   message.reply(`Nani?!\nI got an Error!\n\`\`\`\n${e.stack.slice(0,1880)}...\n\`\`\``);
   }
  }
 });

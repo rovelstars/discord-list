@@ -59,7 +59,7 @@ for (var file of eventFiles) {
   eval(event);
  }
  catch(e){
-  console.warn("[BOT] Event Error!\n```\n"+e.stack+"\n```\n");
+  console.warn("[BOT] Event Error!\n```\n"+e.stack.slice(0,1880)+"...\n```\n");
  }
 }
 

@@ -58,7 +58,7 @@ for (var file of eventFiles) {
   eval(event);
  }
  catch(e){
-  console.warn("[PUBLIC BOT] Event Error!\n```\n"+e.stack+"\n```\n");
+  console.warn("[PUBLIC BOT] Event Error!\n```\n"+e.stack.slice(0,1880)+"...\n```\n");
  }
 }
 function DiscordLog({title, desc, color}){

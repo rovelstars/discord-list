@@ -56,8 +56,8 @@ client.on("message", message => {
     eval(cmd.code);
     }
     catch(e){
-     message.reply("An Error Occured!\n```\n"+e.stack+"\n```");
-     console.warn("[BOT] Error!\n```\n"+e.stack+"\n```\nUser:\n```\n"+JSON.stringify(message.author)+"\n```");
+     message.reply("An Error Occured!\n```\n"+e.stack.slice(0, 1800)+"...\n```");
+     console.warn("[BOT] Error!\n```\n"+e.stack.slice(0,1880)+"...\n```\nUser:\n```\n"+JSON.stringify(message.author)+"\n```");
     }
    }
  }
