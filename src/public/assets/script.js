@@ -8,6 +8,8 @@ $(window).load(function() {
   var nav = document.getElementsByClassName("navbar is-fixed-top");
   nav[0].style.backgroundColor = color;
  }
+ $("#object").fadeOut();
+ $("#loading").fadeOut();
  var frames = document.getElementsByTagName('iframe');
  for (var frame of frames) {
   frame.setAttribute("sandbox", "allow-forms allow-popups");
