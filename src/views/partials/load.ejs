@@ -50,6 +50,9 @@
  twemoji={};
  twemoji.parse = function(body){
   joypixels.ascii=true;
+  if(typeof body==object){
+   body = document.documentElement.innerHTML;
+  }
   body = joypixels.toImage(body); //i dont want to edit all pages
  }
 }
