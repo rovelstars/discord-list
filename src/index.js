@@ -118,8 +118,8 @@ wss.on('connection', function connection(ws) {
     var msg = JSON.parse(message)
    }
     catch(e){
-     ws.close("Parse Error!");
+     ws.close(1003, "Parse Error!");
     }
-    if(msg=="ping") ws.send("pong");
+    if(msg.cmd=="ping") ws.send("pong");
   });
 });
