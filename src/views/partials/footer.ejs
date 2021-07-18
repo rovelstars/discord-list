@@ -77,8 +77,15 @@ const transd = res.text;
 for(var i=0;i<transd.length;i++){
 parts[i].innerText = transd[i];
 }
-if(window.twemoji=="object"){
+if(typeof window.twemoji=="object"){
   twemoji.parse(document.body);
+}
+if(typeof window.joypixels=="object"){
+ twemoji={};
+ twemoji.parse = function(body){
+  joypixels.ascii=true;
+  body = joypixels.toImage(body);
+ }
 }
  }
 });

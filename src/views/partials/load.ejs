@@ -41,7 +41,20 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
 <link href="https://pro.fontawesome.com/releases/v5.15.3/css/all.css" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/code.css">
+<% if(preferEmoji=="twemoji"){ %>
   <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
+<% } else { %>
+<script src="https://demos.joypixels.com/latest/lib/js/joypixels.js"></script>
+<script>
+ if(typeof window.joypixels=="object"){
+ twemoji={};
+ twemoji.parse = function(body){
+  joypixels.ascii=true;
+  body = joypixels.toImage(body); //i dont want to edit all pages
+ }
+}
+</script>
+<% } %>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.js"></script>
  <script src="/assets/js/prism.js"></script>

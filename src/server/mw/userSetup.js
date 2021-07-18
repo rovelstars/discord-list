@@ -16,6 +16,8 @@ module.exports = async function(req, res, next){
  if (req.header('RDL-key')) {
   req.query.key = req.header('RDL-key');
  }
+ 
+ res.locals.preferEmoji =(req.cookies["emoji"]=="twemoji")?"twemoji":"joypixels";
 
  if (req.header('RDL-code')) {
   req.query.code = req.header('RDL-code');
