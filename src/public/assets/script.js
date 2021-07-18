@@ -1,4 +1,5 @@
 $(window).load(function() {
+ var emojiparse = function(body){ return twemoji.parse(body, globalThis.emojiopts)};
  var theme = document.getElementById("meta-theme");
  if (theme) {
   theme.style.display = "none";
@@ -61,7 +62,7 @@ $(window).load(function() {
     imageHeight: 100,
     showCancelButton: false,
     showDenyButton: true,
-    didRender: twemoji.parse(this, globalThis.emojiopts),
+    didRender: emojiparse,
     confirmButtonText: '<span>Introduce to me!</span>',
     denyButtonText: '<span>I know this site 😏</span>',
     reverseButtons: true
@@ -86,7 +87,7 @@ $(window).load(function() {
          title: "We use cookies! 🍪",
          text: "Cause they are tasty 😋!",
          icon: "info",
-         didRender: twemoji.parse(this, globalThis.emojiopts),
+         didRender: emojiparse,
          confirmButtonText: "<span>That's Awesome! 😎</span>"
         })
        })
@@ -100,7 +101,7 @@ $(window).load(function() {
       title: "We use cookies! 🍪",
       text: "Cause they are tasty 😋!",
       icon: "info",
-      didRender: twemoji.parse(this, globalThis.emojiopts, ),
+      didRender: emojiparse,
       confirmButtonText: "<span>That's Awesome! 😎</span>"
      }).then(() => { localStorage.allowcookies = "yes" })
     }
