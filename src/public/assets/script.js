@@ -61,7 +61,7 @@ $(window).load(function() {
     imageHeight: 100,
     showCancelButton: false,
     showDenyButton: true,
-    didRender: twemoji.parse,
+    didRender: twemoji.parse(this, globalThis.emojiopts),
     confirmButtonText: '<span>Introduce to me!</span>',
     denyButtonText: '<span>I know this site 😏</span>',
     reverseButtons: true
@@ -86,7 +86,7 @@ $(window).load(function() {
          title: "We use cookies! 🍪",
          text: "Cause they are tasty 😋!",
          icon: "info",
-         didRender: twemoji.parse,
+         didRender: twemoji.parse(this, globalThis.emojiopts),
          confirmButtonText: "<span>That's Awesome! 😎</span>"
         })
        })
@@ -100,7 +100,7 @@ $(window).load(function() {
       title: "We use cookies! 🍪",
       text: "Cause they are tasty 😋!",
       icon: "info",
-      didRender: twemoji.parse,
+      didRender: twemoji.parse(this, globalThis.emojiopts, ),
       confirmButtonText: "<span>That's Awesome! 😎</span>"
      }).then(() => { localStorage.allowcookies = "yes" })
     }
@@ -133,7 +133,7 @@ function offHover()
   if(logout){
    logout.href=`/logout?redirect=${encodeURI(window.location)}`
   }
-twemoji.parse(document.body,  {folder: 'svg', ext: '.svg'})
+twemoji.parse(document.body, globalThis.emojiopts)
   // Check for click events on the navbar burger icon
   $(".navbar-burger").click(function() {
 
