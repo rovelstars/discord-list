@@ -27,12 +27,16 @@
 </div>
 </footer>
 <img class="footer-img" src="/assets/img/wavedown.svg" width="100%" height="auto"></img>
-<% if(preferEmoji!="twemoji"){ %>
+<% if(preferEmoji=="joypixels"){ %>
 <script>
  globalThis.emojiopts = function(icon){
   return "https://demos.joypixels.com/latest/assets/png/" + icon + ".png";
 };
 </script>
+<% } else if(preferEmoji=="openmoji"){ %>
+globalThis.emojiopts = function(icon) {
+    return "https://gitcdn.xyz/repo/hfg-gmuend/openmoji/master/color/svg/"+icon.toUpperCase()+".svg";
+};
 <% } else { %>
 <script>
  globalThis.emojiopts = {folder: 'svg', ext: '.svg'}
