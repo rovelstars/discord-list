@@ -29,13 +29,13 @@
 <img class="footer-img" src="/assets/img/wavedown.svg" width="100%" height="auto"></img>
 <% if(preferEmoji!="twemoji"){ %>
 <script>
- user.emojiopts = function(icon){
+ var emojiopts = function(icon){
   return "https://demos.joypixels.com/latest/assets/png/" + icon + ".png";
 });
 </script>
 <% } else { %>
 <script>
- user.emojiopts = {folder: 'svg', ext: '.svg'}
+ var emojiopts = {folder: 'svg', ext: '.svg'}
 </script>
 <% } %>
 <script>$(document).on("click", "a", function() {
