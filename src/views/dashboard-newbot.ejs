@@ -286,7 +286,7 @@ botdesc.addEventListener("keyup",async (e) => {
     });
     visualizer.innerHTML = noicehtml;
     Prism.highlightAll();
-    twemoji.parse(document.body, emojiopts);
+    twemoji.parse(document.body, window.emojiopts);
     var theme = document.getElementById("meta-theme");
     if(theme){
      theme.style.display="none";

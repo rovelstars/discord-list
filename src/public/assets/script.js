@@ -1,5 +1,5 @@
 $(window).load(function() {
- var emojiparse = function(body){ return twemoji.parse(body, emojiopts)};
+ var emojiparse = function(body){ return twemoji.parse(body, window.emojiopts)};
  var theme = document.getElementById("meta-theme");
  if (theme) {
   theme.style.display = "none";
@@ -134,7 +134,7 @@ function offHover()
   if(logout){
    logout.href=`/logout?redirect=${encodeURI(window.location)}`
   }
-twemoji.parse(document.body, emojiopts)
+twemoji.parse(document.body, window.emojiopts)
   // Check for click events on the navbar burger icon
   $(".navbar-burger").click(function() {
 
