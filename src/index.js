@@ -119,10 +119,10 @@ wss.on('connection', function connection(ws) {
     msg = JSON.parse(message)
    }
     catch(e){
-     ws.close(1003, "Parse Error!");
+     ws.send(JSON.stringify({err: "parse_failed"}));
     }
     if(typeof msg != undefined) {
-    if(msg.cmd=="ping") ws.send("pong");
+    if(msg?.cmd=="ping") ws.send("pong");
     }
   });
 });
