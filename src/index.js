@@ -114,12 +114,15 @@ globalThis.wss = new wsServer({server});
 
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
+   var msg;
    try{
-    var msg = JSON.parse(message)
+    msg = JSON.parse(message)
    }
     catch(e){
      ws.close(1003, "Parse Error!");
     }
+    if(typeof msg != undefined) {
     if(msg.cmd=="ping") ws.send("pong");
+    }
   });
 });
