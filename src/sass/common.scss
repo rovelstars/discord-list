@@ -405,6 +405,10 @@ body {
  font-size: 1.2em;
  padding: 7px 10px;
  left: 92px;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ white-space: nowrap;
+ word-break: break-all;
 }
 
 code {
