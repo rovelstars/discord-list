@@ -129,7 +129,7 @@ wss.on("connection", function connection(ws, req) {
       ws.send(JSON.stringify({ err: "parse_failed" }));
     }
     if (typeof msg != undefined) {
-      if (msg?.event == "ping") ws.send(req.headers["ping"].slice(-2));
+      if (msg?.event == "ping") ws.send(JSON.stringify({ res: "pong" }));
     }
   });
 });
