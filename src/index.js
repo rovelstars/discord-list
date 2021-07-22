@@ -6,6 +6,18 @@ if (v < 16 && process.platform != "android") {
   console.error("[ERROR] Node.js v16 or above is required.");
   process.exit(1);
 }
+if (!String.prototype.replaceAll) {
+  String.prototype.replaceAll = function (str, newStr) {
+    // If a regex pattern
+    if (
+      Object.prototype.toString.call(str).toLowerCase() === "[object regexp]"
+    ) {
+      return this.replace(str, newStr);
+    }
+    // If a string
+    return this.replace(new RegExp(str, "g"), newStr);
+  };
+}
 var rovel = require("rovel.js");
 rovel.env.config();
 const mongoose = require("mongoose");
@@ -26,6 +38,11 @@ globalThis.console.error = loggy.error;
 globalThis.warnn = console.warn;
 globalThis.console.warn = loggy.warn;
 globalThis.fetch = rovel.fetch;
+globalThis.console.debug = function (obj) {
+  if (typeof obj.stack == "string" && typeof obj == "object") {
+    console.log(obj.stack);
+  } else console.log(obj);
+};
 
 if (!process.env.DOMAIN) {
   console.error("[ERROR] No Domain Given!");
@@ -39,6 +56,7 @@ globalThis.db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function () {
   console.log("[DB] We're connected to database!");
+  require("./cache.js");
 });
 require("@bot/index.js");
 
