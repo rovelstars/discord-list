@@ -20,7 +20,12 @@
 
 <img src="https://cdn.discordapp.com/attachments/775225719743053844/847168450735374416/unknown.png" style="width: 100%"></img>
 
-The list is currently a **W.I.P.** therefore we cannot provide an E.T.A. If you'd like to follow up on the progress or would like to talk with us, we welcome you to [join our server](https://discord.gg/953XCpHbKF)!
+# READ THIS
+> Due to lack of donations for RDL, I've stopped contributing actively. RDL is being hosted although, but it won't recieve active commits by me (@sayantan300). I would still approve any pull requests given here for the benefit of RDL. For now I will start working on a new project: Dev Space. It will be a compilation of dev.to, medium, stackoverflow, basic chat app with temporary messages, you can find devs who wanna work for your project, or find projects were you want to work. For more information, you can contact me on my discord server ofc.
+
+---
+
+> The list is currently a **W.I.P.** therefore we cannot provide an E.T.A. If you'd like to follow up on the progress or would like to talk with us, we welcome you to [join our server](https://discord.gg/953XCpHbKF)!
 
 [Website Link](https://discord.rovelstars.com)
 
