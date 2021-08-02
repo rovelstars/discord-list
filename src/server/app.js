@@ -1,5 +1,7 @@
 const port = process.env.PORT || 3000;
 process.env.ANNOUNCE = "No Announcements to show!";
+var Purgecss = require("purgecss").PurgeCSS;
+var fs = require("fs");
 function shuffle(array) {
   var currentIndex = array.length,
     temporaryValue,
@@ -50,6 +52,24 @@ const info = require("@utils/info.js");
 const express = require("express");
 const minifyhtml = require("html-minifier").minify;
 
+var css = {};
+css.dracula = fs.readFileSync(
+  `${__dirname.replace("/server", "")}/public/assets/css/dracula.css`,
+  { encoding: "utf8", flag: "r" }
+);
+css.discord = fs.readFileSync(
+  `${__dirname.replace("/server", "")}/public/assets/css/discord.css`,
+  { encoding: "utf8", flag: "r" }
+);
+css.default = fs.readFileSync(
+  `${__dirname.replace("/server", "")}/public/assets/css/default.css`,
+  { encoding: "utf8", flag: "r" }
+);
+css.paranoid = fs.readFileSync(
+  `${__dirname.replace("/server", "")}/public/assets/css/paranoid.css`,
+  { encoding: "utf8", flag: "r" }
+);
+
 express.response.render = function render(view, options, callback) {
   var tapp = this.req.app;
   var done = callback;
@@ -69,18 +89,27 @@ express.response.render = function render(view, options, callback) {
   // default callback to respond
   done =
     done ||
-    function (err, str) {
+    async function (err, str) {
       if (err) return req.next(err);
-      self.send(
-        minifyhtml(str, {
-          caseSensitive: true,
-          continueOnParseError: true,
-          keepClosingSlash: true,
-          minifyCSS: true,
-          minifyJS: true,
-          collapseWhiteSpace: true,
-        })
-      );
+      var htmlrendered = minifyhtml(str, {
+        caseSensitive: true,
+        continueOnParseError: true,
+        keepClosingSlash: true,
+        minifyCSS: true,
+        minifyJS: true,
+        collapseWhiteSpace: true,
+      });
+      if (htmlrendered.includes('<style id="styling">')) {
+        var pp = await new Purgecss().purge({
+          css: [{ raw: css[req.cookies["theme"] || "default"] }],
+          content: [{ raw: htmlrendered }],
+        });
+        htmlrendered = htmlrendered.replace(
+          `<style id="styling"></style>`,
+          `<style id="styling">${pp[0].css}</style>`
+        );
+        self.send(htmlrendered);
+      } else self.send(htmlrendered);
     };
 
   // render

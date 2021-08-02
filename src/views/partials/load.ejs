@@ -36,7 +36,11 @@
 <% if(theme=="discord"){ hex="#5865F2"; bgcolor= "#36393F" } %>
 <% if(theme=="dracula"){ hex="#bd93f9"; bgcolor= "#282a36" } %>
 <% if(theme=="paranoid"){ hex="#A702F2"; bgcolor= "#191B2A" } %>
+<% if(req.originalUrl.includes("/new")||req.originalUrl.includes("/edit")){ %>
 <link rel="stylesheet" href="/assets/css/<%= theme %>.css">
+<% }else{ %>
+<style id="styling"></style>
+<% } %>
 <link rel="stylesheet" href="/assets/css/sa2.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
 <link href="https://pro.fontawesome.com/releases/v5.15.3/css/all.css" rel="stylesheet">

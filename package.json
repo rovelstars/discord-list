@@ -55,6 +55,7 @@
     "nodemailer": "6.6.3",
     "passport": "0.4.1",
     "proxy-list-random": "1.0.2",
+    "purgecss": "^4.0.3",
     "rdl-i18n": "github:rovelstars/rdl-i18n",
     "response-time": "2.3.2",
     "rovel.js": "1.2.0",

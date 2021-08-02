@@ -70,7 +70,7 @@ console.log(
   "[SENTRY] Initialized!\nAll issues and performance are being sent!"
 );
 process.on("unhandledRejection", (error) => {
-  console.warn("An Error Occurred!\n" + error);
+  console.warn("An Error Occurred!\n" + error.stack);
 });
 
 const { app, port } = require("@server/app.js");
