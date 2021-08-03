@@ -49,12 +49,11 @@
   <script>
    setInterval(blink, 500);
 function blink() {
-  $('.blink').each(function(){    
-    var backColor = $(this).css('background-color');
-    var textColor = $(this).css('color');
-
-    $(this).css( 'background', textColor);
-    $(this).css('color', backColor);
+  Array.from(document.getElementsByClassName("blink")).forEach(e=>{    
+    var backColor = e.style.backColor;
+    var textColor = e.style.color;
+    e.style.backColor = textColor;
+    e.style.color = backColor;
   });
 };
   </script>

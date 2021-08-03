@@ -17,6 +17,7 @@ window.addEventListener('load', function () {
   let loading = $("#loading");
   loading.style.transition = "0.8s";
   loading.style.opacity = "0";
+  loading.style.display="none";
   var frames = document.getElementsByTagName("iframe");
   for (var frame of frames) {
     frame.setAttribute("sandbox", "allow-forms allow-popups");
@@ -126,19 +127,7 @@ window.addEventListener('load', function () {
       window.close();
     });
   }
-});
-
-function onHover() {
-  $("rdllogo").src =
-    "https://discord.rovelstars.com/assets/img/bot/pet.gif";
-}
-
-function offHover() {
-  $("#rdllogo").src =
-    "https://discord.rovelstars.com/assets/img/bot/logo.svg";
-}
-
-window.addEventListener('load', function () {
+  
   var logout = $("#logout-link");
   if (logout) {
     logout.href = `/logout?redirect=${encodeURI(window.location)}`;
@@ -154,3 +143,13 @@ window.addEventListener('load', function () {
   $(".navbar-dropdown").classList.toggle("is-hidden-touch");
     });
 });
+
+function onHover() {
+  $("rdllogo").src =
+    "https://discord.rovelstars.com/assets/img/bot/pet.gif";
+}
+
+function offHover() {
+  $("#rdllogo").src =
+    "https://discord.rovelstars.com/assets/img/bot/logo.svg";
+}
