@@ -1,4 +1,5 @@
 var run =  function() {
+ $ = document.querySelector;
   var emojiparse = function (body) {
     return twemoji.parse(body, emojiopts);
   };
