@@ -1,4 +1,4 @@
-const run =  function() {
+var run =  function() {
   var emojiparse = function (body) {
     return twemoji.parse(body, emojiopts);
   };
@@ -144,7 +144,7 @@ const run =  function() {
     });
 };
 
-window.addEventListener("load",run);
+window.addEventListener("load", function(){run()});
 
 function onHover() {
   $("rdllogo").src =
