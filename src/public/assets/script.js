@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+window.addEventListener('load', function () {
   var emojiparse = function (body) {
     return twemoji.parse(body, emojiopts);
   };
@@ -138,7 +138,7 @@ function offHover() {
     "https://discord.rovelstars.com/assets/img/bot/logo.svg";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+window.addEventListener('load', function () {
   var logout = $("#logout-link");
   if (logout) {
     logout.href = `/logout?redirect=${encodeURI(window.location)}`;
