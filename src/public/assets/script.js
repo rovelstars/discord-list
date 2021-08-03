@@ -1,4 +1,4 @@
-window.addEventListener('load', function () {
+const run =  function() {
   var emojiparse = function (body) {
     return twemoji.parse(body, emojiopts);
   };
@@ -142,7 +142,9 @@ window.addEventListener('load', function () {
   $(".navbar-dropdown").addEventListener("click", function () {
   $(".navbar-dropdown").classList.toggle("is-hidden-touch");
     });
-});
+};
+
+window.addEventListener("load",run);
 
 function onHover() {
   $("rdllogo").src =
