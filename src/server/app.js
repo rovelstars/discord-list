@@ -103,7 +103,7 @@ express.response.render = function render(view, options, callback) {
         var pp = await new Purgecss().purge({
           css: [{ raw: css[req.cookies["theme"] || "default"] }],
           content: [{ raw: htmlrendered }],
-          safelist: [{greedy: [/is-active$/]}]
+          safelist: {greedy: [/is-active$/]}
         });
         htmlrendered = htmlrendered.replace(
           `<style id="styling"></style>`,
