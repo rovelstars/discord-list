@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var emojiparse = function (body) {
     return twemoji.parse(body, emojiopts);
   };
-  var theme = document.getElementById("meta-theme");
+  var theme = $("#meta-theme");
   if (theme) {
     theme.style.display = "none";
     const color = theme.innerText;
@@ -12,13 +12,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document
       .querySelector('meta[name="theme-color"]')
       .setAttribute("msapplication-navbutton-color", color);
-    var nav = document.getElementsByClassName("navbar is-fixed-top");
-    nav[0].style.backgroundColor = color;
+    $(".navbar").style.backgroundColor = color;
   }
-  let object = document.getElementById("object");
-  object.style.transition = "0.8s";
-  object.style.opacity = "0";
-  let loading = document.getElementById("loading");
+  let loading = $("#loading");
   loading.style.transition = "0.8s";
   loading.style.opacity = "0";
   var frames = document.getElementsByTagName("iframe");
@@ -133,38 +129,28 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function onHover() {
-  document.getElementById("menuImg").src =
+  $("rdllogo").src =
     "https://discord.rovelstars.com/assets/img/bot/pet.gif";
 }
 
 function offHover() {
-  document.getElementById("menuImg").src =
+  $("#rdllogo").src =
     "https://discord.rovelstars.com/assets/img/bot/logo.svg";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  var logout = document.getElementById("logout-link");
+  var logout = $("#logout-link");
   if (logout) {
     logout.href = `/logout?redirect=${encodeURI(window.location)}`;
   }
   twemoji.parse(document.body, emojiopts);
   // Check for click events on the navbar burger icon
-  document
-    .getElementsByClassName("navbar-burger")
-    .addEventListener("click", function () {
+  $(".navbar-burger").addEventListener("click", function () {
       // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-      document
-        .getElementsByClassName("navbar-burger")
-        .classList.toggle("is-active");
-      document
-        .getElementsByClassName("navbar-menu")
-        .classList.toggle("is-active");
+      $(".navbar-burger").classList.toggle("is-active");
+      $(".navbar-menu").classList.toggle("is-active");
     });
-  document
-    .getElementsByClassName("navbar-dropdown")
-    .addEventListener("click", function () {
-      document
-        .getElementsByClassName("navbar-dropdown")
-        .classList.toggle("is-hidden-touch");
+  $(".navbar-dropdown").addEventListener("click", function () {
+  $(".navbar-dropdown").classList.toggle("is-hidden-touch");
     });
 });
