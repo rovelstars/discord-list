@@ -144,7 +144,7 @@ var run =  function() {
     });
 };
 
-window.addEventListener("load", function(){run()});
+run();
 
 function onHover() {
   $("rdllogo").src =
