@@ -1,5 +1,6 @@
 var run =  function() {
- $ = document.querySelector;
+ var $ = function(str){return document.querySelector(str)};
+ var $$ = function(str){return Array.from(document.querySelectorAll(str))};
   var emojiparse = function (body) {
     return twemoji.parse(body, emojiopts);
   };
