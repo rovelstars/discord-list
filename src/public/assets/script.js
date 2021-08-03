@@ -141,7 +141,7 @@ var run =  function() {
       $(".navbar-burger").classList.toggle("is-active");
       $(".navbar-menu").classList.toggle("is-active");
     });
-  $(".navbar-dropdown").addEventListener("click", function () {
+  $(".navbar-link").addEventListener("click", function () {
   $(".navbar-dropdown").classList.toggle("is-hidden-touch");
     });
 };
