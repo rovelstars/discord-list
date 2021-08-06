@@ -153,17 +153,21 @@ style="background-image:url(https://discord.rovelstars.com/assets/img/default-bg
   </div>
    <script>
    document.addEventListener("DOMContentLoaded", function(event) {
-   var earnfun = function(){
+    var $ = function(r){return document.querySelector(r)};
+    var earnfun = function(){
     $("#earn").innerText="Earning...";
     fetch("https://discord.rovelstars.com/api/auth/earn").then(r=>r.json()).then(d=>{
      if(d.err){
-      Swal.fire({title:"Error",icon:"error",text:d.err.replace("_").join(" ")});
+      Swal.fire({title:"Error",icon:"error",text:d.err.replace("_").join(" ")}).then(()=>{
+      $("#earn").innerText="Failed. Try again to earn";
+      });
      }
      else{
-      Swal.fire({title:"Success!",icon:"success",text:`You've earned R$ ${d.coins} ${(d.lis)?"and thanks for keeping link in status! You recieved more R$ because of that!":", ps: add our dscrdly.com link in your status and recieve more R$!"}`});
+      Swal.fire({title:"Success!",icon:"success",text:`You've earned R$ ${d.coins} ${(d.lis)?"and thanks for keeping link in status! You recieved more R$ because of that!":", ps: add our dscrdly.com link in your status and recieve more R$!"}`}).then(()=>{
       $("#bal").innerText=`R$ ${d.approxbal}`;
-     }
      $("#earn").innerText="After 1 minute you can start earning";
+      });
+     }
      setTimeout(()=>{$("#earn").innerText="Earn"},60*1000);
     })
    }
