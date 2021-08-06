@@ -50,7 +50,6 @@ var latency = require("response-time");
 globalThis.translate = require("translatte");
 const info = require("@utils/info.js");
 const express = require("express");
-const minifyhtml = require("html-minifier").minify;
 
 var css = {};
 css.dracula = fs.readFileSync(
@@ -91,26 +90,18 @@ express.response.render = function render(view, options, callback) {
     done ||
     async function (err, str) {
       if (err) return req.next(err);
-      var htmlrendered = minifyhtml(str, {
-        caseSensitive: true,
-        continueOnParseError: true,
-        keepClosingSlash: true,
-        minifyCSS: true,
-        minifyJS: true,
-        collapseWhiteSpace: true,
-      });
-      if (htmlrendered.includes('<style id="styling">')) {
+      if (str.includes('<style id="styling">')) {
         var pp = await new Purgecss().purge({
           css: [{ raw: css[req.cookies["theme"] || "default"] }],
-          content: [{ raw: htmlrendered }],
+          content: [{ raw: str }],
           safelist: {greedy: [/is-active$/]}
         });
-        htmlrendered = htmlrendered.replace(
+        str = str.replace(
           `<style id="styling"></style>`,
           `<style id="styling">${pp[0].css}</style>`
         );
-        self.send(htmlrendered);
-      } else self.send(htmlrendered);
+        self.send(str);
+      } else self.send(str);
     };
 
   // render
