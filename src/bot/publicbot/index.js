@@ -13,6 +13,7 @@ client.contributors = contributors;
 client.commands = [];
 const prefix = "a!" || process.env.PREFIX;
 var cooldownearn = new Set();
+client.cooldownearn=cooldownearn;
 const prompter = require('discordjs-prompter');
 
 function getMention(mention) {

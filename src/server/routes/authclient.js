@@ -180,4 +180,33 @@ router.get("/user", async (req, res) => {
  }
  else res.json({ error: "no_key" });
 });
+
+router.get("/earn",(req, res)=>{
+ if(publicbot.cooldownearn.has(res.locals?.user?.id)){
+  res.json({err: "cooldown"});
+}
+else {
+  Users.findOne({id: res.locals?.user?.id}).then(user=>{
+    if(!user) res.json({err:"not_logined"});
+    else {
+     let act = false;
+     if(privatebot.isInMain(res.locals?.user?.id)){
+     act = privatebot.users.cache.get(res.locals?.user?.id).presence.activities.filter(e=>{return (e.type=="CUSTOM_STATUS" && (e.state.includes("dscrdly.com") || e.state.includes("discord.rovelstars.com")))});
+     if(act.length==0) act=false;
+     else act=true;
+     }
+      const c = Math.floor(Math.random()*10)+1;
+      user.bal+=c;
+      if(act) user.bal+=10;
+      user.save();
+      res.json({coins: c, bal: user.bal, lis:act, approxbal: rovel.approx(user.bal)});
+      publicbot.cooldownearn.add(res.locals?.user?.id);
+      setTimeout(()=>{
+       publicbot.cooldownearn.delete(res.locals?.user?.id);
+      }, 60000);
+    }
+  })
+}
+})
+
 module.exports = router;
