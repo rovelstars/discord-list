@@ -26,7 +26,7 @@ imglink: undefined
     <%= __("dashboard.subtitle") %>
    </h4>
    <div class="field is-grouped is-grouped-multiline">
-   <div class="control" onclick="sync()">
+   <div class="control" onclick="syncfun()">
     <div class="tags has-addons">
     <span class="tag is-outlined"><%= __("dashboard.sync.title") %></span>
     <span class="tag is-success" id="sync"><%= __("dashboard.sync.normal") %></span>
@@ -38,7 +38,7 @@ imglink: undefined
      <span class="tag is-danger" id="bal">R$ <%= (user.bal)?user.bal.toString():"0" %></span>
     </div>
   </div>
-  <div class="control" onclick="earn()">
+  <div class="control" onclick="earnfun()">
     <div class="tags has-addons">
     <span class="tag is-outlined" id="earn">Earn</span>
     <span class="tag is-success"> R$</span>
@@ -153,21 +153,21 @@ style="background-image:url(https://discord.rovelstars.com/assets/img/default-bg
   </div>
    <script>
    document.addEventListener("DOMContentLoaded", function(event) {
-   var earn = function(){
+   var earnfun = function(){
     $("#earn").innerText="Earning...";
     fetch("https://discord.rovelstars.com/api/auth/earn").then(r=>r.json()).then(d=>{
      if(d.err){
-      Swal.fire({title:"Error",img:"error",text:d.err.replace("_").join(" ")});
+      Swal.fire({title:"Error",icon:"error",text:d.err.replace("_").join(" ")});
      }
      else{
-      Swal.fire({title:"Success!",img:"success",text:`You've earned R$ ${d.coins} ${(d.lis)?"and thanks for keeping link in status! You recieved more R$ because of that!":", ps: add our dscrdly.com link in your status and recieve more R$!"}`});
+      Swal.fire({title:"Success!",icon:"success",text:`You've earned R$ ${d.coins} ${(d.lis)?"and thanks for keeping link in status! You recieved more R$ because of that!":", ps: add our dscrdly.com link in your status and recieve more R$!"}`});
       $("#bal").innerText=`R$ ${d.approxbal}`;
      }
      $("#earn").innerText="After 1 minute you can start earning";
      setTimeout(()=>{$("#earn").innerText="Earn"},60*1000);
     })
    }
-  var sync = function(){
+  var syncfun = function(){
    var sc = document.getElementById("sync");
    sc.innerText="In Progress...";
    fetch("https://discord.rovelstars.com/api/users/<%= user.id %>/sync").then(r=>r.json()).then(d=>{
