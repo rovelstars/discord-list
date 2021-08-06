@@ -146,7 +146,7 @@ var run =  function() {
     });
 };
 
-run();
+setTimeout(run, 3000);
 
 function onHover() {
   $("rdllogo").src =

@@ -69,9 +69,8 @@ input.addEventListener("keyup", async (event) => {
 
     function doSearch(){
      document.getElementById("loadtext").innerText="Searching for your query!"
-     {style} = $("#loading");
-     style.opacity="1";
-     style.display="";
+     $("#loading").style.display="";
+     $("#loading").style.opacity="1";
      document.getElementById("results-title").innerHTML="";
      fetch("https://discord.rovelstars.com/api/bots?q="+encodeURI(input.value)).then(r=>r.json()).then(bots=>{
       style.opacity="0";
