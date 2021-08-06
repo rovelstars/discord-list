@@ -14,8 +14,8 @@ imglink: undefined
   <div class="container">
     <div class="columns">
      <div class="column is-2">
-      <figure class="image is-64x64 bc-avatar is-avatar">
-<img width="64" height="64" class="is-rounded" loading="lazy" src="<%= user.avatarUrl() %>" alt="<%= user.tag %> Avatar" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
+      <figure class="image is-128x128" style="margin:auto;border-radius:50%">
+<img class="is-rounded" loading="lazy" src="<%= user.avatarUrl() %>" alt="<%= user.tag %> Avatar" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
 <div class="status-<%= (user.status)?user.status:"online" %>"></div>
 </figure>
      </div>
