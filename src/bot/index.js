@@ -2,8 +2,10 @@ const Discord = require("discord.js");
 const fs = require("fs");
 require("./publicbot/index.js");
 const normalText = require("diacritics").remove;
+Discord.Intents.ALL = 32767;
 var client = new Discord.Client({
-  ws: { intents: new Discord.Intents(Discord.Intents.ALL) },
+  intents: new Discord.Intents(Discord.Intents.ALL),
+  allowedMentions: { parse: ["users", "roles"], repliedUser: true },
 });
 client.login(process.env.TOKEN);
 globalThis.privatebot = client;
@@ -15,7 +17,6 @@ client.mods = mods;
 client.contributors = contributors;
 client.commands = [];
 const prefix = process.env.PREFIX;
-const prompter = require("discordjs-prompter");
 
 function getMention(mention) {
   if (!mention) return;

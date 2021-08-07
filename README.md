@@ -62,6 +62,31 @@ Please keep **bugs**, **issues** and **code related subjects** in our issues and
 
 ---
 
+# SELF DEPLOYMENT 🏜️
+
+This is for users who want to contribute to RDL. We **do not support others running their own deployment**
+
+- check whether you have nodejs v16.6.x or above
+```sh
+$ node -v
+v16.6.1
+```
+- install dependencies
+```sh
+$ npm i
+```
+
+- fill in envs
+```sh
+$ cp example.env .env && vim .env
+```
+
+- start
+```sh
+$ npm start
+```
+
+---
 This project is open source so we are transparent in our work and to prove we do not have bad intentions. If you're trying to run it, please only do so if you're testing or helping us.
 If your instance is public, make sure to let us know about your website in our support server.
 

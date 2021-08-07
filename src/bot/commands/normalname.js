@@ -3,15 +3,15 @@ if (!client.owners.some(x => x === message.author.id) || !client.mods.some(x => 
 }
 else {
  if (!args.length) {
-  message.reply("Please provide user ID or ping him.");
+  message.reply({content: "Please provide user ID or ping him."});
  }
  else {
   let usern = getMention(args[0]);
-  if (!usern) message.reply("Please provide a valid user!");
+  if (!usern) message.reply({content: "Please provide a valid user!"});
   else {
    if (usern.username !== normalText(usern.username)) {
     message.guild.members.cache.get(usern.id).setNickname(normalText(usern.username));
-    message.reply("Successfully updated "+usern.username+"'s nickname to "+normalText(usern.username));
+    message.reply({content: "Successfully updated "+usern.username+"'s nickname to "+normalText(usern.username)});
    }
    else{
     prompter
@@ -22,7 +22,7 @@ else {
   timeout: (3600*1000),
  }).then(responses=>{
   if(!responses.size){
-   message.reply("Time's up! I won't change his nickname anymore unless you ask me again to.");
+   message.reply({"Time's up! I won't change his nickname anymore unless you ask me again to.");
   }
   else {
    const msg = responses.first();

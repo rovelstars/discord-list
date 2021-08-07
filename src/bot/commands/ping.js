@@ -1,1 +1,1 @@
-message.reply("pong!");
+message.reply({ content: "pong!" });

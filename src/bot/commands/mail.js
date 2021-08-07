@@ -1,9 +1,9 @@
-if(message.channel.type=="dm"){
+if(message.channel.type=="DM"){
  if(args.length==0){
-  message.reply("Please send your message to mail.");
+  message.reply({content: "Please send your message to mail."});
  }
  else{
-  message.reply("📨 Successfully Mailed The Team!");
+  message.reply({content:"📨 Successfully Mailed The Team!"});
   const at = (message.attachments).array();
   
   fetch(`${process.env.DOMAIN}/api/client/log`,{
@@ -24,5 +24,5 @@ if(message.channel.type=="dm"){
  }
 }
 else{
- message.reply("This command can be executed only in DMs. Don't you ever care about your privacy? 🤨");
+ message.reply({content: "This command can be executed only in DMs. Don't you ever care about your privacy? 🤨});
 }
