@@ -8,7 +8,7 @@ router.get("/", async (req, res) => {
  try {
   const key = await auth.getAccess(req.query.code);
   const user = await auth.getUser(key).catch(e => {
-   console.log(e);
+   console.log(e.stack);
    return res.redirect("/logout");
   });
   console.log(user.tag);

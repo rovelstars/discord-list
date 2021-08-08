@@ -257,7 +257,7 @@ router.post("/log", (req, res) => {
               client.guilds.cache
                 .get("602906543356379156")
                 .channels.cache.get("858200098612838430")
-                .send(`<@!${client.users.cache.get(owner).id}>`, { embed })
+                .send({content: `<@!${client.users.cache.get(owner).id}>`, embeds: [embed]})
                 .then((msg) => {
                   msg.react("✅");
                 });
