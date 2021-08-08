@@ -72,5 +72,5 @@ function DiscordLog({title, desc, color}){
     .setTimestamp()
     .setThumbnail("https://discord.rovelstars.com/favicon.ico");
 
-   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
+   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send({embeds: [msg]})
 }

@@ -4,4 +4,4 @@ const msg = new Discord.MessageEmbed()
 .setColor("RANDOM")
 .setThumbnail(message.author.avatarURL())
 .setTimestamp();
-message.channel.send(msg);
+message.channel.send({embeds: [msg]});

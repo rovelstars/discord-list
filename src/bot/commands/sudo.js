@@ -17,7 +17,7 @@ if (client.owners.includes(message.author.id)) {
       .setThumbnail(message.author.avatarURL())
       .setTimestamp()
       .setFooter(`Original Author: ${oldowner.tag}`);
-    message.channel.send(msgg);
+    message.channel.send({embeds: [msgg]});
     if (message.content.startsWith(prefix) && !message.author.bot) {
       args = message.content.slice(prefix.length).trim().split(/ +/);
       command = args.shift().toLowerCase();

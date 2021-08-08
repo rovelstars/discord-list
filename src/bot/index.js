@@ -91,7 +91,7 @@ function DiscordLog({ title, desc, color }) {
   client.guilds.cache
     .get("602906543356379156")
     .channels.cache.get("775231877433917440")
-    .send(msg);
+    .send({embeds: msg});
 }
 
 let router = require("express").Router();
@@ -224,7 +224,7 @@ router.post("/log", (req, res) => {
         client.guilds.cache
           .get("602906543356379156")
           .channels.cache.get(req.body.channel || "775231877433917440")
-          .send(msg)
+          .send({embeds: [msg]})
           .catch((e) => {});
       }
       if (req.body.owners) {
@@ -258,7 +258,7 @@ router.post("/log", (req, res) => {
                 .get("602906543356379156")
                 .channels.cache.get("858200098612838430")
                 .send({content: `<@!${client.users.cache.get(owner).id}>`, embeds: [embed]})
-                .then((msg) => {
+                .then(({embeds: [msg]}) => {
                   msg.react("✅");
                 });
             });

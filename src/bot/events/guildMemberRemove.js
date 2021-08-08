@@ -65,7 +65,7 @@ client.on("guildMemberRemove", (member)=>{
    client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send(msg)
    if (bot.owners) {
     for (const owner of bot.owners) {
-     client.users.cache.get(owner).send(msg);
+     client.users.cache.get(owner).send({embeds:[msg]});
     }
    }
     }
