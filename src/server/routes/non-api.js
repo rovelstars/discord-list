@@ -147,9 +147,11 @@ router.get("/dashboard", async (req, res) => {
     let botus = [];
     Users.findOne({ id: res.locals.user.id }).then(async (u) => {
       res.locals.user.bal = rovel.approx(u.bal);
-      res.locals.user.status = privatebot.guilds.cache.get("602906543356379156").members.cache.get(u.id).presence.status;
+      res.locals.user.status = privatebot.guilds.cache.get("602906543356379156").members.cache.get(u.id)?.presence?.status;
+      var notjoined = false;
+      if(!res.locals.user.status) notjoined = true;
       const bots = Cache.Bots.findByOwner(u.id);
-      await res.render("dashboard.ejs", { bots });
+      await res.render("dashboard.ejs", { bots, notjoined });
     });
   }
 });
