@@ -32,7 +32,7 @@ router.get("/:id/invite", (req, res)=>{
  }
  else{
   if(guild.me.hasPermission("MANAGE_GUILD")){
-  guild.fetchInvites().then(invs=>{
+  guild.invites.fetch().then(invs=>{
   invs = invs.map(invm=>invm.code);
   shuffle(invs);
   const code = invs[0] || "not_found";

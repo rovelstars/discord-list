@@ -32,7 +32,7 @@ globalThis.Servers = require("@models/servers.js");
 async function Update() {
   publicbot.guilds.cache
     .get("602906543356379156")
-    .fetchBans()
+    .bans.fetch()
     .then((list) => {
       globalThis.BannedList = list.map((b) => b.user.id);
     });
