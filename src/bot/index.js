@@ -2,9 +2,8 @@ const Discord = require("discord.js");
 const fs = require("fs");
 require("./publicbot/index.js");
 const normalText = require("diacritics").remove;
-Discord.Intents.ALL = 32767;
 var client = new Discord.Client({
-  intents: new Discord.Intents(Discord.Intents.ALL),
+  intents: [new Discord.Intents(32767)],
   allowedMentions: { parse: ["users", "roles"], repliedUser: true },
 });
 client.login(process.env.TOKEN);

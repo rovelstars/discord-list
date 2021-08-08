@@ -44,4 +44,6 @@ body{display:flex;flex-direction:column;}#loading{margin:0;padding:0;background-
   </style>
   <script>
   var user = <%- (user)?JSON.stringify(user):"null" %>
+  var $ = function(r){return document.querySelector(r)};
+  var $$ = function(r){return Array.from(document.querySelectorAll(r))};
 </script>

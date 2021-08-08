@@ -152,7 +152,6 @@ style="background-image:url(https://discord.rovelstars.com/assets/img/default-bg
 </div>
   </div>
    <script>
-    var $ = function(r){return document.querySelector(r)};
     var earnfun = function(){
     $("#earn").innerText="Earning...";
     fetch("https://discord.rovelstars.com/api/auth/earn").then(r=>r.json()).then(d=>{

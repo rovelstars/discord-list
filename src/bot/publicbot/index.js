@@ -1,7 +1,9 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 const normalText = require("diacritics").remove;
-var client = new Discord.Client();
+var client = new Discord.Client({
+ intents: [new Discord.Intents(32509)]
+});
 client.login(process.env.PUBLIC_TOKEN);
 globalThis.publicbot = client;
 const { fetch } = require("rovel.js");
