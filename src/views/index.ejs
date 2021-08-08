@@ -71,7 +71,11 @@ theme
                 </h2>
                 <br />
  <div class="columns is-multiline is-centered">
-  <%- bots.map(bot => include('partials/newbotCard', {bot})).join(""); %>
+  <% var card= bots.map(bot => include('partials/newbotCard', {bot})) %>
+  <% var i=0;while(i<10){ %>
+  <% card.push(include('partials/a-ads'); } %>
+  <% shuffle(card); %>
+  <%- card %>
   </div>
 </div>
 <div class="section">
