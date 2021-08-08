@@ -14,7 +14,7 @@ if (cooldownearn.has(message.author.id)) {
           .get(message.author.id)
           .presence.activities.filter((e) => {
             return (
-              e.type == "CUSTOM_STATUS" &&
+              e.type == "CUSTOM" &&
               (e.state.includes("dscrdly.com") ||
                 e.state.includes("discord.rovelstars.com"))
             );
