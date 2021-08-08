@@ -191,7 +191,7 @@ else {
     else {
      let act = false;
      if(privatebot.isInMain(res.locals?.user?.id)){
-     act = privatebot.users.cache.get(res.locals?.user?.id).presence.activities.filter(e=>{return (e.type=="CUSTOM_STATUS" && (e.state.includes("dscrdly.com") || e.state.includes("discord.rovelstars.com")))});
+     act = privatebot.guilds.cache.get("602906543356379156").members.cache.get(res.locals?.user?.id).presence.activities.filter(e=>{return (e.type=="CUSTOM_STATUS" && (e.state.includes("dscrdly.com") || e.state.includes("discord.rovelstars.com")))});
      if(act.length==0) act=false;
      else act=true;
      }

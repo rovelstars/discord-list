@@ -147,7 +147,7 @@ router.get("/dashboard", async (req, res) => {
     let botus = [];
     Users.findOne({ id: res.locals.user.id }).then(async (u) => {
       res.locals.user.bal = rovel.approx(u.bal);
-      res.locals.user.status = privatebot.users.cache.get(u.id).presence.status;
+      res.locals.user.status = privatebot.guilds.cache.get("602906543356379156").members.cache.get(u.id).presence.status;
       const bots = Cache.Bots.findByOwner(u.id);
       await res.render("dashboard.ejs", { bots });
     });
