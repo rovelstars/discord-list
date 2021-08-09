@@ -258,7 +258,7 @@ router.post("/log", (req, res) => {
                 .get("602906543356379156")
                 .channels.cache.get("858200098612838430")
                 .send({content: `<@!${client.users.cache.get(owner).id}>`, embeds: [embed]})
-                .then(({embeds: [msg]}) => {
+                .then((msg) => {
                   msg.react("✅");
                 });
             });
