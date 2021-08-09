@@ -31,7 +31,7 @@ router.get("/:id/invite", (req, res)=>{
   res.json({err: "guild_not_found"});
  }
  else{
-  if(guild.me.hasPermission("MANAGE_GUILD")){
+  if(guild.me.permissions.has("MANAGE_GUILD")){
   guild.invites.fetch().then(invs=>{
   invs = invs.map(invm=>invm.code);
   shuffle(invs);
@@ -40,7 +40,7 @@ router.get("/:id/invite", (req, res)=>{
   res.json({code})
   }
   else{
-   if(guild.me.hasPermission("CREATE_INSTANT_INVITE")){
+   if(guild.me.permissions.has("CREATE_INSTANT_INVITE")){
    var chx = guild.channels.cache.filter(chx => (chx.type === "text" && !chx.nsfw)).find(x => x.position === 0);
    chx.createInvite().then(inv=>{
     res.json({code: inv.code});
@@ -53,7 +53,7 @@ router.get("/:id/invite", (req, res)=>{
 });
  }
  else{
-  if(guild.me.hasPermission("CREATE_INSTANT_INVITE")){
+  if(guild.me.permissions.has("CREATE_INSTANT_INVITE")){
    var chx = guild.channels.cache.filter(chx => (chx.type === "text" && !chx.nsfw)).find(x => x.position === 0);
    chx.createInvite().then(inv=>{
     res.json({code: inv.code});

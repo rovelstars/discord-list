@@ -1,4 +1,4 @@
-if (message.member.hasPermission("ADMINISTRATOR")) {
+if (message.member.permissions.has("ADMINISTRATOR")) {
   Servers.findOne({ id: message.guild.id }).then((server) => {
     if (!server) {
       message.channel.send(
