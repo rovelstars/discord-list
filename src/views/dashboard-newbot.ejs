@@ -211,7 +211,7 @@ General Information
   </div>
  <br />
  <div class="container" style="overflow: hidden;">
-  <div class="section content has-background-dark is-curved longdescription" id="livedesc">
+  <div class="section content has-background-dark is-curved longdescription table-container" id="livedesc">
    Bot Description
   </div>
  </div>
@@ -285,6 +285,7 @@ botdesc.addEventListener("keyup",async (e) => {
      }
     });
     visualizer.innerHTML = noicehtml;
+    $$("table").forEach(e=>{e.classList.toggle("table", true)})
     Prism.highlightAll();
     twemoji.parse(document.body, emojiopts);
     var theme = document.getElementById("meta-theme");

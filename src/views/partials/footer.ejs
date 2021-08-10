@@ -41,6 +41,7 @@ globalThis.emojiopts = function(icon) {
 </script>
 <% } %>
 <script>
+$$("table").forEach(e=>{e.classList.toggle("table", true)});
 var parts = document.getElementsByClassName("tt");
 var ttarr =[];
 for(const part of parts){
