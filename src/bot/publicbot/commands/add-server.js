@@ -9,7 +9,7 @@ if (message.member.permissions.has("ADMINISTRATOR")) {
      msg.edit(`Invite code: **${invite.code}**`);*/
       let Server = new Servers({
         id: message.guild.id,
-        owner: message.guild.ownerID,
+        owner: message.guild.ownerId,
         name: message.guild.name,
         icon: message.guild.icon,
         short: message.guild.description || "Short description is not Updated.",
