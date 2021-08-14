@@ -41,7 +41,7 @@ router.get("/:id/invite", (req, res)=>{
   }
   else{
    if(guild.me.permissions.has("CREATE_INSTANT_INVITE")){
-   var chx = guild.channels.cache.filter(chx => (chx.type === "GUILD_TEXT" && !chx.nsfw && chx.rawPosition==1)).first();
+   var chx = guild.channels.cache.filter(chx => (chx.type === "GUILD_TEXT" && !chx.nsfw && chx.position==0 && chx.permissionsFor(guild.me).has('CREATE_INSTANT_INVITE'))).first();
    chx.createInvite().then(inv=>{
     res.json({code: inv.code});
    })
@@ -54,7 +54,7 @@ router.get("/:id/invite", (req, res)=>{
  }
  else{
   if(guild.me.permissions.has("CREATE_INSTANT_INVITE")){
-   var chx = guild.channels.cache.filter(chx => (chx.type === "GUILD_TEXT" && !chx.nsfw && chx.rawPosition==1)).first();
+   var chx = guild.channels.cache.filter(chx => (chx.type === "GUILD_TEXT" && !chx.nsfw && chx.permissionsFor(guild.me).has('CREATE_INSTANT_INVITE') && chx.position==0)).first();
    chx.createInvite().then(inv=>{
     res.json({code: inv.code});
    })
