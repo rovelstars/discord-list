@@ -6,6 +6,7 @@ module.exports = async function(req, res, next) {
  if (req.query.code) {
   var botu = await Bots.findOne({ code: req.query.code });
   if (botu) {
+   res.locals.botid=botu.id;
    botu = `${botu.id} (${botu.tag})`;
   }
  }

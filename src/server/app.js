@@ -137,7 +137,10 @@ app.set("views", path.resolve("src/views"));
 app.use(express.json());
 const limiter = rateLimit({
   windowMs: 30 * 1000, // 30 secs
-  max: 300, // limit each IP to 300 requests per windowMs
+  max: 30, // limit each IP to 300 requests per windowMs
+  keyGenerator: function(req, res){
+   return (res?.locals?.user?.id || res?.locals?.botid || req.ip);
+  }
 });
 app.set("trust proxy", 1);
 app.all("/", (req, res, next) => {
@@ -148,7 +151,6 @@ app.all("/", (req, res, next) => {
   //make the server giving respond fast
   next();
 });
-app.use("/api", limiter);
 process.on("unhandledRejection", (err) => {
   var unre = function (req, res, next) {
     log(error("**PROCESS** - Unhandled Rejection:\n") + warn(err));
@@ -171,7 +173,7 @@ app.use(userSetup);
 app.use(checkBanned);
 app.use(ls);
 app.use(dnd);
-
+app.use("/", limiter);
 var i18n = require("i18n");
 i18n.configure({
   locales: ["en", "hi", "ar", "es", "tr"],
