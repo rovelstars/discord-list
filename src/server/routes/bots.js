@@ -680,7 +680,8 @@ router.post("/edit", async (req, res) => {
 router.post("/new", async (req, res) => {
   var err;
   Cache.Bots.findOne({ id: req.body.id }).then(async (result) => {
-    if (typeof result == "object") err = "bot_already_added";
+    if (typeof result == "object") return res.json({err: "bot_already_added"});
+    else{
       if (!err) {
         if (req.body.github == "") req.body.github = null;
         if (req.body.bg == "") req.body.bg = null;
@@ -885,6 +886,7 @@ router.post("/new", async (req, res) => {
           console.error("error: " + e.stack);
         }
       }
+    }
   });
 });
 module.exports = router;
