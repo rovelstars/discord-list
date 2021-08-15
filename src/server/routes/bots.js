@@ -12,8 +12,10 @@ rule.hour = 12;
 rule.minute = 0;
 var gitregex = /(https?:\/\/)?github.com\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+/i;
 const job = schedule.scheduleJob(rule, async function () {
-  const hmm = await Cache.models.bots.updateMany({}, { votes: 0 });
-  Cache.Bots.refresh();
+  Cache.Bots.find({}).then(bots=>{bots.forEach(bot=>{
+bot.votes=0;
+bot.save();
+  })})
   fetch(`${process.env.DOMAIN}/api/client/log`, {
     method: "POST",
     headers: {
@@ -21,7 +23,7 @@ const job = schedule.scheduleJob(rule, async function () {
     },
     body: JSON.stringify({
       secret: process.env.SECRET,
-      channel: "775225719743053844",
+      channel: "830791693904904212",
       desc: `It is now the Scheduled Time!\nThe Votes of all (${hmm.nModified}) bots will now be **RESETED**!\nStart voting your bots again to reach the top of the Leaderboard!`,
       title: "Votes Reseted!",
       color: "#ff0000",
