@@ -79,8 +79,9 @@ Nevergonna let ${member} down.`,
   var bots = Cache.Bots.findByOwner(member.user.id);
    for(const bot of bots){
     if(bot.added == false){
-     Bots.findOne({id: bot.id}).then(d=>{
+     Cache.Bots.findOne({id: bot.id}).then(d=>{
       d.added = true;
+      d.status = member.presence.status || "online";
       fetch("https://discord.rovelstars.com/api/client/log", {
         method: "POST",
         headers: {
