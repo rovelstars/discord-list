@@ -330,8 +330,11 @@ function addBot(){
    if(d.err=="no_id"){
     err="Please Write The Bot ID"
    }
+   if(d.err=="bot_already_added_no_owner"){
+    err="This Bot Has Been Already Added To Our List Without Any Owners. Please send an email or ask in our support server to verify and take your ownership of this bot."
+   }
    if(d.err=="bot_already_added"){
-    err="The Bot Has Been Added To Our List."
+    err="This Bot Has Been Already Added To Our List."
    }
    if(d.err=="cannot_add_user"){
     err="We cannot add a user as a bot"
