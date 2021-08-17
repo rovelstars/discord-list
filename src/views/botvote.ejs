@@ -41,6 +41,7 @@ imglink: bot.bg
    </h1><br />
    </div>
    </div>
+   <% if(res.locals.user){ %>
    <div class="section">
    <h2>How much are you gonna spend today for voting <strong><%= bot.username %></strong>?</h2>
    <br />
@@ -57,6 +58,11 @@ imglink: bot.bg
      <button class="button is-success has-text-white" onclick="addVote()" id="submitbutton"><i class="fad fa-caret-circle-up has-text-info"></i>Vote</button>
      </div>
    </div>
+   <% } else { %>
+   <div class="has-text-centered">
+   <button class="button is-warning has-text-muted" onclick="Cookies.set('return', window.location.href,{ expires: 7});" href="/login">Login in order to vote</button>
+   </div>
+   <% } %>
    </div>
    </div>
    </section>

@@ -95,8 +95,13 @@ router.get("/sitemap.xml", async (req, res) => {
 
 router.get("/bots/:id/vote", async (req, res) => {
   if (!res.locals.user) {
-    res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
-    res.redirect("/login");
+   var bot = Cache.Bots.findOneById(req.params.id);
+    if (!bot) {
+      await res.render("404.ejs", { path: req.originalUrl });
+    }
+    else{
+    res.render("botvote.ejs",{bot});
+    }
   } else {
     var bot = Cache.Bots.findOneById(req.params.id);
     if (!bot) {
