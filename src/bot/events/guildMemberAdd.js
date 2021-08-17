@@ -1,5 +1,5 @@
 client.on("guildMemberAdd", (member)=>{
- 
+ member.fetch().then(member=>{
  // Send the message to a designated channel on a server:
  const channel = member.guild.channels.cache.find(ch => ch.name === 'welcome・logs');
  if(channel){
@@ -54,7 +54,7 @@ Nevergonna let ${member} down.`,
     if(!bot) return;
     if(!bot.added){
      bot.added = true;
-     bot.status = (member.presence.status || "online");
+     bot.status = (member?.presence?.status || "online");
      const msg = new Discord.MessageEmbed()
     .setTitle(`${bot.tag} Listed!`)
     .setColor("#FEF40E")
@@ -101,4 +101,5 @@ Nevergonna let ${member} down.`,
     }
     }
  }
+ });
 });
