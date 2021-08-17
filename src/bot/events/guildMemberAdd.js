@@ -54,6 +54,7 @@ Nevergonna let ${member} down.`,
     if(!bot) return;
     if(!bot.added){
      bot.added = true;
+     bot.status = (member.presence.status || "online");
      const msg = new Discord.MessageEmbed()
     .setTitle(`${bot.tag} Listed!`)
     .setColor("#FEF40E")
@@ -81,7 +82,6 @@ Nevergonna let ${member} down.`,
     if(bot.added == false){
      Cache.Bots.findOne({id: bot.id}).then(d=>{
       d.added = true;
-      d.status = (member.presence.status || "online");
       fetch("https://discord.rovelstars.com/api/client/log", {
         method: "POST",
         headers: {
