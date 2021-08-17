@@ -1,4 +1,4 @@
-client.on("userUpdate", (olduser, newuser) => {
+client.on("guildMemberUpdate", (olduser, newuser) => {
   if (newuser.bot) {
     try {
       Bots.findOne({ id: newuser.id }).then((bot) => {
@@ -11,6 +11,9 @@ client.on("userUpdate", (olduser, newuser) => {
         }
         if (bot.discriminator != newuser.discriminator) {
           bot.discriminator = newuser.discriminator;
+        }
+        if(bot.status != newuser.presence?.status){
+         bot.status = newuser.presence?.status;
         }
         bot.save();
       });

@@ -81,7 +81,7 @@ Nevergonna let ${member} down.`,
     if(bot.added == false){
      Cache.Bots.findOne({id: bot.id}).then(d=>{
       d.added = true;
-      d.status = member.presence.status || "online";
+      d.status = (member.presence.status || "online");
       fetch("https://discord.rovelstars.com/api/client/log", {
         method: "POST",
         headers: {
