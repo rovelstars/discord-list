@@ -595,7 +595,7 @@ router.post("/edit", async (req, res) => {
         )
           err = "invalid_desc";
         else {
-         req.body.desc=req.body.desc.replaceAll("\r\n","\n");
+         req.body.desc=req.body.desc.replaceAll("\r\n","\n").replaceAll("\u0009","&#9;");
           bot.desc = coronaSanitizer(req.body.desc, {
             allowedTags: coronaSanitizer.defaults.allowedTags.concat([
               "discord-message",
@@ -763,7 +763,7 @@ router.post("/new", async (req, res) => {
                   err = "invalid_github"; //lemme add my dank memer bot
               }
               if (!err && req.body.desc) {
-               req.body.desc=req.body.desc.replaceAll("\r\n","\n").replaceAll("\u0009","&#9");
+               req.body.desc=req.body.desc.replaceAll("\r\n","\n").replaceAll("\u0009","&#9;");
                 req.body.desc = coronaSanitizer(req.body.desc, {
                   allowedTags: coronaSanitizer.defaults.allowedTags.concat([
                     "discord-message",
