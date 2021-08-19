@@ -77,7 +77,7 @@ var run =  function() {
         if (result.isConfirmed) {
           Swal.fire({
             title: "We are all-in-one!",
-            text: "Yeah, RDL is meant to be a list having everything from discord, from emojis, users, servers, templates & bots!",
+            text: "Yeah, RDL is a list of everything about Discord, from emojis, users, servers, templates & bots!",
             confirmButtonText: "<span>That's awesome!</span>",
           })
             .then(() => {
