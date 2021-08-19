@@ -58,11 +58,12 @@ if(!str.includes("\n")){
 	return str.replace(regexinside, '');
 }
 else{
-str.split("\n").map(t=>{
+str = str.split("\n").map(t=>{
  const length = Indent(t);
  const regexinside = new RegExp(`^[ \\t]{${length}}`, 'gm');
 	return t.replace(regexinside, '');
 }).join("\n");
+return str;
 }
 }
 
