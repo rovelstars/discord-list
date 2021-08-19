@@ -52,9 +52,18 @@ const info = require("@utils/info.js");
 const express = require("express");
 const Indent = require("min-indent");
 globalThis.indent = function (str){
+if(!str.includes("\n")){
  const length = Indent(str);
  const regexinside = new RegExp(`^[ \\t]{${length}}`, 'gm');
 	return str.replace(regexinside, '');
+}
+else{
+str.split("\n").map(t=>{
+ const length = Indent(t);
+ const regexinside = new RegExp(`^[ \\t]{${length}}`, 'gm');
+	return t.replace(regexinside, '');
+}).join("\n");
+}
 }
 
 var css = {};
