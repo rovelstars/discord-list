@@ -52,7 +52,8 @@ const info = require("@utils/info.js");
 const express = require("express");
 const Indent = require("min-indent");
 globalThis.indent = function (str){
- const regexinside = new RegExp(`^[ \\t]{${Indent}}`, 'gm');
+ const length = Indent(str);
+ const regexinside = new RegExp(`^[ \\t]{${length}}`, 'gm');
 	return str.replace(regexinside, '');
 }
 
