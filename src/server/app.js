@@ -50,6 +50,11 @@ var latency = require("response-time");
 globalThis.translate = require("translatte");
 const info = require("@utils/info.js");
 const express = require("express");
+const Indent = require("min-indent");
+globalThis.indent = function (str){
+ const regexinside = new RegExp(`^[ \\t]{${Indent}}`, 'gm');
+	return string.replace(regexinside, '');
+}
 
 var css = {};
 css.dracula = fs.readFileSync(
