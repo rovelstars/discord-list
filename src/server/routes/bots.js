@@ -33,7 +33,7 @@ bot.save();
 
 const newrule = new schedule.RecurrenceRule();
 newrule.hour=12;
-nenewrule.minute=0;
+newrule.minute=0;
 schedule.scheduleJob(newrule, async function(){
  Cache.AllBots.forEach((bot,i)=>{
   setTimeout(()=>{
