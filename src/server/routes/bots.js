@@ -11,11 +11,11 @@ rule.dayOfWeek = 0;
 rule.hour = 12;
 rule.minute = 0;
 var gitregex = /(https?:\/\/)?github.com\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+/i;
-const job = schedule.scheduleJob(rule, async function () {
+schedule.scheduleJob(rule, async function () {
   Cache.Bots.find({}).then(bots=>{bots.forEach(bot=>{
 bot.votes=0;
 bot.save();
-  })})
+  })});
   fetch(`${process.env.DOMAIN}/api/client/log`, {
     method: "POST",
     headers: {
@@ -30,6 +30,27 @@ bot.save();
     }),
   });
 });
+
+const newrule = new schedule.RecurrenceRule();
+newrule.hour=12;
+nenewrule.minute=0;
+schedule.scheduleJob(newrule, async function(){
+ Cache.AllBots.forEach((bot,i)=>{
+  setTimeout(()=>{
+   fetch(`https://top.gg/api/bots/${bot.id}`, {
+    method: "GET",
+    headers: {
+      Authorization: `${process.env.TOPTOKEN}`,
+    },
+  }).then(r=>r.json()).then(b=>{
+   if(!b.error){
+    bot.servers=b.server_count;
+    bot.save();
+   }
+  })
+  }, 2000*(i+1)); //if our server makes one more request (61) , we're doomed!
+ });
+})
 
 router.get("/", (req, res) => {
   if (req.query.q) {
