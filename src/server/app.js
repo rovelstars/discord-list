@@ -152,8 +152,8 @@ app.set("view engine", "ejs");
 app.set("views", path.resolve("src/views"));
 app.use(express.json());
 const limiter = rateLimit({
-  windowMs: 30 * 1000, // 30 secs
-  max: 30, // limit each IP to 300 requests per windowMs
+  windowMs: 60 * 1000, // 60 secs
+  max: 30, // limit each IP to 30 requests per windowMs
   keyGenerator: function(req, res){
    return (res?.locals?.user?.id || res?.locals?.botid || req.ip);
   }

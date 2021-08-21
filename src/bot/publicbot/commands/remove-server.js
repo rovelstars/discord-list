@@ -1,4 +1,4 @@
-if (message.author.id === message.guild.owner.user.id) {
+if (message.author.id === message.guild.ownerId) {
   Cache.models.servers.findOne({ id: message.guild.id }).then((server) => {
     if (server) {
       fetch("https://discord.rovelstars.com/api/client/log", {
