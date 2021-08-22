@@ -24,7 +24,7 @@ bot.save();
     body: JSON.stringify({
       secret: process.env.SECRET,
       channel: "830791693904904212",
-      desc: `It is now the Scheduled Time!\nThe Votes of all (${hmm.nModified}) bots will now be **RESETED**!\nStart voting your bots again to reach the top of the Leaderboard!`,
+      desc: `It is now the Scheduled Time!\nThe Votes of all (${Cache.AllBots.length}) bots will now be **RESETED**!\nStart voting your bots again to reach the top of the Leaderboard!`,
       title: "Votes Reseted!",
       color: "#ff0000",
     }),
