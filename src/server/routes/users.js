@@ -5,19 +5,19 @@ router.use(require("express").json());
 
 router.get("/", (req, res) => {
  if (req.query.q) {
-  Users.find({ $text: { $search: req.query.q } }, { _id: false, email: false }).exec((err, doc) => {
+  Cache.models.users.find({ $text: { $search: req.query.q } }, { _id: false, email: false }).exec((err, doc) => {
    if (err) return res.json({ err });
    res.json(doc);
   })
  }
  else {
-  Users.find({}, { _id: false }).exec(function(err, users) {
+  Cache.models.users.find({}, { _id: false }).exec(function(err, users) {
    if (err) return console.error(err);
    res.send(users);
   })
  }
 });
-
+/*
 router.get("/all", async (req, res) => {
  if (req.query.q) {
   await fetch(`https://api.dscrd.info/search/${req.query.q}`,{
@@ -70,6 +70,7 @@ router.get("/all", async (req, res) => {
  }
  else return res.json({ err: "no_query" });
 });
+*/
 
 router.get("/:id", (req, res) => {
  Users.findOne({ id: req.params.id }, { _id: false, email: false }).then(user => {
