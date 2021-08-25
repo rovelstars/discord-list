@@ -40,7 +40,7 @@ schedule.scheduleJob(newrule, async function(){
    fetch(`https://top.gg/api/bots/${bot.id}`, {
     method: "GET",
     headers: {
-      Authorization: `${process.env.TOPTOKEN}`,
+      Authorization: `${process.env.TOPGGTOKEN()}`,
     },
   }).then(r=>r.json()).then(b=>{
    if(!b.error){
@@ -378,7 +378,7 @@ router.get("/import/not-owned/:id", (req, res) => {
   fetch(`https://top.gg/api/bots/${req.params.id}`, {
     method: "GET",
     headers: {
-      Authorization: `${process.env.TOPTOKEN}`,
+      Authorization: `${process.env.TOPGGTOKEN()}`,
     },
   })
     .then((r) => r.json())
@@ -425,7 +425,7 @@ router.get("/import/topgg/:id", (req, res) => {
         fetch(`https://top.gg/api/bots/${req.params.id}`, {
           method: "GET",
           headers: {
-            Authorization: `${process.env.TOPTOKEN}`,
+            Authorization: `${process.env.TOPGGTOKEN()}`,
           },
         })
           .then((r) => r.json())
@@ -725,13 +725,15 @@ router.post("/new", async (req, res) => {
             .then((r) => r.json())
             .then(async (user) => {
               if (!err && user.bot == undefined) err = "cannot_add_user";
+              if(!err && user.username.toLowerCase().includes("hack")) err = "cannot_add_hacked_bot";
+              if(!err && user.username.toLowerCase().includes("deleted")) err = "cannot_add_deleted_bot";
               if (!err && user.code == 10013) err = "cannot_add_invalid_user";
               if (!err && req.body.bg) {
                 if (!validator.isURL(req.body.bg)) err = "invalid_bg";
               }
-              if (!err && !req.body.owners && req.body.owned != "no")
+              if (!err && !req.body.owners)
                 err = "no_owners";
-              if (req.body.owned != "no") {
+              if (req.body.owners) {
                 req.body.owners = [...new Set(req.body.owners)];
               }
               if (!err && !req.body.short) err = "no_short";
@@ -810,7 +812,6 @@ router.post("/new", async (req, res) => {
                   return name;
                 });
               }
-              if (req.body.owned != "no") {
                 for (const owner of req.body.owners) {
                   await fetch(
                     `${process.env.DOMAIN}/api/client/mainserver/${owner}`
@@ -821,10 +822,6 @@ router.post("/new", async (req, res) => {
                         err = "owner_not_in_server";
                       }
                     });
-                }
-              }
-              if (req.body.owned == "no") {
-                req.body.owners = [];
               }
               if (!err) {
                 if (!user.avatar) {
@@ -858,7 +855,7 @@ router.post("/new", async (req, res) => {
                     }).save((err, bot) => {
                       if (err) {
                         console.log("err" + err);
-                        return res.send({ err });
+                        return res.send({ err: (err.stack||err) });
                       }
                       if (!err) {
                         Cache.AllBots.push(bot);
@@ -910,7 +907,7 @@ router.post("/new", async (req, res) => {
               }
             });
         } catch (e) {
-          res.json({ err: e.stack });
+          res.json({ err: (e.stack||e) });
           console.error("error: " + e.stack);
         }
       }

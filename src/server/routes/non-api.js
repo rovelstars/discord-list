@@ -124,7 +124,7 @@ router.get("/processes", (req, res) => {
 });
 
 router.get("/bots/:id", async (req, res) => {
-  fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`);
+  fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`).then(async()=>{
   var bot = Cache.Bots.findOneById(req.params.id);
   if (!bot) return await res.render("404.ejs", { path: req.originalUrl });
   else {
@@ -142,6 +142,7 @@ router.get("/bots/:id", async (req, res) => {
     await res.render("botpage.ejs", { bot });
     await Cache.Bots.refreshOne(bot.id);
   }
+  });
 });
 
 router.get("/dashboard", async (req, res) => {

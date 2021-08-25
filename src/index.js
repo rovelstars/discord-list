@@ -134,6 +134,12 @@ wallet.watchNewTransactions().subscribe((transaction) => {
   });
 });
 
+process.env.TOPTOKEN=process.env.TOPTOKEN.split("|");
+process.env.TOPGGTOKEN=function(){
+ const index = Math.floor(Math.random() * (process.env.TOPTOKEN.length - 1) + 1);
+ return process.env.TOPTOKEN[index];
+}
+
 const { Server: wsServer } = require("ws");
 
 globalThis.wss = new wsServer({ server });
