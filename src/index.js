@@ -134,10 +134,10 @@ wallet.watchNewTransactions().subscribe((transaction) => {
   });
 });
 
-process.env.TOPTOKEN=process.env.TOPTOKEN.split("|");
+globalThis.TOPTOKENS=process.env.TOPTOKEN.split("|");
 globalThis.TOPGGTOKEN=function(){
- const index = Math.floor(Math.random() * (process.env.TOPTOKEN.length - 1) + 1);
- return process.env.TOPTOKEN[index];
+ const index = Math.floor(Math.random() * (TOPTOKENS.length - 1) + 1);
+ return TOPTOKENS[index];
 }
 
 const { Server: wsServer } = require("ws");

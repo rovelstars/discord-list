@@ -73,7 +73,7 @@ imglink: bot.bg
     <div class="control" id="status">
     <div class="tags has-addons">
     <span class="tag is-dark"><i class="bx bxs-notification"></i>&nbsp;Status</span>
-    <span class="tag is-success"><%= (bot.status)?bot.status:"Online" %></span>
+    <span class="tag is-success"><%= (bot.status)?bot.status:"online" %></span>
     </div>
     </div><br />
    <div class="control" id="lib">
@@ -89,20 +89,28 @@ imglink: bot.bg
   <div class="control" id="owners">
     <div class="tags has-addons">
     <span class="tag is-dark"><i class="bx bxs-crown"></i>&nbsp;Made by</span>
-    <span class="tag is-success"><%= (bot.owned)?bot.owner.join(", "):"None" %></span>
+    <span class="tag is-success"><%= bot.owner.join(", ") %></span>
     </div>
   </div><br />
+  <% if(!bot.owned) %>
+  <div class="control">
+    <div class="tags has-addons">
+    <span class="tag is-dark"><i class="fad fa-long-arrow-down has-text-warning"></i>&nbsp;PlaceHolder</span>
+    <span class="tag is-warning">Bot</span>
+    </div>
+  </div><br />
+  <% } %>
   <div class="control" id="servers">
     <div class="tags has-addons">
     <span class="tag is-dark"><i class="fad fa-server has-text-link"></i>&nbsp;In</span>
-    <span class="tag is-link"><%= (bot.servers)?((bot.servers!=1)?bot.servers:"???"):"???" %> Servers
+    <span class="tag is-link"><span class="approx-num"><%= (bot.servers)?((bot.servers!=1)?bot.servers:"???"):"???" %></span> Servers
     </span>
     </div>
   </div><br />
   <div class="control" id="votes">
     <div class="tags has-addons">
     <span class="tag is-dark"><i class="fad fa-caret-circle-up has-text-info"></i>&nbsp;Votes</span>
-    <span class="tag is-info"><%= bot.votes %></span>
+    <span class="tag is-info approx-num"><%= bot.votes %></span>
     </div>
   </div><br /><% if(bot.support){ %>
   <div class="control">

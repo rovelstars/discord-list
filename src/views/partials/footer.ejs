@@ -47,6 +47,38 @@ var ttarr =[];
 for(const part of parts){
  ttarr.push(part.innerText);
 }
+function approx(num, opts) {
+    var numString;
+    opts = opts || {};
+    var negative = num < 0;
+    num = Math.abs(num);
+    var thousandsBreak = opts.min10k ? TEN_THOUSAND : THOUSAND;
+    if (num < thousandsBreak) {
+      numString = addCommas(formatDec(num, 1, opts), opts);
+    } else if (num < MILLION) {
+      numString =  formatDec(num, THOUSAND, opts) + 'k';
+    } else if (num < BILLION) {
+      numString =  formatDec(num, MILLION, opts) + 'm';
+    } else if (num < TRILLION) {
+      numString =  addCommas(formatDec(num,  BILLION, opts), opts) + 'b';
+    } else {
+      numString = addCommas(formatDec(num,  TRILLION, opts), opts) + 't';
+    }
+    if (negative) {
+      numString = '-' + numString;
+    }
+    if (opts.capital) {
+      numString = numString.toUpperCase();
+    }
+    if (opts.prefix) {
+      numString = opts.prefix + numString;
+    }
+    if (opts.suffix) {
+      numString = numString + opts.suffix;
+    }
+    return numString;
+  }
+$$(".approx-num").forEach(e=>{e.innerText=approx(e.innerText,{capital: true})});
 <% if(req.locale!="en"){ %>
 function translate(arg){
 if(arg){
