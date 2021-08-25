@@ -47,6 +47,49 @@ var ttarr =[];
 for(const part of parts){
  ttarr.push(part.innerText);
 }
+function addCommas(num, opts) {
+    if (opts.separator === false) {
+      return num.toString();
+    }
+    if (num < 1000) {
+      return num.toString();
+    }
+    var separator = (typeof opts.separator === 'string' ? opts.separator : ',');
+
+    var out = [],
+      digits = Math.round(num).toString().split('');
+
+    digits.reverse().forEach(function(digit, i){
+      if (i && i%3 === 0) {
+        out.push(separator);
+      }
+      out.push(digit);
+    });
+    return out.reverse().join('');
+  }
+  function formatDec(num, base, opts) {
+    var workingNum = num/base;
+    var ROUND = opts.round ? 'round' : 'floor';
+    if (opts.decimal === false) {
+      num = Math[ROUND](workingNum);
+      return num.toString();
+    }
+    if (opts.precision) {
+      num = workingNum;
+    } else {
+      num = workingNum < 10 ? (Math[ROUND](workingNum * 10) / 10) : Math[ROUND](workingNum);
+    }
+    num = num.toString();
+    if (typeof opts.decimal === 'string') {
+      num = num.replace('.', opts.decimal);
+    }
+    return num;
+  }
+  var THOUSAND = 1000;
+  var TEN_THOUSAND = 10000;
+  var MILLION = 1000000;
+  var BILLION = 1000000000;
+  var TRILLION = 1000000000000;
 function approx(num, opts) {
     var numString;
     opts = opts || {};
