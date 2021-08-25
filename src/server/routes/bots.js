@@ -40,7 +40,7 @@ schedule.scheduleJob(newrule, async function(){
    fetch(`https://top.gg/api/bots/${bot.id}`, {
     method: "GET",
     headers: {
-      Authorization: `${process.env.TOPGGTOKEN()}`,
+      Authorization: `${globalThis.TOPGGTOKEN()}`,
     },
   }).then(r=>r.json()).then(b=>{
    if(!b.error){
@@ -378,7 +378,7 @@ router.get("/import/not-owned/:id", (req, res) => {
   fetch(`https://top.gg/api/bots/${req.params.id}`, {
     method: "GET",
     headers: {
-      Authorization: `${process.env.TOPGGTOKEN()}`,
+      Authorization: `${globalThis.TOPGGTOKEN()}`,
     },
   })
     .then((r) => r.json())
@@ -425,7 +425,7 @@ router.get("/import/topgg/:id", (req, res) => {
         fetch(`https://top.gg/api/bots/${req.params.id}`, {
           method: "GET",
           headers: {
-            Authorization: `${process.env.TOPGGTOKEN()}`,
+            Authorization: `${globalThis.TOPGGTOKEN()}`,
           },
         })
           .then((r) => r.json())
