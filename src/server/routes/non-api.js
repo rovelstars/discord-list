@@ -130,7 +130,6 @@ router.get("/bots/:id", async (req, res) => {
   else {
     bot.desc = await marked(bot.desc.replace(/&gt;+/g, ">"));
     bot.owner = [];
-    if (bot.owned) {
       for (const id of bot.owners) {
         await fetch(`${process.env.DOMAIN}/api/client/users/${id}`)
           .then((r) => r.json())
@@ -138,7 +137,6 @@ router.get("/bots/:id", async (req, res) => {
             await bot.owner.push(d.tag);
           });
       }
-    }
     await res.render("botpage.ejs", { bot });
     await Cache.Bots.refreshOne(bot.id);
   }

@@ -373,7 +373,7 @@ router.delete("/:id", async (req, res) => {
       });
     });
 });
-
+/*
 router.get("/import/not-owned/:id", (req, res) => {
   fetch(`https://top.gg/api/bots/${req.params.id}`, {
     method: "GET",
@@ -414,7 +414,7 @@ router.get("/import/not-owned/:id", (req, res) => {
       }
     });
 });
-
+*/
 router.get("/import/topgg/:id", (req, res) => {
   if (req.query.key) {
     var userid;
@@ -579,7 +579,7 @@ router.post("/edit", async (req, res) => {
     }
     if (!err && req.body.owners) {
       req.body.owners = [...new Set(req.body.owners)];
-      if (!err && req.body.owners !== bot.owners && bot.owned) {
+      if (!err && rovel.func.isEqual(req.body.owners, bot.owners)) {
         var cond = true;
         for (const owner of req.body.owners) {
           await fetch(`${process.env.DOMAIN}/api/client/mainserver/${owner}`)
@@ -705,8 +705,7 @@ router.post("/edit", async (req, res) => {
 router.post("/new", async (req, res) => {
   var err;
   Cache.Bots.findOne({ id: req.body.id }).then(async (result) => {
-    if (typeof result == "object" && result?.owned!=true) return res.json({err: "bot_already_added"});
-    else if(typeof result == "object" && result?.owned) return res.json({err: "bot_already_added_no_owner"});
+    if (typeof result == "object") return res.json({err: "bot_already_added"});
     else{
       if (!err) {
         if (req.body.github == "") req.body.github = null;
@@ -839,7 +838,6 @@ router.post("/new", async (req, res) => {
                       discriminator: user.discriminator,
                       avatar: user.avatar,
                       owners: req.body.owners,
-                      owned: req.body.owned != "no" ? true : false,
                       added: dd.condition,
                       short: req.body.short,
                       desc: req.body.desc,
@@ -859,7 +857,6 @@ router.post("/new", async (req, res) => {
                       }
                       if (!err) {
                         Cache.AllBots.push(bot);
-                        if (req.body.owned != "no") {
                           let role = privatebot.guilds.cache
                             .get("602906543356379156")
                             .roles.cache.get("775250249040134164");
@@ -869,7 +866,6 @@ router.post("/new", async (req, res) => {
                               .members.cache.get(meme);
                             member.roles.add(role).catch((e) => console.log(e));
                           });
-                        }
                         res.send({ success: true });
                         fetch("https://discord.rovelstars.com/api/client/log", {
                           method: "POST",
@@ -880,16 +876,10 @@ router.post("/new", async (req, res) => {
                             secret: process.env.SECRET,
                             img: bot.avatarURL,
                             desc: `**${user.username}** has been added by ${
-                              req.body.owned == "no"
-                                ? "No One"
-                                : "<@!" + bot.owners[0] + ">"
+                              "<@!" + bot.owners[0] + ">"
                             }\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${
                               dd.condition == true
                                 ? "\nThe bot has been already added to the server, so they are saved as 'added'"
-                                : ""
-                            }${
-                              req.body.owned == "no"
-                                ? "\nSince there's no owner of the bot, this bot will be added without owners and we are open for DMs from the real bot owner."
                                 : ""
                             }`,
                             title: "New Bot Added!",
