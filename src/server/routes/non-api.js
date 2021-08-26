@@ -119,6 +119,17 @@ router.get("/bots/:id/vote", async (req, res) => {
   }
 });
 
+router.get("/bots/:slug/invite",(req, res, next)=>{
+  Cache.Bots.findOne({slug: req.params.slug}).then(bot=>{
+   if(!bot){
+    res.render("404.ejs", { path: req.originalUrl });
+   }
+   else{
+    res.redirect(bot.invite);
+   }
+  })
+})
+
 router.get("/processes", (req, res) => {
   eval(shell.exec("cat src/build/process.js").stdout);
 });
