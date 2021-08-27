@@ -91,7 +91,7 @@ function DiscordLog({ title, desc, color }) {
   client.guilds.cache
     .get("602906543356379156")
     .channels.cache.get("775231877433917440")
-    .send({embeds: msg});
+    .send({ embeds: msg });
 }
 
 let router = require("express").Router();
@@ -152,12 +152,20 @@ router.get("/bannedusers/:id", (req, res) => {
 
 router.get("/users/:id", (req, res) => {
   try {
-    var user = client.users.cache.get(req.params.id);
+    var user = client.users.cache.get(req.params.id).catch((e) => {
+      res.json({ err: "invalid_user" });
+      return;
+    });
     if (user == null) {
-      client.users.fetch(req.params.id).then((d) => {
-        if (d.avatar == null) d.avatar = d.discriminator % 5;
-        res.json(d);
-      });
+      client.users
+        .fetch(req.params.id)
+        .then((d) => {
+          if (d.avatar == null) d.avatar = d.discriminator % 5;
+          res.json(d);
+        })
+        .catch((e) => {
+          res.json({ err: "invalid_user" });
+        });
     } else {
       if (user.avatar == null)
         user.avatar = (user.discriminator % 5).toString();
@@ -224,7 +232,7 @@ router.post("/log", (req, res) => {
         client.guilds.cache
           .get("602906543356379156")
           .channels.cache.get(req.body.channel || "775231877433917440")
-          .send({embeds: [msg]})
+          .send({ embeds: [msg] })
           .catch((e) => {});
       }
       if (req.body.owners) {
@@ -257,7 +265,10 @@ router.post("/log", (req, res) => {
               client.guilds.cache
                 .get("602906543356379156")
                 .channels.cache.get("858200098612838430")
-                .send({content: `<@!${client.users.cache.get(owner).id}>`, embeds: [embed]})
+                .send({
+                  content: `<@!${client.users.cache.get(owner).id}>`,
+                  embeds: [embed],
+                })
                 .then((msg) => {
                   msg.react("✅");
                 });

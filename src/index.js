@@ -20,6 +20,11 @@ if (!String.prototype.replaceAll) {
 }
 var rovel = require("rovel.js");
 rovel.env.config();
+rovel.fetch = function (url, opts) {
+  if (!opts?.headers?.["user-agent"])
+    opts.headers["user-agent"] = `RDL self server`;
+  return require("node-fetch")(encodeURI(url), opts);
+};
 const mongoose = require("mongoose");
 mongoose.connect(process.env.DB, {
   useNewUrlParser: true,
@@ -30,13 +35,14 @@ mongoose.connect(process.env.DB, {
 });
 globalThis.shell = require("shelljs");
 const loggy = require("@utils/loggy.js");
-
-globalThis.logg = console.log;
-globalThis.console.log = loggy.log;
-globalThis.logerr = console.error;
-globalThis.console.error = loggy.error;
-globalThis.warnn = console.warn;
-globalThis.console.warn = loggy.warn;
+if (process.env.WEBLOG == "true") {
+  globalThis.logg = console.log;
+  globalThis.console.log = loggy.log;
+  globalThis.logerr = console.error;
+  globalThis.console.error = loggy.error;
+  globalThis.warnn = console.warn;
+  globalThis.console.warn = loggy.warn;
+}
 globalThis.fetch = rovel.fetch;
 globalThis.console.debug = function (obj) {
   if (typeof obj.stack == "string" && typeof obj == "object") {
@@ -91,10 +97,27 @@ globalThis.random = function random(n) {
 };
 process.on("SIGTERM", () => {
   console.log("SIGTERM Recieved!");
+  console.log("Closing off bots");
+  privatebot.destroy();
+  publicbot.destroy();
   console.log("Closing http server.");
   server.close(() => {
     console.log("Http server closed.");
     // boolean means [force], see in mongoose doc
+    db.close(false, () => {
+      console.log("MongoDb connection closed.");
+      process.exit(0);
+    });
+  }, 3000);
+});
+process.on("SIGINT", () => {
+  console.log("SIGINT Recieved!");
+  console.log("Closing off bots");
+  privatebot.destroy();
+  publicbot.destroy();
+  console.log("Closing http server.");
+  server.close(() => {
+    console.log("Http server closed.");
     db.close(false, () => {
       console.log("MongoDb connection closed.");
       process.exit(0);
@@ -134,11 +157,11 @@ wallet.watchNewTransactions().subscribe((transaction) => {
   });
 });
 
-globalThis.TOPTOKENS=process.env.TOPTOKEN.split("|");
-globalThis.TOPGGTOKEN=function(){
- const index = Math.floor(Math.random() * (TOPTOKENS.length - 1) + 1);
- return TOPTOKENS[index];
-}
+globalThis.TOPTOKENS = process.env.TOPTOKEN.split("|");
+globalThis.TOPGGTOKEN = function () {
+  const index = Math.floor(Math.random() * (TOPTOKENS.length - 1) + 1);
+  return TOPTOKENS[index];
+};
 
 const { Server: wsServer } = require("ws");
 
@@ -154,6 +177,8 @@ wss.on("connection", function connection(ws, req) {
     }
     if (typeof msg != undefined) {
       if (msg?.event == "ping") ws.send(JSON.stringify({ res: "pong" }));
+      if (msg?.event == "state")
+        ws.send(JSON.stringify({ memory: process.memoryUsage() }));
     }
   });
 });
