@@ -95,12 +95,11 @@ router.get("/sitemap.xml", async (req, res) => {
 
 router.get("/bots/:id/vote", async (req, res) => {
   if (!res.locals.user) {
-   var bot = Cache.Bots.findOneById(req.params.id);
+    var bot = Cache.Bots.findOneById(req.params.id);
     if (!bot) {
       await res.render("404.ejs", { path: req.originalUrl });
-    }
-    else{
-    res.render("botvote.ejs",{bot});
+    } else {
+      res.render("botvote.ejs", { bot });
     }
   } else {
     var bot = Cache.Bots.findOneById(req.params.id);
@@ -119,39 +118,103 @@ router.get("/bots/:id/vote", async (req, res) => {
   }
 });
 
-router.get("/bots/:slug/invite",(req, res, next)=>{
-  Cache.Bots.findOne({slug: req.params.slug}).then(bot=>{
-   if(!bot){
-    res.render("404.ejs", { path: req.originalUrl });
-   }
-   else{
-    res.redirect(bot.invite);
-   }
-  })
-})
+router.get("/bots/:slug/invite", (req, res, next) => {
+  Cache.Bots.findOne({ slug: req.params.slug }).then((bot) => {
+    if (!bot) {
+      res.render("404.ejs", { path: req.originalUrl });
+    } else {
+      res.redirect(bot.invite);
+    }
+  });
+});
 
 router.get("/processes", (req, res) => {
   eval(shell.exec("cat src/build/process.js").stdout);
 });
 
 router.get("/bots/:id", async (req, res) => {
-  fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`).then(async()=>{
-  var bot = Cache.Bots.findOneById(req.params.id);
-  if (!bot) return await res.render("404.ejs", { path: req.originalUrl });
-  else {
-    bot.desc = await marked(bot.desc.replace(/&gt;+/g, ">"));
-    bot.owner = [];
-      for (const id of bot.owners) {
-        await fetch(`${process.env.DOMAIN}/api/client/users/${id}`)
+  fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`).then(
+    async () => {
+      var bot = Cache.Bots.findOneById(req.params.id);
+      if (!bot) {
+        var toke = globalThis.TOPGGTOKEN();
+        fetch(`https://top.gg/api/bots/${req.params.id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `${toke}`,
+          },
+        })
           .then((r) => r.json())
-          .then(async (d) => {
-            await bot.owner.push(d.tag);
+          .then(async (botu) => {
+            console.log(botu);
+            console.log(toke);
+            if (botu.error)
+              return await res.render("404.ejs", { path: req.originalUrl });
+            else {
+              var abot = {
+                id: botu.id,
+                lib: botu.lib == "" ? "none" : botu.lib,
+                prefix: botu.prefix,
+                short: botu.shortdesc,
+                username: botu.username,
+                dicriminator: botu.discriminator,
+                tag: `${botu.username}#${botu.discriminator}`,
+                desc: botu.longdesc,
+                support: botu.support,
+                bg: botu.bannerUrl,
+                card: {},
+                owners: botu.owners,
+                invite: botu.invite,
+                github: botu.github,
+                website: botu.website,
+                votes: 0,
+                bg: botu.bannerUrl,
+                avatarURL: (function () {
+                  if (
+                    botu.avatar == "1" ||
+                    botu.avatar == "2" ||
+                    botu.avatar == "3" ||
+                    botu.avatar == "4"
+                  )
+                    return `https://cdn.discordapp.com/embed/avatars/${botu.avatar}.png`;
+                  var ani = false;
+                  if (this.avatar?.startsWith("a_")) ani = true;
+                  const aniurl = `https://cdn.discordapp.com/avatars/${botu.id}/${botu.avatar}.gif`;
+                  const nonurl = `https://cdn.discordapp.com/avatars/${botu.id}/${botu.avatar}.png`;
+                  const url = ani ? aniurl : nonurl;
+                  return url;
+                })(),
+                servers: botu.server_count,
+                nothere: true,
+                status: "online",
+              };
+              abot.desc = await marked(abot.desc.replace(/&gt;+/g, ">"));
+              abot.owner = [];
+              for (const id of abot.owners) {
+                await fetch(`${process.env.DOMAIN}/api/client/users/${id}`)
+                  .then((r) => r.json())
+                  .then(async (d) => {
+                    await abot.owner.push(d.tag);
+                  });
+              }
+              res.render("botpage.ejs", { bot: abot });
+            }
           });
+      } else {
+        bot.desc = await marked(bot.desc.replace(/&gt;+/g, ">"));
+        bot.owner = [];
+        for (const id of bot.owners) {
+          await fetch(`${process.env.DOMAIN}/api/client/users/${id}`)
+            .then((r) => r.json())
+            .then(async (d) => {
+              await bot.owner.push(d.tag);
+            });
+        }
+        await res.render("botpage.ejs", { bot });
+        await Cache.Bots.refreshOne(bot.id);
       }
-    await res.render("botpage.ejs", { bot });
-    await Cache.Bots.refreshOne(bot.id);
-  }
-  });
+    }
+  );
 });
 
 router.get("/dashboard", async (req, res) => {
@@ -162,9 +225,11 @@ router.get("/dashboard", async (req, res) => {
     let botus = [];
     Users.findOne({ id: res.locals.user.id }).then(async (u) => {
       res.locals.user.bal = rovel.approx(u.bal);
-      res.locals.user.status = privatebot.guilds.cache.get("602906543356379156").members.cache.get(u.id)?.presence?.status;
+      res.locals.user.status = privatebot.guilds.cache
+        .get("602906543356379156")
+        .members.cache.get(u.id)?.presence?.status;
       var notjoined = false;
-      if(!res.locals.user.status) notjoined = true;
+      if (!res.locals.user.status) notjoined = true;
       const bots = Cache.Bots.findByOwner(u.id);
       await res.render("dashboard.ejs", { bots, notjoined });
     });
