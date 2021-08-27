@@ -152,10 +152,7 @@ router.get("/bannedusers/:id", (req, res) => {
 
 router.get("/users/:id", (req, res) => {
   try {
-    var user = client.users.cache.get(req.params.id).catch((e) => {
-      res.json({ err: "invalid_user" });
-      return;
-    });
+    var user = client.users.cache.get(req.params.id);
     if (user == null) {
       client.users
         .fetch(req.params.id)
