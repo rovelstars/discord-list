@@ -21,8 +21,11 @@ if (!String.prototype.replaceAll) {
 var rovel = require("rovel.js");
 rovel.env.config();
 rovel.fetch = function (url, opts) {
-  if (!opts?.headers?.["user-agent"])
+  if (!opts?.headers?.["user-agent"]) {
+    if (!opts) opts = {};
+    if (!opts.headers) opts.headers = {};
     opts.headers["user-agent"] = `RDL self server`;
+  }
   return require("node-fetch")(encodeURI(url), opts);
 };
 const mongoose = require("mongoose");
