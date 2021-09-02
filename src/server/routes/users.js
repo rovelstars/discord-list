@@ -17,60 +17,6 @@ router.get("/", (req, res) => {
   })
  }
 });
-/*
-router.get("/all", async (req, res) => {
- if (req.query.q) {
-  await fetch(`https://api.dscrd.info/search/${req.query.q}`,{
-   method: "GET",
-   headers:{
-    "user-agent": "you fucked up dscrd.info xD"
-   }
-  }).then(r => r.json()).then(async resp => {
-   if (resp.success) {
-    if (resp.members.length == 0) { //need to perform id fetch
-     await fetch(`https://api.dscrd.info/id/${req.query.q}`,{
-   method: "GET",
-   headers:{
-    "user-agent": "you fucked up dscrd.info xD"
-   }
-  }).then(r => r.json()).then(async resp => {
-      if (resp.success) {
-       var users = [{
-        id: resp.user.user_id,
-        username: resp.user.username,
-        avatarURL: resp.user.avatar_url,
-        discriminator: resp.user.discriminator,
-        tag: resp.user.username + "#" + resp.user.discriminator
-      }];
-       res.json(users);
-      } else {
-       return res.json({ err: "not_found" });
-      }
-     });
-    }
-    else {
-     var users = [];
-     var temp;
-     const members = resp.members;
-     await members.forEach((data, index) => {
-      temp = {
-       id: data.user_id,
-       username: data.username,
-       avatarURL: data.avatar_url,
-       discriminator: data.discriminator,
-       tag: data.username + "#" + data.discriminator
-      };
-      users.push(temp);
-     });
-     await res.json(users);
-    }
-   }
-   else return res.json({ err: `failed`, logs: resp });
-  })
- }
- else return res.json({ err: "no_query" });
-});
-*/
 
 router.get("/:id", (req, res) => {
  Users.findOne({ id: req.params.id }, { _id: false, email: false }).then(user => {
