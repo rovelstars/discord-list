@@ -185,11 +185,13 @@ var userSetup = require("@mw/userSetup.js");
 var keepAlive = require("@mw/keepAlive.js");
 var ls = require("@mw/linkService.js");
 var dnd = require("@mw/doOrDoNot.js");
+var ree = require("@mw/error.js");
 app.use(keepAlive);
 app.use(userSetup);
 app.use(checkBanned);
 app.use(ls);
 app.use(dnd);
+app.use(ree);
 app.use("/", limiter);
 var i18n = require("i18n");
 i18n.configure({
@@ -276,7 +278,7 @@ app.post("/api/translate", async (req, res) => {
 });
 
 app.get("/api/*", (req, res) => {
-  res.json({ err: 404 });
+  res.status(404).json({ err: 404 });
 });
 
 app.get("/comments", (req, res) => {

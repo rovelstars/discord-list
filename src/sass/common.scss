@@ -1,103 +1,102 @@
 $white: #000000;
 $deep-black: #0a0a0a;
 $dark: darken(#2f3136, 5%);
-$success: #57F287;
-$warning: #FEE75C;
-$danger: #ED4245;
+$success: #57f287;
+$warning: #fee75c;
+$danger: #ed4245;
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=K2D&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=K2D&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap");
 
 @font-face {
- font-family: discord;
- font-display: swap;
- src: url(/assets/font/sans.otf);
+  font-family: discord;
+  font-display: swap;
+  src: url(/assets/font/sans.otf);
 }
 
 @font-face {
- font-family: burbank;
- src: url(/assets/font/Burbank.otf);
+  font-family: burbank;
+  src: url(/assets/font/Burbank.otf);
 }
 
 @font-face {
- font-family: angrybirds;
- src: url(/assets/font/angrybirds.ttf);
+  font-family: angrybirds;
+  src: url(/assets/font/angrybirds.ttf);
 }
 
 @font-face {
- font-family: bangers;
- src: url(/assets/font/Bangers.ttf);
+  font-family: bangers;
+  src: url(/assets/font/Bangers.ttf);
 }
 
 img.vert-move {
- -webkit-animation: mover 1s infinite alternate;
- animation: mover 1s infinite alternate;
+  -webkit-animation: mover 1s infinite alternate;
+  animation: mover 1s infinite alternate;
 }
 
 @-webkit-keyframes mover {
- 0% {
-  transform: translateY(0);
- }
+  0% {
+    transform: translateY(0);
+  }
 
- 100% {
-  transform: translateY(-10px);
- }
+  100% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes mover {
- 0% {
-  transform: translateY(0);
- }
+  0% {
+    transform: translateY(0);
+  }
 
- 100% {
-  transform: translateY(-10px);
- }
+  100% {
+    transform: translateY(-10px);
+  }
 }
 
-
 #scroll {
- position: fixed;
- right: 10px;
- bottom: 10px;
- cursor: pointer;
- width: 50px;
- height: 50px;
- background-color: #5865F2;
- text-indent: -9999px;
- display: none;
- -webkit-border-radius: 60px;
- -moz-border-radius: 60px;
- border-radius: 60px
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  background-color: #5865f2;
+  text-indent: -9999px;
+  display: none;
+  -webkit-border-radius: 60px;
+  -moz-border-radius: 60px;
+  border-radius: 60px;
 }
 
 #scroll span {
- position: absolute;
- top: 50%;
- left: 50%;
- margin-left: -8px;
- margin-top: -12px;
- height: 0;
- width: 0;
- border: 8px solid transparent;
- border-bottom-color: $white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -12px;
+  height: 0;
+  width: 0;
+  border: 8px solid transparent;
+  border-bottom-color: $white;
 }
 
 #scroll:hover {
- background-color: $white;
- opacity: 1;
- filter: "alpha(opacity=100)";
- -ms-filter: "alpha(opacity=100)";
+  background-color: $white;
+  opacity: 1;
+  filter: "alpha(opacity=100)";
+  -ms-filter: "alpha(opacity=100)";
 }
 
 body {
- font-family: 'Montserrat', sans-serif;
- min-height: 100vh;
+  font-family: "Montserrat", sans-serif;
+  min-height: 100vh;
 }
 
 footer,
 .footer-img {
- margin-top: auto;
+  margin-top: auto;
 }
 
 h1,
@@ -112,175 +111,176 @@ h5,
 .h5,
 h6,
 .h6 {
- font-family: discord, sans-serif;
+  font-family: discord, sans-serif;
 }
 
 div.content iframe {
- width: 100%;
- height: 100vh;
- border-radius: 5px;
+  width: 100%;
+  height: 100vh;
+  border-radius: 5px;
 }
 
 div.content img {
- border-radius: 5px;
+  border-radius: 5px;
 }
 
 div.content img.emoji {
- border-radius: 0px;
+  border-radius: 0px;
 }
 
 div.content img.emoji-double {
- border-radius: 0px;
+  border-radius: 0px;
 }
 
 div.content img.emoji-double {
- border-radius: 0px;
+  border-radius: 0px;
 }
 
 div.content discord-messages {
- border-radius: 5px;
+  border-radius: 5px;
 }
 
 .http-method {
- padding: 4px;
- border-radius: 20px;
- font-family: discord;
+  padding: 4px;
+  border-radius: 20px;
+  font-family: discord;
 }
 
 .section {
- padding: 3rem 0.5rem;
+  padding: 3rem 0.5rem;
 }
 
 .rdllogo:hover {
- content: url('/assets/img/bot/pet.gif');
- height: 30;
- width: 30;
+  content: url("/assets/img/bot/pet.gif");
+  height: 30;
+  width: 30;
 }
 
 textarea {
- color: $white;
- font-family: Montserrat, sans-serif;
+  color: $white;
+  font-family: Montserrat, sans-serif;
 }
 
 select option {
- background-color: $white;
- font-family: Montserrat, sans-serif;
+  background-color: $white;
+  font-family: Montserrat, sans-serif;
 }
 
 .is-curved {
- border-radius: 5px;
+  border-radius: 5px;
 }
 
 code,
 pre code {
- background-color: #18191C;
- border-radius: 5px;
- font-family: 'JetBrains Mono', monospace;
+  background-color: #18191c;
+  border-radius: 5px;
+  font-family: "JetBrains Mono", monospace;
 }
 
 pre {
- border-radius: 5px;
+  border-radius: 5px;
 }
 
 .status-online {
- width: 15px;
- height: 15px;
- border-radius: 50%;
- background-color: #43b581;
- bottom: 0;
- right: 0;
- position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #43b581;
+  bottom: 0;
+  right: 0;
+  position: absolute;
 }
 
 .status-dnd {
- width: 15px;
- height: 15px;
- border-radius: 50%;
- background-color: #f04747;
- bottom: 0;
- right: 0;
- position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #f04747;
+  bottom: 0;
+  right: 0;
+  position: absolute;
 }
 
 .status-idle {
- width: 15px;
- height: 15px;
- border-radius: 50%;
- background-color: #faa61a;
- bottom: 0;
- right: 0;
- position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #faa61a;
+  bottom: 0;
+  right: 0;
+  position: absolute;
 }
 
 .status-offline {
- width: 15px;
- height: 15px;
- border-radius: 50%;
- background-color: #99aab5;
- bottom: 0;
- right: 0;
- position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #99aab5;
+  bottom: 0;
+  right: 0;
+  position: absolute;
 }
 
 .is-avatar {
- width: 50px;
- height: 50px;
- position: relative;
+  width: 50px;
+  height: 50px;
+  position: relative;
 }
 
 span.tag {
- font-family: "K2D", sans-serif;
+  font-family: "K2D", sans-serif;
 }
 
 .textarea {
- border-radius: 5px;
- font-family: 'JetBrains Mono', monospace;
+  border-radius: 5px;
+  font-family: "JetBrains Mono", monospace;
 }
 
 pre span[class],
 pre span,
 pre code {
- color: #99aab5;
- background-color: #282A36;
- border-radius: 0px;
- font-family: 'JetBrains Mono', monospace;
+  color: #99aab5;
+  background-color: #282a36;
+  border-radius: 0px;
+  font-family: "JetBrains Mono", monospace;
 }
 
 .input {
- font-family: 'K2D', sans-serif;
+  font-family: "K2D", sans-serif;
 }
 
 .scale-out-center {
- -webkit-animation: scale-out-center 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
- animation: scale-out-center 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+  -webkit-animation: scale-out-center 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53)
+    both;
+  animation: scale-out-center 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
 }
 
 @-webkit-keyframes scale-out-center {
- 0% {
-  -webkit-transform: scale(1);
-  transform: scale(1);
-  opacity: 1;
- }
+  0% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
 
- 100% {
-  -webkit-transform: scale(0);
-  transform: scale(0);
-  opacity: 1;
- }
+  100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 1;
+  }
 }
 
 @keyframes scale-out-center {
- 0% {
-  -webkit-transform: scale(1);
-  transform: scale(1);
-  opacity: 1;
- }
+  0% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
 
- 100% {
-  -webkit-transform: scale(0);
-  transform: scale(0);
-  opacity: 1;
- }
+  100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 1;
+  }
 }
 
 a.navbar-item:hover,
@@ -290,131 +290,140 @@ div.navbar-item:focus,
 div.navbar-link:focus,
 div.navbar-link:hover,
 .navbar-dropdown {
- background-color: $dark;
+  background-color: $dark;
 }
-div.navbar-dropdown.is-hidden-touch{background-color: $dark;}
+div.navbar-dropdown.is-hidden-touch {
+  background-color: $dark;
+}
 body {
- background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='94' height='94' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='a' gradientUnits='userSpaceOnUse' x1='100' y1='33' x2='100' y2='-3'%3E%3Cstop offset='0' stop-color='%23000' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='1'/%3E%3C/linearGradient%3E%3ClinearGradient id='b' gradientUnits='userSpaceOnUse' x1='100' y1='135' x2='100' y2='97'%3E%3Cstop offset='0' stop-color='%23000' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='%232e3036' fill-opacity='0.59'%3E%3Crect x='100' width='100' height='100'/%3E%3Crect y='100' width='100' height='100'/%3E%3C/g%3E%3Cg fill-opacity='0.59'%3E%3Cpolygon fill='url(%23a)' points='100 30 0 0 200 0'/%3E%3Cpolygon fill='url(%23b)' points='100 100 0 130 0 100 200 100 200 130'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='94' height='94' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='a' gradientUnits='userSpaceOnUse' x1='100' y1='33' x2='100' y2='-3'%3E%3Cstop offset='0' stop-color='%23000' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='1'/%3E%3C/linearGradient%3E%3ClinearGradient id='b' gradientUnits='userSpaceOnUse' x1='100' y1='135' x2='100' y2='97'%3E%3Cstop offset='0' stop-color='%23000' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='%232e3036' fill-opacity='0.59'%3E%3Crect x='100' width='100' height='100'/%3E%3Crect y='100' width='100' height='100'/%3E%3C/g%3E%3Cg fill-opacity='0.59'%3E%3Cpolygon fill='url(%23a)' points='100 30 0 0 200 0'/%3E%3Cpolygon fill='url(%23b)' points='100 100 0 130 0 100 200 100 200 130'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 .bot-card {
- position: relative;
- width: 280px;
- height: 320px;
- margin-top: 20px;
+  position: relative;
+  width: 280px;
+  height: 320px;
+  margin-top: 20px;
 }
 
 .bot-card .bc-avatar {
- margin: 0 4px 0 14px;
- display: block;
- z-index: 2;
- position: absolute;
+  margin: 0 4px 0 14px;
+  display: block;
+  z-index: 2;
+  position: absolute;
 }
 
 .bot-card .top-bar {
- position: absolute;
- border-radius: 4px;
- z-index: 2
+  position: absolute;
+  border-radius: 4px;
+  z-index: 2;
 }
 
 .bot-card .top-bar {
- left: 92px;
- background-color: $dark;
- box-shadow: 1px 1px 2px 0 #bfbfbf;
- max-width: calc(100% - 102px);
- padding: 5px 10px
+  left: 92px;
+  background-color: $dark;
+  box-shadow: 1px 1px 2px 0 #bfbfbf;
+  max-width: calc(100% - 102px);
+  padding: 5px 10px;
 }
 
 .bot-card .bc-content {
- position: absolute;
- top: 20px;
- background-color: $white;
- border-radius: 4px;
- box-shadow: 1px 1px 2px 1px $deep-black;
- padding: 10px;
- height: calc(100% - 20px);
- width: 100%;
- overflow: hidden
+  position: absolute;
+  top: 20px;
+  background-color: $white;
+  border-radius: 4px;
+  box-shadow: 1px 1px 2px 1px $deep-black;
+  padding: 10px;
+  height: calc(100% - 20px);
+  width: 100%;
+  overflow: hidden;
 }
 
 .bot-card .bc-content .description {
- height: 120px;
- margin: 10px 2px 0;
- overflow-x: hidden;
- overflow-y: auto;
- margin-top: 20px;
+  height: 120px;
+  margin: 10px 2px 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-top: 20px;
 }
 
 .bot-card .bc-content .description::-webkit-scrollbar {
- width: 6px
+  width: 6px;
 }
 
 .bot-card .bc-content .description::-webkit-scrollbar-track {
- background-color: $dark;
- border-radius: 2px
+  background-color: $dark;
+  border-radius: 2px;
 }
 
 .bot-card .bc-content .description::-webkit-scrollbar-thumb {
- background-color: $deep-black;
- border-radius: 2px
+  background-color: $deep-black;
+  border-radius: 2px;
 }
 
 .bot-card .bc-content .description p {
- white-space: pre-wrap;
- word-wrap: break-word
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .bot-card .bc-content .bc-buttons {
- position: absolute;
- right: 0;
- bottom: 0;
- display: flex;
- margin: 10px
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  margin: 10px;
 }
 
 .bot-card .bc-content .bc-buttons .button {
- height: 30px;
- margin: 0;
- padding-top: 2px;
- padding-bottom: 4px
+  height: 30px;
+  margin: 0;
+  padding-top: 2px;
+  padding-bottom: 4px;
 }
 
 .bot-card .bc-content .bc-buttons .button:not(:first-child) {
- margin-left: 10px
+  margin-left: 10px;
 }
 
 .bot-card .bc-content .info {
- margin: 10px 0 10px 82px;
- padding: 2px;
- -webkit-user-select: none;
- -moz-user-select: none;
- -ms-user-select: none;
- user-select: none
+  margin: 10px 0 10px 82px;
+  padding: 2px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .bot-card .bc-content .info .control {
- display: inline-block;
- padding-right: 16px;
- margin-top: 10px;
+  display: inline-block;
+  padding-right: 16px;
+  margin-top: 10px;
 }
 
 .bot-card .username {
- font-family: discord;
- position: absolute;
- z-index: 2;
- font-size: 1.2em;
- padding: 7px 10px;
- left: 92px;
- overflow: hidden;
- text-overflow: ellipsis;
- white-space: nowrap;
- word-break: break-all;
+  font-family: discord;
+  position: absolute;
+  z-index: 2;
+  font-size: 1.2em;
+  padding: 7px 10px;
+  left: 92px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-all;
 }
 
 code {
- padding: 1px;
+  padding: 1px;
 }
 
 .bot-card {
- margin-left: 20px;
+  margin-left: 20px;
+}
+
+div.bot-card {
+  transition: ease 0.5s;
+}
+div.bot-card:hover {
+  top: -15px;
 }

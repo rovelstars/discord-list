@@ -369,7 +369,7 @@ router.get("/logout", async (req, res) => {
 });
 
 router.get("*", (req, res) => {
-  res.render("404.ejs", { path: req.originalUrl });
+  res.status(404).render("404.ejs", { path: req.originalUrl });
 });
 
 module.exports = router;

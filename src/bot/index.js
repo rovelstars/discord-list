@@ -161,7 +161,7 @@ router.get("/users/:id", (req, res) => {
           res.json(d);
         })
         .catch((e) => {
-          res.json({ err: "invalid_user" });
+          if(!res.headersSent) res.json({ err: "invalid_user" });
         });
     } else {
       if (user.avatar == null)
@@ -193,7 +193,7 @@ router.get("/emojiapprovers/:id", (req, res) => {
 router.get("/mods", (req, res) => {
   res.json({ mods: client.mods });
 });
-router.get("/mod/:id", (req, res) => {
+router.get("/mods/:id", (req, res) => {
   if (req.params.id) {
     var condition = client.mods.includes(req.params.id);
     res.json({ condition });
