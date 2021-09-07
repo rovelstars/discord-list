@@ -128,10 +128,6 @@ router.get("/bots/:slug/invite", (req, res, next) => {
   });
 });
 
-router.get("/processes", (req, res) => {
-  eval(shell.exec("cat src/build/process.js").stdout);
-});
-
 router.get("/bots/:id", async (req, res) => {
   fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`).then(
     async () => {

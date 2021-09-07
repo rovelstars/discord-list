@@ -144,9 +144,11 @@ const rateLimit = require("express-rate-limit");
 globalThis.path = require("path");
 const bots = require("@routes/bots.js");
 const non_api = require("@routes/non-api.js");
-setTimeout(() => {
+globalThis.started=false;
+process.on("STARTED", () => {
   console.log(rovel.text.green(`Everything Started! RDL is ready to go!`));
-}, 5000);
+  globalThis.started=true;
+});
 // ejs setting
 app.set("view engine", "ejs");
 app.set("views", path.resolve("src/views"));

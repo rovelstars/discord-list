@@ -5,6 +5,8 @@
  globalThis.Cache = {};
  console.log("[CACHE] Started!");
 
+ process.emit("STARTED",{});
+
  /*only Arrays, Objects, Functions are referenced.
  Others are not*/
 
