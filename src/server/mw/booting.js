@@ -1,5 +1,5 @@
 module.exports = function (req, res, next) {
-  if (globalThis.started) {
+  if (!globalThis.started) {
     console.log("[WAITING] Booting: " + process.uptime());
     if (
       req.originalUrl.startsWith("/assets") ||
