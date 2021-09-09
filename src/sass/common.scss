@@ -420,9 +420,8 @@ code {
 .bot-card {
   margin-left: 20px;
 }
-
 div.bot-card {
-  transition: ease 0.5s;
+  transition: top 0.5s linear;
 }
 div.bot-card:hover {
   top: -5px;

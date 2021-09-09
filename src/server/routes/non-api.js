@@ -142,8 +142,8 @@ router.get("/bots/:id", async (req, res) => {
         })
           .then((r) => r.json())
           .then(async (botu) => {
-            console.log(botu);
-            console.log(toke);
+            //console.log(botu);
+            //console.log(toke);
             if (botu.error)
               return await res.render("404.ejs", { path: req.originalUrl });
             else {
@@ -154,6 +154,8 @@ router.get("/bots/:id", async (req, res) => {
                 short: botu.shortdesc,
                 username: botu.username,
                 dicriminator: botu.discriminator,
+                added: true,
+                topgg: true,
                 tag: `${botu.username}#${botu.discriminator}`,
                 desc: botu.longdesc,
                 support: botu.support,
@@ -184,7 +186,7 @@ router.get("/bots/:id", async (req, res) => {
                 nothere: true,
                 status: "online",
               };
-              abot.desc = await marked(abot.desc.replace(/&gt;+/g, ">"));
+              abot.desc = marked(abot.desc.replace(/&gt;+/g, ">"));
               abot.owner = [];
               for (const id of abot.owners) {
                 await fetch(`${process.env.DOMAIN}/api/client/users/${id}`)
@@ -220,7 +222,7 @@ router.get("/dashboard", async (req, res) => {
   } else {
     let botus = [];
     Users.findOne({ id: res.locals.user.id }).then(async (u) => {
-      res.locals.user.bal = rovel.approx(u.bal);
+      res.locals.user.bal = u.bal;
       res.locals.user.status = privatebot.guilds.cache
         .get("602906543356379156")
         .members.cache.get(u.id)?.presence?.status;

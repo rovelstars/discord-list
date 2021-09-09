@@ -6,7 +6,7 @@ const pkg = require("./package.json");
 if (process.version.split(1, 3) > 16) {
   process.exit(0);
 }
-name = [
+var name = [
   "h",
   "t",
   "t",

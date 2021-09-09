@@ -91,6 +91,9 @@ function addCommas(num, opts) {
   var BILLION = 1000000000;
   var TRILLION = 1000000000000;
 function approx(num, opts) {
+  if(isNaN(num)) return num;
+  else if(num == Infinity || num == "Infinity") return "∞";
+  else{
     var numString;
     opts = opts || {};
     var negative = num < 0;
@@ -119,7 +122,7 @@ function approx(num, opts) {
     if (opts.suffix) {
       numString = numString + opts.suffix;
     }
-    return numString;
+    return numString;}
   }
 $$(".approx-num").forEach(e=>{e.innerText=approx(e.innerText,{capital: true})});
 <% if(req.locale!="en"){ %>

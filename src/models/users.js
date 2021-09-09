@@ -13,6 +13,7 @@ const Users = new Schema(
     email: { type: String },
     bal: { type: Number, default: 10 },
     bio: { type: String, default: "The user doesn't have bio set!" },
+    banner: {type: String },
     badges: [{ type: String }],
     promoted: { type: Boolean, default: false },
     address: { type: String },

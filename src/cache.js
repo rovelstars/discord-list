@@ -1,143 +1,255 @@
-(async function() {
- bots = require("@models/bots.js");
- users = require("@models/users.js");
- servers = require("@models/servers.js");
- globalThis.Cache = {};
- console.log("[CACHE] Started!");
+(async function () {
+  bots = require("@models/bots.js");
+  users = require("@models/users.js");
+  servers = require("@models/servers.js");
+  globalThis.Cache = {};
+  console.log("[CACHE] Started!");
 
- process.emit("STARTED",{});
+  process.emit("STARTED", {});
 
- /*only Arrays, Objects, Functions are referenced.
+  function compare(a, b, on) {
+    if (a[on] < b[on]) {
+      return -1;
+    }
+    if (a[on] > b[on]) {
+      return 1;
+    }
+    return 0;
+  }
+
+  /*only Arrays, Objects, Functions are referenced.
  Others are not*/
 
- AllBots = await bots.find();
- AllUsers = await users.find();
- AllServers = await servers.find();
- 
- /*idk why all the documents returned are in reverse order.*/
+  AllBots = await bots.find();
+  AllUsers = await users.find();
+  AllServers = await servers.find();
 
- Bots = {};
+  /*idk why all the documents returned are in reverse order.*/
 
- Cache.AllBots = await AllBots;
- Cache.AllUsers = await AllUsers;
- Cache.AllServers = await AllServers;
- Cache.models = { bots, users, servers };
- Cache.Bots = Bots;
+  Bots = {};
 
- Bots.findOne = async function(obj) {
-  if (!obj) {
-   return AllBots[0];
-  }
-  else if(Object.keys(obj).length === 0 && obj.constructor === Object){
-   return AllBots[0];
-  }
-  else {
-   var arr = [];
-   for (const [key, value] of Object.entries(obj)) {
-    arr.push(AllBots.map((bot, index) => {
-     if (bot[key] == value) { return bot }
-    }).filter(Boolean));
-   }
-   return [...new Set(arr)][0][0];
-  }
- }
+  Cache.AllBots = await AllBots;
+  Cache.AllUsers = await AllUsers;
+  Cache.AllServers = await AllServers;
+  Cache.models = { bots, users, servers };
+  Cache.Bots = Bots;
 
- Bots.find = async function(obj) {
-  if (!obj) {
-   return AllBots;
-  }
-  else if(Object.keys(obj).length === 0 && obj.constructor === Object){
-   return AllBots;
-  }
-  else {
-   var arr = [];
-   for (const [key, value] of Object.entries(obj)) {
-    arr.push(AllBots.map((bot, index) => {
-     if (bot[key] == value) { return bot }
-    }).filter(Boolean));
-   }
-   return [...new Set(arr)][0]; //without 0: [[{bot}]]
-  }
- }
+  Bots.findOne = async function (obj) {
+    if (!obj) {
+      return AllBots[0];
+    } else if (Object.keys(obj).length === 0 && obj.constructor === Object) {
+      return AllBots[0];
+    } else {
+      var arr = [];
+      for (const [key, value] of Object.entries(obj)) {
+        arr.push(
+          AllBots.map((bot, index) => {
+            if (bot[key] == value) {
+              return bot;
+            }
+          }).filter(Boolean)
+        );
+      }
+      return [...new Set(arr)][0][0];
+    }
+  };
 
- Bots.sortNewAdded = function() {
-  return [...AllBots].reverse().slice(0, 9); //idk we dont we need to reverse!?!
- }
+  Bots.find = async function (obj) {
+    if (!obj) {
+      return AllBots;
+    } else if (Object.keys(obj).length === 0 && obj.constructor === Object) {
+      return AllBots;
+    } else {
+      var arr = [];
+      for (const [key, value] of Object.entries(obj)) {
+        arr.push(
+          AllBots.map((bot, index) => {
+            if (bot[key] == value) {
+              return bot;
+            }
+          }).filter(Boolean)
+        );
+      }
+      return [...new Set(arr)][0]; //without 0: [[{bot}]]
+    }
+  };
 
- function compare(a, b, on) {
-  if (a[on] < b[on]) {
-   return -1;
-  }
-  if (a[on] > b[on]) {
-   return 1;
-  }
-  return 0;
- }
+  Bots.sortNewAdded = function () {
+    return [...AllBots].reverse().slice(0, 9); //idk we dont we need to reverse!?!
+  };
 
- Bots.sortTopVoted = function() {
-  return [...AllBots].sort((a, b) => compare(a, b, "votes")).reverse().slice(0, 9);
- }
+  Bots.sortTopVoted = function () {
+    return [...AllBots]
+      .sort((a, b) => compare(a, b, "votes"))
+      .reverse()
+      .slice(0, 9);
+  };
 
- Bots.findOneById = function(q) {
-  return AllBots[AllBots.findIndex(b => b.id == q)];
- }
+  Bots.findOneById = function (q) {
+    return AllBots[AllBots.findIndex((b) => b.id == q)];
+  };
 
- Bots.refreshOne = function(id) {
-  var bot = Bots.findOneById(id);
-  Cache.models.bots.findOne({ id }).then(botu => bot = botu);
- }
- 
- Bots.refresh = async function(){
-  Cache.AllBots = await bots.find();
- }
- 
- Bots.findOneByCode = function(q) {
-  return AllBots[AllBots.findIndex(b => b.code == q)];
- }
+  Bots.refreshOne = function (id) {
+    var bot = Bots.findOneById(id);
+    Cache.models.bots.findOne({ id }).then((botu) => (bot = botu));
+  };
 
- Bots.findOneByBoth = function(q, c) {
-  return AllBots[AllBots.findIndex(b => (b.id == q && b.code === c))];
- }
+  Bots.refresh = async function () {
+    Cache.AllBots = await bots.find();
+  };
 
- Bots.clean = function(arg) {
-  if(arg==undefined){
-   return {err: "not_found"};
-  }
-  else{
-  const { _id, code, ...bot } = arg;
-  return bot;
-  }
- }
+  Bots.findOneByCode = function (q) {
+    return AllBots[AllBots.findIndex((b) => b.code == q)];
+  };
 
- Bots.findOneByOwner = function(id) {
-  return AllBots[AllBots.findIndex(b => b.owners.includes(id))];
- }
+  Bots.findOneByBoth = function (q, c) {
+    return AllBots[AllBots.findIndex((b) => b.id == q && b.code === c)];
+  };
 
- Bots.findByOwner = function(id) {
-  return AllBots.map((bot, index) => {
-   if (bot.owners.includes(id)) { return bot }
-  }).filter(Boolean);
- }
- 
- Bots.deleteOne = function(obj, callback){
-  let err=undefined;
-  if (!obj) {
-   return undefined;
-  }
-  else if(Object.keys(obj).length === 0 && obj.constructor === Object){
-   return undefined;
-  }
-  else{
-  Cache.models.bots.deleteOne(obj, callback);
-  Cache.Bots.findOne(obj).then(deletedbot=>{
-  const i = AllBots.findIndex(b=>b==deletedbot);
-  if(i > -1){
-   return AllBots.splice(i, 1);
-  }
-  else{
-   return undefined;
-  }
-  });
- }
- }
+  Bots.clean = function (arg) {
+    if (arg == undefined) {
+      return { err: "not_found" };
+    } else {
+      const { _id, code, ...bot } = arg;
+      return bot;
+    }
+  };
+
+  Bots.findOneByOwner = function (id) {
+    return AllBots[AllBots.findIndex((b) => b.owners.includes(id))];
+  };
+
+  Bots.findByOwner = function (id) {
+    return AllBots.map((bot, index) => {
+      if (bot.owners.includes(id)) {
+        return bot;
+      }
+    }).filter(Boolean);
+  };
+
+  Bots.deleteOne = function (obj, callback) {
+    let err = undefined;
+    if (!obj) {
+      return undefined;
+    } else if (Object.keys(obj).length === 0 && obj.constructor === Object) {
+      return undefined;
+    } else {
+      Cache.models.bots.deleteOne(obj, callback);
+      Cache.Bots.findOne(obj).then((deletedbot) => {
+        const i = AllBots.findIndex((b) => b == deletedbot);
+        if (i > -1) {
+          return AllBots.splice(i, 1);
+        } else {
+          return undefined;
+        }
+      });
+    }
+  };
+
+  Cache.Users = Users;
+
+  Users.findOne = async function (obj) {
+    if (!obj) {
+      return AllUsers[0];
+    } else if (Object.keys(obj).length === 0 && obj.constructor === Object) {
+      return AllUsers[0];
+    } else {
+      var arr = [];
+      for (const [key, value] of Object.entries(obj)) {
+        arr.push(
+          AllUsers.map((user, index) => {
+            if (user[key] == value) {
+              return user;
+            }
+          }).filter(Boolean)
+        );
+      }
+      return [...new Set(arr)][0][0];
+    }
+  };
+
+  Users.find = async function (obj) {
+    if (!obj) {
+      return AllUsers;
+    } else if (Object.keys(obj).length === 0 && obj.constructor === Object) {
+      return AllUsers;
+    } else {
+      var arr = [];
+      for (const [key, value] of Object.entries(obj)) {
+        arr.push(
+          AllUsers.map((user, index) => {
+            if (user[key] == value) {
+              return user;
+            }
+          }).filter(Boolean)
+        );
+      }
+      return [...new Set(arr)][0]; //without 0: [[{bot}]]
+    }
+  };
+
+  Users.sortNewAdded = function () {
+    return [...AllUsers].reverse().slice(0, 9); //idk we dont we need to reverse!?!
+  };
+
+  Users.sortTopVoted = function () {
+    return [...AllUsers]
+      .sort((a, b) => compare(a, b, "votes"))
+      .reverse()
+      .slice(0, 9);
+  };
+
+  Users.findOneById = function (q) {
+    return AllUsers[AllUsers.findIndex((b) => b.id == q)];
+  };
+
+  Users.refreshOne = function (id) {
+    var user = Users.findOneById(id);
+    Cache.models.bots.findOne({ id }).then((botu) => (user = botu));
+  };
+
+  Users.refresh = async function () {
+    Cache.AllUsers = await users.find();
+  };
+
+  Bots.clean = function (arg) {
+    if (arg == undefined) {
+      return { err: "not_found" };
+    } else {
+      const { _id, code, ...bot } = arg;
+      return bot;
+    }
+  };
+
+  Bots.findOneByOwner = function (id) {
+    return AllBots[AllBots.findIndex((b) => b.owners.includes(id))];
+  };
+
+  Bots.findByOwner = function (id) {
+    return AllBots.map((bot, index) => {
+      if (bot.owners.includes(id)) {
+        return bot;
+      }
+    }).filter(Boolean);
+  };
+
+  Bots.deleteOne = function (obj, callback) {
+    let err = undefined;
+    if (!obj) {
+      return undefined;
+    } else if (Object.keys(obj).length === 0 && obj.constructor === Object) {
+      return undefined;
+    } else {
+      Cache.models.bots.deleteOne(obj, callback);
+      Cache.Bots.findOne(obj).then((deletedbot) => {
+        const i = AllBots.findIndex((b) => b == deletedbot);
+        if (i > -1) {
+          return AllBots.splice(i, 1);
+        } else {
+          return undefined;
+        }
+      });
+    }
+  };
 })();
+ 

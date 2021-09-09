@@ -35,7 +35,7 @@ imglink: undefined
    <div class="control">
     <div class="tags has-addons">
      <span class="tag is-outlined">Balance</span>
-     <span class="tag is-danger" id="bal">R$ <%= (user.bal)?user.bal.toString():"0" %></span>
+     <span class="tag is-danger" id="bal">R$ <span class="approx-num"><%= (user.bal)?user.bal.toString():"0" %></span></span>
     </div>
   </div>
   <div class="control" onclick="earnfun()">
@@ -77,7 +77,7 @@ style="background-image:url(<%= bot.bg || "https://discord.rovelstars.com/assets
   </div>
   <div class="control">
     <div class="tags has-addons">
-    <span class="tag is-black"><i class="fad fa-caret-circle-up has-text-info"></i>&nbsp;Votes</span>
+    <span class="tag is-black"><i class="fad fa-caret-circle-up has-text-dark"></i>&nbsp;Votes</span>
     <span class="tag is-info approx-num"><%= bot.votes %></span>
     </div>
   </div>
