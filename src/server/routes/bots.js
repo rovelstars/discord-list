@@ -5,7 +5,7 @@ let { fetch } = require("rovel.js");
 const schedule = require("node-schedule");
 let router = require("express").Router();
 router.use(require("express").json());
-const coronaSanitizer = require("sanitize-html");
+globalThis.coronaSanitizer = require("sanitize-html");
 const rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = 0;
 rule.hour = 12;
