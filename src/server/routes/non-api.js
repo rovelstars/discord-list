@@ -142,33 +142,34 @@ router.get("/bots/:id", async (req, res) => {
         })
           .then((r) => r.json())
           .then(async (botu) => {
-            //console.log(botu);
-            //console.log(toke);
-            if (botu.error)
+            if (botu.error) {
+              console.log(toke);
               return await res.render("404.ejs", { path: req.originalUrl });
-            else {
-              botu.longdesc=botu.longdesc.replaceAll("\r\n","\n").replaceAll("\u0009","\t");
-               botu.longdesc=indent(botu.longdesc);
-                botu.longdesc = coronaSanitizer(botu.longdesc, {
-                  allowedTags: coronaSanitizer.defaults.allowedTags.concat([
-                    "discord-message",
-                    "discord-messages",
-                    "img",
-                    "iframe",
-                    "style",
-                    "h1",
-                    "h2",
-                    "link",
-                    "mark",
-                  ]),
-                  allowVulnerableTags: true,
-                  allowedAttributes: {
-                    "*": ["*"],
-                  },
-                });
-                botu.longdesc = rovel.emoji.emojify(botu.longdesc, (name) => {
-                  return name;
-                });
+            } else {
+              botu.longdesc = botu.longdesc
+                .replaceAll("\r\n", "\n")
+                .replaceAll("\u0009", "\t");
+              botu.longdesc = indent(botu.longdesc);
+              botu.longdesc = coronaSanitizer(botu.longdesc, {
+                allowedTags: coronaSanitizer.defaults.allowedTags.concat([
+                  "discord-message",
+                  "discord-messages",
+                  "img",
+                  "iframe",
+                  "style",
+                  "h1",
+                  "h2",
+                  "link",
+                  "mark",
+                ]),
+                allowVulnerableTags: true,
+                allowedAttributes: {
+                  "*": ["*"],
+                },
+              });
+              botu.longdesc = rovel.emoji.emojify(botu.longdesc, (name) => {
+                return name;
+              });
               var abot = {
                 id: botu.id,
                 lib: botu.lib == "" ? "none" : botu.lib,
