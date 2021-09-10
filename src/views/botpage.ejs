@@ -31,7 +31,7 @@ imglink: bot.bg
  Swal.fire({icon: "warning", title: "<%= bot.tag %> has not been listed!", text: "Please do not add this bot since it's waiting for approval. You can join our server to get informed about when <%= bot.username %> will be approved. Or just sit back here and scream!", footer: '<a href="/server">Ask us whether is bot is safe or not.</a>'});
 </script>
 <% } %>
-<% if(!bot.topgg){ %>
+<% if(bot.topgg){ %>
   <script>
    Swal.fire({icon: "info", title: "<%= bot.tag %> has not been added by their real devs!", text: "We can't provide support for this bot. Please ask the owners of the bot to add this bot here to recieve support from us!", footer: '<a href="/server">Discuss with us about this bot.</a>'});
   </script>
