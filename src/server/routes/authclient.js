@@ -42,6 +42,7 @@ router.get("/", async (req, res) => {
      avatar: (user.avatarHash) ? user.avatarHash : (user.discriminator % 5)
     }).save(async (err, userr) => {
      if (err) return console.log(err);
+     Cache.Users.refresh();
      fetch(`${process.env.DOMAIN}/api/client/log`, {
       method: "POST",
       headers: {
