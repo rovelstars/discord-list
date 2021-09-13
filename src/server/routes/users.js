@@ -19,7 +19,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
- Users.findOne({ id: req.params.id }, { _id: false, email: false }).then(user => {
+ Users.findOne({ id: req.params.id }).then(user => {
   res.json(user);
  });
 });

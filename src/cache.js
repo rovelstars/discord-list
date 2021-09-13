@@ -27,6 +27,7 @@
   /*idk why all the documents returned are in reverse order.*/
 
   Bots = {};
+  Users = {};
 
   Cache.AllBots = await AllBots;
   Cache.AllUsers = await AllUsers;
