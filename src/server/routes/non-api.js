@@ -50,7 +50,46 @@ router.get("/manifest.json", (req, res) => {
 });
 
 let sitemap;
+let botsfromtopgg = "";
+let keywords = [
+  "minecraft",
+  "music",
+  "rpg",
+  "game",
+  "video",
+  "memer",
+  "nitro",
+  "currency",
+  "coding",
+  "among",
+];
+
+fetch(
+  `https://top.gg/api/search?q=${
+    keywords[Math.floor(Math.random() * 10)]
+  }&limit=500&platform=discord&entityType=bot&isLegacy=true`
+)
+  .then((r) => r.json())
+  .then((d)=>{
+     d.results=d.results.map((bot) => {
+      return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>`;
+    }).join("\n");
+    botsfromtopgg = d.results;
+  });
+
 async function gensitemap() {
+  var r = await fetch(
+    `https://top.gg/api/search?q=${
+      keywords[Math.floor(Math.random() * 10)]
+    }&limit=500&platform=discord&entityType=bot&isLegacy=true`
+  );
+  var d = await r.json();
+  d.results = d.results
+    .map((bot) => {
+      return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>`;
+    })
+    .join("\n");
+  botsfromtopgg = await d.results;
   const botsmap = Cache.AllBots.map((bot) => {
     return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>`;
   }).join("\n");
@@ -62,6 +101,7 @@ async function gensitemap() {
     `\n<url>\n<loc>${process.env.DOMAIN}/</loc>\n<priority>1.00</priority><changefreq>weekly</changefreq>\n</url>\n` +
     botsmap +
     serversmap +
+    botsfromtopgg +
     "</urlset>";
   return Sitemap;
 }

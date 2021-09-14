@@ -65,12 +65,12 @@ router.get("/", async (req, res) => {
      
      if (req.cookies["return"]) {
    try {
-    await res.cookie("return", req.cookies["return"], { maxAge: 0 });
-    await res.redirect(req.cookies["return"]);
+    res.cookie("return", req.cookies["return"], { maxAge: 0 });
+    res.redirect(req.cookies["return"]);
    } catch (e) {}
   }
   else {
-   await res.redirect("/");
+   res.redirect("/");
   }
     });
    }
@@ -101,12 +101,12 @@ router.get("/", async (req, res) => {
     
     if (req.cookies["return"]) {
    try {
-    await res.cookie("return", req.cookies["return"], { maxAge: 0 });
-    await res.redirect(req.cookies["return"]);
+    res.cookie("return", req.cookies["return"], { maxAge: 0 });
+    res.redirect(req.cookies["return"]);
    } catch (e) {}
   }
   else {
-   await res.redirect("/");
+   res.redirect("/");
   }
    }
   })
@@ -120,12 +120,12 @@ router.get("/", async (req, res) => {
      
      if (req.cookies["return"]) {
    try {
-    await res.cookie("return", req.cookies["return"], { maxAge: 0 });
-    await res.redirect(req.cookies["return"]);
+    res.cookie("return", req.cookies["return"], { maxAge: 0 });
+    res.redirect(req.cookies["return"]);
    } catch (e) {}
   }
   else {
-   await res.redirect("/");
+   res.redirect("/");
   }
    }
  } catch (e) {
@@ -173,7 +173,7 @@ router.get("/user", async (req, res) => {
    const user = await auth.getUser(req.query.key || req.cookies['key']).catch(e => {
     return res.json({ err: "invalid_key" });
    });
-   await res.json(user);
+   res.json(user);
   }
   catch {
    res.json({ error: "invalid_key" });
