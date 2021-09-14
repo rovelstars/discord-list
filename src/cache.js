@@ -213,39 +213,27 @@
     Cache.AllUsers = await users.find();
   };
 
-  Bots.clean = function (arg) {
+  Users.clean = function (arg) {
     if (arg == undefined) {
       return { err: "not_found" };
     } else {
-      const { _id, code, ...bot } = arg;
-      return bot;
+      const { _id, email, address, ...user } = arg;
+      return user;
     }
   };
 
-  Bots.findOneByOwner = function (id) {
-    return AllBots[AllBots.findIndex((b) => b.owners.includes(id))];
-  };
-
-  Bots.findByOwner = function (id) {
-    return AllBots.map((bot, index) => {
-      if (bot.owners.includes(id)) {
-        return bot;
-      }
-    }).filter(Boolean);
-  };
-
-  Bots.deleteOne = function (obj, callback) {
+  Users.deleteOne = function (obj, callback) {
     let err = undefined;
     if (!obj) {
       return undefined;
     } else if (Object.keys(obj).length === 0 && obj.constructor === Object) {
       return undefined;
     } else {
-      Cache.models.bots.deleteOne(obj, callback);
-      Cache.Bots.findOne(obj).then((deletedbot) => {
-        const i = AllBots.findIndex((b) => b == deletedbot);
+      Cache.models.users.deleteOne(obj, callback);
+      Cache.Users.findOne(obj).then((deleteduser) => {
+        const i = AllUsers.findIndex((b) => b == deleteduser);
         if (i > -1) {
-          return AllBots.splice(i, 1);
+          return AllUsers.splice(i, 1);
         } else {
           return undefined;
         }

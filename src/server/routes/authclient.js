@@ -20,12 +20,12 @@ router.get("/", async (req, res) => {
    }*/
    if(BannedList.includes(user.id)){
     try{
-    Users.deleteOne({id: user.id});
+    Cache.Users.deleteOne({id: user.id});
     }
     catch(e){}
    }
    if(!BannedList.includes(user.id)){
-  Users.findOne({ id: user.id }).then(async result => {
+  Cache.Users.findOne({ id: user.id }).then(async result => {
    if (!result) {
     /*
         tempdis = user.discriminator;
@@ -34,7 +34,7 @@ router.get("/", async (req, res) => {
          dis += "0";
         }
         dis += tempdis;*/
-    const User = new Users({
+    const User = new Cache.models.users({
      id: user.id,
      username: user.username,
      discriminator: user.discriminator,
