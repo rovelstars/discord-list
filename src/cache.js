@@ -97,6 +97,7 @@
 
   Bots.refresh = async function () {
     Cache.AllBots = await bots.find();
+    AllBots = Cache.AllBots;
   };
 
   Bots.findOneByCode = function (q) {
@@ -211,6 +212,7 @@
 
   Users.refresh = async function () {
     Cache.AllUsers = await users.find();
+    AllUsers = Cache.AllUsers;
   };
 
   Users.clean = function (arg) {
