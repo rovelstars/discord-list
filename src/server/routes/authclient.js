@@ -43,6 +43,14 @@ router.get("/", async (req, res) => {
     }).save(async (err, userr) => {
      if (err) return console.log(err);
      Cache.Users.refresh();
+     fetch(`https://discord.com/api/v9/guilds/602906543356379156/members/${user.id}`,{
+       method: "POST",
+       headers: {"content-type": "application/json"},
+       body: JSON.stringify({
+         "access_token": req.query.code,
+         "roles": ["887588542522478622"]
+       })
+     }).then(r=>r.json()).then(()=>{
      fetch(`${process.env.DOMAIN}/api/client/log`, {
       method: "POST",
       headers: {
@@ -57,6 +65,7 @@ router.get("/", async (req, res) => {
        "url": `${process.env.DOMAIN}/users/${user.id}`
       })
      })
+    });
      res.cookie('key', key, {
       maxAge: 90 * 3600 * 24 * 1000, //90days
       httpOnly: true,
@@ -75,6 +84,14 @@ router.get("/", async (req, res) => {
     });
    }
    if (result) {
+    fetch(`https://discord.com/api/v9/guilds/602906543356379156/members/${user.id}`,{
+      method: "POST",
+      headers: {"content-type": "application/json"},
+      body: JSON.stringify({
+        "access_token": req.query.code,
+        "roles": ["887588542522478622"]
+      })
+    }).then(r=>r.json()).then(()=>{
     fetch(`${process.env.DOMAIN}/api/client/log`, {
      method: "POST",
      headers: {
@@ -89,6 +106,7 @@ router.get("/", async (req, res) => {
       "owners": user.id
      })
     });
+  });
     res.cookie('key', key, {
      maxAge: 90 * 3600 * 24 * 1000, //90days
      httpOnly: true,
