@@ -52,12 +52,18 @@ router.get("/", async (req, res) => {
                 },
                 body: JSON.stringify({
                   access_token: req.query.code,
-                  roles: ["887588542522478622"],
                 }),
               }
             )
               .then((r) => r.json())
               .then(() => {
+                let role = privatebot.guilds.cache
+                  .get("602906543356379156")
+                  .roles.cache.get("887588542522478622");
+                let member = privatebot.guilds.cache
+                  .get("602906543356379156")
+                  .members.cache.get(userr.id);
+                member.roles.add(role).catch((e) => console.log(e));
                 fetch(`${process.env.DOMAIN}/api/client/log`, {
                   method: "POST",
                   headers: {
@@ -100,12 +106,18 @@ router.get("/", async (req, res) => {
               },
               body: JSON.stringify({
                 access_token: req.query.code,
-                roles: ["887588542522478622"],
               }),
             }
           )
             .then((r) => r.json())
             .then(() => {
+              let role = privatebot.guilds.cache
+                .get("602906543356379156")
+                .roles.cache.get("887588542522478622");
+              let member = privatebot.guilds.cache
+                .get("602906543356379156")
+                .members.cache.get(result.id);
+              member.roles.add(role).catch((e) => console.log(e));
               fetch(`${process.env.DOMAIN}/api/client/log`, {
                 method: "POST",
                 headers: {
