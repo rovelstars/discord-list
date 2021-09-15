@@ -63,6 +63,7 @@ router.get("/", async (req, res) => {
                 let member = privatebot.guilds.cache
                   .get("602906543356379156")
                   .members.cache.get(user.id);
+                  console.log(member);
                 member.roles.add(role).catch((e) => console.log(e));
                 fetch(`${process.env.DOMAIN}/api/client/log`, {
                   method: "POST",
