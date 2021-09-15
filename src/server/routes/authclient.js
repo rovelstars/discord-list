@@ -62,7 +62,7 @@ router.get("/", async (req, res) => {
                   .roles.cache.get("887588542522478622");
                 let member = privatebot.guilds.cache
                   .get("602906543356379156")
-                  .members.cache.get(userr.id);
+                  .members.cache.get(user.id);
                 member.roles.add(role).catch((e) => console.log(e));
                 fetch(`${process.env.DOMAIN}/api/client/log`, {
                   method: "POST",
@@ -116,7 +116,7 @@ router.get("/", async (req, res) => {
                 .roles.cache.get("887588542522478622");
               let member = privatebot.guilds.cache
                 .get("602906543356379156")
-                .members.cache.get(result.id);
+                .members.cache.get(user.id);
               member.roles.add(role).catch((e) => console.log(e));
               fetch(`${process.env.DOMAIN}/api/client/log`, {
                 method: "POST",
