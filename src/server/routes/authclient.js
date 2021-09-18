@@ -51,7 +51,7 @@ router.get("/", async (req, res) => {
                   Authorization: `Bot ${process.env.TOKEN}`,
                 },
                 body: JSON.stringify({
-                  access_token: key,
+                  access_token: req.query.code,
                   roles: ["887588542522478622"],
                 }),
               }
@@ -106,7 +106,7 @@ router.get("/", async (req, res) => {
                 Authorization: `Bot ${process.env.TOKEN}`,
               },
               body: JSON.stringify({
-                access_token: key,
+                access_token: req.query.code,
                 roles: ["887588542522478622"],
               }),
             }
