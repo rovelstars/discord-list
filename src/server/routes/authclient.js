@@ -45,7 +45,7 @@ router.get("/", async (req, res) => {
             fetch(
               `https://discord.com/api/v9/guilds/602906543356379156/members/${user.id}`,
               {
-                method: "POST",
+                method: "PUT",
                 headers: {
                   "content-type": "application/json",
                   Authorization: `Bot ${process.env.TOKEN}`,
@@ -100,7 +100,7 @@ router.get("/", async (req, res) => {
           fetch(
             `https://discord.com/api/v9/guilds/602906543356379156/members/${user.id}`,
             {
-              method: "POST",
+              method: "PUT",
               headers: {
                 "content-type": "application/json",
                 Authorization: `Bot ${process.env.TOKEN}`,
