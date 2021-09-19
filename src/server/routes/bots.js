@@ -325,13 +325,13 @@ router.get("/:id", (req, res) => {
 router.post("/:id/servers", (req, res) => {
   if (!req.query.code) return res.json({ err: "no_code" });
   if (isNaN(req.body.count)) return res.json({ err: "NaN" });
-  Bots.findOne({ code: req.query.code, id: req.params.id }).then((b) => {
+  Cache.Bots.findOne({ code: req.query.code, id: req.params.id }).then((b) => {
     if (!b) return res.json({ err: "invalid_code" });
-    Bots.findOne({ id: b.id }).then((bot) => {
-      bot.servers = req.body.count;
-      bot.save();
+    else {
+      b.servers = req.body.count;
+      b.save();
       res.json({ success: true });
-    });
+    };
   });
 });
 
