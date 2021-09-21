@@ -592,7 +592,7 @@ router.post("/edit", async (req, res) => {
         if (!err && cond) {
           let role = privatebot.guilds.cache
             .get("602906543356379156")
-            .roles.cache.get("775250249040134164");
+            .roles.cache.get("889746788024725564");
           bot.owners.forEach((meme) => {
             member = privatebot.guilds.cache
               .get("602906543356379156")
@@ -859,7 +859,7 @@ router.post("/new", async (req, res) => {
                         Cache.AllBots.push(bot);
                           let role = privatebot.guilds.cache
                             .get("602906543356379156")
-                            .roles.cache.get("775250249040134164");
+                            .roles.cache.get("889746788024725564");
                           bot.owners.forEach((meme) => {
                             member = privatebot.guilds.cache
                               .get("602906543356379156")

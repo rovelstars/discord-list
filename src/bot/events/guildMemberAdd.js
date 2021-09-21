@@ -48,7 +48,7 @@ Nevergonna let ${member} down.`,
  channel.send('<a:incoming:822373222993100840> ' + welcomelist[hiwelcome]);
  }
  if(member.user.bot){
-  let role = client.guilds.cache.get("602906543356379156").roles.cache.get("775763023234203720");
+  let role = client.guilds.cache.get("602906543356379156").roles.cache.get("889747366293409822");
   member.roles.add(role).catch(e=>console.log(e));
    Cache.Bots.findOne({id: member.user.id}).then(bot=>{
     if(!bot) return;
@@ -73,7 +73,7 @@ Nevergonna let ${member} down.`,
  }
  if(!member.user.bot){
   if(Cache.Bots.findOneByOwner(member.user.id)){
-   let role = client.guilds.cache.get("602906543356379156").roles.cache.get("775250249040134164");
+   let role = client.guilds.cache.get("602906543356379156").roles.cache.get("889746788024725564");
    member.roles.add(role).catch(e=>console.log(e));
   }
   
