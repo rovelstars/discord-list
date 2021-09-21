@@ -1,4 +1,5 @@
 let router = require("express").Router();
+
 router.all("*", (req, res, next) => {
   if (req.hostname == "rovelstars.com") {
     res.set("location", `https://discord.rovelstars.com${req.path}`);
