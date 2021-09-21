@@ -1,7 +1,7 @@
 client.on("guildMemberUpdate", (olduser, newuser) => {
   if (newuser.bot) {
     try {
-      Bots.findOne({ id: newuser.id }).then((bot) => {
+      Cache.Bots.findOne({ id: newuser.id }).then((bot) => {
         if (!bot) return;
         if (bot.username != newuser.username) {
           bot.username = newuser.username;

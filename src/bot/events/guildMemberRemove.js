@@ -62,7 +62,7 @@ client.on("guildMemberRemove", (member)=>{
     .setTimestamp()
     .setThumbnail(bot.avatarURL);
     bot.save();
-   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send({embeds: [msg]}).catch(e=>{});
+   client.guilds.cache.get("602906543356379156").channels.cache.get("889696494758789191").send({embeds: [msg]}).catch(e=>{});
    if (bot.owners) {
     for (const owner of bot.owners) {
      client.users.cache.get(owner).send({embeds:[msg]});

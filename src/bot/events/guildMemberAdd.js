@@ -50,7 +50,7 @@ Nevergonna let ${member} down.`,
  if(member.user.bot){
   let role = client.guilds.cache.get("602906543356379156").roles.cache.get("775763023234203720");
   member.roles.add(role).catch(e=>console.log(e));
-   Bots.findOne({id: member.user.id}).then(bot=>{
+   Cache.Bots.findOne({id: member.user.id}).then(bot=>{
     if(!bot) return;
     if(!bot.added){
      bot.added = true;
@@ -62,7 +62,7 @@ Nevergonna let ${member} down.`,
     .setTimestamp()
     .setThumbnail(bot.avatarURL);
     bot.save();
-   client.guilds.cache.get("602906543356379156").channels.cache.get("775231877433917440").send({embeds: [msg]})
+   client.guilds.cache.get("602906543356379156").channels.cache.get("889696494758789191").send({embeds: [msg]})
    if (bot.owners) {
     for (const owner of bot.owners) {
      client.users.cache.get(owner).send({embeds:[msg]});

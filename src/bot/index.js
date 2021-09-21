@@ -90,7 +90,7 @@ function DiscordLog({ title, desc, color }) {
 
   client.guilds.cache
     .get("602906543356379156")
-    .channels.cache.get("775231877433917440")
+    .channels.cache.get("889696494758789191")
     .send({ embeds: msg });
 }
 
@@ -228,7 +228,7 @@ router.post("/log", (req, res) => {
       if (req.body.channel != "private") {
         client.guilds.cache
           .get("602906543356379156")
-          .channels.cache.get(req.body.channel || "775231877433917440")
+          .channels.cache.get(req.body.channel || "889696494758789191")
           .send({ embeds: [msg] })
           .catch((e) => {});
       }
@@ -261,7 +261,7 @@ router.post("/log", (req, res) => {
 
               client.guilds.cache
                 .get("602906543356379156")
-                .channels.cache.get("858200098612838430")
+                .channels.cache.get("889429029898321921")
                 .send({
                   content: `<@!${client.users.cache.get(owner).id}>`,
                   embeds: [embed],

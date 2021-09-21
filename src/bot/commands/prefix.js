@@ -8,7 +8,7 @@ if (!args.length) {
     if (!user.bot) {
       message.reply({ content: "It's not a bot, it's a **__USER__**!" });
     } else {
-      Bots.findOne({ id: user.id }).then((bot) => {
+      Cache.Bots.findOne({ id: user.id }).then((bot) => {
         if (!bot) {
           message.reply({
             content:

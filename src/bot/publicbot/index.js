@@ -88,6 +88,6 @@ function DiscordLog({ title, desc, color }) {
 
   client.guilds.cache
     .get("602906543356379156")
-    .channels.cache.get("775231877433917440")
+    .channels.cache.get("889696494758789191")
     .send({ embeds: [msg] });
 }
