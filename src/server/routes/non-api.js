@@ -429,6 +429,10 @@ router.get("/logout", async (req, res) => {
   }
 });
 
+router.get("/ads.txt", (req,res)=>{
+  res.sendFile(path.resolve("src/public/assets/ads.txt"));
+});
+
 router.get("*", (req, res) => {
   res.status(404).render("404.ejs", { path: req.originalUrl });
 });
