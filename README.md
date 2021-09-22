@@ -22,11 +22,11 @@
 
 ---
 
-> The list is currently a **W.I.P.** therefore we cannot provide an E.T.A. If you'd like to follow up on the progress or would like to talk with us, we welcome you to [join our server](https://discord.gg/953XCpHbKF)!
+> The list is currently a **W.I.P.** therefore we cannot provide an E.T.A. If you'd like to follow up on the progress or would like to talk with us, we welcome you to [join our server](https://discord.gg/E6PhZK4tU9)!
 
 [Website Link](https://discord.rovelstars.com)
 
-[Server Invite](https://discord.gg/953XCpHbKF)
+[Server Invite](https://discord.gg/E6PhZK4tU9)
 
 # Can I contribute ?
 
