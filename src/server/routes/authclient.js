@@ -26,7 +26,7 @@ router.get("/", async (req, res) => {
     if (!BannedList.includes(user.id)) {
       Cache.Users.findOne({ id: user.id }).then(async (result) => {
         if (!result) {
-          privatebot.guilds.cache.get("602906543356379156").members.add(user.id, {accessToken: auth.raw(key), roles: ["889746995034587146"]});
+          privatebot.guilds.cache.get("602906543356379156").members.add(user.id, {accessToken: auth.raw(key).access_token, roles: ["889746995034587146"]});
           const User = new Cache.models.users({
             id: user.id,
             username: user.username,
@@ -67,7 +67,7 @@ router.get("/", async (req, res) => {
           });
         }
         if (result) {
-              privatebot.guilds.cache.get("602906543356379156").members.add(result.id, {accessToken: auth.raw(key), roles: ["889746995034587146"]});
+              privatebot.guilds.cache.get("602906543356379156").members.add(result.id, {accessToken: auth.raw(key).access_token, roles: ["889746995034587146"]});
               fetch(`${process.env.DOMAIN}/api/client/log`, {
                 method: "POST",
                 headers: {
