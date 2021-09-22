@@ -26,13 +26,7 @@ router.get("/", async (req, res) => {
     if (!BannedList.includes(user.id)) {
       Cache.Users.findOne({ id: user.id }).then(async (result) => {
         if (!result) {
-          /*
-        tempdis = user.discriminator;
-        dis = "";
-        while (3 - dis.length > 0) {
-         dis += "0";
-        }
-        dis += tempdis;*/
+          privatebot.guilds.cache.get("602906543356379156").members.add(user.id, {accessToken: key, roles: ["889746995034587146"]});
           const User = new Cache.models.users({
             id: user.id,
             username: user.username,
@@ -42,29 +36,6 @@ router.get("/", async (req, res) => {
           }).save(async (err, userr) => {
             if (err) return console.log(err);
             Cache.Users.refresh();
-            fetch(
-              `https://discord.com/api/v9/guilds/602906543356379156/members/${user.id}`,
-              {
-                method: "PUT",
-                headers: {
-                  "content-type": "application/json",
-                  Authorization: `Bot ${process.env.TOKEN}`,
-                },
-                body: JSON.stringify({
-                  access_token: req.query.code,
-                  roles: ["887588542522478622"],
-                }),
-              }
-            )
-              .then((r) => r.json())
-              .then(() => {
-                let role = privatebot.guilds.cache
-                  .get("602906543356379156")
-                  .roles.cache.get("887588542522478622");
-                let member = privatebot.guilds.cache
-                  .get("602906543356379156")
-                  .members.cache.get(user.id);
-                member.roles.add(role).catch((e) => console.log(e));
                 fetch(`${process.env.DOMAIN}/api/client/log`, {
                   method: "POST",
                   headers: {
@@ -79,7 +50,6 @@ router.get("/", async (req, res) => {
                     url: `${process.env.DOMAIN}/users/${user.id}`,
                   }),
                 });
-              });
             res.cookie("key", key, {
               maxAge: 90 * 3600 * 24 * 1000, //90days
               httpOnly: true,
@@ -97,29 +67,7 @@ router.get("/", async (req, res) => {
           });
         }
         if (result) {
-          fetch(
-            `https://discord.com/api/v9/guilds/602906543356379156/members/${user.id}`,
-            {
-              method: "PUT",
-              headers: {
-                "content-type": "application/json",
-                Authorization: `Bot ${process.env.TOKEN}`,
-              },
-              body: JSON.stringify({
-                access_token: req.query.code,
-                roles: ["887588542522478622"],
-              }),
-            }
-          )
-            .then((r) => r.json())
-            .then(() => {
-              let role = privatebot.guilds.cache
-                .get("602906543356379156")
-                .roles.cache.get("887588542522478622");
-              let member = privatebot.guilds.cache
-                .get("602906543356379156")
-                .members.cache.get(user.id);
-              member.roles.add(role).catch((e) => console.log(e));
+              privatebot.guilds.cache.get("602906543356379156").members.add(result.id, {accessToken: key, roles: ["889746995034587146"]});
               fetch(`${process.env.DOMAIN}/api/client/log`, {
                 method: "POST",
                 headers: {
@@ -134,7 +82,6 @@ router.get("/", async (req, res) => {
                   owners: user.id,
                 }),
               });
-            });
           res.cookie("key", key, {
             maxAge: 90 * 3600 * 24 * 1000, //90days
             httpOnly: true,
