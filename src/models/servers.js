@@ -13,6 +13,13 @@ const Servers = new Schema({
    icon: {type: String},
    promoted: {type: Boolean, default: false},
    badges: [{type: String}],
+   slug: {
+    type: String,
+    default: function () {
+      return this.id;
+    },
+    unique: true,
+  },
   },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
   
   Servers.virtual('iconURL').get(function(){

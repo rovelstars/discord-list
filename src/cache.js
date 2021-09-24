@@ -28,11 +28,13 @@
 
   globalThis.Bots = {};
   globalThis.Users = {};
+  globalThis.Servers = {};
 
   Cache.AllBots = await AllBots;
   Cache.AllUsers = await AllUsers;
   Cache.AllServers = await AllServers;
   Cache.models = { bots, users, servers };
+
   Cache.Bots = Bots;
 
   Bots.findOne = async function (obj) {
@@ -236,6 +238,101 @@
         const i = AllUsers.findIndex((b) => b == deleteduser);
         if (i > -1) {
           return AllUsers.splice(i, 1);
+        } else {
+          return undefined;
+        }
+      });
+    }
+  };
+
+  Cache.Servers = Servers;
+
+  Servers.findOne = async function (obj) {
+    if (!obj) {
+      return AllServers[0];
+    } else if (Object.keys(obj).length === 0 && obj.constructor === Object) {
+      return AllServers[0];
+    } else {
+      var arr = [];
+      for (const [key, value] of Object.entries(obj)) {
+        arr.push(
+          AllServers.map((server, index) => {
+            if (server[key] == value) {
+              return server;
+            }
+          }).filter(Boolean)
+        );
+      }
+      return [...new Set(arr)][0][0];
+    }
+  };
+
+  Servers.find = async function (obj) {
+    if (!obj) {
+      return AllServers;
+    } else if (Object.keys(obj).length === 0 && obj.constructor === Object) {
+      return AllServers;
+    } else {
+      var arr = [];
+      for (const [key, value] of Object.entries(obj)) {
+        arr.push(
+          AllServers.map((server, index) => {
+            if (server[key] == value) {
+              return server;
+            }
+          }).filter(Boolean)
+        );
+      }
+      return [...new Set(arr)][0]; //without 0: [[{bot}]]
+    }
+  };
+
+  Servers.sortNewAdded = function () {
+    return [...AllServers].reverse().slice(0, 9); //idk we dont we need to reverse!?!
+  };
+
+  Servers.sortTopVoted = function () {
+    return [...AllServers]
+      .sort((a, b) => compare(a, b, "votes"))
+      .reverse()
+      .slice(0, 9);
+  };
+
+  Servers.findOneById = function (q) {
+    return AllServers[AllServers.findIndex((b) => b.id == q)];
+  };
+
+  Servers.refreshOne = function (id) {
+    var server = Servers.findOneById(id);
+    Cache.models.servers.findOne({ id }).then((botu) => (server = botu));
+  };
+
+  Servers.refresh = async function () {
+    Cache.AllServers = await servers.find();
+    AllServers = Cache.AllServers;
+  };
+
+  Servers.clean = function (arg) {
+    if (arg == undefined) {
+      return { err: "not_found" };
+    } else {
+      const { _id, email, address, ...server } = arg;
+      return server;
+    }
+  };
+
+  Servers.deleteOne = function (obj, callback) {
+    let err = undefined;
+    if (!obj) {
+      return undefined;
+    } else if (Object.keys(obj).length === 0 && obj.constructor === Object) {
+      return undefined;
+    } else {
+      Cache.models.servers.deleteOne(obj, callback);
+      Cache.Servers.findOne(obj).then((deletedserver) => {
+        const i = AllServers.findIndex((b) => b == deletedserver);
+        if (i > -1) {
+          return AllServers.splice(i, 1);
         } else {
           return undefined;
         }

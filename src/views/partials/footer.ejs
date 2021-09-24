@@ -185,3 +185,31 @@ translate();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="/assets/script.js"></script>
+<script>
+  function adBlockDetected() {
+	Swal.fire({title: "AD Block Detected!", html: "We depend on ads for our income. All of the earnings go to the development of RDL, server hosting, and the extra income goes to best bot devs and fossthost.org</br >Please disable ad block and revisit the site again. If you dont want ads, disable ads from our <a href='/dashboard'>dashboard.</a><br />Please disable your adblock and click ok."}).then(()=>{location.reload()})
+}
+
+// We look at whether BlockAdBlock already exists.
+if(typeof blockAdBlock !== 'undefined' || typeof BlockAdBlock !== 'undefined') {
+	// If this is the case, it means that something tries to usurp are identity
+	// So, considering that it is a detection
+	adBlockDetected();
+} else {
+	// Otherwise, you import the script BlockAdBlock
+	var importFAB = document.createElement('script');
+	importFAB.onload = function() {
+		// If all goes well, we configure BlockAdBlock
+		blockAdBlock.onDetected(adBlockDetected)
+	};
+	importFAB.onerror = function() {
+		// If the script does not load (blocked, integrity error, ...)
+		// Then a detection is triggered
+		adBlockDetected(); 
+	};
+	importFAB.integrity = 'sha256-xjwKUY/NgkPjZZBOtOxRYtK20GaqTwUCf7WYCJ1z69w=';
+	importFAB.crossOrigin = 'anonymous';
+	importFAB.src = 'https://cdnjs.cloudflare.com/ajax/libs/blockadblock/3.2.1/blockadblock.min.js';
+	document.head.appendChild(importFAB);
+}
+</script>

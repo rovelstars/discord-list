@@ -1,3 +1,5 @@
+const { Server } = require("mongodb");
+
 let router = require("express").Router();
 
 router.all("*", (req, res, next) => {
@@ -35,15 +37,15 @@ router.get("/b/:slug/vote", (req, res, next) => {
   }
 });
 
-router.get("/b/:slug", (req, res, next) => {
+router.get("/s/:slug", (req, res, next) => {
   if (req.hostname != "dscrdly.com") {
     next();
   } else {
-    Cache.Bots.findOne({ slug: req.params.slug }).then((bot) => {
-      if (!bot) {
+    Cache.Servers.findOne({ slug: req.params.slug }).then((server) => {
+      if (!server) {
         res.render("404.ejs", { path: req.originalUrl });
       } else {
-        res.redirect(`${process.env.DOMAIN}/bots/${bot.id}`);
+        res.redirect(`${process.env.DOMAIN}/servers/${server.id}`);
       }
     });
   }
