@@ -6,6 +6,6 @@ client.on("messageReactionAdd", function(reaction, user) {
    reaction.message.delete();
   }
  }
- }
+}
  catch(e){}
 });
