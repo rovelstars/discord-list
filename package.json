@@ -17,7 +17,7 @@
   },
   "checkCache": "true",
   "dependencies": {
-    "@babel/runtime": "7.14.8",
+    "@babel/runtime": "7.15.4",
     "@meanie/mongoose-to-json": "2.5.0",
     "@sentry/node": "6.9.0",
     "@sentry/tracing": "^6.9.0",
