@@ -20,6 +20,7 @@ const Servers = new Schema({
     },
     unique: true,
   },
+  votes: { type: Number, default: 0 },
   },{ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }});
   
   Servers.virtual('iconURL').get(function(){

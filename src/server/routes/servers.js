@@ -25,6 +25,33 @@ router.get("/:id", (req, res)=>{
  });
 })
 
+router.get("/:id/vote", async (req, res) => {
+  if (!req.query.key) res.json({ err: "not_logined" });
+  else {
+    fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.err) return res.json({ err: "invalid_key" });
+        if (!req.query.coins) return res.json({ err: "no_coins" });
+        if (req.query.coins % 10 != 0)
+          return res.json({ err: "coins_not_divisible" });
+        const Vote = parseInt(req.query.coins) / 10;
+        Cache.Users.findOne({ id: d.id }).then((use) => {
+          if (!use) return res.json({ err: "no_user_found" });
+          if (use.bal < req.query.coins)
+            return res.json({ err: "not_enough_coins" });
+          var server = Cache.Servers.findOneById(req.params.id);
+          if (!server) return res.json({ err: "no_server_found" });
+          use.bal = use.bal - req.query.coins;
+          use.save();
+          server.votes = server.votes + parseInt(Vote);
+          server.save();
+          res.json({ server });
+          });
+      });
+  }
+});
+
 router.get("/:id/invite", (req, res)=>{
  const guild = globalThis.publicbot.guilds.cache.get(req.params.id);
  if(!guild){
