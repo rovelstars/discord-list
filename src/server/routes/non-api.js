@@ -169,7 +169,7 @@ router.get("/bots/:slug/invite", (req, res, next) => {
 });
 
 router.get("/bots/:id", async (req, res) => {
-  var blocked = ["493716749342998541","792443342926512128"];
+  var blocked = ["493716749342998541","792443342926512128","768534891154374768"];
   fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`).then(
     async () => {
       var bot = Cache.Bots.findOneById(req.params.id);
