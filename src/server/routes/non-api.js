@@ -169,6 +169,7 @@ router.get("/bots/:slug/invite", (req, res, next) => {
 });
 
 router.get("/bots/:id", async (req, res) => {
+  var blocked = ["493716749342998541","792443342926512128"];
   fetch(`${process.env.DOMAIN}/api/bots/${req.params.id}/sync`).then(
     async () => {
       var bot = Cache.Bots.findOneById(req.params.id);
@@ -182,7 +183,7 @@ router.get("/bots/:id", async (req, res) => {
         })
           .then((r) => r.json())
           .then(async (botu) => {
-            if (botu.error) {
+            if (botu.error || blocked.includes(botu?.id)) {
               console.log(toke);
               return await res.render("404.ejs", { path: req.originalUrl });
             } else {
