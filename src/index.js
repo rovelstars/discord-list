@@ -132,8 +132,57 @@ globalThis.isCopy = function () {
   } else return true;
 };
 
+const http = require('http');
+var cloudcmd = require('cloudcmd');
+var {Server} = require('socket.io');
+const gritty = require('gritty');
+
+const server = http.createServer(app);
+const socket = new Server(server, {
+    path: `/panel/socket.io`,
+});
+
+const config = {
+    name: 'Hackboard',
+};
+
+const filePicker = {
+    data: {
+        FilePicker: {
+            key: 'key',
+        },
+    },
+};
+
+const modules = {
+    filePicker,
+};
+
+const {
+    createConfigManager,
+    configPath,
+} = cloudcmd;
+
+const configManager = createConfigManager({
+    configPath,
+});
+
+app.use("/panel", cloudcmd({
+    socket, // used by Config, Edit (optional) and Console (required)
+    config, // config data (optional)
+    modules, // optional
+    configManager, // optional
+}));
+
+app.use(gritty())
+gritty.listen(socket);
+
+app.get("*", (req, res) => {
+  res.status(404).render("404.ejs", { path: req.originalUrl });
+});
+
 if (!isCopy()) {
-  globalThis.server = app.listen(port, () => {
+  globalThis.server = server.listen(port,()=>{
     console.log(`[SERVER] Started on port: ${port}`);
   });
   console.warn(
@@ -145,9 +194,87 @@ if (!isCopy()) {
     `https://discord.rovelstars.com/api/report?link=${process.env.DOMAIN}`
   );
 } else {
-  globalThis.server = app.listen(port, () => {
+  globalThis.server = server.listen(port,()=>{
     console.log(`[SERVER] Started on port: ${port}`);
   });
+}
+
+function addCommas(num, opts) {
+  if (opts.separator === false) {
+    return num.toString();
+  }
+  if (num < 1000) {
+    return num.toString();
+  }
+  var separator = (typeof opts.separator === 'string' ? opts.separator : ',');
+
+  var out = [],
+    digits = Math.round(num).toString().split('');
+
+  digits.reverse().forEach(function(digit, i){
+    if (i && i%3 === 0) {
+      out.push(separator);
+    }
+    out.push(digit);
+  });
+  return out.reverse().join('');
+}
+function formatDec(num, base, opts) {
+  var workingNum = num/base;
+  var ROUND = opts.round ? 'round' : 'floor';
+  if (opts.decimal === false) {
+    num = Math[ROUND](workingNum);
+    return num.toString();
+  }
+  if (opts.precision) {
+    num = workingNum;
+  } else {
+    num = workingNum < 10 ? (Math[ROUND](workingNum * 10) / 10) : Math[ROUND](workingNum);
+  }
+  num = num.toString();
+  if (typeof opts.decimal === 'string') {
+    num = num.replace('.', opts.decimal);
+  }
+  return num;
+}
+var THOUSAND = 1000;
+var TEN_THOUSAND = 10000;
+var MILLION = 1000000;
+var BILLION = 1000000000;
+var TRILLION = 1000000000000;
+rovel.approx = function (num, opts) {
+if(isNaN(num)) return num;
+else if(num == Infinity || num == "Infinity") return "∞";
+else{
+  var numString;
+  opts = opts || {};
+  var negative = num < 0;
+  num = Math.abs(num);
+  var thousandsBreak = opts.min10k ? TEN_THOUSAND : THOUSAND;
+  if (num < thousandsBreak) {
+    numString = addCommas(formatDec(num, 1, opts), opts);
+  } else if (num < MILLION) {
+    numString =  formatDec(num, THOUSAND, opts) + 'k';
+  } else if (num < BILLION) {
+    numString =  formatDec(num, MILLION, opts) + 'm';
+  } else if (num < TRILLION) {
+    numString =  addCommas(formatDec(num,  BILLION, opts), opts) + 'b';
+  } else {
+    numString = addCommas(formatDec(num,  TRILLION, opts), opts) + 't';
+  }
+  if (negative) {
+    numString = '-' + numString;
+  }
+  if (opts.capital) {
+    numString = numString.toUpperCase();
+  }
+  if (opts.prefix) {
+    numString = opts.prefix + numString;
+  }
+  if (opts.suffix) {
+    numString = numString + opts.suffix;
+  }
+  return numString;}
 }
 
 const { Wallet } = require("simplebtc");
@@ -183,23 +310,3 @@ globalThis.TOPGGTOKEN = function () {
   const index = Math.floor(Math.random() * (TOPTOKENS.length - 1) + 1);
   return TOPTOKENS[index];
 };
-
-const { Server: wsServer } = require("ws");
-
-globalThis.wss = new wsServer({ server });
-
-wss.on("connection", function connection(ws, req) {
-  ws.on("message", function incoming(message) {
-    var msg;
-    try {
-      msg = JSON.parse(message);
-    } catch (e) {
-      ws.send(JSON.stringify({ err: "parse_failed" }));
-    }
-    if (typeof msg != undefined) {
-      if (msg?.event == "ping") ws.send(JSON.stringify({ res: "pong" }));
-      if (msg?.event == "state")
-        ws.send(JSON.stringify({ memory: process.memoryUsage() }));
-    }
-  });
-});
