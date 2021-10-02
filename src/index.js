@@ -41,6 +41,7 @@ if (process.env.WEBLOG == "true") {
   globalThis.warnn = console.warn;
   globalThis.console.warn = loggy.warn;
 }
+console.log("[STARTING]");
 globalThis.fetch = rovel.fetch;
 globalThis.console.debug = function (obj) {
   if (typeof obj.stack == "string" && typeof obj == "object") {
