@@ -1,3 +1,4 @@
 node_modules/*
 .env
 cloudflare_ip.json
+package-lock.json
