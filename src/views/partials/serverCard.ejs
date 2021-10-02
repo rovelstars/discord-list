@@ -1,38 +1,31 @@
-<div class="column is-one-third is-bot-card">
-<div class="box has-background-dark" style="overflow: hidden; height: 100%;">
-<article class="media">
-<div class="media-left">
-<figure class="image is-64x64 is-avatar">
-<img width="64" height="64" class="is-rounded" loading="lazy" src="<%= server.iconURL.replace(".png",".webp") %>" alt="<%= server.name %> Icon" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
-</figure>
-</div>
-<div style="overflow: hidden;" class="media-content">
-<div class="content">
-<p>
-<span class="is-size-4 title has-text-default is-mobile" style="font-family: discord;">
-<span><%= server.name %></span>
-</span>
-<br />
-<span class="has-text-grey-light"><%= ((server.short.length>62)?(server.short.slice(0,62)+"..."):server.short) %></span>
-</p>
-<br />
-</div>
-<div class="content-footer">
-<div class="buttons">
-<a href="/servers/<%= server.id %>" class="box button is-info is-outlined">
-<span class="icon">
-<i class="fad fa-newspaper has-text-info"></i>
-</span>
-<span><%= __("view") %></span>
-</a>
- <a href="/servers/<%= server.id %>/join" target="_blank" class="box button is-link is-outlined">
-<span class="icon">
-<i class="bx bxs-down-arrow-circle"></i>
-</span>
-<span><%= __("join") %></span>
-</a>
-</div>
-</div>
-</article>
-</div>
-</div>
+<div class="bot-card">
+    <figure class="image is-64x64 bc-avatar is-avatar">
+    <img width="64" height="64" class="is-rounded" loading="lazy" src="<%= server.iconURL %>" alt="<%= server.name %> Icon" onerror="this.onerror=null;this.src='/assets/img/bot/profile.svg';">
+    </figure>
+     <span class="username">
+    <span><%= server.name %></span>
+    </span>
+     <div class="bc-content has-background-dark" 
+    style="background-image:url(https://discord.rovelstars.com/assets/img/default-bg.svg);background-size:cover">
+    <br />
+    <br />
+    <br />
+       <div class="description has-background-dark is-curved" style="opacity: 0.9;border-radius: 5px;">
+        <p style="font-family: K2D;padding: 10px 10px;"><%= server.short %></p>
+       </div>
+       <div class="bc-buttons">
+    <a href="/servers/<%= server.id %>" class="box button is-info is-outlined" style=":hover{border-color:#9b84ee;}">
+    <span class="icon">
+    <i class="fad fa-newspaper has-text-info"></i>
+    </span>
+    <span>View</span>
+    </a>
+     <a href="/servers/<%= server.id %>/join" target="_blank" class="box button is-link is-outlined">
+    <span class="icon">
+    <i class="fad fa-angle-down has-text-link"></i>
+    </span>
+    <span>Join</span>
+    </a>
+        </div>
+     </div>
+    </div>
