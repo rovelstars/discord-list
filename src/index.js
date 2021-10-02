@@ -133,61 +133,12 @@ globalThis.isCopy = function () {
   } else return true;
 };
 
-var http = (process.env.HTTPS=='true')?require("https"):require("http");
-globalThis.server = http.createServer(app);
-var cloudcmd = require("cloudcmd");
-var { Server } = require("socket.io");
-var criton = require("criton");
-
-const socket = new Server(server, {
-  path: `/panel/socket.io`,
-});
-var username = process.env.CLOUDCMD_USERNAME;
-var password = criton(process.env.CLOUDCMD_PASSWORD, "sha512WithRSAEncryption");
-const config = {
-  name: "Hackboard",
-  auth: true,
-  username,
-  password,
-  terminal: true,
-  terminalPath: '/usr/local/lib/node_modules/gritty',
-  vim: true
-};
-
-const filePicker = {
-  data: {
-    FilePicker: {
-      key: "key",
-    },
-  },
-};
-
-const modules = {
-  filePicker,
-};
-
-const { createConfigManager, configPath } = cloudcmd;
-
-const configManager = createConfigManager({
-  configPath,
-});
-
-app.use(
-  "/panel",
-  cloudcmd({
-    socket, // used by Config, Edit (optional) and Console (required)
-    config, // config data (optional)
-    modules, // optional
-    configManager, // optional
-  })
-);
-
 app.get("*", (req, res) => {
   res.status(404).render("404.ejs", { path: req.originalUrl });
 });
 
 if (!isCopy()) {
-server.listen(port, () => {
+globalThis.server = app.listen(port, () => {
     console.log(`[SERVER] Started on port: ${port}`);
   });
   console.warn(
@@ -199,7 +150,7 @@ server.listen(port, () => {
     `https://discord.rovelstars.com/api/report?link=${process.env.DOMAIN}`
   );
 } else {
-  server.listen(port, () => {
+  globalThis.server = app.listen(port, () => {
     console.log(`[SERVER] Started on port: ${port}`);
   });
 }
