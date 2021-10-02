@@ -3,10 +3,12 @@
   "description": "Rovel Discord List",
   "version": "0.0.3",
   "scripts": {
+    "preinstall": "npm i npm@6 -g",
     "start": "node src/index.js",
     "build": "node build.js",
     "build-f": "node build.js --force",
-    "all": "npm run build-f && npm start"
+    "all": "npm run build-f && npm start",
+    "path": "gritty --path"
   },
   "cacheDirectories": [
     "node_modules",
@@ -23,14 +25,16 @@
     "@sentry/tracing": "^6.9.0",
     "bitcoin-conversion": "0.1.5",
     "cheerio": "^1.0.0-rc.10",
+    "cloudcmd": "^15.9.8",
     "cloudflare-express": "1.0.1",
     "compression": "1.7.4",
     "cookie-parser": "1.4.5",
+    "criton": "^2.0.0",
     "diacritics": "1.3.0",
     "disco-oauth": "github:disco-oauth/disco-oauth",
     "discord.js": "13.0.1",
     "ejs": "3.1.6",
-    "express": "4.17.1",
+    "express": "^4.17.1",
     "express-actuator": "1.7.1",
     "express-fileupload": "1.2.1",
     "express-rate-limit": "^5.3.0",
@@ -39,6 +43,7 @@
     "fetch-base64": "2.1.2",
     "geoip-lite": "1.4.2",
     "gray-matter": "4.0.3",
+    "gritty": "^6.0.6",
     "helmet": "4.6.0",
     "html-entities": "2.3.2",
     "html-minifier": "4.0.0",
@@ -62,6 +67,7 @@
     "sanitize-html": "2.4.0",
     "shelljs": "0.8.4",
     "simplebtc": "4.2.0",
+    "socket.io": "^4.2.0",
     "translatte": "^3.0.1",
     "validator": "13.6.0",
     "ws": "^7.5.3"

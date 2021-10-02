@@ -4,51 +4,6 @@ let auth = require("@utils/auth.js");
 const marked = require("marked");
 var proxy = require("proxy-list-random");
 
-router.get("/", async (req, res) => {
-  var servers = shuffle(Cache.AllServers).slice(0, 10);
-  var alerts;
-  if (req.query.alert) {
-    alerts = req.query.alert;
-  }
-  await res.render("index.ejs", {
-    bots: Cache.Bots.sortTopVoted(),
-    servers,
-    alerts,
-  });
-});
-
-router.get("/bots", async (req, res) => {
-  await res.render("bots.ejs", { bots: Cache.Bots.sortNewAdded() });
-});
-
-router.get("/analytics", async (req, res) => {
-  await res.render("analytics.ejs");
-});
-
-router.get("/servers/:id", async (req, res) => {
-  var server = await Servers.findOne({ id: req.params.id });
-  if (!server) return await res.render("404.ejs", { path: req.originalUrl });
-  else {
-    server.desc = await marked(server.desc.replace(/&gt;+/g, ">"));
-    await res.render("serverpage.ejs", { server });
-  }
-});
-
-router.get("/servers/:id/join", (req, res) => {
-  fetch(`${process.env.DOMAIN}/api/servers/${req.params.id}/invite`)
-    .then((r) => r.json())
-    .then((d) => {
-      if (d.err) res.json({ err: d.err });
-      else {
-        res.redirect(`https://discord.gg/${d.code}`);
-      }
-    });
-});
-
-router.get("/manifest.json", (req, res) => {
-  res.sendFile(path.resolve("src/public/assets/manifest.json"));
-});
-
 let sitemap;
 
 async function gensitemap() {
@@ -79,6 +34,76 @@ if (
     fetch(`https://google.com/ping?sitemap=${process.env.DOMAIN}/sitemap.xml`);
   }, 3600000);
 }
+
+router.get("/", async (req, res) => {
+  var alerts;
+  if (req.query.alert) {
+    alerts = req.query.alert;
+  }
+  res.render("index.ejs", {
+    bots: Cache.Bots.sortTopVoted(),
+    servers: shuffle(Cache.AllServers).slice(0, 10),
+    alerts,
+  });
+});
+
+router.get("/bots", async (req, res) => {
+  res.render("bots.ejs", { bots: Cache.Bots.sortNewAdded() });
+});
+
+router.get("/analytics", async (req, res) => {
+  res.render("analytics.ejs");
+});
+
+router.get("/servers/:id", async (req, res) => {
+  var server = await Servers.findOne({ id: req.params.id });
+  var r;
+  if (!server) return res.render("404.ejs", { path: req.originalUrl });
+  else {
+    r = await fetch(`${process.env.DOMAIN}/api/client/users/${server.owner}`);
+    r = await r.json();
+    server.owner = r.tag;
+    r = await fetch(
+      `${process.env.DOMAIN}/api/servers/${req.params.id}/invite`
+    );
+    r = await r.json();
+    if (!r.err) {
+      r = await fetch(
+        `https://discord.com/api/v9/invites/${r.code}?with_counts=true`
+      );
+      r = await r.json();
+      console.log(r);
+      if (!r.message) {
+        server.online = rovel.approx(r.approximate_presence_count);
+        server.all = rovel.approx(r.approximate_member_count);
+        server.desc = marked(server.desc.replace(/&gt;+/g, ">"));
+        res.render("serverpage.ejs", { server });
+      } else {
+        server.desc = marked(server.desc.replace(/&gt;+/g, ">"));
+        res.render("serverpage.ejs", { server });
+      }
+    } else {
+      server.desc = marked(server.desc.replace(/&gt;+/g, ">"));
+      res.render("serverpage.ejs", { server });
+    }
+  }
+});
+
+router.get("/servers/:id/join", (req, res) => {
+  fetch(`${process.env.DOMAIN}/api/servers/${req.params.id}/invite`)
+    .then((r) => r.json())
+    .then((d) => {
+      if (d.err) res.json({ err: d.err });
+      else {
+        res.redirect(`https://discord.gg/${d.code}`);
+      }
+    });
+});
+
+router.get("/manifest.json", (req, res) => {
+  res.sendFile(path.resolve("src/public/assets/manifest.json"));
+});
+
 router.get("/sitemap.xml", async (req, res) => {
   if (
     process.env.DOMAIN == "https://discord.rovelstars.com" &&
@@ -98,14 +123,14 @@ router.get("/bots/:id/vote", async (req, res) => {
   if (!res.locals.user) {
     var bot = Cache.Bots.findOneById(req.params.id);
     if (!bot) {
-      await res.render("404.ejs", { path: req.originalUrl });
+      res.render("404.ejs", { path: req.originalUrl });
     } else {
       res.render("botvote.ejs", { bot });
     }
   } else {
     var bot = Cache.Bots.findOneById(req.params.id);
     if (!bot) {
-      await res.render("404.ejs", { path: req.originalUrl });
+      res.render("404.ejs", { path: req.originalUrl });
     } else {
       var u = await Users.findOne({ id: res.locals.user.id });
       if (!u) {
@@ -113,7 +138,7 @@ router.get("/bots/:id/vote", async (req, res) => {
         res.redirect("/login");
       } else {
         res.locals.user.bal = u.bal;
-        await res.render("botvote.ejs", { bot });
+        res.render("botvote.ejs", { bot });
       }
     }
   }
@@ -136,7 +161,7 @@ router.get("/bots/:id", async (req, res) => {
       if (!bot) {
         res.render("404.ejs", { path: req.originalUrl });
       } else {
-        bot.desc = await marked(bot.desc.replace(/&gt;+/g, ">"));
+        bot.desc = marked(bot.desc.replace(/&gt;+/g, ">"));
         bot.owner = [];
         for (const id of bot.owners) {
           await fetch(`${process.env.DOMAIN}/api/client/users/${id}`)
@@ -145,7 +170,7 @@ router.get("/bots/:id", async (req, res) => {
               await bot.owner.push(d.tag);
             });
         }
-        await res.render("botpage.ejs", { bot });
+        res.render("botpage.ejs", { bot });
         await Cache.Bots.refreshOne(bot.id);
       }
     }
@@ -166,7 +191,7 @@ router.get("/dashboard", async (req, res) => {
       var notjoined = false;
       if (!res.locals.user.status) notjoined = true;
       const bots = Cache.Bots.findByOwner(u.id);
-      await res.render("dashboard.ejs", { bots, notjoined });
+      res.render("dashboard.ejs", { bots, notjoined });
     });
   }
 });
@@ -184,10 +209,10 @@ router.get("/beta/dashboard", async (req, res) => {
         .then(async (bots) => {
           for (const bot of bots) {
             if (bot.owners.includes(res.locals.user.id)) {
-              await botus.push(bot);
+              botus.push(bot);
             }
           }
-          await res.render("newdashboard.ejs", { bots: botus });
+          res.render("newdashboard.ejs", { bots: botus });
         });
     });
   }
@@ -198,7 +223,7 @@ router.get("/dashboard/bots/new", async (req, res) => {
     res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
     res.redirect("/login");
   } else {
-    await res.render("dashboard-newbot.ejs");
+    res.render("dashboard-newbot.ejs");
   }
 });
 
@@ -213,7 +238,7 @@ router.get("/dashboard/bots/edit/:id", async (req, res) => {
       privatebot.owners.includes(res.locals.user.id)
     ) {
       bot = bot.toObject(); //get virtuals then
-      await res.render("editbot.ejs", { bot });
+      res.render("editbot.ejs", { bot });
       await Cache.Bots.refreshOne(req.params.id);
     } else {
       res.json({ err: "unauth" });
@@ -226,7 +251,26 @@ router.get("/dashboard/bots/import", async (req, res) => {
     res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
     res.redirect("/login");
   } else {
-    await res.render("dashboard-importbot.ejs");
+    res.render("dashboard-importbot.ejs");
+  }
+});
+
+router.get("/dashboard/servers/edit/:id", async (req, res) => {
+  if (!res.locals.user) {
+    res.cookie("return", req.originalUrl, { maxAge: 1000 * 3600 });
+    res.redirect("/login");
+  } else {
+    var server = Cache.Servers.findOneById(req.params.id);
+    if (
+      server.owner == res.locals.user.id ||
+      privatebot.owners.includes(res.locals.user.id)
+    ) {
+      server = server.toObject(); //get virtuals then
+      res.render("editserver.ejs", { server });
+      await Cache.Servers.refreshOne(req.params.id);
+    } else {
+      res.json({ err: "unauth" });
+    }
   }
 });
 
@@ -303,12 +347,8 @@ router.get("/logout", async (req, res) => {
   }
 });
 
-router.get("/ads.txt", (req,res)=>{
+router.get("/ads.txt", (req, res) => {
   res.sendFile(path.resolve("src/public/assets/ads.txt"));
-});
-
-router.get("*", (req, res) => {
-  res.status(404).render("404.ejs", { path: req.originalUrl });
 });
 
 module.exports = router;

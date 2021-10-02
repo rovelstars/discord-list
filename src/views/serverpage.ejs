@@ -50,6 +50,29 @@ imglink: undefined
 </a><br />
 </div>
 </div>
+<div class="field is-grouped is-grouped-multiline">
+    <div class="control">
+     <div class="tags has-addons">
+     <span class="tag is-dark"><i class="fad fa-user-shield has-text-danger"></i>&nbsp;Owner</span>
+     <span class="tag is-danger"><%= server.owner %></span>
+     </div>
+   </div><br />
+   <% if(server.all){ %>
+     <div class="control" id="status">
+     <div class="tags has-addons">
+     <span class="tag is-dark"><i class="fad fa-users has-text-info"></i>&nbsp;All</span>
+     <span class="tag is-info"><%= server.all %> members</span>
+     </div>
+     </div><br />
+     <% } if(server.online){ %>
+         <div class="control" id="status">
+        <div class="tags has-addons">
+        <span class="tag is-dark"><i class="fad fa-circle has-text-success"></i>&nbsp;Online</span>
+        <span class="tag is-success"><%= server.online %> members</span>
+        </div>
+        </div><br />
+        <% } %>
+     </div>
   </div>
   </div>
   </div>

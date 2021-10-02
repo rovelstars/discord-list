@@ -187,7 +187,7 @@ translate();
 <script src="/assets/script.js"></script>
 <script>
   function adBlockDetected() {
-	Swal.fire({title: "AD Block Detected!", html: "We depend on ads for our income. All of the earnings go to the development of RDL, server hosting, and the extra income goes to best bot devs and fossthost.org</br >Please disable ad block and revisit the site again. If you dont want ads, disable ads from our <a href='/dashboard'>dashboard.</a><br />Please disable your adblock and click ok."}).then(()=>{location.reload()})
+	Swal.fire({icon:"danger", title: "AD Block Detected!", html: "We depend on ads for our income. All of the earnings go to the development of RDL, server hosting, and the extra income goes to best bot devs and fossthost.org</br >Please disable ad block and revisit the site again. If you dont want ads, disable ads from our <a href='/dashboard'>dashboard.</a><br />Please disable your adblock and click ok."}).then(()=>{location.reload()})
 }
 
 // We look at whether BlockAdBlock already exists.

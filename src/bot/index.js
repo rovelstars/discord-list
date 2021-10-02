@@ -15,7 +15,7 @@ client.emojiapprovers = emojiapprovers;
 client.mods = mods;
 client.contributors = contributors;
 client.commands = [];
-const prefix = process.env.PREFIX;
+const prefix = process.env.PRIVATE_PREFIX;
 
 function getMention(mention) {
   if (!mention) return;
