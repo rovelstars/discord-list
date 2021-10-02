@@ -133,13 +133,29 @@ globalThis.isCopy = function () {
   } else return true;
 };
 
+if (!isCopy()) {
+  globalThis.server = app.listen(port, () => {
+    console.log(`[SERVER] Started on port: ${port}`);
+  });
+  console.warn(
+    rovel.text.red(
+      "[NOTIFICATION] I noticed that you're running your own deployment of RDL. We don't support it, and also, we won't help you setup your own deployment. Please run this only for testing and fixing."
+    )
+  );
+  rovel.fetch(
+    `https://discord.rovelstars.com/api/report?link=${process.env.DOMAIN}`
+  );
+} else {
+  globalThis.server = app.listen(port, () => {
+    console.log(`[SERVER] Started on port: ${port}`);
+  });
+}
 
 
-const http = (process.env.HTTPS=='true')?require("https"):require("http");
 var cloudcmd = require("cloudcmd");
 var { Server } = require("socket.io");
 var criton = require("criton");
-const server = http.createServer(app);
+
 const socket = new Server(server, {
   path: `/panel/socket.io`,
 });
@@ -186,24 +202,6 @@ app.use(
 app.get("*", (req, res) => {
   res.status(404).render("404.ejs", { path: req.originalUrl });
 });
-
-if (!isCopy()) {
-  globalThis.server = server.listen(port, () => {
-    console.log(`[SERVER] Started on port: ${port}`);
-  });
-  console.warn(
-    rovel.text.red(
-      "[NOTIFICATION] I noticed that you're running your own deployment of RDL. We don't support it, and also, we won't help you setup your own deployment. Please run this only for testing and fixing."
-    )
-  );
-  rovel.fetch(
-    `https://discord.rovelstars.com/api/report?link=${process.env.DOMAIN}`
-  );
-} else {
-  globalThis.server = server.listen(port, () => {
-    console.log(`[SERVER] Started on port: ${port}`);
-  });
-}
 
 function addCommas(num, opts) {
   if (opts.separator === false) {
