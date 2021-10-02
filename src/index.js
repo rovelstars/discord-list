@@ -134,7 +134,7 @@ globalThis.isCopy = function () {
 
 
 
-const http = require("http");
+const http = (process.env.HTTPS=='true')?require("https"):require("http");
 var cloudcmd = require("cloudcmd");
 var { Server } = require("socket.io");
 var criton = require("criton");
