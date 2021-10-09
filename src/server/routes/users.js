@@ -11,16 +11,17 @@ router.get("/", (req, res) => {
   })
  }
  else {
-  Cache.models.users.find({}, { _id: false }).exec(function(err, users) {
+  Cache.models.users.find({}, { _id: false , email: false, address: false}).exec(function(err, users) {
    if (err) return console.error(err);
+   users = users.map(Cache.Users.clean)
    res.send(users);
   })
  }
 });
 
 router.get("/:id", (req, res) => {
- Users.findOne({ id: req.params.id }).then(user => {
-  res.json(user);
+ Cache.Users.findOne({ id: req.params.id }).then(user => {
+  res.json(Cache.Users.clean(user));
  });
 });
 router.get("/:id/delete", (req, res) => {
