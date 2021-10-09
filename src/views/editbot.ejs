@@ -67,6 +67,15 @@ General Information
    <div class="desc-live">
    <textarea style="width:100%;" class="textarea" name="botdesc" id="botdesc" placeholder="Supports markdown, html, css styles and iframe. Javascript not supported."><%= bot.desc %></textarea>
    </div>
+     <br />
+  <p>Webhook URL</p>
+  <p class="has-text-grey-light">Not necessary to provide one.</p>
+  <p class="control has-icons-left">
+   <input class="input has-background-black has-text-white" id="botwh" placeholder="http/https server link" value="<%= bot.webhook %>">
+   <span class="icon is-small is-left">
+    <i class="bx bxs-image"></i>
+   </span>
+  </p>
   <br />
   <p>Background Image</p>
   <p class="has-text-grey-light">Not necessary to provide one.</p>
@@ -231,6 +240,8 @@ botshort.addEventListener("keyup", async(e)=>{
  document.getElementById("bot-short").innerText=botshort.value;
 });
 
+var botwh = document.getElementById("botwh");
+
 var botprefix = document.getElementById("botprefix");
 botprefix.addEventListener("keyup", async(e)=>{
  document.getElementById("bot-prefix").innerText=botprefix.value;
@@ -300,6 +311,7 @@ function editBot(){
  "short": botshort.value,
  "desc": botdesc.value,
  "bg": botbg.value,
+ "webhook": (botwh.value=="")?undefined:botwh.value,
  "prefix": botprefix.value,
  "support": botsupport.value,
  "github": botgithub.github,
