@@ -124,6 +124,7 @@ router.get("/:id/vote", async (req, res) => {
       .then((d) => {
         if (d.err) return res.json({ err: "invalid_key" });
         if (!req.query.coins) return res.json({ err: "no_coins" });
+        if (req.query.coins <= 0) return res.json({ err: "negative_coins" })
         if (req.query.coins % 10 != 0)
           return res.json({ err: "coins_not_divisible" });
         const Vote = parseInt(req.query.coins) / 10;
