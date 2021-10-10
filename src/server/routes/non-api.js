@@ -5,8 +5,46 @@ const marked = require("marked");
 var proxy = require("proxy-list-random");
 
 let sitemap;
+let botsfromtopgg = "";
+let keywords = [
+  "minecraft",
+  "music",
+  "rpg",
+  "game",
+  "video",
+  "memer",
+  "nitro",
+  "currency",
+  "coding",
+  "among",
+];
+
+fetch(
+  `https://top.gg/api/search?q=${
+    keywords[Math.floor(Math.random() * 10)]
+  }&limit=500&platform=discord&entityType=bot&isLegacy=true`
+)
+  .then((r) => r.json())
+  .then((d)=>{
+     d.results=d.results.map((bot) => {
+      return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>`;
+    }).join("\n");
+    botsfromtopgg = d.results;
+  });
 
 async function gensitemap() {
+  var r = await fetch(
+    `https://top.gg/api/search?q=${
+      keywords[Math.floor(Math.random() * 10)]
+    }&limit=500&platform=discord&entityType=bot&isLegacy=true`
+  );
+  var d = await r.json();
+  d.results = d.results
+    .map((bot) => {
+      return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>`;
+    })
+    .join("\n");
+  botsfromtopgg = await d.results;
   const botsmap = Cache.AllBots.map((bot) => {
     return `<url>\n<loc>${process.env.DOMAIN}/bots/${bot.id}</loc>\n<priority>0.9</priority>\n<changefreq>weekly</changefreq></url>`;
   }).join("\n");
@@ -18,6 +56,7 @@ async function gensitemap() {
     `\n<url>\n<loc>${process.env.DOMAIN}/</loc>\n<priority>1.00</priority><changefreq>weekly</changefreq>\n</url>\n` +
     botsmap +
     serversmap +
+    botsfromtopgg +
     "</urlset>";
   return Sitemap;
 }
@@ -159,9 +198,96 @@ router.get("/bots/:id", async (req, res) => {
     async () => {
       var bot = Cache.Bots.findOneById(req.params.id);
       if (!bot) {
-        res.render("404.ejs", { path: req.originalUrl });
+        var toke = globalThis.TOPGGTOKEN();
+        fetch(`https://top.gg/api/bots/${req.params.id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `${toke}`,
+          },
+        })
+          .then((r) => r.json())
+          .then(async (botu) => {
+            if (botu.error) {
+              console.log(toke);
+              return await res.render("404.ejs", { path: req.originalUrl });
+            } else {
+              botu.longdesc = botu.longdesc
+                .replaceAll("\r\n", "\n")
+                .replaceAll("\u0009", "\t");
+              botu.longdesc = indent(botu.longdesc);
+              botu.longdesc = coronaSanitizer(botu.longdesc, {
+                allowedTags: coronaSanitizer.defaults.allowedTags.concat([
+                  "discord-message",
+                  "discord-messages",
+                  "img",
+                  "iframe",
+                  "style",
+                  "h1",
+                  "h2",
+                  "link",
+                  "mark",
+                ]),
+                allowVulnerableTags: true,
+                allowedAttributes: {
+                  "*": ["*"],
+                },
+              });
+              botu.longdesc = rovel.emoji.emojify(botu.longdesc, (name) => {
+                return name;
+              });
+              var abot = {
+                id: botu.id,
+                lib: botu.lib == "" ? "none" : botu.lib,
+                prefix: botu.prefix,
+                short: botu.shortdesc,
+                username: botu.username,
+                dicriminator: botu.discriminator,
+                added: true,
+                topgg: true,
+                tag: `${botu.username}#${botu.discriminator}`,
+                desc: botu.longdesc,
+                support: botu.support,
+                bg: botu.bannerUrl,
+                card: {},
+                owners: botu.owners,
+                invite: botu.invite,
+                github: botu.github,
+                website: botu.website,
+                votes: 0,
+                bg: botu.bannerUrl,
+                avatarURL: (function () {
+                  if (
+                    botu.avatar == "1" ||
+                    botu.avatar == "2" ||
+                    botu.avatar == "3" ||
+                    botu.avatar == "4"
+                  )
+                    return `https://cdn.discordapp.com/embed/avatars/${botu.avatar}.png`;
+                  var ani = false;
+                  if (this.avatar?.startsWith("a_")) ani = true;
+                  const aniurl = `https://cdn.discordapp.com/avatars/${botu.id}/${botu.avatar}.gif`;
+                  const nonurl = `https://cdn.discordapp.com/avatars/${botu.id}/${botu.avatar}.png`;
+                  const url = ani ? aniurl : nonurl;
+                  return url;
+                })(),
+                servers: botu.server_count,
+                nothere: true,
+                status: "online",
+              };
+              abot.desc = marked(abot.desc.replace(/&gt;+/g, ">"));
+              abot.owner = [];
+              for (const id of abot.owners) {
+                await fetch(`${process.env.DOMAIN}/api/client/users/${id}`)
+                  .then((r) => r.json())
+                  .then(async (d) => {
+                    await abot.owner.push(d.tag);
+                  });
+              }
+              res.render("botpage.ejs", { bot: abot });
+            }
+          });
       } else {
-        bot.desc = marked(bot.desc.replace(/&gt;+/g, ">"));
+        bot.desc = await marked(bot.desc.replace(/&gt;+/g, ">"));
         bot.owner = [];
         for (const id of bot.owners) {
           await fetch(`${process.env.DOMAIN}/api/client/users/${id}`)
@@ -170,7 +296,7 @@ router.get("/bots/:id", async (req, res) => {
               await bot.owner.push(d.tag);
             });
         }
-        res.render("botpage.ejs", { bot });
+        await res.render("botpage.ejs", { bot });
         await Cache.Bots.refreshOne(bot.id);
       }
     }

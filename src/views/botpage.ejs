@@ -33,7 +33,7 @@ imglink: bot.bg
 <% } %>
 <% if(bot.topgg){ %>
   <script>
-   Swal.fire({icon: "info", title: "<%= bot.tag %> has not been added by their real devs!", text: "We can't provide support for this bot. Please ask the owners of the bot to add this bot here to recieve support from us!", footer: '<a href="/server">Discuss with us about this bot.</a>'});
+   Swal.fire({icon: "info", title: "<%= bot.tag %> has not been added by their real devs!", text: "This bot is not really listed here. It's not saved in our database. It's shown directly from top.gg", footer: '<a href="/server">Discuss with us about this bot or about the DMCA policy.</a>'});
   </script>
   <% } %>
  <%- include('partials/navbar', {user}); %>
