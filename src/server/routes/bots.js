@@ -31,27 +31,6 @@ bot.save();
   });
 });
 
-const newrule = new schedule.RecurrenceRule();
-newrule.hour=12;
-newrule.minute=0;
-schedule.scheduleJob(newrule, async function(){
- Cache.AllBots.forEach((bot,i)=>{
-  setTimeout(()=>{
-   fetch(`https://top.gg/api/bots/${bot.id}`, {
-    method: "GET",
-    headers: {
-      Authorization: `${globalThis.TOPGGTOKEN()}`,
-    },
-  }).then(r=>r.json()).then(b=>{
-   if(!b.error){
-    bot.servers=b.server_count;
-    bot.save();
-   }
-  })
-  }, 2000*(i+1)); //if our server makes one more request (61) , we're doomed!
- });
-})
-
 router.get("/", (req, res) => {
   if (req.query.q) {
     res.json(shuffle(Search(Cache.AllBots, req.query.q)).slice(0, 10));
