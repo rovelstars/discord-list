@@ -2,7 +2,6 @@ const { langs } = require("../../data.js");
 
 module.exports = async function(req, res, next){
  res.locals.req = req;
- req.language = eval(`langs.${req.locale}`);
  var themes = ["discord", "dracula", "paranoid"];
  if (!themes.includes(req.cookies['theme'])) {
   req.cookies["theme"] = "discord";

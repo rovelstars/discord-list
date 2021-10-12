@@ -125,63 +125,6 @@ function approx(num, opts) {
     return numString;}
   }
 $$(".approx-num").forEach(e=>{e.innerText=approx(e.innerText,{capital: true})});
-<% if(req.locale!="en"){ %>
-function translate(arg){
-if(arg){
-fetch("/api/translate",{
- method: "POST",
- headers: {
-  "content-type": "application/json"
- },
- body: JSON.stringify({
-  to: "<%= req.locale %>",
-  text: arg
- })
-}).then(r=>r.json()).then(res=>{
- if(res.err){
-  Swal.fire({icon:"error", title: "Translation Error", text: res.err})
- }
- else{
-return res.text;
-}
-})
-}
-else{
-document.getElementById("loadtext").innerText="Translating RDL into <%= req.locale %>";
-fetch("/api/translate",{
- method: "POST",
- headers: {
-  "content-type": "application/json"
- },
- body: JSON.stringify({
-  to: "<%= req.locale %>",
-  text: ttarr
- })
-}).then(r=>r.json()).then(res=>{
- if(res.err){
-  Swal.fire({icon:"error", title: "Translation Error", text: res.err})
- }
- else{
-const transd = res.text;
-for(var i=0;i<transd.length;i++){
-parts[i].innerText = transd[i];
-}
-if(typeof window.twemoji=="object"){
-  twemoji.parse(document.body);
-}
-if(typeof window.joypixels=="object"){
- twemoji={};
- twemoji.parse = function(body){
-  joypixels.ascii=true;
-  body = joypixels.toImage(body);
- }
-}
- }
-});
-}
-}
-translate();
-<% } %>
 </script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="/assets/script.js"></script>
