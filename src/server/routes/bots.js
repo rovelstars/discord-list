@@ -125,7 +125,7 @@ router.get("/:id/vote", async (req, res) => {
               votes: Vote,
               currentVotes: bot.votes,
             });
-            fetch(`${bot.webhook}/vote?code=${bot.code}`, {
+            fetch(`${bot.webhook}?code=${bot.code}`, {
               method: "POST",
               headers: {
                 "content-type": "application/json",
