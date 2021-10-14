@@ -128,14 +128,13 @@ router.get("/:id/vote", async (req, res) => {
             fetch(`${bot.webhook}?code=${bot.code}`, {
               method: "POST",
               headers: {
-                "content-type": "application/json",
-                authentication: bot.code,
+                "Content-Type": "application/json",
+                "Authentication": bot.code,
               },
               body: hmm,
             })
-              .then((r) => r.json())
-              .then((d) => {
-                if (!d.ok || d?.ok != "true") {
+              .then((r) =>{
+                if ((r.status >= 300) || (r.status < 200)) {
                   fetch(`${process.env.DOMAIN}/api/client/log`, {
                     method: "POST",
                     headers: {
