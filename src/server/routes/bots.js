@@ -129,6 +129,7 @@ router.get("/:id/vote", async (req, res) => {
               method: "POST",
               headers: {
                 "content-type": "application/json",
+                authentication: bot.code,
               },
               body: hmm,
             })
