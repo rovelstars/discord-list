@@ -57,7 +57,7 @@ router.get("/:id/delete", (req, res) => {
  }
 })
 router.get("/coins", (req, res) => {
- Users.findOne({ id: "602902050677981224" }).then(user => {
+ Users.findOne({ id: "889439979686739998" }).then(user => {
   user.bal += 10;
   user.save();
   res.json({ bal: user.bal });
