@@ -240,10 +240,11 @@ botid.addEventListener("keyup", async(e)=>{
   document.getElementById("bot-username").innerText=d.username;
  })
 });
-
-var owners=["<%= user.id %>"];
+var userid = "<% user.id %>";
+var owners=[];
 var botowners = document.getElementById("botowners");
 botowners.addEventListener("keyup", async(e)=>{
+  owners = [];
  var temp;
  temp = botowners.value.split(",").map(s=>s.trim());
  for(i=0;i<temp.length;i++){
@@ -309,6 +310,7 @@ botdesc.addEventListener("keyup",async (e) => {
     }
 });
 function addBot(){
+  owners.unshift(userid);
  var submitbutton = document.getElementById("submitbutton");
  submitbutton.classList.add("is-loading");
  fetch("https://discord.rovelstars.com/api/bots/new",{
