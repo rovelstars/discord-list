@@ -240,7 +240,6 @@ botid.addEventListener("keyup", async(e)=>{
   document.getElementById("bot-username").innerText=d.username;
  })
 });
-var userid = "<% user.id %>";
 var owners=[];
 var botowners = document.getElementById("botowners");
 botowners.addEventListener("keyup", async(e)=>{
@@ -310,7 +309,7 @@ botdesc.addEventListener("keyup",async (e) => {
     }
 });
 function addBot(){
-  owners.unshift(userid);
+  owners.unshift(user.id);
   owners = owners.filter(a=>{a!=""});
  var submitbutton = document.getElementById("submitbutton");
  submitbutton.classList.add("is-loading");
