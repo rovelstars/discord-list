@@ -310,7 +310,7 @@ botdesc.addEventListener("keyup",async (e) => {
 });
 function addBot(){
   owners.unshift(user.id);
-  owners = owners.filter(a=>{a!=""});
+  owners = owners.filter(a=>{return (a!="")});
  var submitbutton = document.getElementById("submitbutton");
  submitbutton.classList.add("is-loading");
  fetch("https://discord.rovelstars.com/api/bots/new",{
