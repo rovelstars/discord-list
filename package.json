@@ -32,7 +32,7 @@
     "criton": "^2.0.0",
     "diacritics": "1.3.0",
     "disco-oauth": "github:disco-oauth/disco-oauth",
-    "discord.js": "13.0.1",
+    "discord.js": "13.2.0",
     "ejs": "3.1.6",
     "express": "^4.17.1",
     "express-actuator": "1.7.1",
