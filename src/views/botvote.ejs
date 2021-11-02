@@ -15,9 +15,9 @@ imglink: bot.bg
    fetch(`https://discord.rovelstars.com/api/bots/<%= bot.id %>/vote?coins=${coins.value}`).then(r=>r.json()).then(d=>{
     submitbutton.classList.remove("is-loading");
     if(d.err){
-     if(d.err=="coins_not_divisible") d.err="your coins is not divisible by 10. remember: r$10 = 1 vote"
+     if(d.err=="coins_not_divisible") d.err="The amount you requested to spend is not divisible by 10. Remember: R$10 = 1 vote"
      var title = d.err.split("_").join(" ").toUpperCase()
-     Swal.fire({icon: "error", title,  footer: '<a href="/server">Why do I have this error?</a>'});
+     Swal.fire({icon: "error", title,  footer: '<a href="/dashboard">Earn some R$ from the dashboard in order to vote the bot</a>'});
     }
     else{
      Swal.fire({icon: "success", title: `You Voted <%= bot.username %> with R$ ${coins.value}!`}).then(()=>{
@@ -56,7 +56,9 @@ imglink: bot.bg
    <br />
    <div class="has-text-centered">
      <button class="button is-success has-text-white" onclick="addVote()" id="submitbutton">
-      <span class="icon"><i class="fad fa-caret-circle-up"></i></span>Vote</button>
+      <span class="icon"><i class="fad fa-caret-circle-up"></i></span>&nbsp;Vote</button><br /><br />
+      <a class="button is-info has-text-white" href="/dashboard">
+      <span class="icon"><i class="fad fa-caret-circle-up"></i></span>&nbsp;Earn R$</a>
      </div>
    </div>
    <% } else { %>

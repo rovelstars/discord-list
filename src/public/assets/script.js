@@ -88,7 +88,7 @@ var run =  function() {
               }).then(() => {
                 Swal.fire({
                   title: "Login Fast!",
-                  text: "Login if you want to contribute to RDL, or just change your preferences!",
+                  text: "Login if you want to contribute to RDL, or just change your preferences! You will be added to the support server in order to keep a note of your account data (for syncing purposes)",
                   confirmButtonText: "<span>Sure!</span>",
                 }).then(() => {
                   Swal.fire({

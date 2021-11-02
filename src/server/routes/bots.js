@@ -710,7 +710,7 @@ router.post("/new", async (req, res) => {
               if (!err && req.body.bg) {
                 if (!validator.isURL(req.body.bg)) err = "invalid_bg";
               }
-              if (!err && !req.body.owners)
+              if (!err && (!req.body.owners||req.body.owners?.length==0))
                 err = "no_owners";
               if (req.body.owners) {
                 req.body.owners = [...new Set(req.body.owners)];
