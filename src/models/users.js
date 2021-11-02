@@ -11,7 +11,7 @@ const Users = new Schema(
     avatar: { type: String, required: true },
     discriminator: { type: String, required: true },
     email: { type: String },
-    bal: { type: Number, default: 10 },
+    bal: { type: Number, default: 50 },
     bio: { type: String, default: "The user doesn't have bio set!" },
     banner: {type: String },
     badges: [{ type: String }],
