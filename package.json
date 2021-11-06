@@ -70,7 +70,7 @@
     "socket.io": "^4.2.0",
     "translatte": "^3.0.1",
     "validator": "13.7.0",
-    "ws": "^7.5.3"
+    "ws": "^8.2.3"
   },
   "devDependencies": {
     "autoprefixer": "^10.3.1",
