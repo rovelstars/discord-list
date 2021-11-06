@@ -229,8 +229,7 @@ router.post("/log", (req, res) => {
         client.guilds.cache
           .get("602906543356379156")
           .channels.cache.get(req.body.channel || "889696494758789191")
-          .send({content: `<@!${owner}> A new Notification!`, embeds: [msg] })
-          .catch((e) => {});
+          .send({embeds: [msg] })
       }
       if (req.body.owners) {
         for (const owner of req.body.owners) {
