@@ -215,28 +215,28 @@ router.post("/log", (req, res) => {
         req.body.desc = req.body.desc.slice(0, 1997) + "...";
       }
       const msg = new Discord.MessageEmbed()
-        .setTitle(req.body.title || "RDL Logging")
-        .setColor(req.body.color || "#5865F2")
-        .setDescription(req.body.desc || "No description provided.\n:/&&")
-        .setImage(req.body.attachment)
-        .setURL(req.body.url || "https://discord.rovelstars.com")
+        .setTitle(req?.body?.title || "RDL Logging")
+        .setColor(req?.body?.color || "#5865F2")
+        .setDescription(req?.body?.desc || "No description provided.\n:/&&")
+        .setImage(req?.body?.attachment)
+        .setURL(req?.body?.url || "https://discord.rovelstars.com")
         .setTimestamp()
         .setThumbnail(
-          req.body.img ||
+          req?.body?.img ||
             "https://discord.rovelstars.com/assets/img/bot/logo-512.png"
         );
       if (req.body.channel != "private") {
         client.guilds.cache
           .get("602906543356379156")
           .channels.cache.get(req.body.channel || "889696494758789191")
-          .send({ embeds: [msg] })
+          .send({content: `<@!${owner}> A new Notification!`, embeds: [msg] })
           .catch((e) => {});
       }
       if (req.body.owners) {
         for (const owner of req.body.owners) {
           client.users.cache
             .get(owner)
-            .send(msg)
+            .send({content: `<@!${owner}> A new Notification!`, embeds: [msg]})
             .catch((e) => {
               const embed = new Discord.MessageEmbed()
                 .setTitle(
