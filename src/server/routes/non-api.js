@@ -41,7 +41,7 @@ router.get("/", async (req, res) => {
     alerts = req.query.alert;
   }
   if(req.query.r && !req.cookies["refferal"]){
-    res.cookie("refferal", req.query.r, {maxAge: 360000});
+    res.cookie("refferal", req.query.r, {maxAge: 360000, httpOnly: true, secure: true});
   }
   res.render("index.ejs", {
     bots: Cache.Bots.sortTopVoted(),
