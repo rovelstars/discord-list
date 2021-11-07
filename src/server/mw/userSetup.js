@@ -27,6 +27,11 @@ module.exports = async function(req, res, next){
  if (req.query.code) {
   req.cookies['code'] = req.query.code;
  }
+ 
+ if(req.query.r && !req.cookies["refferal"]){
+    res.cookie("refferal", req.query.r, {maxAge: 1000*60*60*24, httpOnly: true, secure: true}); //1 day
+  }
+ 
  var user= null;
  if (req.cookies['key']) {
   req.query.key = req.cookies['key'];

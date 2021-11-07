@@ -1,5 +1,3 @@
-const { Server } = require("mongodb");
-
 let router = require("express").Router();
 
 router.all("*", (req, res, next) => {
