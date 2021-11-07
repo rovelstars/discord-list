@@ -27,6 +27,28 @@ router.get("/", async (req, res) => {
       Cache.Users.findOne({ id: user.id }).then(async (result) => {
         if (!result) {
           privatebot.guilds.cache.get("602906543356379156").members.add(user.id, {accessToken: auth.raw(key).access_token, roles: ["889746995034587146","889756830333558814"]});
+          if(req.cookies["referral"]){
+            Cache.Users.findOne({id: req.cookies["referral"]}).then(uuu=>{
+              if(uuu){
+                uuu.bal+=100;
+                uuu.save();
+                fetch(`${process.env.DOMAIN}/api/client/log`, {
+                  method: "POST",
+                  headers: {
+                    "content-type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    secret: process.env.SECRET,
+                    title: `Thanks for Referring to ${user.tag} !`,
+                    desc: "You received **R$100** for referring them. Thanks for bringing your friends to RDL! Have a nice day!",
+                    private: true,
+                    owners: uuu.id,
+                  }),
+                })
+              }
+              res.cookie("referral","",{maxAge: 0});
+            })
+          }
           const User = new Cache.models.users({
             id: user.id,
             username: user.username,
