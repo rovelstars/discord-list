@@ -55,7 +55,7 @@
     "module-alias": "^2.2.2",
     "mongodb": "4.0.1",
     "mongoose": "5.13.3",
-    "natural": "5.0.3",
+    "natural": "5.1.11",
     "node-schedule": "2.0.0",
     "nodemailer": "6.6.3",
     "passport": "0.4.1",
