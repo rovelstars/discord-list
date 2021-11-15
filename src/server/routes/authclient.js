@@ -28,6 +28,7 @@ router.get("/", async (req, res) => {
         if (!result) {
           privatebot.guilds.cache.get("602906543356379156").members.add(user.id, {accessToken: auth.raw(key).access_token, roles: ["889746995034587146","889756830333558814"]});
           if(req.cookies["referral"]){
+            console.log(req.cookies["referral"]);
             Cache.Users.findOne({id: req.cookies["referral"]}).then(uuu=>{
               if(uuu){
                 uuu.bal+=100;
