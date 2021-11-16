@@ -39,13 +39,6 @@ module.exports = async function(req, res, next){
   user = await auth.getUser(req.cookies['key']).catch(async () => {
    try {
     let tempvalid = auth.checkValidity(req.cookies['key']);
-    /*
-   {
-  expired: false,
-  expiresIn: 538994851,
-  expireTimestamp: 1623434339257
-}
-*/
     if (tempvalid.expired) {
      // ah yes the key really expired!
      const newkey = await auth.refreshToken(req.cookies['key']);
@@ -68,7 +61,15 @@ module.exports = async function(req, res, next){
     res.redirect("/?alert=logout");
    }
   });
+  Cache.Users.findOne({id: user.id}).then(u=>{
+    if(!u){
+      res.cookie('key', req.cookies['key'], { maxAge: 0 });
+      res.redirect("/?alert=deletion");
+    }
+    else {
+      res.locals.user = user;
+      next();
+    }
+  })
 }
-res.locals.user = user;
-next();
 }
