@@ -7,17 +7,12 @@ router.use(require("express").json());
 router.get("/", async (req, res) => {
   try {
     const key = await auth.getAccess(req.query.code);
+    const raw = await auth.raw(key);
     const user = await auth.getUser(key).catch((e) => {
       console.log(e.stack);
       return res.redirect("/logout");
     });
     console.log(user.tag);
-    /* try{
-    fetch(`https://discord.com/api/v7/`)
-   }
-   catch(e){
-    console.log(e);
-   }*/
     if (BannedList.includes(user.id)) {
       try {
         Cache.Users.deleteOne({ id: user.id });
@@ -26,7 +21,7 @@ router.get("/", async (req, res) => {
     if (!BannedList.includes(user.id)) {
       Cache.Users.findOne({ id: user.id }).then(async (result) => {
         if (!result) {
-          privatebot.guilds.cache.get("602906543356379156").members.add(user.id, {accessToken: auth.raw(key).access_token, roles: ["889746995034587146","889756830333558814"]});
+          privatebot.guilds.cache.get("602906543356379156").members.add(user.id, {accessToken: raw.access_token, roles: ["889746995034587146","889756830333558814"]});
           if(req.cookies["referral"]){
             console.log("worked:" + req.cookies["referral"]);
             Cache.Users.findOne({id: req.cookies["referral"]}).then(uuu=>{
@@ -90,7 +85,7 @@ router.get("/", async (req, res) => {
           });
         }
         if (result) {
-              privatebot.guilds.cache.get("602906543356379156").members.add(result.id, {accessToken: auth.raw(key).access_token, roles: ["889746995034587146","889756830333558814"]});
+              privatebot.guilds.cache.get("602906543356379156").members.add(result.id, {accessToken: raw.access_token, roles: ["889746995034587146","889756830333558814"]});
               fetch(`${process.env.DOMAIN}/api/client/log`, {
                 method: "POST",
                 headers: {
