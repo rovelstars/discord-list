@@ -25,15 +25,31 @@ router.get("/:id", (req, res) => {
  });
 });
 router.get("/:id/delete", (req, res) => {
- if (!req.query.key) return res.json({ err: "no_key" });
+ if (!res.locals.user) return res.json({ err: "not_logined" });
  else {
-  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`).then(r => r.json()).then(d => {
-   if (d.err) return res.json({ err: "invalid_key" });
-   else {
-    if (d.id == req.params.id) {
-     Users.findOne({ id: d.id }).then(user => {
+     Users.findOne({ id: res.locals.user.id }).then(user => {
       if (!user) return;
-      Users.deleteOne({ id: user.id }).then(r => {});
+      //logout
+      if (req.cookies["key"]) {
+        fetch(`${process.env.DOMAIN}/api/client/log`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            secret: process.env.SECRET,
+            title: `${user ? user.tag : "IDK who"} Logouted!`,
+            desc: `Bye bye ${
+                user ? user.tag : "Unknown Guy"
+              }\nSee you soon back on RDL!`,
+            color: "#ff0000",
+            img: user ? user.avatarUrl(128) : `${process.env.DOMAIN}/favicon.ico`,
+            owners: user ? user.id : null,
+          }),
+        });
+        res.cookie("key", req.cookies["key"], { maxAge: 0 });
+      }
+      
       res.json({ deleted: true });
       fetch("https://discord.rovelstars.com/api/client/log", {
        method: "POST",
@@ -45,14 +61,11 @@ router.get("/:id/delete", (req, res) => {
         "desc": `${user.tag} deleted their account!\nThe data deleted is:\n\`\`\`\n${JSON.stringify(user)}\n\`\`\`\nIncase it was deleted accidentally, the above data may be added back again manually if the user is added back to RDL`,
         "title": "User Deleted!",
         "color": "#ff0000",
-        "owners": user.id,
+        "owners": [user.id],
         "img": user.avatarURL,
         "url": `https://discord.rovelstars.com/`
        })
-      });
-     })
-    }
-   }
+    })
   });
  }
 })
