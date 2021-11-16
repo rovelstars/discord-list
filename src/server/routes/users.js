@@ -27,7 +27,7 @@ router.get("/:id", (req, res) => {
 router.get("/:id/delete", (req, res) => {
  if (!res.locals.user) return res.json({ err: "not_logined" });
  else {
-     Users.findOne({ id: res.locals.user.id }).then(user => {
+     Cache.Users.findOne({ id: res.locals.user.id }).then(user => {
       if (!user) return;
       //logout
       if (req.cookies["key"]) {
@@ -66,6 +66,7 @@ router.get("/:id/delete", (req, res) => {
         "url": `https://discord.rovelstars.com/`
        })
     })
+    Cache.Users.deleteOne({ id: user.id },()=>{});
   });
  }
 })
