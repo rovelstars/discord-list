@@ -61,6 +61,7 @@ module.exports = async function(req, res, next){
     res.redirect("/?alert=logout");
    }
   });
+  if(user){
   Cache.Users.findOne({id: user.id}).then(u=>{
     if(!u){
       res.cookie('key', req.cookies['key'], { maxAge: 0 });
@@ -71,5 +72,10 @@ module.exports = async function(req, res, next){
       next();
     }
   })
+}
+else{
+  res.locals.user = user;
+  next();
+}
 }
 }
