@@ -188,10 +188,12 @@ var keepAlive = require("@mw/keepAlive.js");
 var ls = require("@mw/linkService.js");
 var dnd = require("@mw/doOrDoNot.js");
 var ree = require("@mw/error.js");
+var weblog = require("@mw/weblog.js");
 app.use(keepAlive);
-app.use(userSetup);
-app.use(checkBanned);
 app.use(ls);
+app.use(userSetup);
+app.use(weblog);
+app.use(checkBanned);
 app.use(dnd);
 app.use(ree);
 app.use("/", limiter);
@@ -204,9 +206,6 @@ i18n.configure({
   directory: path.resolve("node_modules/rdl-i18n/site"),
 });
 app.use(i18n.init);
-
-var weblog = require("@mw/weblog.js");
-app.use(weblog);
 
 log("[SERVER] Started!\n[SERVER] Webhooks started!");
 
