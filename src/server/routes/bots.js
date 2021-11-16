@@ -6,11 +6,11 @@ const schedule = require("node-schedule");
 let router = require("express").Router();
 router.use(require("express").json());
 globalThis.coronaSanitizer = require("sanitize-html");
+
 const rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = 0;
 rule.hour = 12;
 rule.minute = 0;
-var gitregex = /(https?:\/\/)?github.com\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+/i;
 schedule.scheduleJob(rule, async function () {
   Cache.Bots.find({}).then(bots=>{bots.forEach(bot=>{
 bot.votes=0;
@@ -23,12 +23,19 @@ bot.save();
     },
     body: JSON.stringify({
       secret: process.env.SECRET,
-      channel: "830791693904904212",
+      channel: "889695874152804383",
       desc: `It is now the Scheduled Time!\nThe Votes of all (${Cache.AllBots.length}) bots will now be **RESETED**!\nStart voting your bots again to reach the top of the Leaderboard!`,
       title: "Votes Reseted!",
       color: "#ff0000",
     }),
   });
+});
+
+schedule.scheduleJob('15 * * * *', async function() {
+  Cache.Bots.find({}).then(bots=>{bots.forEach(bot=>{
+  bot.votes=Math.floor(Math.random()*(bot.servers/(24*7)))+Math.floor(Math.random()*10);
+  bot.save();
+  })});
 });
 
 router.get("/", (req, res) => {

@@ -43,7 +43,7 @@ router.get("/:id/delete", (req, res) => {
                 user ? user.tag : "Unknown Guy"
               }\nSee you soon back on RDL!`,
             color: "#ff0000",
-            img: user ? user.avatarUrl(128) : `${process.env.DOMAIN}/favicon.ico`,
+            img: user ? user.avatarURL : `${process.env.DOMAIN}/favicon.ico`,
             owners: user ? user.id : null,
           }),
         });
@@ -58,7 +58,7 @@ router.get("/:id/delete", (req, res) => {
        },
        body: JSON.stringify({
         "secret": process.env.SECRET,
-        "desc": `${user.tag} deleted their account!\nThe data deleted is:\n\`\`\`\n${JSON.stringify(user)}\n\`\`\`\nIncase it was deleted accidentally, the above data may be added back again manually if the user is added back to RDL`,
+        "desc": `${user.tag} deleted their account!\n**R$ wasted**: ${user.bal}\nIncase it was deleted accidentally, the above data may be added back again manually if the user is added back to RDL`,
         "title": "User Deleted!",
         "color": "#ff0000",
         "owners": [user.id],
