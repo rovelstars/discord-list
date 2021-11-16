@@ -12,7 +12,7 @@ module.exports = async function (req, res, next) {
   }
   const user = res.locals.user ? res.locals.user.tag : "Not logined";
   const geo = await geoip.lookup(req.cf_ip);
-  if (process.env.WEBLOG == "true") {
+  if (process.env.WEBLOG_API == "true") {
     const logweb = `**New Log!**\n**Time:** \`${dayjs().format(
       "ss | mm | hh A - DD/MM/YYYY Z"
     )}\`\n**IP:** ||${req.cf_ip}||\n**Path requested:** \`${

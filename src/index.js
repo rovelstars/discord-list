@@ -6,18 +6,6 @@ if (v < 16 && process.platform != "android") {
   console.error("[ERROR] Node.js v16 or above is required.");
   process.exit(1);
 }
-if (!String.prototype.replaceAll) {
-  String.prototype.replaceAll = function (str, newStr) {
-    // If a regex pattern
-    if (
-      Object.prototype.toString.call(str).toLowerCase() === "[object regexp]"
-    ) {
-      return this.replace(str, newStr);
-    }
-    // If a string
-    return this.replace(new RegExp(str, "g"), newStr);
-  };
-}
 var rovel = require("rovel.js");
 rovel.env.config();
 rovel.fetch = function (url, opts) {
@@ -33,7 +21,7 @@ mongoose.connect(process.env.DB, {
 });
 globalThis.shell = require("shelljs");
 const loggy = require("@utils/loggy.js");
-if (process.env.WEBLOG == "true") {
+if (process.env.WEBLOG_CONSOLE == "true") {
   globalThis.logg = console.log;
   globalThis.console.log = loggy.log;
   globalThis.logerr = console.error;
