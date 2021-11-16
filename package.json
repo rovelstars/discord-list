@@ -5,7 +5,7 @@
   "scripts": {
     "preinstall": "npm i npm@6 -g",
     "start": "node src/index.js",
-    "build": "node build.js",
+    "build": "node build.js --force",
     "build-f": "node build.js --force",
     "all": "npm run build-f && npm start",
     "path": "gritty --path"
