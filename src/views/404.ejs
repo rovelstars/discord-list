@@ -12,7 +12,7 @@
 <div class="overlay"></div>
 <div class="terminal">
   <h1>Error <span class="errorcode" id="title">404 - Not Found</span></h1>
-  <p class="output" id="method"><%= (user)?(user.username+", "):"" %>The page you are looking for (<%= path %>) might have been removed, had its name changed or is temporarily unavailable.</p>
+  <p class="output" id="method"><%= (typeof user != "undefined")?(user.username+", "):"" %>The page you are looking for (<%= path %>) might have been removed, had its name changed or is temporarily unavailable.</p>
   <p class="output">Please try to <a onclick="goback()">go back</a> or <a href="/">return to the homepage</a>. Alternatively, talk to us on our <a href="/server">server</a> </p>
   <p class="output" id="input" contenteditable="true">$ down</p>
 </div>
@@ -27,15 +27,15 @@
   if(input.innerText=="$ UP"){
    input.innerText="$ ";
    title.innerText="405 - Method Not Allowed";
-   method.innerText="Did you *@#$?! <%= (user)?user.username:"" %>... Well, nevermind.";
+   method.innerText="Did you *@#$?! <%= (typeof user != "undefined")?user.username:"" %>... Well, nevermind.";
   }
   else if(input.innerText=="$ DOWN"){
    input.innerText="$ ";
    title.innerText="404 - Not Found";
-   method.innerText="<%= (user)?(user.username+", "):"" %> The page you are looking for (<%= path %>) might have been removed, had its name changed or is temporarily unavailable.";
+   method.innerText="<%= (typeof user != "undefined")?(user.username+", "):"" %> The page you are looking for (<%= path %>) might have been removed, had its name changed or is temporarily unavailable.";
   }
   else if(input.innerText=="$ LOGIN"){
-   title.innerText="Welcome <%= (user)?(user.username+", "):"User, " %> You're on Rovel Stars Terminal At the moment.";
+   title.innerText="Welcome <%= (typeof user != "undefined")?(user.username+", "):"User, " %> You're on Rovel Stars Terminal At the moment.";
    method.innerText="Commands Available:\n- whoami: sends your terminal username\n- run: run javascript code (not nodejs)\n- play: play terminal games here!";
    input.innerText="$ ";
   }
