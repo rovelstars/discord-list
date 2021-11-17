@@ -360,48 +360,61 @@ router.delete("/:id", async (req, res) => {
       });
     });
 });
-/*
-router.get("/import/not-owned/:id", (req, res) => {
-  fetch(`https://top.gg/api/bots/${req.params.id}`, {
-    method: "GET",
-    headers: {
-      Authorization: `${globalThis.TOPGGTOKEN()}`,
-    },
-  })
-    .then((r) => r.json())
-    .then((bot) => {
-      if (bot.error)
-        return res.json({ err: bot.error.toLowerCase().split(" ").join("_") });
-      else {
-        var abot = {
-          id: bot.id,
-          lib: bot.lib == "" ? "none" : bot.lib,
-          prefix: bot.prefix,
-          short: bot.shortdesc,
-          bg: bot.bannerUrl,
-          desc: bot.longdesc,
-          support: bot.support,
-          owners: bot.owners,
-          owned: "no",
-          invite: bot.invite,
-          github: bot.github,
-          website: bot.website,
-        };
-        fetch(`${process.env.DOMAIN}/api/bots/new`, {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(abot),
-        })
+
+router.get("/import/voidbots/:id", (req, res)=>{
+  if (req.query.key) {
+    var userid;
+    fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
+      .then((r) => r.json())
+      .then((user) => {
+        userid = user.id;
+        fetch(`https://api.voidbots.net/bot/info/${req.params.id}`, {
+            method: "GET",
+            headers: {
+              Authorization: `${process.env.VOIDTOKEN}`,
+            },
+          })
           .then((r) => r.json())
-          .then((d) => {
-            res.json(d);
+          .then((bot) => {
+            if (bot.error || bot.message)
+              return res.json({
+                err: "not_found",
+              });
+            if (bot.owners.includes(userid)) {
+              var abot = {
+                id: bot.botid,
+                lib: "none",
+                prefix: bot.prefix,
+                short: bot.blurb,
+                desc: bot.description,
+                support: bot.links.supportserver,
+                owners: bot.owners,
+                invite: bot.links.invite,
+                github: bot.links.github,
+                website: bot.links.website,
+                donate: bot.links.donate==""?null:bot.links.donate
+              };
+              fetch(`${process.env.DOMAIN}/api/bots/new`, {
+                  method: "POST",
+                  headers: {
+                    "content-type": "application/json",
+                  },
+                  body: JSON.stringify(abot),
+                })
+                .then((r) => r.json())
+                .then((d) => {
+                  res.json(d);
+                });
+            } else {
+              return res.json({ err: "unauth_owner" });
+            }
           });
-      }
-    });
+      });
+  } else {
+    res.json({ err: "no_key" });
+  }
 });
-*/
+
 router.get("/import/topgg/:id", (req, res) => {
   if (req.query.key) {
     var userid;
@@ -479,6 +492,7 @@ router.get("/import/del/:id", (req, res) => {
                   support: bot.bot.links.support,
                   github: bot.bot.links.repo,
                   website: bot.bot.links.website,
+                  donate: bot.bot.links.donation==""?null:bot.bot.links.donation,
                 };
                 fetch(`${process.env.DOMAIN}/api/bots/new`, {
                   method: "POST",
