@@ -33,7 +33,7 @@ module.exports = async function(req, res, next) {
     res.cookie("refferal", req.query.r, { maxAge: 1000 * 60 * 60 * 24, httpOnly: true, secure: true }); //1 day
   }
 
-  var user = null;
+  var user = undefined;
   if (req.cookies['key']) {
     req.query.key = req.cookies['key'];
     user = await auth.getUser(req.cookies['key']).catch(async () => {
