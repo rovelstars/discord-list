@@ -120,7 +120,15 @@
   };
 
   Bots.findOneByOwner = function (id) {
-    return AllBots[AllBots.findIndex((b) => b.owners.includes(id))];
+    var arr = [];
+      arr.push(
+        AllBots.map((bot, index) => {
+          if (bot.owners.includes(id)) {
+            return bot;
+          }
+        }).filter(Boolean)
+      );
+    return [...new Set(arr)][0][0];
   };
 
   Bots.findByOwner = function (id) {

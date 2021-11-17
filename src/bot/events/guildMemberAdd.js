@@ -87,6 +87,9 @@ Nevergonna let ${member} down.`,
         });
       }
       if (!member.user.bot) {
+        Cache.Users.findOne({id: member.user.id}).then(user=>{
+          if(user){
+            member.roles.add("889746995034587146").catch((e) => console.log(e));
         if (Cache.Bots.findOneByOwner(member.user.id)) {
           let role = client.guilds.cache
             .get("602906543356379156")
@@ -117,6 +120,8 @@ Nevergonna let ${member} down.`,
             });
           }
         }
+          }
+      })
       }
     });
   }
