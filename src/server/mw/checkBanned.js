@@ -20,11 +20,12 @@ module.exports = async function(req, res, next) {
    }
    else{
      Cache.Users.findOne({id: user.id}).then(u=>{
-       if(!u){
+       if(!u && !req.cookies["newuser"]){
          res.cookie('key', req.cookies['key'], { maxAge: 0 });
          res.redirect("/?alert=deletion");
        }
        else {
+         if(req.cookies["newuser"]) res.cookie("newuser","",{maxAge: 0})
        next();
        }
      });
@@ -33,11 +34,12 @@ module.exports = async function(req, res, next) {
   else {
    console.log("[WARN] BannedList is not initialized. No user checkup will be done.");
    Cache.Users.findOne({ id: user.id }).then(u => {
-     if (!u) {
+     if (!u && !req.cookies["newuser"]) {
        res.cookie('key', req.cookies['key'], { maxAge: 0 });
        res.redirect("/?alert=deletion");
      }
      else {
+       if(req.cookies["newuser"]) res.cookie("newuser","",{maxAge: 0})
        next();
      }
    });
