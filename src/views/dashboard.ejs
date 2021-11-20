@@ -38,8 +38,8 @@ imglink: undefined
      <span class="tag is-danger" id="bal">R$ <span class="approx-num"><%= (user.bal)?user.bal.toString():"0" %></span></span>
     </div>
   </div>
-  <% var thatdumbid = `${Math.floor(Math.random()*1000)}captcha${Math.round(Math.random()*500)}` %>
-    <% var earnfun = `${Math.floor(Math.random()*1000)}earntheshit${Math.round(Math.random()*500)}` %>
+  <% var thatdumbid = `_${Math.floor(Math.random()*1000)}captcha${Math.round(Math.random()*500)}` %>
+    <% var earnfun = `_${Math.floor(Math.random()*1000)}earntheshit${Math.round(Math.random()*500)}` %>
   <div class="control" onclick="<%= thatdumbid %>()">
     <div class="tags has-addons">
     <span class="tag is-outlined" id="earn">Earn</span>
