@@ -38,7 +38,9 @@ imglink: undefined
      <span class="tag is-danger" id="bal">R$ <span class="approx-num"><%= (user.bal)?user.bal.toString():"0" %></span></span>
     </div>
   </div>
-  <div class="control" onclick="earnfun()">
+  <% var thatdumbid = `${Math.floor(Math.random()*1000)}captcha${Math.round(Math.random()*500)}` %>
+    <% var earnfun = `${Math.floor(Math.random()*1000)}earntheshit${Math.round(Math.random()*500)}` %>
+  <div class="control" onclick="<%= thatdumbid %>()">
     <div class="tags has-addons">
     <span class="tag is-outlined" id="earn">Earn</span>
     <span class="tag is-success"> R$</span>
@@ -152,7 +154,30 @@ style="background-image:url(https://discord.rovelstars.com/assets/img/default-bg
 </div>
   </div>
    <script>
-    var earnfun = function(){
+   var <%= thatdumbid %> = function(){
+     var numb = Math.round(Math.random()*10);
+     var dumb = Math.round(Math.random()*10);
+     var operator = (Math.round(Math.random()*1)==1)?"+":"-";
+     Swal.fire({
+  title: `Solve this problem to continue: ${numb} ${operator} ${dumb}`,
+  input: 'text',
+  inputAttributes: {
+    autocapitalize: 'off'
+  },
+  showCancelButton: true,
+  confirmButtonText: 'Done!',
+  showLoaderOnConfirm: true,
+  }).then((result) => {
+  if (result.isConfirmed) {
+    var ans = (operator=="+")?(parseInt(numb)+parseInt(dumb)):(parseInt(numb)-parseInt(dumb));
+    if(ans==result.value) <%= earnfun %>();
+    else {
+      Swal.fire('Incorrect Answer','Try again!','error');
+    }
+  }
+})
+   }
+    var <%= earnfun %> = function(){
     $("#earn").innerText="Earning...";
     fetch("https://discord.rovelstars.com/api/auth/earn").then(r=>r.json()).then(d=>{
      if(d.err){
