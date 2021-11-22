@@ -61,13 +61,11 @@ module.exports = async function(req, res, next) {
         else {
           res.cookie('key', req.cookies['key'], { maxAge: 0 });
           res.redirect("/?alert=logout");
-          console.log("not fucked?");
         }
       }
       catch (e) {
         res.cookie('key', req.cookies['key'], { maxAge: 0 });
         res.redirect("/?alert=logout");
-        console.log("fucked?");
       }
     });
   }
