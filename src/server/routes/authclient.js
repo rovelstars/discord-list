@@ -205,8 +205,8 @@ router.get("/earn", (req, res) => {
             .presence.activities.filter((e) => {
               return (
                 e.type == "CUSTOM" &&
-                (e.state.includes("dscrdly.com") ||
-                  e.state.includes("discord.rovelstars.com"))
+                (e?.state?.includes("dscrdly.com") ||
+                  e?.state?.includes("discord.rovelstars.com"))
               );
             });
           if (act.length == 0) act = false;
