@@ -59,7 +59,6 @@ module.exports = async function(req, res, next) {
           res.redirect("/?alert=key_refreshed");
         }
         else {
-          console.log("ben: "+ req.cookies['key']);
           res.cookie('key', '', { maxAge: 0 });
           res.redirect("/?alert=logout");
         }
