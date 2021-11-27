@@ -214,10 +214,10 @@ router.get("/earn", (req, res) => {
         }
         const c = Math.floor(Math.random() * 10) + 1;
         user.bal += c;
-        if (act) user.bal += 10;
+        if (act) user.bal += 50;
         user.save();
         res.json({
-          coins: c,
+          coins: (act)?(c+50):(c),
           bal: user.bal,
           lis: act,
           approxbal: rovel.approx(user.bal),
