@@ -7,7 +7,7 @@ if (message.member.permissions.has("ADMINISTRATOR")) {
       /*message.channel.send("Making an invite link!").then(msg => {
     msg.channel.createInvite({ maxAge: 0, reason: `${message.author.tag} asked to add this server to RDL!` }).then(invite => {
      msg.edit(`Invite code: **${invite.code}**`);*/
-      let Server = new Cache.models.Servers({
+      let Server = new Cache.models.servers({
         id: message.guild.id,
         owner: message.guild.ownerId,
         name: message.guild.name,
