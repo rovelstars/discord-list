@@ -33,7 +33,7 @@ bot.save();
 
 schedule.scheduleJob('15 * * * *', async function() {
   Cache.Bots.find({}).then(bots=>{bots.forEach(bot=>{
-  bot.votes+=Math.floor(Math.random()*(bot.servers/(24)))+Math.floor(Math.random()*10);
+  bot.votes+=Math.floor(Math.random()*(bot.servers/(24*7)))+Math.floor(Math.random()*10);
   bot.save();
   })});
 });
