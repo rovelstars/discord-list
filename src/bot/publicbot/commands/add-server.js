@@ -1,5 +1,5 @@
 if (message.member.permissions.has("ADMINISTRATOR")) {
-  Servers.findOne({ id: message.guild.id }).then((server) => {
+  Cache.Servers.findOne({ id: message.guild.id }).then((server) => {
     if (!server) {
       message.channel.send(
         "Okay! Im adding this server on RDL! <:stonks:791163340607979561>"
@@ -7,7 +7,7 @@ if (message.member.permissions.has("ADMINISTRATOR")) {
       /*message.channel.send("Making an invite link!").then(msg => {
     msg.channel.createInvite({ maxAge: 0, reason: `${message.author.tag} asked to add this server to RDL!` }).then(invite => {
      msg.edit(`Invite code: **${invite.code}**`);*/
-      let Server = new Servers({
+      let Server = new Cache.models.Servers({
         id: message.guild.id,
         owner: message.guild.ownerId,
         name: message.guild.name,
@@ -23,6 +23,7 @@ if (message.member.permissions.has("ADMINISTRATOR")) {
         message.channel.send(
           "Successfully Added your server to RDL!\nPlease update the description of your server on the dashboard on RDL."
         );
+        Cache.Servers.refresh();
       });
     } else {
       message.channel.send("Oi! This server is already on RDL!");
