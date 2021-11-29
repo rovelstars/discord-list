@@ -23,9 +23,7 @@ client.on("guildMemberRemove", (member) => {
                   bot.id
                 }) has been deleted because the main owner (${
                   member.user.tag
-                })left the server.\nThe data deleted is:\n\`\`\`\n${JSON.stringify(
-                  bot
-                )}\n\`\`\`\nIncase he left accidentally, the above data may be added back again manually if the bot is added back to RDL`,
+                })left the server.\nThe data deleted is:\n**Votes:** ${bot.votes}\nIncase he left accidentally, the above data may be added back again manually if the bot is added back to RDL`,
                 title: "Bot Deleted!",
                 color: "#ff0000",
                 owners: bot.owners,
@@ -34,27 +32,7 @@ client.on("guildMemberRemove", (member) => {
               }),
             });
           });
-        } else if (bot.owners.includes(member.user.id)) {
-          Cache.Bots.findOne({ id: bot.id }).then((d) => {
-            d.added = false;
-            d.save();
-            fetch("https://discord.rovelstars.com/api/client/log", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                secret: process.env.SECRET,
-                desc: `Bot ${bot.tag} (${bot.id}) was stopped listing because one of the secondary owners left the server. Please ask them to join back to make this bot list back again.`,
-                title: "Bot Stopped Listing!",
-                color: "#ff0000",
-                owners: bot.owners,
-                img: bot.avatarURL,
-                url: `https://discord.rovelstars.com/`,
-              }),
-            });
-          });
-        }
+        } 
       }
     }
     if (member.user.bot) {

@@ -96,30 +96,6 @@ Nevergonna let ${member} down.`,
             .roles.cache.get("889746788024725564");
           member.roles.add(role).catch((e) => console.log(e));
         }
-
-        var bots = Cache.Bots.findByOwner(member.user.id);
-        for (const bot of bots) {
-          if (bot.added == false) {
-            Cache.Bots.findOne({ id: bot.id }).then((d) => {
-              d.added = true;
-              fetch("https://discord.rovelstars.com/api/client/log", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  secret: process.env.SECRET,
-                  desc: `Bot ${d.username} (${d.id}) has been listed again because one of the owners - ${member.user.tag} (${member.user.id}) joined back our server.`,
-                  title: "Bot Listed!",
-                  color: "#FEF40E",
-                  owners: bot.owners,
-                  img: bot.avatarURL,
-                  url: `https://discord.rovelstars.com/`,
-                }),
-              });
-            });
-          }
-        }
           }
       })
       }

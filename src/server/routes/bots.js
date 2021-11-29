@@ -325,7 +325,7 @@ router.post("/:id/servers", (req, res) => {
 router.delete("/:id", async (req, res) => {
   if (!req.query.key) return res.json({ err: "no_key" });
 
-  await fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
+  fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
     .then((r) => r.json())
     .then(async (d) => {
       if (d.err) return res.json({ err: "invalid_key" });
@@ -561,7 +561,7 @@ router.post("/edit", async (req, res) => {
   if (!req.body.id) return res.json({ err: "no_id" });
   Bots.findOne({ id: req.body.id }).then(async (bot) => {
     if (!err && !bot) err = "bot_not_found";
-    await fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
+    fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
       .then((r) => r.json())
       .then(async (d) => {
         if (!err && d.err) err = "invalid_key";
@@ -582,13 +582,13 @@ router.post("/edit", async (req, res) => {
       req.body.owners = [...new Set(req.body.owners)];
       if (!err && rovel.func.isEqual(req.body.owners, bot.owners)) {
         var cond = true;
-        for (const owner of req.body.owners) {
-          await fetch(`${process.env.DOMAIN}/api/client/mainserver/${owner}`)
+        
+         fetch(`${process.env.DOMAIN}/api/client/mainserver/${req.body.owners[0]}`)
             .then((r) => r.json())
             .then((d) => {
               cond = cond == true && d.condition == false ? false : true;
             });
-        }
+        
         if (!err && !cond) err = "owner_not_in_server";
         if (!err && cond) {
           let role = privatebot.guilds.cache
@@ -717,7 +717,7 @@ router.post("/new", async (req, res) => {
       if (!err && !result) {
         try {
           if (!err && !req.body.id) err = "no_id";
-          await fetch(`https://discord.com/api/v7/users/${req.body.id}`, {
+          fetch(`https://discord.com/api/v7/users/${req.body.id}`, {
             headers: {
               Authorization: `Bot ${process.env.TOKEN}`,
             },
@@ -812,9 +812,9 @@ router.post("/new", async (req, res) => {
                   return name;
                 });
               }
-                for (const owner of req.body.owners) {
-                  await fetch(
-                    `${process.env.DOMAIN}/api/client/mainserver/${owner}`
+                
+                  fetch(
+                    `${process.env.DOMAIN}/api/client/mainserver/${req.body.owners[0]}`
                   )
                     .then((r) => r.json())
                     .then((d) => {
@@ -822,7 +822,7 @@ router.post("/new", async (req, res) => {
                         err = "owner_not_in_server";
                       }
                     });
-              }
+              
               if (!err) {
                 if (!user.avatar) {
                   user.avatar = (user.discriminator % 5).toString();

@@ -78,7 +78,7 @@
   };
 
   Bots.sortNewAdded = function () {
-    return [...AllBots].reverse().slice(0, 9); //idk we dont we need to reverse!?!
+    return [...AllBots].filter(b=>{return b.added}).reverse().slice(0, 10); //idk we dont we need to reverse!?!
   };
 
   Bots.sortTopVoted = function () {
