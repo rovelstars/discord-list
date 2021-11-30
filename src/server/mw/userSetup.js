@@ -28,9 +28,9 @@ module.exports = async function (req, res, next) {
     req.cookies["code"] = req.query.code;
   }
 
-  if (req.query.r && !req.cookies["refferal"]) {
+  if (req.query.r && !req.cookies["referral"]) {
     console.log("hmmmm: " + req.query.r);
-    res.cookie("refferal", req.query.r, {
+    res.cookie("referral", req.query.r, {
       maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
       secure: true,
