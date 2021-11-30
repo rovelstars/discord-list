@@ -10,8 +10,9 @@ if (cooldownearn.has(message.author.id)) {
     else {
       let act = false;
       if (privatebot.isInMain(message.author.id)) {
-        act = privatebot.guilds.cache.get("602906543356379156").members.cache
-          .get(message.author.id)
+        act = privatebot.guilds.cache
+          .get("602906543356379156")
+          .members.cache.get(message.author.id)
           .presence.activities.filter((e) => {
             return (
               e.type == "CUSTOM" &&

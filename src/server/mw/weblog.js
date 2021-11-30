@@ -33,31 +33,30 @@ module.exports = async function (req, res, next) {
       }),
     });
   } else {
-    if(!process.env.WEBLOG_CONSOLE){
-    console.log(
-      `${green("New Log!")}\n${yellow("Time:")} ${dayjs().format(
-        "ss | mm | hh A - DD/M | M/YYYY Z"
-      )}\n${yellow("IP:")} ${req.cf_ip}\n${
-        yellow("Path requested:") + " " + req.originalUrl
-      }\nRequest type: ${req.method}\nLocation: ${
-        geo ? geo.timezone : "idk"
-      }\nUser: ${user}\nBot: ${botu || "nope"}\nBrowser: ${
-        req.headers["user-agent"] ? req.headers["user-agent"] : "api request"
-      }`
-    );
-    }
-    else{
+    if (!process.env.WEBLOG_CONSOLE) {
+      console.log(
+        `${green("New Log!")}\n${yellow("Time:")} ${dayjs().format(
+          "ss | mm | hh A - DD/M | M/YYYY Z"
+        )}\n${yellow("IP:")} ${req.cf_ip}\n${
+          yellow("Path requested:") + " " + req.originalUrl
+        }\nRequest type: ${req.method}\nLocation: ${
+          geo ? geo.timezone : "idk"
+        }\nUser: ${user}\nBot: ${botu || "nope"}\nBrowser: ${
+          req.headers["user-agent"] ? req.headers["user-agent"] : "api request"
+        }`
+      );
+    } else {
       logg(
         `${green("New Log!")}\n${yellow("Time:")} ${dayjs().format(
-                "ss | mm | hh A - DD/M | M/YYYY Z"
-              )}\n${yellow("IP:")} ${req.cf_ip}\n${
-                yellow("Path requested:") + " " + req.originalUrl
-              }\nRequest type: ${req.method}\nLocation: ${
-                geo ? geo.timezone : "idk"
-              }\nUser: ${user}\nBot: ${botu || "nope"}\nBrowser: ${
-                req.headers["user-agent"] ? req.headers["user-agent"] : "api request"
-              }`
-              )
+          "ss | mm | hh A - DD/M | M/YYYY Z"
+        )}\n${yellow("IP:")} ${req.cf_ip}\n${
+          yellow("Path requested:") + " " + req.originalUrl
+        }\nRequest type: ${req.method}\nLocation: ${
+          geo ? geo.timezone : "idk"
+        }\nUser: ${user}\nBot: ${botu || "nope"}\nBrowser: ${
+          req.headers["user-agent"] ? req.headers["user-agent"] : "api request"
+        }`
+      );
     }
   }
   next();

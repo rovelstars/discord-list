@@ -8,7 +8,8 @@
     "build": "node build.js --force",
     "build-f": "node build.js --force",
     "all": "npm run build-f && npm start",
-    "path": "gritty --path"
+    "path": "gritty --path",
+    "pretty": "npx prettier --write \"./**/*.{js,jsx,json}\""
   },
   "cacheDirectories": [
     "node_modules",

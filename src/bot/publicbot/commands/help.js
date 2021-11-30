@@ -9,7 +9,7 @@ if (!args[0]) {
           .join("\n")
     )
     .setTimestamp();
-  message.channel.send({embeds: [msg]});
+  message.channel.send({ embeds: [msg] });
 } else {
   const cmd = searchCommand(args[0]);
   if (!cmd)

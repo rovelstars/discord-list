@@ -1,4 +1,4 @@
-var run =  function() {
+var run = function () {
   var emojiparse = function (body) {
     return twemoji.parse(body, emojiopts);
   };
@@ -17,7 +17,7 @@ var run =  function() {
   let loading = $("#loading");
   loading.style.transition = "0.8s";
   loading.style.opacity = "0";
-  loading.style.display="none";
+  loading.style.display = "none";
   var frames = document.getElementsByTagName("iframe");
   for (var frame of frames) {
     frame.setAttribute("sandbox", "allow-forms allow-popups");
@@ -127,7 +127,7 @@ var run =  function() {
       window.close();
     });
   }
-  
+
   var logout = $("#logout-link");
   if (logout) {
     logout.href = `/logout?redirect=${encodeURI(window.location)}`;
@@ -135,23 +135,21 @@ var run =  function() {
   twemoji.parse(document.body, emojiopts);
   // Check for click events on the navbar burger icon
   $(".navbar-burger").addEventListener("click", function () {
-      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-      $(".navbar-burger").classList.toggle("is-active");
-      $(".navbar-menu").classList.toggle("is-active");
-    });
+    // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+    $(".navbar-burger").classList.toggle("is-active");
+    $(".navbar-menu").classList.toggle("is-active");
+  });
   $(".navbar-link").addEventListener("click", function () {
-  $(".navbar-dropdown").classList.toggle("is-hidden-touch");
-    });
+    $(".navbar-dropdown").classList.toggle("is-hidden-touch");
+  });
 };
 
 setTimeout(run, 3000);
 
 function onHover() {
-  $("rdllogo").src =
-    "https://discord.rovelstars.com/assets/img/bot/pet.gif";
+  $("rdllogo").src = "https://discord.rovelstars.com/assets/img/bot/pet.gif";
 }
 
 function offHover() {
-  $("#rdllogo").src =
-    "https://discord.rovelstars.com/assets/img/bot/logo.svg";
+  $("#rdllogo").src = "https://discord.rovelstars.com/assets/img/bot/logo.svg";
 }

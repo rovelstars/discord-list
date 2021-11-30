@@ -310,7 +310,7 @@ router.get("/login", (req, res) => {
     res.cookie("key", req.cookies["key"], { maxAge: 0 });
   }
   res.set("X-Robots-Tag", "noindex");
-  res.cookie("newuser", "true", {maxAge: 1000*60*60})
+  res.cookie("newuser", "true", { maxAge: 1000 * 60 * 60 });
   res.redirect(auth.auth.link);
 });
 

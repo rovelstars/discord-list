@@ -37,7 +37,7 @@ function showRDLmenu() {
       RDLmenu_info.tabIndex = "0";
       discordsettingswindow.innerHTML =
         '<div><div id="rdl-info-window"><div class="sectionTitle-2vauyC"><h1 class="colorStandard-2KCXvj size14-e6ZScH h1-1qdNzo title-3sZWYQ defaultColor-1_ajX0 defaultMarginh1-peT3GC">Welcome Back!</h1></div></div></div>';
-        $("div.item-PXvHYJ.themed-OHr7kt")
-      });
+      $("div.item-PXvHYJ.themed-OHr7kt");
+    });
   }, 100);
 }

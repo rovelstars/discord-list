@@ -12,8 +12,8 @@ client.on("guildMemberUpdate", (olduser, newuser) => {
         if (bot.discriminator != newuser.discriminator) {
           bot.discriminator = newuser.discriminator;
         }
-        if(bot.status != newuser.presence?.status){
-         bot.status = newuser.presence?.status;
+        if (bot.status != newuser.presence?.status) {
+          bot.status = newuser.presence?.status;
         }
         bot.save();
       });

@@ -10,5 +10,5 @@ if (!args.length) {
     .setColor("RANDOM")
     .setImage(link)
     .setFooter(`Requested by ${message.author.tag}`);
-  message.channel.send({embeds: [qrembed]});
+  message.channel.send({ embeds: [qrembed] });
 }

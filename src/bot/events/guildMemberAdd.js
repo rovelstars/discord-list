@@ -87,17 +87,17 @@ Nevergonna let ${member} down.`,
         });
       }
       if (!member.user.bot) {
-        Cache.Users.findOne({id: member.user.id}).then(user=>{
-          if(user){
+        Cache.Users.findOne({ id: member.user.id }).then((user) => {
+          if (user) {
             member.roles.add("889746995034587146").catch((e) => console.log(e));
-        if (Cache.Bots.findOneByOwner(member.user.id)) {
-          let role = client.guilds.cache
-            .get("602906543356379156")
-            .roles.cache.get("889746788024725564");
-          member.roles.add(role).catch((e) => console.log(e));
-        }
+            if (Cache.Bots.findOneByOwner(member.user.id)) {
+              let role = client.guilds.cache
+                .get("602906543356379156")
+                .roles.cache.get("889746788024725564");
+              member.roles.add(role).catch((e) => console.log(e));
+            }
           }
-      })
+        });
       }
     });
   }

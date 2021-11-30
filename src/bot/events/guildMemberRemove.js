@@ -19,11 +19,7 @@ client.on("guildMemberRemove", (member) => {
               },
               body: JSON.stringify({
                 secret: process.env.SECRET,
-                desc: `Bot ${bot.tag} (${
-                  bot.id
-                }) has been deleted because the main owner (${
-                  member.user.tag
-                })left the server.\nThe data deleted is:\n**Votes:** ${bot.votes}\nIncase he left accidentally, the above data may be added back again manually if the bot is added back to RDL`,
+                desc: `Bot ${bot.tag} (${bot.id}) has been deleted because the main owner (${member.user.tag})left the server.\nThe data deleted is:\n**Votes:** ${bot.votes}\nIncase he left accidentally, the above data may be added back again manually if the bot is added back to RDL`,
                 title: "Bot Deleted!",
                 color: "#ff0000",
                 owners: bot.owners,
@@ -32,7 +28,7 @@ client.on("guildMemberRemove", (member) => {
               }),
             });
           });
-        } 
+        }
       }
     }
     if (member.user.bot) {

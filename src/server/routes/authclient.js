@@ -21,12 +21,17 @@ router.get("/", async (req, res) => {
     if (!BannedList.includes(user.id)) {
       Cache.Users.findOne({ id: user.id }).then(async (result) => {
         if (!result) {
-          privatebot.guilds.cache.get("602906543356379156").members.add(user.id, {accessToken: raw.access_token, roles: ["889746995034587146","889756830333558814"]});
-          if(req.cookies["referral"]){
+          privatebot.guilds.cache
+            .get("602906543356379156")
+            .members.add(user.id, {
+              accessToken: raw.access_token,
+              roles: ["889746995034587146", "889756830333558814"],
+            });
+          if (req.cookies["referral"]) {
             console.log("worked:" + req.cookies["referral"]);
-            Cache.Users.findOne({id: req.cookies["referral"]}).then(uuu=>{
-              if(uuu){
-                uuu.bal+=100;
+            Cache.Users.findOne({ id: req.cookies["referral"] }).then((uuu) => {
+              if (uuu) {
+                uuu.bal += 100;
                 uuu.save();
                 fetch(`${process.env.DOMAIN}/api/client/log`, {
                   method: "POST",
@@ -40,10 +45,10 @@ router.get("/", async (req, res) => {
                     private: true,
                     owners: uuu.id,
                   }),
-                })
+                });
               }
-              res.cookie("referral","",{maxAge: 0});
-            })
+              res.cookie("referral", "", { maxAge: 0 });
+            });
           }
           const User = new Cache.models.users({
             id: user.id,
@@ -54,20 +59,20 @@ router.get("/", async (req, res) => {
           }).save(async (err, userr) => {
             if (err) return console.log(err);
             Cache.Users.refresh();
-                fetch(`${process.env.DOMAIN}/api/client/log`, {
-                  method: "POST",
-                  headers: {
-                    "content-type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    secret: process.env.SECRET,
-                    title: `${userr.tag} account created!`,
-                    desc: `${userr.tag} (${user.id}) has got a new account automatically on RDL after logining for the first time! So Hey new user **${user.username}**\nWelcome to Rovel Discord List!\nHere you can add your bots, servers, emojis, find your friends, and earn money to vote for your favourite bot!\nSo let's get started on your new journey on RDL!`,
-                    owners: user.id,
-                    img: user.avatarUrl(128),
-                    url: `${process.env.DOMAIN}/users/${user.id}`,
-                  }),
-                });
+            fetch(`${process.env.DOMAIN}/api/client/log`, {
+              method: "POST",
+              headers: {
+                "content-type": "application/json",
+              },
+              body: JSON.stringify({
+                secret: process.env.SECRET,
+                title: `${userr.tag} account created!`,
+                desc: `${userr.tag} (${user.id}) has got a new account automatically on RDL after logining for the first time! So Hey new user **${user.username}**\nWelcome to Rovel Discord List!\nHere you can add your bots, servers, emojis, find your friends, and earn money to vote for your favourite bot!\nSo let's get started on your new journey on RDL!`,
+                owners: user.id,
+                img: user.avatarUrl(128),
+                url: `${process.env.DOMAIN}/users/${user.id}`,
+              }),
+            });
             res.cookie("key", key, {
               maxAge: 90 * 3600 * 24 * 1000, //90days
               httpOnly: true,
@@ -85,21 +90,26 @@ router.get("/", async (req, res) => {
           });
         }
         if (result) {
-              privatebot.guilds.cache.get("602906543356379156").members.add(result.id, {accessToken: raw.access_token, roles: ["889746995034587146","889756830333558814"]});
-              fetch(`${process.env.DOMAIN}/api/client/log`, {
-                method: "POST",
-                headers: {
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  secret: process.env.SECRET,
-                  title: `${result.tag} Logined!`,
-                  desc: `Hello ${result.tag}!\nWelcome to RDL!`,
-                  color: "#1FD816",
-                  img: user.avatarUrl(128),
-                  owners: user.id,
-                }),
-              });
+          privatebot.guilds.cache
+            .get("602906543356379156")
+            .members.add(result.id, {
+              accessToken: raw.access_token,
+              roles: ["889746995034587146", "889756830333558814"],
+            });
+          fetch(`${process.env.DOMAIN}/api/client/log`, {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({
+              secret: process.env.SECRET,
+              title: `${result.tag} Logined!`,
+              desc: `Hello ${result.tag}!\nWelcome to RDL!`,
+              color: "#1FD816",
+              img: user.avatarUrl(128),
+              owners: user.id,
+            }),
+          });
           res.cookie("key", key, {
             maxAge: 90 * 3600 * 24 * 1000, //90days
             httpOnly: true,
@@ -214,10 +224,10 @@ router.get("/earn", (req, res) => {
         }
         const c = Math.floor(Math.random() * 10) + 1;
         user.bal += c;
-        if (act) user.bal += 50;
+        if (act) user.bal += 10;
         user.save();
         res.json({
-          coins: (act)?(c+50):(c),
+          coins: act ? c + 10 : c,
           bal: user.bal,
           lis: act,
           approxbal: rovel.approx(user.bal),

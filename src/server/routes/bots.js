@@ -12,10 +12,12 @@ rule.dayOfWeek = 0;
 rule.hour = 12;
 rule.minute = 0;
 schedule.scheduleJob(rule, async function () {
-  Cache.Bots.find({}).then(bots=>{bots.forEach(bot=>{
-bot.votes=0;
-bot.save();
-  })});
+  Cache.Bots.find({}).then(async (bots) => {
+    for (var bot of bots) {
+      bot.votes = 0;
+      bot.save();
+    }
+  });
   fetch(`${process.env.DOMAIN}/api/client/log`, {
     method: "POST",
     headers: {
@@ -31,12 +33,32 @@ bot.save();
   });
 });
 
-schedule.scheduleJob('15 * * * *', async function() {
-  Cache.Bots.find({}).then(bots=>{bots.forEach(bot=>{
-  bot.votes+=Math.floor(Math.random()*(bot.servers/(24*7)))+Math.floor(Math.random()*10);
-  bot.save();
-  })});
+schedule.scheduleJob("15 * * * *", async function () {
+  Cache.Bots.find({}).then((bots) => {
+    for (var bot of bots) {
+      bot.votes +=
+        Math.floor(Math.random() * (bot.servers / (24 * 7))) +
+        Math.floor(Math.random() * 10);
+      bot.save();
+    }
+  });
 });
+
+schedule.scheduleJob("* 0 * * *", async function () {
+  Cache.Bots.find({}).then(async (bots) => {
+    for (var [i, bot] of bots.entries()) {
+      updateBotServers(i, bot);
+    }
+  });
+});
+
+function updateBotServers(i, bot) {
+  setTimeout(async () => {
+    var r = await selfbot(`/oauth2/authorize?client_id=${bot.id}&scope=bot`);
+    bot.servers = await r.bot.approximate_guild_count;
+    await bot.save();
+  }, 2000 * i);
+}
 
 router.get("/", (req, res) => {
   if (req.query.q) {
@@ -110,7 +132,7 @@ router.get("/:id/vote", async (req, res) => {
       .then((d) => {
         if (d.err) return res.json({ err: "invalid_key" });
         if (!req.query.coins) return res.json({ err: "no_coins" });
-        if (req.query.coins <= 0) return res.json({ err: "negative_coins" })
+        if (req.query.coins <= 0) return res.json({ err: "negative_coins" });
         if (req.query.coins % 10 != 0)
           return res.json({ err: "coins_not_divisible" });
         const Vote = parseInt(req.query.coins) / 10;
@@ -136,12 +158,12 @@ router.get("/:id/vote", async (req, res) => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": bot.code,
+                Authorization: bot.code,
               },
               body: hmm,
             })
-              .then((r) =>{
-                if ((r.status >= 300) || (r.status < 200)) {
+              .then((r) => {
+                if (r.status >= 300 || r.status < 200) {
                   fetch(`${process.env.DOMAIN}/api/client/log`, {
                     method: "POST",
                     headers: {
@@ -318,7 +340,7 @@ router.post("/:id/servers", (req, res) => {
       b.servers = req.body.count;
       b.save();
       res.json({ success: true });
-    };
+    }
   });
 });
 
@@ -361,7 +383,7 @@ router.delete("/:id", async (req, res) => {
     });
 });
 
-router.get("/import/voidbots/:id", (req, res)=>{
+router.get("/import/voidbots/:id", (req, res) => {
   if (req.query.key) {
     var userid;
     fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
@@ -369,11 +391,11 @@ router.get("/import/voidbots/:id", (req, res)=>{
       .then((user) => {
         userid = user.id;
         fetch(`https://api.voidbots.net/bot/info/${req.params.id}`, {
-            method: "GET",
-            headers: {
-              Authorization: `${process.env.VOIDTOKEN}`,
-            },
-          })
+          method: "GET",
+          headers: {
+            Authorization: `${process.env.VOIDTOKEN}`,
+          },
+        })
           .then((r) => r.json())
           .then((bot) => {
             if (bot.error || bot.message)
@@ -392,15 +414,15 @@ router.get("/import/voidbots/:id", (req, res)=>{
                 invite: bot.links.invite,
                 github: bot.links.github,
                 website: bot.links.website,
-                donate: bot.links.donate==""?null:bot.links.donate
+                donate: bot.links.donate == "" ? null : bot.links.donate,
               };
               fetch(`${process.env.DOMAIN}/api/bots/new`, {
-                  method: "POST",
-                  headers: {
-                    "content-type": "application/json",
-                  },
-                  body: JSON.stringify(abot),
-                })
+                method: "POST",
+                headers: {
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify(abot),
+              })
                 .then((r) => r.json())
                 .then((d) => {
                   res.json(d);
@@ -492,7 +514,10 @@ router.get("/import/del/:id", (req, res) => {
                   support: bot.bot.links.support,
                   github: bot.bot.links.repo,
                   website: bot.bot.links.website,
-                  donate: bot.bot.links.donation==""?null:bot.bot.links.donation,
+                  donate:
+                    bot.bot.links.donation == ""
+                      ? null
+                      : bot.bot.links.donation,
                 };
                 fetch(`${process.env.DOMAIN}/api/bots/new`, {
                   method: "POST",
@@ -582,13 +607,15 @@ router.post("/edit", async (req, res) => {
       req.body.owners = [...new Set(req.body.owners)];
       if (!err && rovel.func.isEqual(req.body.owners, bot.owners)) {
         var cond = true;
-        
-         fetch(`${process.env.DOMAIN}/api/client/mainserver/${req.body.owners[0]}`)
-            .then((r) => r.json())
-            .then((d) => {
-              cond = cond == true && d.condition == false ? false : true;
-            });
-        
+
+        fetch(
+          `${process.env.DOMAIN}/api/client/mainserver/${req.body.owners[0]}`
+        )
+          .then((r) => r.json())
+          .then((d) => {
+            cond = cond == true && d.condition == false ? false : true;
+          });
+
         if (!err && !cond) err = "owner_not_in_server";
         if (!err && cond) {
           let role = privatebot.guilds.cache
@@ -619,8 +646,10 @@ router.post("/edit", async (req, res) => {
         )
           err = "invalid_desc";
         else {
-         req.body.desc=req.body.desc.replaceAll("\r\n","\n").replaceAll("\u0009","\t");
-         req.body.desc=indent(req.body.desc);
+          req.body.desc = req.body.desc
+            .replaceAll("\r\n", "\n")
+            .replaceAll("\u0009", "\t");
+          req.body.desc = indent(req.body.desc);
           bot.desc = coronaSanitizer(req.body.desc, {
             allowedTags: coronaSanitizer.defaults.allowedTags.concat([
               "discord-message",
@@ -706,8 +735,9 @@ router.post("/edit", async (req, res) => {
 router.post("/new", async (req, res) => {
   var err;
   Cache.Bots.findOne({ id: req.body.id }).then(async (result) => {
-    if (typeof result == "object") return res.json({err: "bot_already_added"});
-    else{
+    if (typeof result == "object")
+      return res.json({ err: "bot_already_added" });
+    else {
       if (!err) {
         if (req.body.github == "") req.body.github = null;
         if (req.body.bg == "") req.body.bg = null;
@@ -725,13 +755,15 @@ router.post("/new", async (req, res) => {
             .then((r) => r.json())
             .then(async (user) => {
               if (!err && user.bot == undefined) err = "cannot_add_user";
-              if(!err && user.username.toLowerCase().includes("hack")) err = "cannot_add_hacked_bot";
-              if(!err && user.username.toLowerCase().includes("deleted")) err = "cannot_add_deleted_bot";
+              if (!err && user.username.toLowerCase().includes("hack"))
+                err = "cannot_add_hacked_bot";
+              if (!err && user.username.toLowerCase().includes("deleted"))
+                err = "cannot_add_deleted_bot";
               if (!err && user.code == 10013) err = "cannot_add_invalid_user";
               if (!err && req.body.bg) {
                 if (!validator.isURL(req.body.bg)) err = "invalid_bg";
               }
-              if (!err && (!req.body.owners||req.body.owners?.length==0))
+              if (!err && (!req.body.owners || req.body.owners?.length == 0))
                 err = "no_owners";
               if (req.body.owners) {
                 req.body.owners = [...new Set(req.body.owners)];
@@ -789,8 +821,10 @@ router.post("/new", async (req, res) => {
                   err = "invalid_github"; //lemme add my dank memer bot
               }
               if (!err && req.body.desc) {
-               req.body.desc=req.body.desc.replaceAll("\r\n","\n").replaceAll("\u0009","\t");
-               req.body.desc=indent(req.body.desc);
+                req.body.desc = req.body.desc
+                  .replaceAll("\r\n", "\n")
+                  .replaceAll("\u0009", "\t");
+                req.body.desc = indent(req.body.desc);
                 req.body.desc = coronaSanitizer(req.body.desc, {
                   allowedTags: coronaSanitizer.defaults.allowedTags.concat([
                     "discord-message",
@@ -812,17 +846,17 @@ router.post("/new", async (req, res) => {
                   return name;
                 });
               }
-                
-                  fetch(
-                    `${process.env.DOMAIN}/api/client/mainserver/${req.body.owners[0]}`
-                  )
-                    .then((r) => r.json())
-                    .then((d) => {
-                      if (!err && !d.condition) {
-                        err = "owner_not_in_server";
-                      }
-                    });
-              
+
+              fetch(
+                `${process.env.DOMAIN}/api/client/mainserver/${req.body.owners[0]}`
+              )
+                .then((r) => r.json())
+                .then((d) => {
+                  if (!err && !d.condition) {
+                    err = "owner_not_in_server";
+                  }
+                });
+
               if (!err) {
                 if (!user.avatar) {
                   user.avatar = (user.discriminator % 5).toString();
@@ -854,19 +888,19 @@ router.post("/new", async (req, res) => {
                     }).save((err, bot) => {
                       if (err) {
                         console.log("err" + err);
-                        return res.send({ err: (err.stack||err) });
+                        return res.send({ err: err.stack || err });
                       }
                       if (!err) {
                         Cache.AllBots.push(bot);
-                          let role = privatebot.guilds.cache
+                        let role = privatebot.guilds.cache
+                          .get("602906543356379156")
+                          .roles.cache.get("889746788024725564");
+                        bot.owners.forEach((meme) => {
+                          member = privatebot.guilds.cache
                             .get("602906543356379156")
-                            .roles.cache.get("889746788024725564");
-                          bot.owners.forEach((meme) => {
-                            member = privatebot.guilds.cache
-                              .get("602906543356379156")
-                              .members.cache.get(meme);
-                            member.roles.add(role).catch((e) => console.log(e));
-                          });
+                            .members.cache.get(meme);
+                          member.roles.add(role).catch((e) => console.log(e));
+                        });
                         res.send({ success: true });
                         fetch("https://discord.rovelstars.com/api/client/log", {
                           method: "POST",
@@ -898,7 +932,7 @@ router.post("/new", async (req, res) => {
               }
             });
         } catch (e) {
-          res.json({ err: (e.stack||e) });
+          res.json({ err: e.stack || e });
           console.error("error: " + e.stack);
         }
       }

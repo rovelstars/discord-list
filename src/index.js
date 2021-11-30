@@ -126,7 +126,7 @@ app.get("*", (req, res) => {
 });
 
 if (!isCopy()) {
-globalThis.server = app.listen(port, () => {
+  globalThis.server = app.listen(port, () => {
     console.log(`[SERVER] Started on port: ${port}`);
   });
   console.warn(
@@ -142,6 +142,27 @@ globalThis.server = app.listen(port, () => {
     console.log(`[SERVER] Started on port: ${port}`);
   });
 }
+globalThis.selfbot = async function (path) {
+  return await fetch(`https://discord.com/api/v9${path}`, {
+    headers: {
+      Authorization: process.env.SELFBOT_TOKEN,
+    },
+  }).then((r) => r.json());
+};
+
+selfbot("/users/@me").then((user) => {
+  if (user.message == "401: Unauthorized") {
+    console.log("[SELFBOT] Failed to login:");
+    console.log(user.message);
+    process.exit(0);
+  } else {
+    console.log(
+      `[SELFBOT] Logged in as ${
+        user.username + "#" + user.discriminator + " [" + user.id + "]"
+      }`
+    );
+  }
+});
 
 function addCommas(num, opts) {
   if (opts.separator === false) {

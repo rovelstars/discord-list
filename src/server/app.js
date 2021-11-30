@@ -51,21 +51,23 @@ globalThis.translate = require("translatte");
 const info = require("@utils/info.js");
 const express = require("express");
 const Indent = require("min-indent");
-globalThis.indent = function (str){
-if(!str.includes("\n")){
- const length = Indent(str);
- const regexinside = new RegExp(`^[ \\t]{${length}}`, 'gm');
-	return str.replace(regexinside, '');
-}
-else{
-str = str.split("\n").map(t=>{
- const length = Indent(t);
- const regexinside = new RegExp(`^[ \\t]{${length}}`, 'gm');
-	return t.replace(regexinside, '');
-}).join("\n");
-return str;
-}
-}
+globalThis.indent = function (str) {
+  if (!str.includes("\n")) {
+    const length = Indent(str);
+    const regexinside = new RegExp(`^[ \\t]{${length}}`, "gm");
+    return str.replace(regexinside, "");
+  } else {
+    str = str
+      .split("\n")
+      .map((t) => {
+        const length = Indent(t);
+        const regexinside = new RegExp(`^[ \\t]{${length}}`, "gm");
+        return t.replace(regexinside, "");
+      })
+      .join("\n");
+    return str;
+  }
+};
 
 var css = {};
 css.dracula = fs.readFileSync(
@@ -110,7 +112,7 @@ express.response.render = function render(view, options, callback) {
         var pp = await new Purgecss().purge({
           css: [{ raw: css[req.cookies["theme"] || "default"] }],
           content: [{ raw: str }],
-          safelist: {greedy: [/is-active$/]}
+          safelist: { greedy: [/is-active$/] },
         });
         str = str.replace(
           `<style id="styling"></style>`,
@@ -144,10 +146,10 @@ const rateLimit = require("express-rate-limit");
 globalThis.path = require("path");
 const bots = require("@routes/bots.js");
 const non_api = require("@routes/non-api.js");
-globalThis.started=false;
+globalThis.started = false;
 process.on("STARTED", () => {
   console.log(rovel.text.green(`Everything Started! RDL is ready to go!`));
-  globalThis.started=true;
+  globalThis.started = true;
 });
 // ejs setting
 app.set("view engine", "ejs");
@@ -156,10 +158,10 @@ app.use(express.json());
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 60 secs
   max: 60, // limit each IP to 60 requests per windowMs
-  message: {err: "ratelimited"},
-  keyGenerator: function(req, res){
-   return (res?.locals?.user?.id || res?.locals?.botid || req.ip);
-  }
+  message: { err: "ratelimited" },
+  keyGenerator: function (req, res) {
+    return res?.locals?.user?.id || res?.locals?.botid || req.ip;
+  },
 });
 app.set("trust proxy", 1);
 app.all("/", (req, res, next) => {
