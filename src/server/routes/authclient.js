@@ -28,7 +28,6 @@ router.get("/", async (req, res) => {
               roles: ["889746995034587146", "889756830333558814"],
             });
           if (req.cookies["referral"]) {
-            console.log("worked:" + req.cookies["referral"]);
             Cache.Users.findOne({ id: req.cookies["referral"] }).then((uuu) => {
               if (uuu) {
                 uuu.bal += 100;
@@ -42,8 +41,8 @@ router.get("/", async (req, res) => {
                     secret: process.env.SECRET,
                     title: `Thanks for Referring to ${user.tag} !`,
                     desc: "You received **R$100** for referring them. Thanks for bringing your friends to RDL! Have a nice day!",
-                    private: true,
-                    owners: uuu.id,
+                    channel: "private",
+                    owners: [uuu.id],
                   }),
                 });
               }
