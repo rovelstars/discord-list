@@ -130,7 +130,30 @@ var run = function () {
 
   var logout = $("#logout-link");
   if (logout) {
-    logout.href = `/logout?redirect=${encodeURI(window.location)}`;
+    logout.href = `/logout?return=${encodeURI(window.location)}`;
+  }
+  var login = $("#login-link");
+  if(login){
+    Swal.fire({
+      title:"Choose Scopes",
+      html: 
+      `<h2><input type="checkbox" id="login-email" /> Email</h2>
+      <p>Email is used to notify you about security issues</p>
+      <h2><input type="checkbox" id="login-servers" /> Join Servers</h2>
+      <p>Join Servers is used to add you to servers you want to join</p>`,
+      didRender: ()=>{
+        $("#login-email").click();
+        $("#login-servers").click();
+      },
+      preConfirm: ()=>{
+        var emailc = $('#login-email').checked;
+            var serversc = $('#login-servers').checked;
+            return {emailc, serversc}
+      }
+    }).then((result)=>{
+      var link = `https://discord.rovelstars.com/login?email=${result?.value?.emailc}&servers=${result?.value?.serversc}`;
+      location.href=link;
+    })
   }
   twemoji.parse(document.body, emojiopts);
   // Check for click events on the navbar burger icon

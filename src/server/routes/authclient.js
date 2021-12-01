@@ -21,12 +21,14 @@ router.get("/", async (req, res) => {
     if (!BannedList.includes(user.id)) {
       Cache.Users.findOne({ id: user.id }).then(async (result) => {
         if (!result) {
+          if(raw.scope.includes("guilds.join")){
           privatebot.guilds.cache
             .get("602906543356379156")
             .members.add(user.id, {
               accessToken: raw.access_token,
               roles: ["889746995034587146", "889756830333558814"],
             });
+          }
           if (req.cookies["referral"]) {
             Cache.Users.findOne({ id: req.cookies["referral"] }).then((uuu) => {
               if (uuu) {
@@ -89,12 +91,14 @@ router.get("/", async (req, res) => {
           });
         }
         if (result) {
+          if(raw.scope.includes("guilds.join")){
           privatebot.guilds.cache
             .get("602906543356379156")
             .members.add(result.id, {
               accessToken: raw.access_token,
               roles: ["889746995034587146", "889756830333558814"],
             });
+          }
           fetch(`${process.env.DOMAIN}/api/client/log`, {
             method: "POST",
             headers: {

@@ -311,7 +311,14 @@ router.get("/login", (req, res) => {
   }
   res.set("X-Robots-Tag", "noindex");
   res.cookie("newuser", "true", { maxAge: 1000 * 60 * 60 });
-  res.redirect(auth.auth.link);
+  let loginlink = auth.auth.link;
+  if (req.query.servers=="false"){
+    loginlink.replace("%20guilds.join","");
+  }
+  if(req.query.email=="false"){
+    loginlink.replace("%20email","");
+  }
+  res.redirect(loginlink);
 });
 
 router.get("/logout", async (req, res) => {
@@ -335,15 +342,18 @@ router.get("/logout", async (req, res) => {
     });
     res.cookie("key", req.cookies["key"], { maxAge: 0 });
   }
-  if (req.query.redirect) {
+  if (req.query.return) {
     res.redirect(
-      decodeURI(req.query.redirect).replace(
+      decodeURI(req.query.return).replace("https://discord.rovelstars.com", "")
+    );
+  } else if (req.cookies["return"]) {
+    res.redirect(
+      decodeURI(req.cookies["return"]).replace(
         "https://discord.rovelstars.com",
         ""
       )
     );
-  }
-  if (!req.query.redirect) {
+  } else {
     res.redirect("/");
   }
 });
