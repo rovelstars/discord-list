@@ -77,7 +77,7 @@ var run = function () {
         if (result.isConfirmed) {
           Swal.fire({
             title: "We are all-in-one!",
-            text: "Yeah, RDL is a list of everything about Discord, from emojis, users, servers, templates & bots!",
+            text: "Yeah, RDL is a list of everything about Discord, from emojis, users, servers, templates & bots!",
             confirmButtonText: "<span>That's awesome!</span>",
           })
             .then(() => {
@@ -132,8 +132,8 @@ var run = function () {
   if (logout) {
     logout.href = `/logout?return=${encodeURI(window.location)}`;
   }
-  var login = $("#login-link");
-  if(login){
+  
+  function loginButton(){
     Swal.fire({
       title:"Choose Scopes",
       html: 
