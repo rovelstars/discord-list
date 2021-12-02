@@ -53,7 +53,31 @@
           <div class="navbar-item">
         <div class="buttons">
          <% if(!user){ %>
-          <a class="button is-success" href="#" id="login-link">
+          <script>
+            function loginButton(){
+    Swal.fire({
+      title:"Choose Scopes",
+      html: 
+      `<h2><input type="checkbox" id="login-email" /> Email</h2>
+      <p>Email is used to notify you about security issues</p>
+      <h2><input type="checkbox" id="login-servers" /> Join Servers</h2>
+      <p>Join Servers is used to add you to servers you want to join</p>`,
+      didRender: ()=>{
+        $("#login-email").click();
+        $("#login-servers").click();
+      },
+      preConfirm: ()=>{
+        var emailc = $('#login-email').checked;
+            var serversc = $('#login-servers').checked;
+            return {emailc, serversc}
+      }
+    }).then((result)=>{
+      var link = `https://discord.rovelstars.com/login?email=${result?.value?.emailc}&servers=${result?.value?.serversc}`;
+      location.href=link;
+    })
+  }
+          </script>
+          <a class="button is-success" href="#" onclick="loginButton()" id="login-link">
             <span class="icon"><i class="fad fa-sign-in-alt"></i></span><span class="tt">Login</span></a>
             <% } else { %>
               <a class="button is-danger" href="/logout" id="logout-link">
