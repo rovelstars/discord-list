@@ -155,6 +155,12 @@ var run = function () {
       location.href=link;
     })
   }
+
+  var login = $("#login-link");
+  if(login){
+    login.addEventListener("click", loginButton);
+  }
+
   twemoji.parse(document.body, emojiopts);
   // Check for click events on the navbar burger icon
   $(".navbar-burger").addEventListener("click", function () {
