@@ -13,14 +13,14 @@ if (cooldownearn.has(message.author.id)) {
         act = privatebot.guilds.cache
           .get("602906543356379156")
           .members.cache.get(message.author.id)
-          .presence.activities.filter((e) => {
+          ?.presence?.activities?.filter((e) => {
             return (
               e.type == "CUSTOM" &&
-              (e.state.includes("dscrdly.com") ||
-                e.state.includes("discord.rovelstars.com"))
+              (e?.state?.includes("dscrdly.com") ||
+                e?.state?.includes("discord.rovelstars.com"))
             );
           });
-        if (act.length == 0) act = false;
+        if (act?.length == 0) act = false;
         else act = true;
       }
       const c = Math.floor(Math.random() * 10) + 1;
