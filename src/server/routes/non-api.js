@@ -313,10 +313,10 @@ router.get("/login", (req, res) => {
   res.cookie("newuser", "true", { maxAge: 1000 * 60 * 60 });
   let loginlink = auth.auth.link;
   if (req.query.servers=="false"){
-    loginlink.replace("%20guilds.join","");
+    loginlink=loginlink.replace("%20guilds.join","");
   }
   if(req.query.email=="false"){
-    loginlink.replace("%20email","");
+    loginlink=loginlink.replace("%20email","");
   }
   res.redirect(loginlink);
 });
