@@ -899,7 +899,7 @@ router.post("/new", async (req, res) => {
                           member = privatebot.guilds.cache
                             .get("602906543356379156")
                             .members.cache.get(meme);
-                          member.roles.add(role).catch((e) => console.log(e));
+                          member?.roles?.add(role)?.catch((e) => console.log(e));
                         });
                         res.send({ success: true });
                         fetch("https://discord.rovelstars.com/api/client/log", {
