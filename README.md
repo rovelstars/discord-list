@@ -6,7 +6,7 @@
 
 <br>
 
-> ## Like it? Consider Starring it! ⭐
+> ## This is the old version of RDL. Kept archived for showcasing in museum. View the latest version on [rovelstars/discord-list](https://github.com/rovelstars/discord-list)
 
 <br>
 
@@ -22,15 +22,13 @@
 
 ---
 
-> The list is currently a **W.I.P.** therefore we cannot provide an E.T.A. If you'd like to follow up on the progress or would like to talk with us, we welcome you to [join our server](https://discord.gg/E6PhZK4tU9)!
-
 [Website Link](https://discord.rovelstars.com)
 
 [Server Invite](https://discord.gg/E6PhZK4tU9)
 
 # Can I contribute ?
 
-Yes! And we welcome people who really want to contribute us! Whether it's just a typo in the code or in readme, or you're making a big change for RDL, we welcome your contributions!
+Yes! Please move over the new repo [rovelstars/discord-list](https://github.com/rovelstars/discord-list)
 
 # License Notice
 
@@ -56,13 +54,13 @@ We won't help anyone with any issues unless it's really legit.
 
 Always remember to search the error on google and stackoverflow before asking us. We believe in FOSS but we are not going to spoonfeed you. Also do not spam to get help, we are humans, not robots therefore we are not available 24/7.
 
-Also note that this codebase is under development, so it's not meant for public usage at the moment (Its usable for us, but not for other's deployments).
-
-Please keep **bugs**, **issues** and **code related subjects** in our issues and pull requests. If they are posted on our Discord server they will be **IGNORED**. The website feedback looks at your likes, dislikes and suggestions on the front end, but not for bugfixes or other problems. Please bring them here if you really want help/to help.
+Also note that this codebase is under archive. View the latest version at [rovelstars/discord-list](https://github.com/rovelstars/discord-list)
 
 ---
 
 # SELF DEPLOYMENT 🏜️
+
+> ## Don't run this. Try the rewrite instead: [rovelstars/discord-list](https://github.com/rovelstars/discord-list)
 
 This is for users who want to contribute to RDL. We **do not support others running their own deployment**
 
