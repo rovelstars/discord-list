@@ -36,14 +36,10 @@ if (
 }
 
 router.get("/", async (req, res) => {
-  var alerts;
-  if (req.query.alert) {
-    alerts = req.query.alert;
-  }
+  
   res.render("index.ejs", {
     bots: Cache.Bots.sortTopVoted(),
-    servers: shuffle(Cache.AllServers).slice(0, 10),
-    alerts,
+    servers: shuffle(Cache.AllServers).slice(0, 10)
   });
 });
 
