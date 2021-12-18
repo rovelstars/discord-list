@@ -1,4 +1,5 @@
 <footer class="footer">
+  <% if(typeof alerts == "undefined"){alerts=undefined} %>
   <% if(alerts){ %>
    <script>
    var alerts = "<%= alerts %>";
