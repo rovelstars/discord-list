@@ -1,5 +1,5 @@
 module.exports = function (err, req, res, next) {
-  var alerts = undefined;
+  var alerts = null;
   if (req.query.alert) {
     alerts = req.query.alert;
   }
