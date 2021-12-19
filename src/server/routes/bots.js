@@ -383,6 +383,57 @@ router.delete("/:id", async (req, res) => {
     });
 });
 
+router.get("/import/fateslist.xyz/:id", (req, res) => {
+  if (req.query.key) {
+    var userid;
+    fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
+      .then((r) => r.json())
+      .then((user) => {
+        userid = user.id;
+        fetch(`https://fateslist.xyz/api/2/bots/${req.params.id}?no_cache=true`, {
+          method: "GET",
+        })
+          .then((r) => r.json())
+          .then((bot) => {
+            if (bot.reason)
+              return res.json({
+                err: "not_found",
+              });
+            if (bot.owners.map(u=>{return u.user.id}).includes(userid)) {
+              var abot = {
+                id: bot.client_id,
+                lib: bot.library,
+                prefix: bot.prefix,
+                short: bot.description,
+                desc: bot.long_description,
+                support: bot.links.supportserver,
+                owners: bot.owners.map(u=>{return u.user.id}),
+                invite: bot.links.invite_link,
+                github: bot.links.github,
+                website: bot.links.website,
+                donate: bot.links.donate == "" ? null : bot.links.donate,
+              };
+              fetch(`${process.env.DOMAIN}/api/bots/new`, {
+                method: "POST",
+                headers: {
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify(abot),
+              })
+                .then((r) => r.json())
+                .then((d) => {
+                  res.json(d);
+                });
+            } else {
+              return res.json({ err: "unauth_owner" });
+            }
+          });
+      });
+  } else {
+    res.json({ err: "no_key" });
+  }
+});
+
 router.get("/import/voidbots/:id", (req, res) => {
   if (req.query.key) {
     var userid;
