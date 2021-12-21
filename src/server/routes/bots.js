@@ -599,47 +599,6 @@ router.get("/import/del/:id", (req, res) => {
   }
 });
 
-router.get("/import/dbl/:id", (req, res) => {
-  if (req.query.key) {
-    fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
-      .then((r) => r.json())
-      .then((user) => {
-        fetch(`https://discordbotlist.com/api/v1/bots/${req.params.id}`)
-          .then((r) => r.json())
-          .then((bot) => {
-            if (bot.owner_id == user.id) {
-              if (bot.server_invite == null)
-                bot.server_invite = "602906543356379156";
-              var abot = {
-                id: bot.id,
-                lib: "discord.js",
-                prefix: bot.prefix,
-                short: bot.short_description,
-                desc: bot.long_description,
-                owners: [bot.owner_id],
-                invite: bot.oauth_url,
-                support: bot.server_invite,
-                website: bot.website,
-                imported: "Dumb Luke"
-              };
-              fetch(`${process.env.DOMAIN}/api/bots/new`, {
-                method: "POST",
-                headers: {
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify(abot),
-              })
-                .then((r) => r.json())
-                .then((d) => {
-                  res.json(d);
-                });
-            } else {
-              return res.json({ err: "unauth_owner" });
-            }
-          });
-      });
-  } else res.json({ err: "no_key" });
-});
 router.post("/edit", async (req, res) => {
   let err;
   if (!req.body.id) return res.json({ err: "no_id" });
