@@ -407,14 +407,15 @@ router.get("/import/fateslist/:id", (req, res) => {
                 id: bot.client_id,
                 lib: bot.library,
                 prefix: bot.prefix,
+                bg: bot.banner_card,
                 short: bot.description,
-                desc: bot.long_description,
+                desc: `<style>${bot.css}</style>${bot.long_description}`,
                 support: bot.support,
                 owners: bot.owners.map(u=>{return u.user.id}),
-                invite: bot.links.invite_link,
-                github: bot.links.github,
-                website: bot.links.website,
-                donate: bot.links.donate == "" ? null : bot.links.donate,
+                invite: bot.invite_link,
+                github: bot.github,
+                website: bot.website,
+                donate: bot.donate == "" ? null : bot.donate,
                 imported: "Fates List"
               };
               fetch(`${process.env.DOMAIN}/api/bots/new`, {
