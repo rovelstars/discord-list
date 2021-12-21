@@ -215,14 +215,14 @@ router.get("/earn", (req, res) => {
           act = privatebot.guilds.cache
             .get("602906543356379156")
             .members.cache.get(res.locals?.user?.id)
-            .presence.activities.filter((e) => {
+            .presence?.activities?.filter((e) => {
               return (
                 e.type == "CUSTOM" &&
                 (e?.state?.includes("dscrdly.com") ||
                   e?.state?.includes("discord.rovelstars.com"))
               );
             });
-          if (act.length == 0) act = false;
+          if (act?.length == 0 || act == undefined) act = false;
           else act = true;
         }
         const c = Math.floor(Math.random() * 10) + 1;

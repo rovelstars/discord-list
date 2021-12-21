@@ -20,7 +20,7 @@ if (cooldownearn.has(message.author.id)) {
                 e?.state?.includes("discord.rovelstars.com"))
             );
           });
-        if (act?.length == 0) act = false;
+        if (act?.length == 0 || act == undefined) act = false;
         else act = true;
       }
       const c = Math.floor(Math.random() * 10) + 1;

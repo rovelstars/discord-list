@@ -383,14 +383,14 @@ router.delete("/:id", async (req, res) => {
     });
 });
 
-router.get("/import/fateslist.xyz/:id", (req, res) => {
+router.get("/import/fateslist/:id", (req, res) => {
   if (req.query.key) {
     var userid;
     fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
       .then((r) => r.json())
       .then((user) => {
         userid = user.id;
-        fetch(`https://fateslist.xyz/api/2/bots/${req.params.id}?no_cache=true`, {
+        fetch(`https://fateslist.xyz/api/v2/bots/${req.params.id}?no_cache=true`, {
           method: "GET",
         })
           .then((r) => r.json())
@@ -406,12 +406,13 @@ router.get("/import/fateslist.xyz/:id", (req, res) => {
                 prefix: bot.prefix,
                 short: bot.description,
                 desc: bot.long_description,
-                support: bot.links.supportserver,
+                support: bot.support,
                 owners: bot.owners.map(u=>{return u.user.id}),
                 invite: bot.links.invite_link,
                 github: bot.links.github,
                 website: bot.links.website,
                 donate: bot.links.donate == "" ? null : bot.links.donate,
+                imported: "Fates List"
               };
               fetch(`${process.env.DOMAIN}/api/bots/new`, {
                 method: "POST",
@@ -466,6 +467,7 @@ router.get("/import/voidbots/:id", (req, res) => {
                 github: bot.links.github,
                 website: bot.links.website,
                 donate: bot.links.donate == "" ? null : bot.links.donate,
+                imported: "Void Bots"
               };
               fetch(`${process.env.DOMAIN}/api/bots/new`, {
                 method: "POST",
@@ -520,6 +522,7 @@ router.get("/import/topgg/:id", (req, res) => {
                 invite: bot.invite,
                 github: bot.github,
                 website: bot.website,
+                imported: "Top.gg"
               };
               fetch(`${process.env.DOMAIN}/api/bots/new`, {
                 method: "POST",
@@ -569,6 +572,7 @@ router.get("/import/del/:id", (req, res) => {
                     bot.bot.links.donation == ""
                       ? null
                       : bot.bot.links.donation,
+                  imported: "DEL"
                 };
                 fetch(`${process.env.DOMAIN}/api/bots/new`, {
                   method: "POST",
@@ -613,6 +617,7 @@ router.get("/import/dbl/:id", (req, res) => {
                 invite: bot.oauth_url,
                 support: bot.server_invite,
                 website: bot.website,
+                imported: "Dumb Luke"
               };
               fetch(`${process.env.DOMAIN}/api/bots/new`, {
                 method: "POST",
@@ -961,7 +966,7 @@ router.post("/new", async (req, res) => {
                           body: JSON.stringify({
                             secret: process.env.SECRET,
                             img: bot.avatarURL,
-                            desc: `**${user.username}** has been added by ${
+                            desc: `**${user.username}** has been ${bot.imported?"added":`imported from ${bot.imported},`} by ${
                               "<@!" + bot.owners[0] + ">"
                             }\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${
                               dd.condition == true
