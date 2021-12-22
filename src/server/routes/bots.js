@@ -929,7 +929,7 @@ router.post("/new", async (req, res) => {
                           body: JSON.stringify({
                             secret: process.env.SECRET,
                             img: bot.avatarURL,
-                            desc: `**${user.username}** has been ${bot.imported?"added":`imported from ${bot.imported},`} by ${
+                            desc: `**${user.username}** has been ${(!bot.imported)?"added":`imported from ${bot.imported},`} by ${
                               "<@!" + bot.owners[0] + ">"
                             }\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${
                               dd.condition == true
