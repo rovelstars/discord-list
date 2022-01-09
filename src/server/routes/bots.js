@@ -390,7 +390,7 @@ router.get("/import/fateslist/:id", (req, res) => {
       .then((r) => r.json())
       .then((user) => {
         userid = user.id;
-        fetch(`https://fateslist.xyz/api/bots/${req.params.id}?compact=false`, {
+        fetch(`https://api.fateslist.xyz/api/v2/bots/${req.params.id}?compact=false`, {
           method: "GET",
           headers: {
             "Authorization": process.env.FATESTOKEN,
