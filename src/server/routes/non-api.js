@@ -181,7 +181,7 @@ router.get("/dashboard", async (req, res) => {
     let botus = [];
     Users.findOne({ id: res.locals.user.id }).then(async (u) => {
       res.locals.user.bal = u?.bal || "Error. Contact Support Server.";
-      console.log(u.id + "has issues on dashboard");
+      if(res.locals.user.bal=="Error. Contact Support Server.") console.log(u.id + " has issues on dashboard");
       res.locals.user.status = privatebot.guilds.cache
         .get("602906543356379156")
         .members.cache.get(u.id)?.presence?.status;
