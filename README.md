@@ -6,7 +6,7 @@
 
 <br>
 
-> ## This is the old version of RDL. Kept archived for showcasing in museum. View the latest version on [rovelstars/discord-list](https://github.com/rovelstars/discord-list)
+> ## This is the old version of RDL. Kept archived for showcasing in museum. Latest version is currently in closed source development, may get open sourced in future.
 
 <br>
 
@@ -28,7 +28,7 @@
 
 # Can I contribute ?
 
-Yes! Please move over the new repo [rovelstars/discord-list](https://github.com/rovelstars/discord-list)
+Yes! Please use the default prettier configuration if you use prettier.
 
 # License Notice
 
@@ -60,7 +60,7 @@ Also note that this codebase is under archive. View the latest version at [rovel
 
 # SELF DEPLOYMENT 🏜️
 
-> ## Don't run this. Try the rewrite instead: [rovelstars/discord-list](https://github.com/rovelstars/discord-list)
+> ## Don't run this. It's not updated for a long time.
 
 This is for users who want to contribute to RDL. We **do not support others running their own deployment**
 
