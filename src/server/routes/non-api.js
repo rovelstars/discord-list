@@ -1,7 +1,7 @@
 let router = require("express").Router();
 let path = require("path");
 let auth = require("@utils/auth.js");
-const marked = require("marked");
+const {marked} = require("marked");
 var proxy = require("proxy-list-random");
 
 let sitemap;
@@ -157,7 +157,7 @@ router.get("/bots/:id", async (req, res) => {
       if (!bot) {
         res.render("404.ejs", { path: req.originalUrl });
       } else {
-        bot.desc = marked(bot.desc.replace(/&gt;+/g, ">"));
+        bot.desc = marked.parse(bot.desc.replace(/&gt;+/g, ">"));
         bot.owner = [];
         for (const id of bot.owners) {
           await fetch(`${process.env.DOMAIN}/api/client/users/${id}`)
