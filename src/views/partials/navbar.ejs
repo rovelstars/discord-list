@@ -1,123 +1,95 @@
-<nav
-    class="navbar is-fixed-top is-primary site-nav"
-    role="navigation"
-    aria-label="main navigation"
-    id="menu"
->
-    <div class="navbar-brand is-primary" style="width: 56px">
-        <img
-            src="https://discord.rovelstars.com/assets/img/bot/logo.svg"
-            width="45px"
-            id="rdllogo"
-            class="rdllogo"
-            style="margin: auto"
-        />
-        <a
-            role="button"
-            class="navbar-burger"
-            aria-label="menu"
-            aria-expanded="false"
-            data-target="navbarmenuthing"
-        >
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
+<nav class="navbar is-fixed-top is-primary site-nav" role="navigation" aria-label="main navigation" id="menu">
+  <div class="navbar-brand is-primary">
+      <img src="https://discord.rovelstars.com/assets/img/bot/logo.svg" width="35" height="35" id="rdllogo" class="rdllogo">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarmenuthing">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
 
-    <div id="navbarmenuthing" class="navbar-menu has-background-dark">
-        <div class="navbar-start">
-            <a class="navbar-item" href="/">
-                <span class="icon has-text-primary"><i class="fad fa-house"></i></span
-                ><span class="tt">Home</span>
-            </a>
+  <div id="navbarmenuthing" class="navbar-menu has-background-dark">
+    <div class="navbar-start">
+      <a class="navbar-item" href="/">
+        <span class="icon has-text-primary"><i class="fad fa-house"></i></span><span class="tt">Home</span>
+      </a>
 
-            <a class="navbar-item" href="https://docs.rovelstars.com">
-                <span class="icon has-text-info"><i class="fad fa-book-open"></i></span
-                ><span class="tt">Documentation</span>
-            </a>
-            <div class="navbar-item has-dropdown is-hoverable">
-                <div class="navbar-link" tabindex="0">
+      <a class="navbar-item" href="https://docs.rovelstars.com">
+        <span class="icon has-text-info"><i class="fad fa-book-open"></i></span><span class="tt">Documentation</span>
+      </a>
+      <div class="navbar-item has-dropdown is-hoverable">
+  <div class="navbar-link" tabindex="0">
                     <span class="icon has-text-success">
                         <i class="fad fa-list-ul" aria-hidden="true"></i>
                     </span>
                     <span class="tt">Listings</span>
                 </div>
-                <div class="navbar-dropdown is-hidden-touch">
-                    <a class="navbar-item" href="#">
-                        <span class="icon has-text-warning"><i class="fad fa-smile-wink"></i></span
-                        ><span class="tt">Emojis (soon)</span>
-                    </a>
-                    <a class="navbar-item" href="#">
-                        <span class="icon has-text-info"><i class="fad fa-user"></i></span
-                        ><span class="tt">Users (soon)</span>
-                    </a>
-                    <a class="navbar-item" href="#">
-                        <span class="icon has-text-success"><i class="fad fa-server"></i></span
-                        ><span class="tt">Servers (soon)</span>
-                    </a>
-                    <a class="navbar-item" href="#">
-                        <span class="icon has-text-info"><i class="fad fa-pager"></i></span
-                        ><span class="tt">Templates (soon)</span>
-                    </a>
-                    <a class="navbar-item" href="/bots">
-                        <span class="icon has-text-danger"><i class="fad fa-user-robot"></i></span
-                        ><span class="tt">Bots</span>
-                    </a>
-                </div>
+       <div class="navbar-dropdown is-hidden-touch">
+          <a class="navbar-item" href="#">
+            <span class="icon has-text-warning"><i class="fad fa-smile-wink"></i></span><span class="tt">Emojis (soon)</span>
+          </a>
+          <a class="navbar-item" href="#">
+            <span class="icon has-text-info"><i class="fad fa-user"></i></span><span class="tt">Users (soon)</span>
+          </a>
+          <a class="navbar-item" href="#">
+            <span class="icon has-text-success"><i class="fad fa-server"></i></span><span class="tt">Servers (soon)</span>
+          </a>
+          <a class="navbar-item" href="#">
+           <span class="icon has-text-info"><i class="fad fa-pager"></i></span><span class="tt">Templates (soon)</span>
+          </a>
+          <a class="navbar-item" href="/bots">
+           <span class="icon has-text-danger"><i class="fad fa-user-robot"></i></span><span class="tt">Bots</span>
+          </a>
+          </div>
             </div>
-        </div>
-        <hr class="navbar-divider" />
-        <a class="navbar-item" href="/server">
-            <span class="icon" style="color: #5865f2"><i class="fab fa-discord"></i></span
-            ><span class="tt">Join Server</span>
-        </a>
-        <a class="navbar-item" href="https://github.com/rovelstars/rovel-discord-list">
-            <span class="icon"><i class="fab fa-github"></i></span
-            ><span class="tt">Source Code</span>
-        </a>
-        <div class="navbar-item">
-            <div class="buttons">
-                <% if(!user){ %>
-                <script>
-                    function loginButton() {
-                        Swal.fire({
-                            title: 'Choose Scopes',
-                            html: `<h2><input type="checkbox" id="login-email" /> Email</h2>
+       </div>
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="/server">
+            <span class="icon" style="color: #5865F2;"><i class="fab fa-discord"></i></span><span class="tt">Join Server</span>
+          </a>
+          <a class="navbar-item" href="https://github.com/rovelstars/rovel-discord-list">
+           <span class="icon"><i class="fab fa-github"></i></span><span class="tt">Source Code</span>
+          </a>
+          <div class="navbar-item">
+        <div class="buttons">
+         <% if(!user){ %>
+          <script>
+            function loginButton(){
+    Swal.fire({
+      title:"Choose Scopes",
+      html: 
+      `<h2><input type="checkbox" id="login-email" /> Email</h2>
       <p>Email is used to notify you about security issues</p>
       <h2><input type="checkbox" id="login-servers" /> Join Servers</h2>
       <p>Join Servers is used to add you to servers you want to join</p>`,
-                            didRender: () => {
-                                $('#login-email').click();
-                                $('#login-servers').click();
-                            },
-                            preConfirm: () => {
-                                var emailc = $('#login-email').checked;
-                                var serversc = $('#login-servers').checked;
-                                return { emailc, serversc };
-                            }
-                        }).then(result => {
-                            var link = `https://discord.rovelstars.com/login?email=${result?.value?.emailc}&servers=${result?.value?.serversc}`;
-                            location.href = link;
-                        });
-                    }
-                </script>
-                <a class="button is-success" href="#" onclick="loginButton()" id="login-link">
-                    <span class="icon"><i class="fad fa-sign-in-alt"></i></span
-                    ><span class="tt">Login</span></a
-                >
-                <% } else { %>
-                <a class="button is-danger" href="/logout" id="logout-link">
-                    <span class="icon"><i class="fad fa-sign-out-alt"></i></span
-                    ><span class="tt">Logout</span></a
-                >
-                <a class="button is-info" style="color: #ffffff" href="/dashboard">
-                    <span class="icon"><i class="fad fa-tachometer-alt-fast"></i></span
-                    ><span class="tt">Dashboard</span>
-                </a>
-                <% } %>
-            </div>
+      didRender: ()=>{
+        $("#login-email").click();
+        $("#login-servers").click();
+      },
+      preConfirm: ()=>{
+        var emailc = $('#login-email').checked;
+            var serversc = $('#login-servers').checked;
+            return {emailc, serversc}
+      }
+    }).then((result)=>{
+      var link = `https://discord.rovelstars.com/login?email=${result?.value?.emailc}&servers=${result?.value?.serversc}`;
+      location.href=link;
+    })
+  }
+          </script>
+          <a class="button is-success" href="#" onclick="loginButton()" id="login-link">
+            <span class="icon"><i class="fad fa-sign-in-alt"></i></span><span class="tt">Login</span></a>
+            <% } else { %>
+              <a class="button is-danger" href="/logout" id="logout-link">
+            <span class="icon"><i class="fad fa-sign-out-alt"></i></span><span class="tt">Logout</span></a>
+             <a class="button is-info" style="color: #ffffff;" href="/dashboard">
+              <span class="icon"><i class="fad fa-tachometer-alt-fast"></i></span><span class="tt">Dashboard</span>
+             </a>
+          <% } %>
         </div>
+      </div>
     </div>
-    <div class="navbar-end"></div>
+    <div class="navbar-end">
+    </div>
+  </div>
 </nav>
