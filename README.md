@@ -6,7 +6,7 @@
 
 <br>
 
-> ## This is the old version of RDL. Kept archived for showcasing in museum. Latest version is currently in closed source development, may get open sourced in future.
+> ## This is the old version of RDL. Kept archived for showcasing in museum. Latest version at [rdl](https://github.com/rovelstars/rdl) and will be soon exchanging repos with this! The new version is in heavy development, and supports self hosting! Check it out!
 
 <br>
 
