@@ -65,7 +65,7 @@
     "rdl-i18n": "github:rovelstars/rdl-i18n",
     "response-time": "2.3.2",
     "rovel.js": "1.2.0",
-    "sanitize-html": "2.4.0",
+    "sanitize-html": "2.7.0",
     "shelljs": "0.8.4",
     "simplebtc": "4.2.0",
     "socket.io": "^4.2.0",
