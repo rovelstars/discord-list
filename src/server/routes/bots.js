@@ -390,11 +390,8 @@ router.get("/import/fateslist/:id", (req, res) => {
       .then((r) => r.json())
       .then((user) => {
         userid = user.id;
-        fetch(`https://api.fateslist.xyz/api/v2/bots/${req.params.id}?compact=false`, {
-          method: "GET",
-          headers: {
-            "Authorization": process.env.FATESTOKEN,
-          }
+        fetch(`https://next.fateslist.xyz/bots/${req.params.id}`, {
+          method: "GET"
         })
           .then((r) => r.json())
           .then((bot) => {
@@ -407,9 +404,9 @@ router.get("/import/fateslist/:id", (req, res) => {
                 id: bot.client_id,
                 lib: bot.library,
                 prefix: bot.prefix,
-                bg: bot.banner_card,
+                bg: bot.banner_page,
                 short: bot.description,
-                desc: `<style>${bot.css}</style>${bot.long_description}`,
+                desc: `<style>${bot.css}</style>${bot.long_description_raw}`,
                 support: bot.support,
                 owners: bot.owners.map(u=>{return u.user.id}),
                 invite: bot.invite_link,
