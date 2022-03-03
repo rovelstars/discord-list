@@ -125,7 +125,7 @@ router.post("/:id/card", (req, res) => {
 });
 
 router.get("/:id/vote", async (req, res) => {
-  if (!req.query.key) res.json({ err: "not_logined" });
+  if (!req.query.key) res.json({ err: "not_logged in" });
   else {
     fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
       .then((r) => r.json())

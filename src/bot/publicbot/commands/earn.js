@@ -5,7 +5,7 @@ if (cooldownearn.has(message.author.id)) {
     if (!user)
       message.reply({
         content:
-          "Nani?! You're not logined!\nPlease login to RDL to make an account in order to recieve money!\nLogin link:\nhttps://discord.rovelstars.com/login",
+          "Nani?! You're not logged in!\nPlease login to RDL to make an account in order to recieve money!\nLogin link:\nhttps://discord.rovelstars.com/login",
       });
     else {
       let act = false;
@@ -28,8 +28,8 @@ if (cooldownearn.has(message.author.id)) {
       if (act) user.bal += 10;
       user.save();
       message.channel.send(
-        `Lol?! You recieved R$ ${c} ${
-          act ? "and R$ 10 as a bonus for **link in status** ♥️" : ""
+        `Lol?! You recieved <:Rcoin:948896802298548224> ${c} ${
+          act ? "and <:Rcoin:948896802298548224> 10 as a bonus for **link in status** ♥️" : ""
         }!\nThat's nothing compared to me- <:trolled:790458256958554173>`
       );
       cooldownearn.add(message.author.id);

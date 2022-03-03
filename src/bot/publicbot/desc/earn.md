@@ -1,1 +1,1 @@
-Start earning money!
+Start earning <:Rcoin:948896802298548224> !

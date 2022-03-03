@@ -10,7 +10,7 @@ if (!args.length) {
         content:
           user.bal > 1000
             ? `Nani?! Now this is something more than my pocket money <:um:852150922313990145>\nYou got **${user.bal}** at the moment.`
-            : `You have R$ **${user.bal}**\nLmfao! I got so much pocket money <:trolled:790458256958554173>!`,
+            : `You have <:Rcoin:948896802298548224> **${user.bal}**\nLmfao! I got so much pocket money <:trolled:790458256958554173>!`,
       });
     }
   });
@@ -25,11 +25,11 @@ if (!args.length) {
   Users.findOne({ id: usern.id }).then((user) => {
     if (!user)
       message.channel.send(
-        "Uh, It seems as if " + usern.tag + " never logined on RDL... 😔"
+        "Uh, It seems as if " + usern.tag + " never logged in on RDL... 😔"
       );
     else {
       message.channel.send(
-        `${user.username}'s balance: R$ **${user.bal}**\nThat's nothing for me! <:trolled:790458256958554173>`
+        `${user.username}'s balance: <:Rcoin:948896802298548224> **${user.bal}**\nThat's nothing for me! <:trolled:790458256958554173>`
       );
     }
   });

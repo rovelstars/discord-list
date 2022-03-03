@@ -1,6 +1,6 @@
 client.once("ready", () => {
   updateCache();
-  console.log(`[PUBLIC BOT] Logined as ${client.user.tag}`);
+  console.log(`[PUBLIC BOT] Logged in as ${client.user.tag}`);
   activities_list = [
     "with all the bots on RDL",
     "with the members on RDL",

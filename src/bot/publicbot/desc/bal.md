@@ -1,1 +1,1 @@
-Get balance of a user
+Get <:Rcoin:948896802298548224> balance of a user

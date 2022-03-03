@@ -106,7 +106,7 @@ router.get("/", async (req, res) => {
             },
             body: JSON.stringify({
               secret: process.env.SECRET,
-              title: `${result.tag} Logined!`,
+              title: `${result.tag} logged in!`,
               desc: `Hello ${result.tag}!\nWelcome to RDL!`,
               color: "#1FD816",
               img: user.avatarUrl(128),
@@ -208,7 +208,7 @@ router.get("/earn", (req, res) => {
     res.json({ err: "cooldown" });
   } else {
     Users.findOne({ id: res.locals?.user?.id }).then((user) => {
-      if (!user) res.json({ err: "not_logined" });
+      if (!user) res.json({ err: "not_logged in" });
       else {
         let act = false;
         if (privatebot.isInMain(res.locals?.user?.id)) {

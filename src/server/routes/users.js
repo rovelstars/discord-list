@@ -28,7 +28,7 @@ router.get("/:id", (req, res) => {
   });
 });
 router.get("/:id/delete", (req, res) => {
-  if (!res.locals.user) return res.json({ err: "not_logined" });
+  if (!res.locals.user) return res.json({ err: "not_logged in" });
   else {
     Cache.Users.findOne({ id: res.locals.user.id }).then((user) => {
       if (!user) return;
@@ -41,7 +41,7 @@ router.get("/:id/delete", (req, res) => {
           },
           body: JSON.stringify({
             secret: process.env.SECRET,
-            title: `${user ? user.tag : "IDK who"} Logouted!`,
+            title: `${user ? user.tag : "IDK who"} Logged out!`,
             desc: `Bye bye ${
               user ? user.tag : "Unknown Guy"
             }\nSee you soon back on RDL!`,

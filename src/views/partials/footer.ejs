@@ -6,7 +6,7 @@
    var text;
     if(alerts=="key_refreshed") text = "Your Discord OAuth2 key was updated successfully!";
     if(alerts=="logout") text = "We deleted your key from your cookies (Logged you out!) Because your key was invalid, or it was missing required permissions (scopes). Please log in again! 🙂";
-    if(alerts=="deletion") text = "Your Account was previously deleted, but you were still logined in this device. Please log in again in order to create your account. Contact support if you want back your Rovel Coins.";
+    if(alerts=="deletion") text = "Your Account was previously deleted, but you were still logged in in this device. Please log in again in order to create your account. Contact support if you want back your Rovel Coins.";
     Swal.fire({title: alerts.split("_").join(" "), text, icon:"info"});
     </script>
    <% } %>

@@ -328,7 +328,7 @@ router.get("/logout", async (req, res) => {
       },
       body: JSON.stringify({
         secret: process.env.SECRET,
-        title: `${user ? user.tag : "IDK who"} Logouted!`,
+        title: `${user ? user.tag : "IDK who"} Logged out!`,
         desc: `Bye bye ${
           user ? user.tag : "Unknown Guy"
         }\nSee you soon back on RDL!`,

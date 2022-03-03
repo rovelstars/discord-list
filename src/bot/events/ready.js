@@ -1,5 +1,5 @@
 client.once("ready", () => {
-  console.log(`[BOT] Logined as ${client.user.tag}`);
+  console.log(`[BOT] Logged in as ${client.user.tag}`);
   activities_list = [
     "with all the bots on RDL",
     "with the members on RDL",
