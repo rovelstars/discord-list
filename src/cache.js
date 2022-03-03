@@ -119,7 +119,7 @@
     if (arg == undefined) {
       return { err: "not_found" };
     } else {
-      const { _id, code, ...bot } = arg;
+      const { _id, code, ...bot } = arg._doc;
       return bot;
     }
   };
@@ -234,7 +234,7 @@
     if (arg == undefined) {
       return { err: "not_found" };
     } else {
-      const { _id, email, address, ...user } = arg;
+      const { _id, email, address, ...user } = arg._doc;
       return user;
     }
   };
@@ -329,7 +329,7 @@
     if (arg == undefined) {
       return { err: "not_found" };
     } else {
-      const { _id, email, address, ...server } = arg;
+      const { _id, email, address, ...server } = arg._doc;
       return server;
     }
   };
