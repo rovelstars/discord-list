@@ -19,9 +19,9 @@ message.reply({content: "You forgot to ping or write the ID of the user to whom 
         message.reply({content: "You need to specify"})
       }
       if(args[1]=="--all"){
-        args[1]=uu.bal;
+        var hmm=uu.bal;
         uu.bal=0;
-        user.bal+=args[1];
+        user.bal+=hmm;
         //this fixes the bug where transferring back the R$ doesn't turns the amount to zero!
         user.save();
         setTimeout(()=>{uu.save();},100); //this fixes the wierd problem with parallel save error.
