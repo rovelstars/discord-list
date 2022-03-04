@@ -16,7 +16,7 @@ message.reply({content: "You forgot to ping or write the ID of the user to whom 
     else {
       Cache.Users.findOne({id: message.author.id}).then((uu)=>{
       if(isNaN(args[1]) && (args[1]!="--all")){
-        message.reply({content: "You need to specify"})
+        message.reply({content: "You need to specify the amount of <:Rcoin:948896802298548224> that you want to send."});
       }
       if(args[1]=="--all"){
         var hmm=uu.bal;
