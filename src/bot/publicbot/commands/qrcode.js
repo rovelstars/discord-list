@@ -1,6 +1,6 @@
 if (!args.length) {
   message.reply({
-    content: "Usage: `a!qrcode <your text to for creating qrcode`",
+    content: `Usage: \`${process.env.PUBLIC_PREFIX}qrcode <your text to for creating qrcode\``,
   });
 } else {
   qr = args.join("%20");

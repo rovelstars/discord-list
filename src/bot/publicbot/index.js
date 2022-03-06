@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 const normalText = require("diacritics").remove;
 var client = new Discord.Client({
-  intents: [new Discord.Intents(32509)],
+  intents: [new Discord.Intents(32767)], //32509
 });
 client.login(process.env.PUBLIC_TOKEN);
 globalThis.publicbot = client;
@@ -13,7 +13,7 @@ client.emojiapprovers = emojiapprovers;
 client.mods = mods;
 client.contributors = contributors;
 client.commands = [];
-const prefix = process.env.PUBLIC_PREFIX || "a!";
+const prefix = process.env.PUBLIC_PREFIX || "R!";
 var cooldownearn = new Set();
 client.cooldownearn = cooldownearn;
 
@@ -25,7 +25,7 @@ function getMention(mention) {
       mention = mention.slice(1);
     }
   }
-  return privatebot.users.cache.get(mention); //main bot doesnt cache anything sed...
+  return client.users.cache.get(mention); //main bot doesnt cache anything sed...
 }
 function searchCommand(name) {
   for (var i = 0; i < client.commands.length; i++) {
