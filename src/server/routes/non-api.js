@@ -66,7 +66,7 @@ router.get("/servers/:id", async (req, res) => {
     if (!r.err) {
       r = await fetch(
         `https://discord.com/api/v9/invites/${r.code}?with_counts=true`
-      );
+      ,{headers:{"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36"}});
       r = await r.json();
       console.log(r);
       if (!r.message) {
