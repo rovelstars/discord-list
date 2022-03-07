@@ -60,7 +60,10 @@ router.get("/:id/invite", (req, res) => {
   if (!guild) {
     res.json({ err: "guild_not_found" });
   } else {
-    if (guild.me.permissions.has("MANAGE_GUILD")) {
+    if(guild.vanityURLCode){
+      res.json({ code: guild.vanityURLCode });
+    }
+    else if (guild.me.permissions.has("MANAGE_GUILD")) {
       guild.invites.fetch().then((invs) => {
         invs = invs.map((invm) => invm.code);
         shuffle(invs);
