@@ -390,7 +390,7 @@ router.get("/import/fateslist/:id", (req, res) => {
       .then((r) => r.json())
       .then((user) => {
         userid = user.id;
-        fetch(`https://next.fateslist.xyz/bots/${req.params.id}`, {
+        fetch(`https://api.fateslist.xyz/bots/${req.params.id}`, {
           method: "GET"
         })
           .then((r) => r.json())
@@ -406,7 +406,9 @@ router.get("/import/fateslist/:id", (req, res) => {
                 prefix: bot.prefix,
                 bg: bot.banner_page,
                 short: bot.description,
-                desc: `<style>${bot.css}</style>${bot.long_description_raw}`,
+                
+                // The two \n's are very important. Markdown tends to not work without it
+                desc: `${bot.css}\n\n${bot.long_description_raw}`,
                 support: bot.support,
                 owners: bot.owners.map(u=>{return u.user.id}),
                 invite: bot.invite_link,
