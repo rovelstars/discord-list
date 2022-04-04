@@ -62,9 +62,10 @@ function updateBotServers(i, bot) {
 
 router.get("/", (req, res) => {
   if (req.query.q) {
-    res.json(shuffle(Search(Cache.AllBots, req.query.q)).slice(0, 10));
+    res.json(shuffle(Search(Cache.Bots.clean(Cache.AllBots), req.query.q)).slice(0, 10));
   } else {
-    res.json(Cache.AllBots);
+    if(req.query.secret==process.env.SECRET) res.json(Cache.AllBots);
+    else res.json(Cache.Bots.clean(Cache.AllBots));
   }
 });
 

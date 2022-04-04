@@ -118,7 +118,15 @@
   Bots.clean = function (arg) {
     if (arg == undefined) {
       return { err: "not_found" };
-    } else {
+    }
+    else if(arg.isArray()){
+      return arg.map(b=>{
+        const { _id, code, webhook, ...bot } = b._doc;
+      bot.addedAt=_id;
+      return bot;
+      })
+    }
+    else {
       const { _id, code, webhook, ...bot } = arg._doc;
       bot.addedAt=_id;
       return bot;
