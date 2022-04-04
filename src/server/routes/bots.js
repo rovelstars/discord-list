@@ -327,8 +327,17 @@ router.get("/:id/slug", (req, res) => {
  else res.json({ err: "no_key" })
 })*/
 router.get("/:id", (req, res) => {
+  if(req?.secret==process.env.SECRET){
+  let botu = Cache.Bots.clean(Cache.Bots.findOneById(req.params.id));
+  botu.code = Cache.Bots.findOneById(req.params.id).code;
+  botu.webhook = Cache.Bots.findOneById(req.params.id).webhook;
+  res.json(botu);
+  Cache.Bots.refreshOne(req.params.id);
+  }
+  else{
   res.json(Cache.Bots.clean(Cache.Bots.findOneById(req.params.id)));
   Cache.Bots.refreshOne(req.params.id);
+  }
 });
 
 router.post("/:id/servers", (req, res) => {

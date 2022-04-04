@@ -119,7 +119,7 @@
     if (arg == undefined) {
       return { err: "not_found" };
     } else {
-      const { _id, code, ...bot } = arg._doc;
+      const { _id, code, webhook, ...bot } = arg._doc;
       bot.addedAt=_id;
       return bot;
     }
