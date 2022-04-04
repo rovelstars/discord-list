@@ -119,7 +119,7 @@
     if (arg == undefined) {
       return { err: "not_found" };
     }
-    else if(arg.isArray()){
+    else if(Array.isArray(arg)){
       return arg.map(b=>{
         const { _id, code, webhook, ...bot } = b._doc;
       bot.addedAt=_id;
