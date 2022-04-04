@@ -22,4 +22,12 @@ client.once("ready", () => {
     const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
     client.user.setActivity(activities_list[index]);
   }, 10000);
+  console.log(`[BOT] Syncing All Bot Statuses!`);
+  setInterval(() => {
+    client.guilds.cache.get("602906543356379156").me.setNickname(`ROVEL BOT | Watching ${Cache.AllBots.length} Bots`);
+    Cache.AllBots.forEach(bot => {
+      bot.status = client.guilds.cache.get("602906543356379156").members.cache.get(bot.id)?.presence?.status || "online";
+      bot.save();
+    })
+  }, 60000);
 });
