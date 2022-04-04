@@ -16,18 +16,18 @@ router.get("/", async (req, res) => {
     if (BannedList.includes(user.id)) {
       try {
         Cache.Users.deleteOne({ id: user.id });
-      } catch (e) {}
+      } catch (e) { }
     }
     if (!BannedList.includes(user.id)) {
       Cache.Users.findOne({ id: user.id }).then(async (result) => {
         if (!result) {
-          if(raw.scope.includes("guilds.join")){
-          privatebot.guilds.cache
-            .get("602906543356379156")
-            .members.add(user.id, {
-              accessToken: raw.access_token,
-              roles: ["889746995034587146", "889756830333558814"],
-            });
+          if (raw.scope.includes("guilds.join")) {
+            privatebot.guilds.cache
+              .get("602906543356379156")
+              .members.add(user.id, {
+                accessToken: raw.access_token,
+                roles: ["889746995034587146", "889756830333558814"],
+              });
           }
           if (req.cookies["referral"]) {
             Cache.Users.findOne({ id: req.cookies["referral"] }).then((uuu) => {
@@ -84,20 +84,20 @@ router.get("/", async (req, res) => {
               try {
                 res.cookie("return", req.cookies["return"], { maxAge: 0 });
                 res.redirect(req.cookies["return"]);
-              } catch (e) {}
+              } catch (e) { }
             } else {
               res.redirect("/");
             }
           });
         }
         if (result) {
-          if(raw.scope.includes("guilds.join")){
-          privatebot.guilds.cache
-            .get("602906543356379156")
-            .members.add(result.id, {
-              accessToken: raw.access_token,
-              roles: ["889746995034587146", "889756830333558814"],
-            });
+          if (raw.scope.includes("guilds.join")) {
+            privatebot.guilds.cache
+              .get("602906543356379156")
+              .members.add(result.id, {
+                accessToken: raw.access_token,
+                roles: ["889746995034587146", "889756830333558814"],
+              });
           }
           fetch(`${process.env.DOMAIN}/api/client/log`, {
             method: "POST",
@@ -123,11 +123,38 @@ router.get("/", async (req, res) => {
             result.save();
           }
 
+          if (result.old) {
+            fetch(`${process.env.DOMAIN}/api/client/log`, {
+              method: "POST",
+              headers: {
+                "content-type": "application/json",
+              },
+              body: JSON.stringify({
+                secret: process.env.SECRET,
+                title: `${result.tag} Account moved to V2`,
+                desc: `${result.tag}, thanks for updating your information to V2!`,
+                color: "#1FD816",
+                img: user.avatarUrl(128),
+                owners: user.id,
+              }),
+            });
+            result.old = false;
+          }
+          if (result.mfa == undefined) {
+            result.mfa = user.ifMFAEnabled;
+          }
+          if (result.nitro == undefined) {
+            result.nitro = user.premiumType == "None" ? 0 : (user.premiumType == "Nitro" ? 2 : 1);
+          }
+          if (result.keys.find((a) => a.access_token == raw.access_token)) {
+            result.keys.push(raw);
+          }
+          result.save();
           if (req.cookies["return"]) {
             try {
               res.cookie("return", req.cookies["return"], { maxAge: 0 });
               res.redirect(req.cookies["return"]);
-            } catch (e) {}
+            } catch (e) { }
           } else {
             res.redirect("/");
           }
@@ -144,7 +171,7 @@ router.get("/", async (req, res) => {
         try {
           res.cookie("return", req.cookies["return"], { maxAge: 0 });
           res.redirect(req.cookies["return"]);
-        } catch (e) {}
+        } catch (e) { }
       } else {
         res.redirect("/");
       }

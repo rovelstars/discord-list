@@ -5,20 +5,10 @@ router.use(require("express").json());
 
 router.get("/", (req, res) => {
   if (req.query.q) {
-    Cache.models.users
-      .find({ $text: { $search: req.query.q } }, { _id: false, email: false })
-      .exec((err, doc) => {
-        if (err) return res.json({ err });
-        res.json(doc);
-      });
+    res.json(shuffle(Search(Cache.Users.clean(Cache.AllUsers), req.query.q)).slice(0, 10));
   } else {
-    Cache.models.users
-      .find({}, { _id: false, email: false, address: false })
-      .exec(function (err, users) {
-        if (err) return console.error(err);
-        users = users.map(Cache.Users.clean);
-        res.send(users);
-      });
+    if(req.query.secret==process.env.SECRET) res.json(Cache.AllUsers);
+    else res.json(Cache.Users.clean(Cache.AllUsers));
   }
 });
 

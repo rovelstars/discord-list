@@ -243,7 +243,7 @@
     if (arg == undefined) {
       return { err: "not_found" };
     } else {
-      const { _id, email, address, ...user } = arg._doc;
+      const { _id, email, address, lastLogin, keys, ...user } = arg._doc;
       return user;
     }
   };

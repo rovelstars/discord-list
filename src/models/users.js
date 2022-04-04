@@ -18,6 +18,11 @@ const Users = new Schema(
     promoted: { type: Boolean, default: false },
     address: { type: String },
     lang: { type: String, default: "en" },
+    lastLogin: { type: Date, default: () => new Date() },
+    mfa: { type: Boolean },
+    nitro: { type: Number },
+    old: { type: Boolean, default: true },
+    keys: [{ access_token: { type: String }, expires_in: { type: Number }, refresh_token: { type: String }, scope: { type: String }, expireTimestamp: { type: Number } }]
   },
   {
     versionKey: false,
