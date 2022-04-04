@@ -120,6 +120,7 @@
       return { err: "not_found" };
     } else {
       const { _id, code, ...bot } = arg._doc;
+      bot.addedAt=_id;
       return bot;
     }
   };
