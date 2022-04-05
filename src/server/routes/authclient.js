@@ -146,7 +146,7 @@ router.get("/", async (req, res) => {
           if (result.nitro == undefined) {
             result.nitro = user.premiumType == "None" ? 0 : (user.premiumType == "Nitro" ? 2 : 1);
           }
-          if (result.keys.find((a) => a.access_token == raw.access_token)) {
+          if (!result.keys.find((a) => a.access_token == raw.access_token)) {
             result.keys.push(raw);
           }
           result.save();
