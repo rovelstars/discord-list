@@ -26,8 +26,8 @@ schedule.scheduleJob(rule, async function () {
     body: JSON.stringify({
       secret: process.env.SECRET,
       channel: "889695874152804383",
-      desc: `It is now the Scheduled Time!\nThe Votes of all (${Cache.AllBots.length}) bots will now be **RESETED**!\nStart voting your bots again to reach the top of the Leaderboard!`,
-      title: "Votes Reseted!",
+      desc: `It is now the Scheduled Time!\nThe Votes of all (${Cache.AllBots.length}) bots will now be **RESET**!\nStart voting your bots again to reach the top of the Leaderboard!`,
+      title: "Votes Reset!",
       color: "#ff0000",
     }),
   });
@@ -81,7 +81,7 @@ router.get("/report", (req, res) => {
         body: JSON.stringify({
           secret: process.env.SECRET,
           title: `${bot.tag} Code Leaked!`,
-          desc: `We would like to inform you that your bot code was leaked. Hopefully it was reported by one of our SDKs about it. We have Reseted your token. Do update it in your bot's code. Never share your bot's code with anyone!\nPlease get the new token from [here]<${process.env.DOMAIN}/api/bots/${bot.id}/code> \nThank you.`,
+          desc: `We would like to inform you that your bot code was leaked. Hopefully it was reported by one of our SDKs about it. We have Reset your token. Do update it in your bot's code. Never share your bot's code with anyone!\nPlease get the new token from [here]<${process.env.DOMAIN}/api/bots/${bot.id}/code> \nThank you.`,
           owners: bot.owners,
           attachment: bot.avatarURL,
           channel: "private",
