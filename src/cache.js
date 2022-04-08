@@ -242,7 +242,14 @@
   Users.clean = function (arg) {
     if (arg == undefined) {
       return { err: "not_found" };
-    } else {
+    }
+    else if(Array.isArray(arg)){
+      return arg.map(b=>{
+        const { _id, email, address, lastLogin, keys, ...user } = b._doc;
+      return user;
+      })
+    }
+    else {
       const { _id, email, address, lastLogin, keys, ...user } = arg._doc;
       return user;
     }
