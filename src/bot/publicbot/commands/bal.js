@@ -23,8 +23,8 @@ if (!args.length) {
     });
   }
   Users.findOne({ id: usern.id }).then((user) => {
-    if(usern.id=="603213294265958400") message.channel.send("Imagine asking the manager of <:Rcoin:948896802298548224> how much he owns...\nWell, I got **<Integer: Infinity>** Haha!!!\n```js\nError: Stack Overflow Go Brr!!!\nat: rovel_bot_balance.js:1:17\nat rovel_bot_ai.js:1069:69\nThis usually means the bot's AI translator is out of control.\nThis error should be reporte� immedia����#%?!\n```");
-    if (!user)
+    if(usern.id=="603213294265958400") message.channel.send("Imagine asking the manager of <:Rcoin:948896802298548224> how much he owns...\nWell, I got **<Integer: Infinity>** Haha!!!\n```js\nError: Stack Overflow Go Brr!!!\nat: rovel_bot_balance.js:1:17\nat: rovel_bot_ai.js:1069:69\nThis usually means the bot's AI translator is out of control.\nThis error should be reporte� immedia����#%?!\n```");
+    else if (!user)
       message.channel.send(
         "Uh, It seems as if " + usern.tag + " never logged in on RDL... 😔"
       );
