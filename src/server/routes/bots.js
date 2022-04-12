@@ -442,8 +442,14 @@ router.get("/import/fateslist/:id", (req, res) => {
                 .then((d) => {
                   res.json(d);
                 });
-              fetch(`https://api.fateslist.xyz/import-log/${req.params.id}?from=Rdl`, {
+              
+              // Telemetry to tell fates of a attempted import
+              fetch(`https://api.fateslist.xyz/import-log/${req.params.id}`, {
                 method: "GET",
+                headers: {
+                  "Lightleap-Dest": "Rovel Discord List",
+                  "Lightleap-Reports": "https://discord.rovelstars.com"
+                }
               })
               .then((r) => r.json())
 
