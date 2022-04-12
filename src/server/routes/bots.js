@@ -445,7 +445,7 @@ router.get("/import/fateslist/:id", (req, res) => {
               
               // Telemetry to tell fates of a attempted import
               fetch(`https://api.fateslist.xyz/import-log/${req.params.id}`, {
-                method: "GET",
+                method: "POST",
                 headers: {
                   "Lightleap-Dest": "Rovel Discord List",
                   "Lightleap-Site": "https://discord.rovelstars.com",
