@@ -403,8 +403,9 @@ router.get("/import/fateslist/:id", (req, res) => {
         fetch(`https://api.fateslist.xyz/bots/${req.params.id}`, {
           method: "GET",
           headers: {
-            // Not strictly required, but worthwhile for future api updates
-            "Lightleap-Cache": "0", // In future, will disable caching
+            // Not strictly required, but worthwhile for telemetry and so we know who to contact when something starts misbehaving (because JavaScript exists) 
+            "Lightleap-Dest": "Rovel Discord List",
+            "Lightleap-Site": "https://discord.rovelstars.com",
           }
         })
           .then((r) => r.json())
@@ -442,17 +443,6 @@ router.get("/import/fateslist/:id", (req, res) => {
                 .then((d) => {
                   res.json(d);
                 });
-              
-              // Telemetry to tell fates of a attempted import
-              fetch(`https://api.fateslist.xyz/import-log/${req.params.id}`, {
-                method: "POST",
-                headers: {
-                  "Lightleap-Dest": "Rovel Discord List",
-                  "Lightleap-Site": "https://discord.rovelstars.com",
-                }
-              })
-              .then((r) => r.json())
-
             } else {
               return res.json({ err: "unauth_owner" });
             }
