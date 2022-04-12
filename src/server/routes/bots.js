@@ -405,8 +405,6 @@ router.get("/import/fateslist/:id", (req, res) => {
           headers: {
             // Not strictly required, but worthwhile for future api updates
             "Lightleap-Cache": "0", // In future, will disable caching
-            "Lightleap-Dest": "Rovel List", // Just some analytics to see which features are being used
-            "Frostpaw-Clan": "RiverClan" // Ensure that this import request is only done server-side and not client-side (due to privacy reasons and Discord Verification)
           }
         })
           .then((r) => r.json())
@@ -444,6 +442,11 @@ router.get("/import/fateslist/:id", (req, res) => {
                 .then((d) => {
                   res.json(d);
                 });
+              fetch(`https://api.fateslist.xyz/import-log/${req.params.id}?from=Rdl`, {
+                method: "GET",
+              })
+              .then((r) => r.json())
+
             } else {
               return res.json({ err: "unauth_owner" });
             }
