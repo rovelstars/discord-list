@@ -144,7 +144,7 @@ var run = function () {
   });
 };
 
-setTimeout(run, localStorage.allowCookies=="yes"?500:3000);
+setTimeout(run, localStorage.allowCookies=="yes"?0:3000);
 
 function onHover() {
   $("rdllogo").src = "https://discord.rovelstars.com/assets/img/bot/pet.gif";

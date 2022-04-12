@@ -775,7 +775,7 @@ router.post("/new", async (req, res) => {
       if (!err && !result) {
         try {
           if (!err && !req.body.id) err = "no_id";
-          fetch(`https://discord.com/api/v7/users/${req.body.id}`, {
+          fetch(`https://discord.com/api/v10/users/${req.body.id}`, {
             headers: {
               Authorization: `Bot ${process.env.TOKEN}`,
             },
