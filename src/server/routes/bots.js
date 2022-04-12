@@ -401,7 +401,13 @@ router.get("/import/fateslist/:id", (req, res) => {
       .then((user) => {
         userid = user.id;
         fetch(`https://api.fateslist.xyz/bots/${req.params.id}`, {
-          method: "GET"
+          method: "GET",
+          headers: {
+            // Not strictly required, but worthwhile for future api updates
+            "Lightleap-Cache": "0", // In future, will disable caching
+            "Lightleap-Dest": "Rovel List", // Just some analytics to see which features are being used
+            "Frostpaw-Clan": "RiverClan" // Ensure that this import request is only done server-side and not client-side (due to privacy reasons and Discord Verification)
+          }
         })
           .then((r) => r.json())
           .then((bot) => {
@@ -411,9 +417,9 @@ router.get("/import/fateslist/:id", (req, res) => {
               });
             if (bot.owners.map(u=>{return u.user.id}).includes(userid)) {
               var abot = {
-                id: bot.client_id,
-                lib: bot.library,
-                prefix: bot.prefix,
+                id: bot.client_id || req.params.id, // Not always present, fallback to req.params.id if not
+                lib: bot.library || "custom", // Not always present
+                prefix: bot.prefix || "/", // Not always present, slash command if not, so manually set /
                 bg: bot.banner_page,
                 short: bot.description,
                 
