@@ -448,7 +448,7 @@ router.get("/import/fateslist/:id", (req, res) => {
                 method: "GET",
                 headers: {
                   "Lightleap-Dest": "Rovel Discord List",
-                  "Lightleap-Reports": "https://discord.rovelstars.com"
+                  "Lightleap-Site": "https://discord.rovelstars.com",
                 }
               })
               .then((r) => r.json())
