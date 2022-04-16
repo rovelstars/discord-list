@@ -994,6 +994,7 @@ schedule.scheduleJob("15 * * * *", async function () {
         //get random user
         const random = uss[Math.floor(Math.random() * uss.length)];
         ue = Cache.Users.findOne({id: uss[random]});
+        console.log("ree: "+ue.id);
         const hmm = JSON.stringify({
           user: Cache.Users.clean(ue._doc),
           coins: parseInt(moneh*10),
