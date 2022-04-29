@@ -1,5 +1,5 @@
 <%- include('partials/header', {
-title: "Rovel Discord List - Bots",
+title: "Bots | The Best Discord Bot List",
 desc: "Find the next bot for your server!",
 img: "https://discord.rovelstars.com/assets/img/bot/logo-512.png",
 theme,
@@ -22,6 +22,21 @@ imglink: undefined
     }]
 }
 </script>
+<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://discord.rovelstars.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://discord.rovelstars.com/bots?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
 </head>
 <body>
  <%- include('partials/load', {theme}); %>
@@ -59,11 +74,18 @@ imglink: undefined
 </div>
 </div>
 <script>
+    if(new URLSearchParams(window.location.search).get("q")){
+        document.getElementById("searchInput").value=new URLSearchParams(window.location.search).get("q");
+        doSearch();
+    }
 let input = document.getElementById("searchInput");
 let page = document.getElementById("results");
 input.addEventListener("keyup", async (event) => {
         if (event.keyCode === 13) {
-          await doSearch();
+          //await doSearch();
+          const urlParams = new URLSearchParams(window.location.search);
+          urlParams.set('q', document.getElementById("searchInput").value);
+          window.location.search = urlParams;
         } else return;
     });
 
