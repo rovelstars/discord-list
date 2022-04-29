@@ -74,10 +74,7 @@ imglink: undefined
 </div>
 </div>
 <script>
-    if(new URLSearchParams(window.location.search).get("q")){
-        document.getElementById("searchInput").value=new URLSearchParams(window.location.search).get("q");
-        doSearch();
-    }
+    
 let input = document.getElementById("searchInput");
 let page = document.getElementById("results");
 input.addEventListener("keyup", async (event) => {
@@ -122,6 +119,10 @@ input.addEventListener("keyup", async (event) => {
      }
      });
       }
+      if(new URLSearchParams(window.location.search).get("q")){
+        document.getElementById("searchInput").value=new URLSearchParams(window.location.search).get("q");
+        doSearch();
+    }
 </script>
  <%- include('partials/footer'); %>
 </body>
