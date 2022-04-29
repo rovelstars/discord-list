@@ -24,7 +24,7 @@ client.once("ready", () => {
   }, 10000);
   console.log(`[BOT] Syncing All Bot Statuses!`);
   setInterval(() => {
-    client.guilds.cache.get("602906543356379156").me.setNickname(`ROVEL BOT | Watching ${Cache.AllBots.length} Bots`);
+    client.guilds.cache.get("602906543356379156").me.setNickname(`Rovel Bot | Watching ${Cache.AllBots.length} Bots`);
     Cache.AllBots.forEach(bot => {
       bot.status = client.guilds.cache.get("602906543356379156").members.cache.get(bot.id)?.presence?.status || "online";
       bot.save();
