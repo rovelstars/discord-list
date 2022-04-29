@@ -1,6 +1,6 @@
 <%- include('partials/header', {
-title: "Bots | The Best Discord Bot List",
-desc: "Find the next bot for your server!",
+title: (req.params.q?)`Find Bots Related to ${req.params.q} on The Best Discord List!`:"Bots | The Best Discord Bot List",
+desc: (req.params.q)?`Showing Bots for the search term "${req.params.q}" !`:"Find the Next Bot to use on The Best Discord Bot List",
 img: "https://discord.rovelstars.com/assets/img/bot/logo-512.png",
 theme,
 imglink: undefined
