@@ -85,9 +85,9 @@ router.get("/report", (req, res) => {
 router.get("/info", (req, res) => {
   if (!req.query.code) return res.json({ err: "no_code" });
   var ba = Cache.Bots.findOneByCode(req.query.code);
-  if (!ba) return res.json({ err: "no_bot_found" });
+  if (!ba) return res.json({ err: "invalid_code" });
   else {
-    res.json(ba);
+    res.json(Cache.Bots.clean(ba));
   }
 });
 
