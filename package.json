@@ -46,7 +46,7 @@
     "gray-matter": "4.0.3",
     "gritty": "^6.0.6",
     "helmet": "4.6.0",
-    "html-entities": "2.3.2",
+    "html-entities": "2.3.3",
     "html-minifier": "4.0.0",
     "i18n": "0.13.3",
     "isomorphic-ws": "4.0.1",
