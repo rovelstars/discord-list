@@ -1,6 +1,5 @@
 const port = process.env.PORT || 3000;
 process.env.ANNOUNCE = "No Announcements to show!";
-var Purgecss = require("purgecss").PurgeCSS;
 var fs = require("fs");
 function shuffle(array) {
   var currentIndex = array.length,
@@ -67,63 +66,6 @@ globalThis.indent = function (str) {
       .join("\n");
     return str;
   }
-};
-
-var css = {};
-css.dracula = fs.readFileSync(
-  `${__dirname.replace("/server", "")}/public/assets/css/dracula.css`,
-  { encoding: "utf8", flag: "r" }
-);
-css.discord = fs.readFileSync(
-  `${__dirname.replace("/server", "")}/public/assets/css/discord.css`,
-  { encoding: "utf8", flag: "r" }
-);
-css.default = fs.readFileSync(
-  `${__dirname.replace("/server", "")}/public/assets/css/default.css`,
-  { encoding: "utf8", flag: "r" }
-);
-css.paranoid = fs.readFileSync(
-  `${__dirname.replace("/server", "")}/public/assets/css/paranoid.css`,
-  { encoding: "utf8", flag: "r" }
-);
-
-express.response.render = function render(view, options, callback) {
-  var tapp = this.req.app;
-  var done = callback;
-  var opts = options || {};
-  var req = this.req;
-  var self = this;
-
-  // support callback function as second arg
-  if (typeof options === "function") {
-    done = options;
-    opts = {};
-  }
-
-  // merge res.locals
-  opts._locals = self.locals;
-
-  // default callback to respond
-  done =
-    done ||
-    async function (err, str) {
-      if (err) return req.next(err);
-      if (str.includes('<style id="styling">')) {
-        var pp = await new Purgecss().purge({
-          css: [{ raw: css[req.cookies["theme"] || "default"] }],
-          content: [{ raw: str }],
-          safelist: { greedy: [/is-active$/] },
-        });
-        str = str.replace(
-          `<style id="styling"></style>`,
-          `<style id="styling">${pp[0].css}</style>`
-        );
-        self.send(str);
-      } else self.send(str);
-    };
-
-  // render
-  tapp.render(view, opts, done);
 };
 
 const app = express();
