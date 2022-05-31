@@ -834,13 +834,8 @@ router.post("/new", async (req, res) => {
                   err: "invalid_support";
               }
               if (!err && req.body.github) {
-                //if (!req.body.github.match(gitregex)) err = "invalid_github"
-                if (
-                  !req.body.github.startsWith("https://github.com/") &&
-                  !req.body.github.startsWith("https://www.github.com/") &&
-                  !req.body.github.startsWith("https://gitlab.com/")
-                )
-                  err = "invalid_github"; //lemme add my dank memer bot
+                if (!req.body.github.startsWith("https://"))
+                  err = "invalid_github";
               }
               if (!err && req.body.desc) {
                 req.body.desc = req.body.desc
