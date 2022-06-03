@@ -31,7 +31,7 @@ client.on("guildMemberRemove", (member) => {
         }
       }
     }
-    /*
+    
     if (member.user.bot) {
       Cache.Bots.findOne({ id: member.user.id }).then((bot) => {
         if (!bot) return;
@@ -58,6 +58,6 @@ client.on("guildMemberRemove", (member) => {
           }
         }
       });
-    }*/
+    }
   }
 });
