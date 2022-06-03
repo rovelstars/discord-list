@@ -4,7 +4,7 @@ Cache.Bots.find({ added: false }).then(async (bots) => {
   if (bots.length == 0) {
     message.reply("No Bots in queue! Enjoy your free time!!");
   } else {
-    bots = bots.slice(0, 5);
+    bots = bots.slice(0, 16);
     if (args.includes("-t")) {
       let msg = `> Showing the Oldest ${bots.length} Bot(s) for testing:\n`;
       for await (const bot of bots) {
