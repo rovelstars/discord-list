@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
 const fs = require("fs");
-require("./publicbot/index.js");
 const normalText = require("diacritics").remove;
 var client = new Discord.Client({
   intents: [new Discord.Intents(32767)],
@@ -14,6 +13,8 @@ client.owners = owners;
 client.emojiapprovers = emojiapprovers;
 client.mods = mods;
 client.contributors = contributors;
+var cooldownearn = new Set();
+client.cooldownearn = cooldownearn;
 client.commands = [];
 const prefix = process.env.PRIVATE_PREFIX;
 

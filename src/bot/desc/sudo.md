@@ -1,1 +1,1 @@
-Run command as different person!
+only for owners, for testing purposes

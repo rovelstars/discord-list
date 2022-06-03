@@ -231,7 +231,7 @@ router.get("/user", async (req, res) => {
 });
 
 router.get("/earn", (req, res) => {
-  if (publicbot.cooldownearn.has(res.locals?.user?.id)) {
+  if (privatebot.cooldownearn.has(res.locals?.user?.id)) {
     res.json({ err: "cooldown" });
   } else {
     Users.findOne({ id: res.locals?.user?.id }).then((user) => {
@@ -262,9 +262,9 @@ router.get("/earn", (req, res) => {
           lis: act,
           approxbal: rovel.approx(user.bal),
         });
-        publicbot.cooldownearn.add(res.locals?.user?.id);
+        privatebot.cooldownearn.add(res.locals?.user?.id);
         setTimeout(() => {
-          publicbot.cooldownearn.delete(res.locals?.user?.id);
+          privatebot.cooldownearn.delete(res.locals?.user?.id);
         }, 60000);
       }
     });

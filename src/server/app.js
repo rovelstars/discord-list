@@ -29,7 +29,7 @@ globalThis.Bots = require("@models/bots.js");
 globalThis.Users = require("@models/users.js");
 globalThis.Servers = require("@models/servers.js");
 async function Update() {
-  publicbot.guilds.cache
+  privatebot.guilds.cache
     .get("602906543356379156")
     .bans.fetch()
     .then((list) => {

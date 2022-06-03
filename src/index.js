@@ -86,7 +86,6 @@ process.on("SIGTERM", () => {
   console.log("SIGTERM Recieved!");
   console.log("Closing off bots");
   privatebot.destroy();
-  publicbot.destroy();
   console.log("Closing http server.");
   server.close(() => {
     console.log("Http server closed.");
@@ -101,7 +100,6 @@ process.on("SIGINT", () => {
   console.log("SIGINT Recieved!");
   console.log("Closing off bots");
   privatebot.destroy();
-  publicbot.destroy();
   console.log("Closing http server.");
   server.close(() => {
     console.log("Http server closed.");
