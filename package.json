@@ -51,7 +51,7 @@
     "min-indent": "1.0.1",
     "module-alias": "^2.2.2",
     "mongodb": "4.0.1",
-    "mongoose": "5.13.3",
+    "mongoose": "6.4.0",
     "natural": "5.0.3",
     "node-fetch": "2",
     "node-schedule": "2.0.0",
