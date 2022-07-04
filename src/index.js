@@ -55,6 +55,7 @@ require("@bot/index.js");
 
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
+if(process.env.SENTRY){
 Sentry.init({
   dsn: process.env.SENTRY,
   tracesSampleRate: 1.0,
@@ -62,6 +63,7 @@ Sentry.init({
 console.log(
   "[SENTRY] Initialized!\nAll issues and performance are being sent!"
 );
+}
 process.on("unhandledRejection", (error) => {
   console.warn("An Error Occurred!\n" + error.stack);
 });
@@ -98,7 +100,7 @@ process.on("SIGTERM", () => {
   }, 3000);
 });
 process.on("SIGINT", () => {
-  console.log("SIGINT Recieved!");
+  console.log("\nSIGINT Recieved!");
   console.log("Closing off bots");
   privatebot.destroy();
   publicbot.destroy();
@@ -115,7 +117,7 @@ process.on("SIGINT", () => {
 globalThis.isCopy = function () {
   if (
     process.env.DOMAIN != "https://discord.rovelstars.com" &&
-    !process.env.DOMAIN.includes("localhost:")
+   ( !process.env.DOMAIN.includes("localhost:") || !process.env.DOMAIN.includes("127.0.0.1:"))
   ) {
     return false;
   } else return true;
@@ -125,31 +127,18 @@ app.get("*", (req, res) => {
   res.status(404).render("404.ejs", { path: req.originalUrl });
 });
 
-if (!isCopy()) {
   globalThis.server = app.listen(port, () => {
     console.log(`[SERVER] Started on port: ${port}`);
   });
-  console.warn(
-    rovel.text.red(
-      "[NOTIFICATION] I noticed that you're running your own deployment of RDL. We don't support it, and also, we won't help you setup your own deployment. Please run this only for testing and fixing."
-    )
-  );
-  rovel.fetch(
-    `https://discord.rovelstars.com/api/report?link=${process.env.DOMAIN}`
-  );
-} else {
-  globalThis.server = app.listen(port, () => {
-    console.log(`[SERVER] Started on port: ${port}`);
-  });
-}
+
 globalThis.selfbot = async function (path) {
   return await fetch(`https://discord.com/api/v9${path}`, {
     headers: {
-      Authorization: process.env.SELFBOT_TOKEN,
+      Authorization: process.env.SELFBOT_TOKEN || "failure management",
     },
   }).then((r) => r.json());
 };
-
+if(process.env.SELFBOT_TOKEN) {
 selfbot("/users/@me").then((user) => {
   if (user.message == "401: Unauthorized") {
     console.log("[SELFBOT] Failed to login:");
@@ -163,6 +152,7 @@ selfbot("/users/@me").then((user) => {
     );
   }
 });
+}
 
 function addCommas(num, opts) {
   if (opts.separator === false) {
@@ -245,34 +235,6 @@ rovel.approx = function (num, opts) {
     return numString;
   }
 };
-
-const { Wallet } = require("simplebtc");
-globalThis.wallet = new Wallet({
-  address: process.env.WALLET_KEY,
-  localCurrency: process.env.CURRENCY,
-});
-
-wallet.watchNewTransactions().subscribe((transaction) => {
-  rovel.fetch(`${process.env.DOMAIN}/api/client/log`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.parse({
-      secret: process.env.SECRET,
-      title: "New Transaction!",
-      url: `https://explorer.bitcoin.com/btc/tx/${transaction.id}`,
-      desc: `**From:** ${transaction.senders.join(", ")}\n**Amount:** ${
-        transaction.amount
-      } **${wallet.localCurrency}**\n**At:** \`${rovel
-        .time(transaction.timestamp)
-        .format("ss | mm | hh A - DD/MM/YYYY Z")}\`\n**Confirmation:** ${
-        transaction.isConfirmed ? "Yes" : "No"
-      }`,
-      attachment: "https://explorer.bitcoin.com/images/social.png",
-    }),
-  });
-});
 
 globalThis.TOPTOKENS = process.env.TOPTOKEN.split("|");
 globalThis.TOPGGTOKEN = function () {

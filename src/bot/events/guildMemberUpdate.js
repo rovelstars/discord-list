@@ -22,7 +22,7 @@ client.on("guildMemberUpdate", (olduser, newuser) => {
     Users.findOne({ id: newuser.id }).then((user) => {
       if (!user) {
       } else {
-        fetch("https://discord.rovelstars.com/api/client/users/" + user.id)
+        fetch(`${process.env.DOMAIN}/api/client/users/${user.id}`)
           .then((r) => r.json())
           .then((u) => {
             if (

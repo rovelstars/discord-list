@@ -45,7 +45,6 @@ const prefers = require("@routes/prefers.js");
 const users = require("@routes/users.js");
 const comments = require("@routes/comments.js");
 globalThis.Search = require("@utils/search.js");
-var latency = require("response-time");
 globalThis.translate = require("translatte");
 const info = require("@utils/info.js");
 const express = require("express");
@@ -121,7 +120,6 @@ process.on("unhandledRejection", (err) => {
     app.use(unre);
   };
 });
-app.use(latency({ header: "ping" }));
 app.use(actuator({ basePath: "/api" }));
 var booting = require("@mw/booting.js");
 app.use(booting);

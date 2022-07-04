@@ -10,7 +10,7 @@ function log(text) {
       content: text,
     }),
   });
-  globalThis.logg(text);
+  if (process.env.CONSOLE_LOG) globalThis.logg(text);
 }
 
 function error(text) {
@@ -24,7 +24,7 @@ function error(text) {
       content: text,
     }),
   });
-  globalThis.logerr(text);
+  if (process.env.CONSOLE_LOG) globalThis.logerr(text);
 }
 
 function warn(text) {
@@ -38,6 +38,6 @@ function warn(text) {
       content: text,
     }),
   });
-  globalThis.warnn(text);
+  if (process.env.CONSOLE_LOG) globalThis.warnn(text);
 }
 module.exports = { log, error, warn };

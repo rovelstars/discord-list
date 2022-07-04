@@ -3,7 +3,7 @@ if (!args.length) {
     if (!user)
       message.reply({
         content:
-          "Oi! You need to login to get an account on RDL!\nLogin link:\nhttps://discord.rovelstars.com/login",
+          `Oi! You need to login to get an account on RDL!\nLogin link:\n${process.env.DOMAIN}/login`,
       });
     else {
       message.reply({

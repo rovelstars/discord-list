@@ -22,7 +22,21 @@ const Users = new Schema(
     mfa: { type: Boolean },
     nitro: { type: Number },
     old: { type: Boolean, default: true },
-    keys: [{ access_token: { type: String }, expires_in: { type: Number }, refresh_token: { type: String }, scope: { type: String }, expireTimestamp: { type: Number } }]
+    votes: [
+      {
+        bot: { type: String },
+        at: { type: Date , default: () => new Date()},
+      }
+    ],
+    keys: [
+      {
+        access_token: { type: String },
+        expires_in: { type: Number },
+        refresh_token: { type: String },
+        scope: { type: String },
+        expireTimestamp: { type: Number },
+      },
+    ],
   },
   {
     versionKey: false,

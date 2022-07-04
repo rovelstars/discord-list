@@ -12,7 +12,7 @@ client.on("guildMemberRemove", (member) => {
       for (const bot of bots) {
         if (bot.owners[0] == member.user.id) {
           Cache.Bots.deleteOne({ id: bot.id }, function (err) {
-            fetch("https://discord.rovelstars.com/api/client/log", {
+            fetch(`${process.env.DOMAIN}/api/client/log`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -24,7 +24,7 @@ client.on("guildMemberRemove", (member) => {
                 color: "#ff0000",
                 owners: bot.owners,
                 img: bot.avatarURL,
-                url: `https://discord.rovelstars.com/`,
+                url: `${process.env.DOMAIN}`,
               }),
             });
           });

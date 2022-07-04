@@ -6,7 +6,7 @@
 
 <br>
 
-> ## This is the old version of RDL. Kept archived for showcasing in museum. Latest version at [rdl](https://github.com/rovelstars/rdl) and will be soon exchanging repos with this! The new version is in heavy development, and supports self hosting! Check it out!
+> ## This is the old version of RDL, still working fine and is the current version. Future version at [rdl](https://github.com/rovelstars/rdl) and will be soon exchanging repos with this! The new version is in heavy development, so check em' out!
 
 <br>
 
@@ -26,6 +26,11 @@
 
 [Server Invite](https://discord.gg/E6PhZK4tU9)
 
+# Want to quickly deploy RDL? Choose Railway.app!
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/9RMDDn?referralCode=k0jRPL)
+
+
 # Can I contribute ?
 
 Yes! Please use the default prettier configuration if you use prettier.
@@ -36,38 +41,32 @@ Yes! Please use the default prettier configuration if you use prettier.
 
 -   Keep your repository open source, with the same license.
 -   Link our repository in your instance.
--   Do not edit the footer, as the default footer follows the AGPL-3.0 license.
--   Do not make a new repository on github and upload your own deployment codes there, instead fork our repository and do changes there.
+-   Do not edit the following lines from header.ejs file:
+   1. `<meta name="canonical" content="https://discord.rovelstars.com<%= req.originalUrl %>">`
+   2. `<meta name="twitter:creator" content="@rovelstars">`
+   These lines make sures you follow our license. (Better than those annoying "You are not allowed to edit this file" messages for footer on other lists, where everybody can see it directly on opening your site!)
 
 ---
 
 ## Note
 
--   You may not use our logo, or any of our images, they are copyrighted by `@sayantan300`.
--   You may not charge for the usage of your RDL instance.
--   You may not provide support for RDL.
--   You may not remove any credits to the original authors anywhere within this project. We know what code we've written, and we will recognize it.
+-   You may not use our logo, or any of our assets, they are copyrighted by `@sayantan300`.
+-   You may not remove any credits to the original authors anywhere within this project. We know what code we've written, and we will recognize it (Follows the above mentioned header.ejs file).
 
 # WARNING ⚠️!
 
-We won't help anyone with any issues unless it's really legit.
-
-Always remember to search the error on google and stackoverflow before asking us. We believe in FOSS but we are not going to spoonfeed you. Also do not spam to get help, we are humans, not robots therefore we are not available 24/7.
-
-Also note that this codebase is under archive. View the latest version at [rovelstars/discord-list](https://github.com/rovelstars/discord-list)
+We don't spoonfeed, other than that, you're welcome to ask for help!
 
 ---
 
 # SELF DEPLOYMENT 🏜️
 
-> ## Don't run this. It's not updated for a long time.
+This is for users who want to contribute to RDL, or even run a self hosted instance of RDL.
 
-This is for users who want to contribute to RDL. We **do not support others running their own deployment**
-
-- check whether you have nodejs v16.6.x or above
+- check whether you have nodejs v18.x or above
 ```sh
 $ node -v
-v16.6.1
+v18.x.x
 ```
 - install dependencies
 ```sh
@@ -79,14 +78,15 @@ $ npm i
 $ cp example.env .env && vim .env
 ```
 
+Edit `.env` file ^
+
 - start
 ```sh
 $ npm start
 ```
 
 ---
-This project is open source so we are transparent in our work and to prove we do not have bad intentions. If you're trying to run it, please only do so if you're testing or helping us.
-If your instance is public, make sure to let us know about your website in our support server.
+This project is open source so we are transparent in our work and to prove we do not have bad intentions.
 
 > Thank you for your time, love and support that make this project possible!
 

@@ -1,5 +1,3 @@
-const { AggressiveTokenizer } = require("natural");
-
 Cache.Bots.find({ added: false }).then(async (bots) => {
   if (bots.length == 0) {
     message.reply("No Bots in queue! Enjoy your free time!!");

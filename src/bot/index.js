@@ -84,9 +84,9 @@ function DiscordLog({ title, desc, color }) {
     .setTitle(title)
     .setColor(color || "#5865F2")
     .setDescription(desc)
-    .setURL("https://discord.rovelstars.com")
+    .setURL(process.env.DOMAIN)
     .setTimestamp()
-    .setThumbnail("https://discord.rovelstars.com/favicon.ico");
+    .setThumbnail(`${process.env.DOMAIN}/favicon.ico`);
 
   client.guilds.cache
     .get("602906543356379156")
@@ -219,11 +219,11 @@ router.post("/log", (req, res) => {
         .setColor(req?.body?.color || "#5865F2")
         .setDescription(req?.body?.desc || "No description provided.\n:/&&")
         .setImage(req?.body?.attachment)
-        .setURL(req?.body?.url || "https://discord.rovelstars.com")
+        .setURL(req?.body?.url || process.env.DOMAIN)
         .setTimestamp()
         .setThumbnail(
           req?.body?.img ||
-            "https://discord.rovelstars.com/assets/img/bot/logo-512.png"
+            `${process.env.DOMAIN}/assets/img/bot/logo-512.png`
         );
       if (req.body.channel != "private") {
         client.guilds.cache
@@ -249,11 +249,11 @@ router.post("/log", (req, res) => {
                   req.body.desc || "No description provided.\n:/&&"
                 )
                 .setImage(req.body.attachment)
-                .setURL(req.body.url || "https://discord.rovelstars.com")
+                .setURL(req.body.url || process.env.DOMAIN)
                 .setTimestamp()
                 .setThumbnail(
                   req.body.img ||
-                    "https://discord.rovelstars.com/assets/img/bot/logo-512.png"
+                    `${process.env.DOMAIN}/assets/img/bot/logo-512.png`
                 )
                 .setFooter(
                   `${

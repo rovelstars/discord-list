@@ -9,19 +9,16 @@ imglink: bot.bg
 <body>
  <script>
   function addVote(){
-   var coins = document.getElementById("coins");
    var submitbutton = document.getElementById("submitbutton");
    submitbutton.classList.add("is-loading");
-   fetch(`https://discord.rovelstars.com/api/bots/<%= bot.id %>/vote?coins=${coins.value}`).then(r=>r.json()).then(d=>{
+   fetch(`<%= process.env.DOMAIN %>/api/bots/<%= bot.id %>/vote`).then(r=>r.json()).then(d=>{
     submitbutton.classList.remove("is-loading");
-    if(d.err){
-     if(d.err=="coins_not_divisible") d.err="The amount you requested to spend is not divisible by 10. Remember: R$10 = 1 vote"
-     var title = d.err.split("_").join(" ").toUpperCase()
-     Swal.fire({icon: "error", title,  footer: '<a href="/dashboard">Earn some R$ from the dashboard in order to vote the bot</a>'});
+    if(!d.success){
+     Swal.fire({icon: "error", title: "Please wait before your next vote!",  footer: `Try after ${d.try_after}`});
     }
     else{
-     Swal.fire({icon: "success", title: `You Voted <%= bot.username %> with R$ ${coins.value}!`}).then(()=>{
-       window.location="https://discord.rovelstars.com/bots/<%= bot.id %>"
+     Swal.fire({icon: "success", title: `You Voted <%= bot.username %>!`, footer: "Come back again tommorow!"}).then(()=>{
+       window.location="<%= process.env.DOMAIN %>/bots/<%= bot.id %>"
      })
     }
    })
@@ -43,22 +40,11 @@ imglink: bot.bg
    </div>
    <% if(user){ %>
    <div class="section">
-   <h2>How much are you gonna spend today for voting <strong><%= bot.username %></strong>?</h2>
-   <br />
-   <form onsubmit="return false;">
-      <p class="control has-icons-left">
-   <input class="input has-background-black has-text-white" id="coins" placeholder="You have <%= user.bal %> coins at the moment.">
-   <span class="icon is-small is-left has-text-white">
-    <i class="bx bx-money"></i>
-   </span>
-  </p>
-   </form>
+   <h2>Vote <strong><%= bot.username %></strong>?</h2>
    <br />
    <div class="has-text-centered">
      <button class="button is-success has-text-white" onclick="addVote()" id="submitbutton">
-      <span class="icon"><i class="fad fa-caret-circle-up"></i></span>&nbsp;Vote</button><br /><br />
-      <a class="button is-info has-text-white" href="/dashboard">
-      <span class="icon"><i class="fad fa-caret-circle-up"></i></span>&nbsp;Earn R$</a>
+      <span class="icon"><i class="fad fa-caret-circle-up"></i></span>&nbsp;Vote</button><br />
      </div>
    </div>
    <% } else { %>

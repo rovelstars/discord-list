@@ -245,12 +245,12 @@
     }
     else if(Array.isArray(arg)){
       return arg.map(b=>{
-        const { _id, email, address, lastLogin, keys, ...user } = b._doc;
+        const { _id, email, address, lastLogin, keys, votes, ...user } = b._doc;
       return user;
       })
     }
     else {
-      const { _id, email, address, lastLogin, keys, ...user } = arg._doc;
+      const { _id, email, address, lastLogin, keys, votes, ...user } = arg._doc;
       return user;
     }
   };

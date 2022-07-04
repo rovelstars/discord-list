@@ -82,9 +82,9 @@ function DiscordLog({ title, desc, color }) {
     .setTitle(title)
     .setColor(color || "#5865F2")
     .setDescription(desc)
-    .setURL("https://discord.rovelstars.com")
+    .setURL(process.env.DOMAIN)
     .setTimestamp()
-    .setThumbnail("https://discord.rovelstars.com/favicon.ico");
+    .setThumbnail(`${process.env.DOMAIN}/favicon.ico`);
 
   client.guilds.cache
     .get("602906543356379156")

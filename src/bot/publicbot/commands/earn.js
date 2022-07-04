@@ -5,7 +5,7 @@ if (cooldownearn.has(message.author.id)) {
     if (!user)
       message.reply({
         content:
-          "Nani?! You're not logged in!\nPlease login to RDL to make an account in order to recieve money!\nLogin link:\nhttps://discord.rovelstars.com/login",
+          `Nani?! You're not logged in!\nPlease login to RDL to make an account in order to recieve money!\nLogin link:\n${process.env.DOMAIN}`,
       });
     else {
       let act = false;

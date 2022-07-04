@@ -42,18 +42,22 @@ schedule.scheduleJob("* 0 * * *", async function () {
 });
 
 function updateBotServers(i, bot) {
-  setTimeout(async () => {
-    var r = await selfbot(`/oauth2/authorize?client_id=${bot.id}&scope=bot`);
-    bot.servers = await r.bot.approximate_guild_count;
-    await bot.save();
-  }, 2000 * i);
+  if (process.env.SELFBOT_TOKEN) {
+    setTimeout(async () => {
+      var r = await selfbot(`/oauth2/authorize?client_id=${bot.id}&scope=bot`);
+      bot.servers = await r.bot.approximate_guild_count;
+      await bot.save();
+    }, 2000 * i);
+  }
 }
 
 router.get("/", (req, res) => {
   if (req.query.q) {
-    res.json(shuffle(Search(Cache.Bots.clean(Cache.AllBots), req.query.q)).slice(0, 10));
+    res.json(
+      shuffle(Search(Cache.Bots.clean(Cache.AllBots), req.query.q)).slice(0, 10)
+    );
   } else {
-    if(req.query.secret==process.env.SECRET) res.json(Cache.AllBots);
+    if (req.query.secret == process.env.SECRET) res.json(Cache.AllBots);
     else res.json(Cache.Bots.clean(Cache.AllBots));
   }
 });
@@ -121,39 +125,63 @@ router.get("/:id/vote", async (req, res) => {
       .then((r) => r.json())
       .then((d) => {
         if (d.err) return res.json({ err: "invalid_key" });
-        if (!req.query.coins) return res.json({ err: "no_coins" });
-        if (req.query.coins <= 0) return res.json({ err: "negative_coins" });
-        if (req.query.coins % 10 != 0)
-          return res.json({ err: "coins_not_divisible" });
-        const Vote = parseInt(req.query.coins) / 10;
-        Users.findOne({ id: d.id }).then((use) => {
-          if (!use) return res.json({ err: "no_user_found" });
-          if (use.bal < req.query.coins)
-            return res.json({ err: "not_enough_coins" });
-          var bot = Cache.Bots.findOneById(req.params.id);
-          if (!bot) return res.json({ err: "no_bot_found" });
-          use.bal = use.bal - req.query.coins;
-          use.save();
-          bot.votes = bot.votes + parseInt(Vote);
-          bot.save();
-          res.json({ bot });
-          if (bot.webhook) {
-            const hmm = JSON.stringify({
-              user: Cache.Users.clean(use),
-              coins: parseInt(req.query.coins),
-              votes: Vote,
-              currentVotes: bot.votes,
-            });
-            fetch(`${bot.webhook}?code=${bot.code}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: bot.code,
-              },
-              body: hmm,
-            })
-              .then((r) => {
-                if (r.status >= 300 || r.status < 200) {
+        //check if the votes array of user has the bot
+        Cache.Users.findOne({ id: d.id }).then(async (use) => {
+          let bot = await Cache.Bots.findOneById(req.params.id);
+          if (!use.votes) use.votes = [];
+          //find the bot from votes: [{bot, at}]
+          let Vote = use.votes.find((b) => b.bot == req.params.id);
+          let allow = false;
+          if (Vote) {
+            //check if Vote.at is older than 24 hours
+            if (Date.now() - Vote.at > 86400000) {
+              //if it is older than 24 hours, remove it from the votes array
+              use.votes = use.votes.filter((b) => b.bot != req.params.id);
+              allow = true;
+            }
+          }
+          if (!Vote) allow = true;
+          if (allow) {
+            //we can approve the vote
+            use.votes.push({ bot: req.params.id, at: Date.now() });
+            use.save();
+            bot.votes = bot.votes + 1;
+            bot.save();
+            res.json({ success: true });
+            console.log("Should vote", use.id, bot.id);
+            if (bot.webhook) {
+              const hmm = JSON.stringify({
+                user: Cache.Users.clean(use),
+                coins: 10,
+                votes: 1,
+                currentVotes: bot.votes,
+              });
+              fetch(`${bot.webhook}?code=${bot.code}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: bot.code,
+                },
+                body: hmm,
+              })
+                .then((r) => {
+                  if (r.status >= 300 || r.status < 200) {
+                    fetch(`${process.env.DOMAIN}/api/client/log`, {
+                      method: "POST",
+                      headers: {
+                        "content-type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        secret: process.env.SECRET,
+                        title: `Failed to send data to ${bot.tag}`,
+                        desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+                        owners: bot.owners,
+                        img: bot.avatarURL,
+                      }),
+                    });
+                  }
+                })
+                .catch((e) => {
                   fetch(`${process.env.DOMAIN}/api/client/log`, {
                     method: "POST",
                     headers: {
@@ -162,28 +190,31 @@ router.get("/:id/vote", async (req, res) => {
                     body: JSON.stringify({
                       secret: process.env.SECRET,
                       title: `Failed to send data to ${bot.tag}`,
-                      desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+                      desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
                       owners: bot.owners,
                       img: bot.avatarURL,
                     }),
                   });
-                }
-              })
-              .catch((e) => {
-                fetch(`${process.env.DOMAIN}/api/client/log`, {
-                  method: "POST",
-                  headers: {
-                    "content-type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    secret: process.env.SECRET,
-                    title: `Failed to send data to ${bot.tag}`,
-                    desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
-                    owners: bot.owners,
-                    img: bot.avatarURL,
-                  }),
                 });
-              });
+            }
+          } else {
+            let start = new Date(Vote.at);
+            start.setDate(start.getDate()+1);
+            let start2 = new Date();
+            let ree = Math.floor((start.getTime() - start2.getTime()) / 1000);
+            function secondsToHms(d) {
+              d = Number(d);
+              var h = Math.floor(d / 3600);
+              var m = Math.floor((d % 3600) / 60);
+              var s = Math.floor((d % 3600) % 60);
+
+              var hDisplay = h > 0 ? h + (h == 1 ? " hour " : " hours ") : "";
+              var mDisplay =
+                m > 0 ? m + (m == 1 ? " minute " : " minutes ") : "";
+              var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+              return hDisplay + mDisplay + sDisplay;
+            }
+            res.json({ success: false, try_after: secondsToHms(ree) });
           }
         });
       });
@@ -317,16 +348,15 @@ router.get("/:id/slug", (req, res) => {
  else res.json({ err: "no_key" })
 })*/
 router.get("/:id", (req, res) => {
-  if(req?.secret==process.env.SECRET){
-  let botu = Cache.Bots.clean(Cache.Bots.findOneById(req.params.id));
-  botu.code = Cache.Bots.findOneById(req.params.id).code;
-  botu.webhook = Cache.Bots.findOneById(req.params.id).webhook;
-  res.json(botu);
-  Cache.Bots.refreshOne(req.params.id);
-  }
-  else{
-  res.json(Cache.Bots.clean(Cache.Bots.findOneById(req.params.id)));
-  Cache.Bots.refreshOne(req.params.id);
+  if (req?.secret == process.env.SECRET) {
+    let botu = Cache.Bots.clean(Cache.Bots.findOneById(req.params.id));
+    botu.code = Cache.Bots.findOneById(req.params.id).code;
+    botu.webhook = Cache.Bots.findOneById(req.params.id).webhook;
+    res.json(botu);
+    Cache.Bots.refreshOne(req.params.id);
+  } else {
+    res.json(Cache.Bots.clean(Cache.Bots.findOneById(req.params.id)));
+    Cache.Bots.refreshOne(req.params.id);
   }
 });
 
@@ -392,10 +422,10 @@ router.get("/import/fateslist/:id", (req, res) => {
         fetch(`https://api.fateslist.xyz/bots/${req.params.id}`, {
           method: "GET",
           headers: {
-            // Not strictly required, but worthwhile for telemetry and so we know who to contact when something starts misbehaving (because JavaScript exists) 
+            // Not strictly required, but worthwhile for telemetry and so we know who to contact when something starts misbehaving (because JavaScript exists)
             "Lightleap-Dest": "Rovel Discord List",
             "Lightleap-Site": "https://discord.rovelstars.com",
-          }
+          },
         })
           .then((r) => r.json())
           .then((bot) => {
@@ -403,23 +433,31 @@ router.get("/import/fateslist/:id", (req, res) => {
               return res.json({
                 err: "not_found",
               });
-            if (bot.owners.map(u=>{return u.user.id}).includes(userid)) {
+            if (
+              bot.owners
+                .map((u) => {
+                  return u.user.id;
+                })
+                .includes(userid)
+            ) {
               var abot = {
                 id: bot.client_id || req.params.id, // Not always present, fallback to req.params.id if not
                 lib: bot.library || "custom", // Not always present
                 prefix: bot.prefix || "/", // Not always present, slash command if not, so manually set /
                 bg: bot.banner_page,
                 short: bot.description,
-                
+
                 // The two \n's are very important. Markdown tends to not work without it
                 desc: `${bot.css}\n\n${bot.long_description_raw}`,
                 support: bot.support,
-                owners: bot.owners.map(u=>{return u.user.id}),
+                owners: bot.owners.map((u) => {
+                  return u.user.id;
+                }),
                 invite: bot.invite_link,
                 github: bot.github,
                 website: bot.website,
                 donate: bot.donate == "" ? null : bot.donate,
-                imported: "Fates List"
+                imported: "Fates List",
               };
               fetch(`${process.env.DOMAIN}/api/bots/new`, {
                 method: "POST",
@@ -474,7 +512,7 @@ router.get("/import/voidbots/:id", (req, res) => {
                 github: bot.links.github,
                 website: bot.links.website,
                 donate: bot.links.donate == "" ? null : bot.links.donate,
-                imported: "Void Bots"
+                imported: "Void Bots",
               };
               fetch(`${process.env.DOMAIN}/api/bots/new`, {
                 method: "POST",
@@ -529,7 +567,7 @@ router.get("/import/topgg/:id", (req, res) => {
                 invite: bot.invite,
                 github: bot.github,
                 website: bot.website,
-                imported: "Top.gg"
+                imported: "Top.gg",
               };
               fetch(`${process.env.DOMAIN}/api/bots/new`, {
                 method: "POST",
@@ -579,7 +617,7 @@ router.get("/import/del/:id", (req, res) => {
                     bot.bot.links.donation == ""
                       ? null
                       : bot.bot.links.donation,
-                  imported: "DEL"
+                  imported: "DEL",
                 };
                 fetch(`${process.env.DOMAIN}/api/bots/new`, {
                   method: "POST",
@@ -916,7 +954,9 @@ router.post("/new", async (req, res) => {
                           member = privatebot.guilds.cache
                             .get("602906543356379156")
                             .members.cache.get(meme);
-                          member?.roles?.add(role)?.catch((e) => console.log(e));
+                          member?.roles
+                            ?.add(role)
+                            ?.catch((e) => console.log(e));
                         });
                         res.send({ success: true });
                         fetch("https://discord.rovelstars.com/api/client/log", {
@@ -927,7 +967,11 @@ router.post("/new", async (req, res) => {
                           body: JSON.stringify({
                             secret: process.env.SECRET,
                             img: bot.avatarURL,
-                            desc: `**${user.username}** has been ${(!bot.imported)?"added":`imported from ${bot.imported},`} by ${
+                            desc: `**${user.username}** has been ${
+                              !bot.imported
+                                ? "added"
+                                : `imported from ${bot.imported},`
+                            } by ${
                               "<@!" + bot.owners[0] + ">"
                             }\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${
                               dd.condition == true

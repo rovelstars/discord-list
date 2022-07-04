@@ -1,7 +1,7 @@
 if (message.author.id === message.guild.ownerId) {
   Cache.models.servers.findOne({ id: message.guild.id }).then((server) => {
     if (server) {
-      fetch("https://discord.rovelstars.com/api/client/log", {
+      fetch(`${process.env.DOMAIN}/api/client/log`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -17,7 +17,7 @@ if (message.author.id === message.guild.ownerId) {
           color: "#ff0000",
           owners: message.author.id,
           img: server.iconURL,
-          url: `https://discord.rovelstars.com/`,
+          url: process.env.DOMAIN,
         }),
       });
       Cache.models.servers.deleteOne({ id: message.guild.id }, () => {});
