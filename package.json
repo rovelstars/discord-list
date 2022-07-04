@@ -14,7 +14,7 @@
     "src/public"
   ],
   "engines": {
-    "node": "^18.x"
+    "node": "^16.x"
   },
   "checkCache": "true",
   "dependencies": {
