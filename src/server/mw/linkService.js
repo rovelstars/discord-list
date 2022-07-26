@@ -63,7 +63,7 @@ router.get("/:slug", (req, res, next) => {
           }
         });
       } else {
-        res.redirect(`${process.env.DOMAIN}/bots/${bot.id}/vote`);
+        res.redirect(`https://discord.rovelstars.com${req.path}`);
       }
       });
   }

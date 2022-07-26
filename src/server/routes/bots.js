@@ -152,6 +152,7 @@ router.get("/:id/vote", async (req, res) => {
             if (bot.webhook) {
               const hmm = JSON.stringify({
                 user: Cache.Users.clean(use),
+                id: use.id,
                 coins: 10,
                 votes: 1,
                 currentVotes: bot.votes,
@@ -337,16 +338,6 @@ router.get("/:id/slug", (req, res) => {
     });
 });
 
-/*router.get("/:id/stats", (req, res) => {
- if (req.query.secret == process.env.SECRET) {
-  Bots.findOne({ id: req.params.id }).then(bot => {
-   bot.servers = req.query.servers;
-   bot.save();
-   res.json({ status: "updated" });
-  })
- }
- else res.json({ err: "no_key" })
-})*/
 router.get("/:id", (req, res) => {
   if (req?.secret == process.env.SECRET) {
     let botu = Cache.Bots.clean(Cache.Bots.findOneById(req.params.id));
@@ -412,73 +403,6 @@ router.delete("/:id", async (req, res) => {
     });
 });
 
-router.get("/import/fateslist/:id", (req, res) => {
-  if (req.query.key) {
-    var userid;
-    fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
-      .then((r) => r.json())
-      .then((user) => {
-        userid = user.id;
-        fetch(`https://api.fateslist.xyz/bots/${req.params.id}`, {
-          method: "GET",
-          headers: {
-            // Not strictly required, but worthwhile for telemetry and so we know who to contact when something starts misbehaving (because JavaScript exists)
-            "Lightleap-Dest": "Rovel Discord List",
-            "Lightleap-Site": "https://discord.rovelstars.com",
-          },
-        })
-          .then((r) => r.json())
-          .then((bot) => {
-            if (bot.reason)
-              return res.json({
-                err: "not_found",
-              });
-            if (
-              bot.owners
-                .map((u) => {
-                  return u.user.id;
-                })
-                .includes(userid)
-            ) {
-              var abot = {
-                id: bot.client_id || req.params.id, // Not always present, fallback to req.params.id if not
-                lib: bot.library || "custom", // Not always present
-                prefix: bot.prefix || "/", // Not always present, slash command if not, so manually set /
-                bg: bot.banner_page,
-                short: bot.description,
-
-                // The two \n's are very important. Markdown tends to not work without it
-                desc: `${bot.css}\n\n${bot.long_description_raw}`,
-                support: bot.support,
-                owners: bot.owners.map((u) => {
-                  return u.user.id;
-                }),
-                invite: bot.invite_link,
-                github: bot.github,
-                website: bot.website,
-                donate: bot.donate == "" ? null : bot.donate,
-                imported: "Fates List",
-              };
-              fetch(`${process.env.DOMAIN}/api/bots/new`, {
-                method: "POST",
-                headers: {
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify(abot),
-              })
-                .then((r) => r.json())
-                .then((d) => {
-                  res.json(d);
-                });
-            } else {
-              return res.json({ err: "unauth_owner" });
-            }
-          });
-      });
-  } else {
-    res.json({ err: "no_key" });
-  }
-});
 
 router.get("/import/voidbots/:id", (req, res) => {
   if (req.query.key) {
@@ -794,6 +718,7 @@ router.post("/edit", async (req, res) => {
 });
 router.post("/new", async (req, res) => {
   var err;
+  let fatescheck = req.query.fates === process.env.FATES_FAILURE;
   Cache.Bots.findOne({ id: req.body.id }).then(async (result) => {
     if (typeof result == "object")
       return res.json({ err: "bot_already_added" });
@@ -878,7 +803,8 @@ router.post("/new", async (req, res) => {
               if (!err && req.body.desc) {
                 req.body.desc = req.body.desc
                   .replaceAll("\r\n", "\n")
-                  .replaceAll("\u0009", "\t");
+                  .replaceAll("\u0009", "\t")
+                  .replaceAll("https://fateslist.xyz","https://discord.rovelstars.com");
                 req.body.desc = indent(req.body.desc);
                 req.body.desc = coronaSanitizer(req.body.desc, {
                   allowedTags: coronaSanitizer.defaults.allowedTags.concat([
@@ -907,7 +833,7 @@ router.post("/new", async (req, res) => {
               )
                 .then((r) => r.json())
                 .then((d) => {
-                  if (!err && !d.condition) {
+                  if (!err && !d.condition && !fatescheck) {
                     err = "owner_not_in_server";
                   }
                 });
@@ -940,6 +866,7 @@ router.post("/new", async (req, res) => {
                       website: req.body.website == "" ? null : req.body.website,
                       donate: req.body.donate == "" ? null : req.body.donate,
                       invite: req.body.invite,
+                      code: fatescheck?req.body.code : null
                     }).save((err, bot) => {
                       if (err) {
                         console.log("err" + err);
@@ -978,7 +905,7 @@ router.post("/new", async (req, res) => {
                                 ? "\nThe bot has been already added to the server, so they are saved as 'added'"
                                 : ""
                             }`,
-                            title: "New Bot Added!",
+                            title: `New Bot Added${fatescheck?" from Fates ListBackup":""}!`,
                             color: "#31CB00",
                             owners: bot.owners,
                             url: `https://discord.rovelstars.com/bots/${bot.id}`,
