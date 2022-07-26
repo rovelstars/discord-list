@@ -12,13 +12,17 @@
 
 ### Discord Theme
 
-<img src="https://cdn.discordapp.com/attachments/775225719743053844/847168826399260703/unknown.png" style="width: 100%"></img>
+<img src="https://windows.is-a.fail/ogp/5CWt4eAn1.png" style="width: 100%"></img>
 
 ---
 
 ### Dracula Theme
 
-<img src="https://cdn.discordapp.com/attachments/775225719743053844/847168450735374416/unknown.png" style="width: 100%"></img>
+<img src="https://windows.is-a.fail/ogp/5CWwe7OwK.png" style="width: 100%"></img>
+
+### Paranoid Theme
+
+<img src="https://windows.is-a.fail/ogp/5CWwKT0JZ.png" style="width: 100%"></img>
 
 ---
 

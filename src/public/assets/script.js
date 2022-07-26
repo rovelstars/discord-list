@@ -14,10 +14,7 @@ var run = function () {
       .setAttribute("msapplication-navbutton-color", color);
     $(".navbar").style.backgroundColor = color;
   }
-  let loading = $("#loading");
-  loading.style.transition = "0.8s";
-  loading.style.opacity = "0";
-  loading.style.display = "none";
+  
   var frames = document.getElementsByTagName("iframe");
   for (var frame of frames) {
     frame.setAttribute("sandbox", "allow-forms allow-popups");
