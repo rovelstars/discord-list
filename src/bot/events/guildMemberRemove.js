@@ -7,31 +7,6 @@ client.on("guildMemberRemove", (member) => {
       channel.send(`R.I.P ${member.user.tag}, why did you leave bro?`);
     }
 
-    if (!member.user.bot) {
-      var bots = Cache.Bots.findByOwner(member.user.id);
-      for (const bot of bots) {
-        if (bot.owners[0] == member.user.id) {
-          Cache.Bots.deleteOne({ id: bot.id }, function (err) {
-            fetch(`${process.env.DOMAIN}/api/client/log`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                secret: process.env.SECRET,
-                desc: `Bot ${bot.tag} (${bot.id}) has been deleted because the main owner (${member.user.tag})left the server.\nThe data deleted is:\n**Votes:** ${bot.votes}\nIncase he left accidentally, the above data may be added back again manually if the bot is added back to RDL`,
-                title: "Bot Deleted!",
-                color: "#ff0000",
-                owners: bot.owners,
-                img: bot.avatarURL,
-                url: `${process.env.DOMAIN}`,
-              }),
-            });
-          });
-        }
-      }
-    }
-    
     if (member.user.bot) {
       Cache.Bots.findOne({ id: member.user.id }).then((bot) => {
         if (!bot) return;
