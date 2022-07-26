@@ -54,16 +54,15 @@ router.get("/:slug", (req, res, next) => {
     next();
   } else {
     Cache.Bots.findOne({ slug: req.params.slug }).then((bot) => {
-      if (!bot) {
+      if (bot) {
+      } else{
          Cache.Servers.findOne({ slug: req.params.slug }).then((server) => {
           if (!server) {
-            res.render("404.ejs", { path: req.originalUrl });
+            res.redirect(`https://discord.rovelstars.com${req.path}`);
           } else {
             res.redirect(`${process.env.DOMAIN}/servers/${server.id}`);
           }
         });
-      } else {
-        res.redirect(`https://discord.rovelstars.com${req.path}`);
       }
       });
   }
