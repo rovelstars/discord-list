@@ -297,7 +297,7 @@ botdesc.addEventListener("keyup",async (e) => {
 function editBot(){
  var submitbutton = document.getElementById("submitbutton");
  submitbutton.classList.add("is-loading");
- fetch("https://discord.rovelstars.com/api/bots/edit",{
+ fetch("/api/bots/edit",{
   method: "POST",
   redirect: "follow",
   referrer: "https://discord.rovelstars.com/api/bots/edit",
@@ -398,7 +398,7 @@ function editBot(){
     text: "Your bot <%= bot.tag %> was successfully edited!",
     footer: '<a href="/server">Why do I need to keep DMs open?</a>'
    }).then(()=>{
-    window.location.replace(`https://discord.rovelstars.com/bots/${botid.value}`);
+    window.location.pathname.replace(`/bots/${botid.value}`);
    });
   }
  })

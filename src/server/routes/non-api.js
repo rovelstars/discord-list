@@ -315,6 +315,9 @@ router.get("/login", (req, res) => {
   if(req.query.email=="false"){
     loginlink=loginlink.replace("%20email","");
   }
+  if(req.hostname == "fateslist.xyz"){
+    loginlink=loginlink.replace("https://discord.rovelstars.com","https://fateslist.xyz");
+  }
   res.redirect(loginlink);
 });
 
@@ -341,14 +344,14 @@ router.get("/logout", async (req, res) => {
   }
   if (req.query.return) {
     res.redirect(
-      decodeURI(req.query.return).replace("https://discord.rovelstars.com", "")
+      decodeURI(req.query.return).replace("https://discord.rovelstars.com", "").replace("https://fateslist.xyz", "")
     );
   } else if (req.cookies["return"]) {
     res.redirect(
       decodeURI(req.cookies["return"]).replace(
         "https://discord.rovelstars.com",
         ""
-      )
+      ).replace("https://fateslist.xyz", "")
     );
   } else {
     res.redirect("/");

@@ -179,7 +179,7 @@ style="background-image:url(.svg);background-size:cover">
    }
     var <%= earnfun %> = function(){
     $("#earn").innerText="Earning...";
-    fetch("https://discord.rovelstars.com/api/auth/earn").then(r=>r.json()).then(d=>{
+    fetch("/api/auth/earn").then(r=>r.json()).then(d=>{
      if(d.err){
       Swal.fire({title:"Error",icon:"error",text:d.err.replace("_").join(" ")}).then(()=>{
       $("#earn").innerText="Failed. Try again to earn";
@@ -197,7 +197,7 @@ style="background-image:url(.svg);background-size:cover">
   var syncfun = function(){
    var sc = document.getElementById("sync");
    sc.innerText="In Progress...";
-   fetch("https://discord.rovelstars.com/api/users/<%= user.id %>/sync").then(r=>r.json()).then(d=>{
+   fetch("/api/users/<%= user.id %>/sync").then(r=>r.json()).then(d=>{
     if(d.success){
      sc.innerText="Successful!";
      setTimeout(()=>{

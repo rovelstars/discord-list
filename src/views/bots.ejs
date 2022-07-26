@@ -91,7 +91,7 @@ input.addEventListener("keyup", async (event) => {
      $("#loading").style.display="";
      $("#loading").style.opacity="1";
      document.getElementById("results-title").innerHTML="";
-     fetch("https://discord.rovelstars.com/api/bots?q="+encodeURI(input.value)).then(r=>r.json()).then(bots=>{
+     fetch("/api/bots?q="+encodeURI(input.value)).then(r=>r.json()).then(bots=>{
       $("#loading").style.opacity="0";
       $("#loading").style.display="none";
       if(!bots.length){ page.innerHTML = "<p>Uh Oh! No Bots found related to your query! 😔</p></ br>"+page.innerHTML;twemoji.parse(document.body);}

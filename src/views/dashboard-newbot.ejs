@@ -235,7 +235,7 @@ var botdesc = document.getElementById("botdesc");
 var visualizer = document.getElementById("livedesc");
 var botid = document.getElementById("botid");
 botid.addEventListener("keyup", async(e)=>{
- fetch("https://discord.rovelstars.com/api/client/users/"+botid.value).then(r=>r.json()).then(d=>{
+ fetch("/api/client/users/"+botid.value).then(r=>r.json()).then(d=>{
   document.getElementById("bot-avatar").src=(d.avatar)?`https://cdn.discordapp.com/avatars/${d.id}/${d.avatar}.png`:`https://cdn.discordapp.com/embed/avatars/${d.discriminator%5}.png`;
   document.getElementById("bot-username").innerText=d.username;
  })
@@ -313,7 +313,7 @@ function addBot(){
   owners = owners.filter(a=>{return (a!="")});
  var submitbutton = document.getElementById("submitbutton");
  submitbutton.classList.add("is-loading");
- fetch("https://discord.rovelstars.com/api/bots/new",{
+ fetch("/api/bots/new",{
   method: "POST",
   redirect: "follow",
   referrer: "https://discord.rovelstars.com/api/bots/new",
@@ -416,7 +416,7 @@ function addBot(){
     text: "And now make sure your DMs are open in our server!",
     footer: '<a href="/server">Why do I need to keep DMs open?</a>'
    }).then(()=>{
-    window.location.replace(`https://discord.rovelstars.com/bots/${botid.value}`);
+    window.location.pathname.replace(`/bots/${botid.value}`);
    });
   }
  })

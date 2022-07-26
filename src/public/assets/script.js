@@ -61,7 +61,7 @@ var run = function () {
       Swal.fire({
         title: "Hey New Visitor!",
         text: "Allow us to introduce RDL!",
-        imageUrl: "https://discord.rovelstars.com/assets/img/bot/logo.svg",
+        imageUrl: "/assets/img/bot/logo.svg",
         imageWidth: 100,
         imageHeight: 100,
         showCancelButton: false,
@@ -144,9 +144,9 @@ var run = function () {
 setTimeout(run, localStorage.allowCookies=="yes"?0:3000);
 
 function onHover() {
-  $("rdllogo").src = "https://discord.rovelstars.com/assets/img/bot/pet.gif";
+  $("rdllogo").src = "/assets/img/bot/pet.gif";
 }
 
 function offHover() {
-  $("#rdllogo").src = "https://discord.rovelstars.com/assets/img/bot/logo.svg";
+  $("#rdllogo").src = "/assets/img/bot/logo.svg";
 }

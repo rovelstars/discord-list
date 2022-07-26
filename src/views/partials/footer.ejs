@@ -16,7 +16,7 @@
      <p class="has-text-grey-light">We are not affiliated with Discord in any way. All trademarks, copyrights and logos belong to their respective companies. Discord, Twitter And GitHub logos is owned by their respective companies.</p>
      <p class="has-text-grey-light">Have a nice day!</p>
     <script src="https://arc.io/widget.min.js#PxMeXGd9"></script>
-    <button id="rdl-widget" onclick="document.getElementById('rdl-widget').classList.add('scale-out-center');Swal.fire({title: 'Announcement', text: '<%= process.env.ANNOUNCE || 'There\'s no announcement currently.' %>', imageWidth: 100, imageHeight: 100, imageUrl: 'https://discord.rovelstars.com/assets/img/announce.png', didRender: twemoji.parse}).then(()=>{document.getElementById('rdl-widget').classList.remove('scale-out-center')});">
+    <button id="rdl-widget" onclick="document.getElementById('rdl-widget').classList.add('scale-out-center');Swal.fire({title: 'Announcement', text: '<%= process.env.ANNOUNCE || 'There\'s no announcement currently.' %>', imageWidth: 100, imageHeight: 100, imageUrl: '/assets/img/announce.png', didRender: twemoji.parse}).then(()=>{document.getElementById('rdl-widget').classList.remove('scale-out-center')});">
 			<img src="/assets/img/announce.png" /></button>
   <% }else{ %>
   <%= "Have a nice day!" %>

@@ -13,7 +13,7 @@ imglink: undefined
    var list = document.getElementById("list");
    var submitbutton = document.getElementById("submitbutton");
    submitbutton.classList.add("is-loading");
-   fetch(`https://discord.rovelstars.com/api/bots/import/${list.value}/${botid.value}`).then(r=>r.json()).then(res=>{
+   fetch(`/api/bots/import/${list.value}/${botid.value}`).then(r=>r.json()).then(res=>{
     submitbutton.classList.remove("is-loading");
     if(res.err){
      const title = res.err.split(" ").join("_");
@@ -22,7 +22,7 @@ imglink: undefined
     else{
      Swal.fire({title: "Bot Successfully Imported!", icon: "success"}).then(()=>{
 
-       window.location = `https://discord.rovelstars.com/bots/${botid.value}`
+       window.location = `/bots/${botid.value}`
      })
     }
    })
