@@ -718,7 +718,6 @@ router.post("/edit", async (req, res) => {
 });
 router.post("/new", async (req, res) => {
   var err;
-  let fatescheck = req.query.fates === process.env.FATES_FAILURE;
   Cache.Bots.findOne({ id: req.body.id }).then(async (result) => {
     if (typeof result == "object")
       return res.json({ err: "bot_already_added" });
@@ -804,7 +803,6 @@ router.post("/new", async (req, res) => {
                 req.body.desc = req.body.desc
                   .replaceAll("\r\n", "\n")
                   .replaceAll("\u0009", "\t")
-                  .replaceAll("https://fateslist.xyz","https://discord.rovelstars.com");
                 req.body.desc = indent(req.body.desc);
                 req.body.desc = coronaSanitizer(req.body.desc, {
                   allowedTags: coronaSanitizer.defaults.allowedTags.concat([
@@ -833,7 +831,7 @@ router.post("/new", async (req, res) => {
               )
                 .then((r) => r.json())
                 .then((d) => {
-                  if (!err && !d.condition && !fatescheck) {
+                  if (!err && !d.condition) {
                     err = "owner_not_in_server";
                   }
                 });
@@ -866,7 +864,6 @@ router.post("/new", async (req, res) => {
                       website: req.body.website == "" ? null : req.body.website,
                       donate: req.body.donate == "" ? null : req.body.donate,
                       invite: req.body.invite,
-                      code: fatescheck?req.body.code : null
                     }).save((err, bot) => {
                       if (err) {
                         console.log("err" + err);
@@ -905,7 +902,7 @@ router.post("/new", async (req, res) => {
                                 ? "\nThe bot has been already added to the server, so they are saved as 'added'"
                                 : ""
                             }`,
-                            title: `New Bot Added${fatescheck?" from Fates ListBackup":""}!`,
+                            title: `New Bot Added!`,
                             color: "#31CB00",
                             owners: bot.owners,
                             url: `https://discord.rovelstars.com/bots/${bot.id}`,
