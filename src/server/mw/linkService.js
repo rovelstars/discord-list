@@ -49,6 +49,26 @@ router.get("/b/:slug/vote", (req, res, next) => {
   }
 });
 
+router.get("/:slug", (req, res, next) => {
+  if (req.hostname != "fateslist.xyz") {
+    next();
+  } else {
+    Cache.Bots.findOne({ slug: req.params.slug }).then((bot) => {
+      if (!bot) {
+         Cache.Servers.findOne({ slug: req.params.slug }).then((server) => {
+          if (!server) {
+            res.render("404.ejs", { path: req.originalUrl });
+          } else {
+            res.redirect(`${process.env.DOMAIN}/servers/${server.id}`);
+          }
+        });
+      } else {
+        res.redirect(`${process.env.DOMAIN}/bots/${bot.id}/vote`);
+      });
+  }
+});
+
+
 router.get("/s/:slug", (req, res, next) => {
   if (req.hostname != "dscrdly.com") {
     next();
