@@ -61,7 +61,7 @@ router.get("/:slug", (req, res, next) => {
           if (server) {
             res.redirect(`https://fateslist.xyz/servers/${server.id}`);
           } else {
-            res.redirect(`https://discord.rovelstars.com${req.path}`);
+            next();
           }
         });
       }
