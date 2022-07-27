@@ -2,7 +2,6 @@ const { langs } = require("../../data.js");
 
 module.exports = async function (req, res, next) {
   res.locals.req = req;
-  req.originalUrl = req.originalUrl.replace("https://fateslist.xyz","https://discord.rovelstars.com");
   var themes = ["discord", "dracula", "paranoid"];
   if (!themes.includes(req.cookies["theme"])) {
     req.cookies["theme"] = "discord";

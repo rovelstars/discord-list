@@ -49,27 +49,6 @@ router.get("/b/:slug/vote", (req, res, next) => {
   }
 });
 
-router.get("/:slug", (req, res, next) => {
-  if (req.hostname != "fateslist.xyz") {
-    next();
-  } else {
-    Cache.Bots.findOne({ slug: req.params.slug }).then((bot) => {
-      if (bot) {
-        res.redirect(`https://fateslist.xyz/bots/${bot.id}`);
-      } else{
-         Cache.Servers.findOne({ slug: req.params.slug }).then((server) => {
-          if (server) {
-            res.redirect(`https://fateslist.xyz/servers/${server.id}`);
-          } else {
-            next();
-          }
-        });
-      }
-      });
-  }
-});
-
-
 router.get("/s/:slug", (req, res, next) => {
   if (req.hostname != "dscrdly.com") {
     next();
