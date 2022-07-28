@@ -119,14 +119,14 @@ router.get("/bots/:id/vote", async (req, res) => {
   if (!res.locals.user) {
     var bot = Cache.Bots.findOneById(req.params.id);
     if (!bot) {
-      res.render("404.ejs", { path: req.originalUrl });
+      res.status(404).render("404.ejs", { path: req.originalUrl });
     } else {
       res.render("botvote.ejs", { bot });
     }
   } else {
     var bot = Cache.Bots.findOneById(req.params.id);
     if (!bot) {
-      res.render("404.ejs", { path: req.originalUrl });
+      res.status(404).render("404.ejs", { path: req.originalUrl });
     } else {
       var u = await Users.findOne({ id: res.locals.user.id });
       if (!u) {
@@ -143,7 +143,7 @@ router.get("/bots/:id/vote", async (req, res) => {
 router.get("/bots/:slug/invite", (req, res, next) => {
   Cache.Bots.findOne({ slug: req.params.slug }).then((bot) => {
     if (!bot) {
-      res.render("404.ejs", { path: req.originalUrl });
+      res.status(404).render("404.ejs", { path: req.originalUrl });
     } else {
       res.redirect(bot.invite);
     }
@@ -155,7 +155,7 @@ router.get("/bots/:id", async (req, res) => {
     async () => {
       var bot = Cache.Bots.findOneById(req.params.id);
       if (!bot) {
-        res.render("404.ejs", { path: req.originalUrl });
+        res.status(404).render("404.ejs", { path: req.originalUrl });
       } else {
         bot.desc = marked.parse(bot.desc.replace(/&gt;+/g, ">"));
         bot.owner = [];
