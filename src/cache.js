@@ -153,6 +153,47 @@
     }).filter(Boolean);
   };
 
+  Bots.importByID = function (id,message) {
+    fetch(`https://top.gg/api/bots/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `${globalThis.TOPGGTOKEN()}`,
+          },
+        })
+          .then((r) => r.json())
+          .then((bot) => {
+            if (bot.error){
+              return message.reply(bot.error.toLowerCase().split(" ").join("_"));
+            }
+            message.reply(`Importing Bot ${bot.username}`);
+              var abot = {
+                id: bot.id,
+                lib: bot.lib == "" ? "none" : bot.lib,
+                prefix: bot.prefix,
+                short: bot.shortdesc,
+                desc: bot.longdesc,
+                support: bot.support,
+                bg: bot.bannerUrl,
+                owners: bot.owners,
+                invite: bot.invite,
+                github: bot.github,
+                website: bot.website,
+                imported: "Backup DB",
+              };
+              fetch(`${process.env.DOMAIN}/api/bots/new`, {
+                method: "POST",
+                headers: {
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify(abot),
+              })
+                .then((r) => r.json())
+                .then((d) => {
+                  message.reply("```json\n"+JSON.stringify(d)+"\n```");
+                });
+          });
+  }
+
   Bots.deleteOne = function (obj, callback) {
     let err = undefined;
     if (!obj) {

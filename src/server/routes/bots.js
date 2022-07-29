@@ -831,7 +831,7 @@ router.post("/new", async (req, res) => {
               )
                 .then((r) => r.json())
                 .then((d) => {
-                  if (!err && !d.condition) {
+                  if (!err && !d.condition && !req.body.imported) {
                     err = "owner_not_in_server";
                   }
                 });
