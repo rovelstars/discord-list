@@ -36,20 +36,21 @@ schedule.scheduleJob(rule, async function () {
 schedule.scheduleJob("* 0 * * *", async function () {
   Cache.Bots.find({}).then(async (bots) => {
     for (var [i, bot] of bots.entries()) {
-      updateBotServers(i, bot);
+      updateBotServers(bot, i);
     }
   });
 });
 
-function updateBotServers(i, bot) {
+function updateBotServers(bot, i) {
   if (process.env.SELFBOT_TOKEN) {
     setTimeout(async () => {
-      var r = await selfbot(`/oauth2/authorize?client_id=${bot.id}&scope=bot`);
+      var r = await selfbot(`/oauth2/authorize?client_id=${bot?.id || bot}&scope=bot`);
       bot.servers = await r.bot.approximate_guild_count;
       await bot.save();
-    }, 2000 * i);
+    }, i?(2000 * i):100);
   }
 }
+globalThis.updateBotServers = updateBotServers;
 
 router.get("/", (req, res) => {
   if (req.query.q) {
@@ -864,6 +865,7 @@ router.post("/new", async (req, res) => {
                       website: req.body.website == "" ? null : req.body.website,
                       donate: req.body.donate == "" ? null : req.body.donate,
                       invite: req.body.invite,
+                      code: passgen()
                     }).save((err, bot) => {
                       if (err) {
                         console.log("err" + err);
