@@ -82,7 +82,11 @@ router.get("/:id/changeVoteType", (req, res) => {
             bot.opted_coins = false;
             bot.save();
           }
-          res.json({type: bot.opted_coins?"coins":"time"});
+          return res.json({type: bot.opted_coins?"coins":"time"});
+        }
+        else{
+          let bot = Cache.Bots.findOneById(req.params.id);
+          return res.json({type: bot.opted_coins?"coins":"time"});
         }
       });
   }
