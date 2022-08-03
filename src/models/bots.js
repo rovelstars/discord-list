@@ -47,6 +47,10 @@ const Bots = new Schema(
       },
       unique: true,
     },
+    opted_coins: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     versionKey: false,

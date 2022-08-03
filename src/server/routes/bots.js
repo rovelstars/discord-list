@@ -47,7 +47,7 @@ function updateBotServers(bot, i) {
       var r = await selfbot(`/oauth2/authorize?client_id=${bot?.id || bot}&scope=bot`);
       bot.servers = await r.bot.approximate_guild_count;
       await bot.save();
-    }, i?(2000 * i):100);
+    }, i ? (2000 * i) : 100);
   }
 }
 globalThis.updateBotServers = updateBotServers;
@@ -62,6 +62,31 @@ router.get("/", (req, res) => {
     else res.json(Cache.Bots.clean(Cache.AllBots));
   }
 });
+
+router.get("/:id/changeVoteType", (req, res) => {
+  if (!req.query.key) res.json({ err: "not_logged in" });
+  else {
+    fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.err) return res.json({ err: "invalid_key" });
+        if (req.query.type) {
+          let bot = Cache.Bots.findOneById(req.params.id);
+          if (!bot) return res.json({ err: "bot_not_found" });
+          if(!bot.owners.includes(d.id)) return res.json({err: "unauth"});
+          if (req.query.type == "coins") {
+            bot.opted_coins = true;
+            bot.save();
+          }
+          else if(req.query.type == "time"){
+            bot.opted_coins = false;
+            bot.save();
+          }
+          res.json({type: bot.opted_coins?"coins":"time"});
+        }
+      });
+  }
+})
 
 router.get("/report", (req, res) => {
   if (req.query.leaked) {
@@ -129,6 +154,9 @@ router.get("/:id/vote", async (req, res) => {
         //check if the votes array of user has the bot
         Cache.Users.findOne({ id: d.id }).then(async (use) => {
           let bot = await Cache.Bots.findOneById(req.params.id);
+          let votingType = bot.opted_coins?"coins":"time";
+          let hmm;
+          if(votingType=="time"){
           if (!use.votes) use.votes = [];
           //find the bot from votes: [{bot, at}]
           let Vote = use.votes.find((b) => b.bot == req.params.id);
@@ -149,15 +177,15 @@ router.get("/:id/vote", async (req, res) => {
             bot.votes = bot.votes + 1;
             bot.save();
             res.json({ success: true });
-            console.log("Should vote", use.id, bot.id);
             if (bot.webhook) {
-              const hmm = JSON.stringify({
+               hmm = JSON.stringify({
                 user: Cache.Users.clean(use),
                 id: use.id,
                 coins: 10,
                 votes: 1,
                 currentVotes: bot.votes,
               });
+
               fetch(`${bot.webhook}?code=${bot.code}`, {
                 method: "POST",
                 headers: {
@@ -201,7 +229,7 @@ router.get("/:id/vote", async (req, res) => {
             }
           } else {
             let start = new Date(Vote.at);
-            start.setDate(start.getDate()+1);
+            start.setDate(start.getDate() + 1);
             let start2 = new Date();
             let ree = Math.floor((start.getTime() - start2.getTime()) / 1000);
             function secondsToHms(d) {
@@ -218,6 +246,74 @@ router.get("/:id/vote", async (req, res) => {
             }
             res.json({ success: false, try_after: secondsToHms(ree) });
           }
+        }
+        else if(votingType=="coins"){
+          if (!req.query.coins) return res.json({ err: "no_coins" });
+        if (req.query.coins <= 0) return res.json({ err: "negative_coins" });
+        if (req.query.coins % 10 != 0)
+          return res.json({ err: "coins_not_divisible" });
+        const Vote = parseInt(req.query.coins) / 10;
+        Users.findOne({ id: d.id }).then((use) => {
+          if (!use) return res.json({ err: "no_user_found" });
+          if (use.bal < req.query.coins)
+            return res.json({ err: "not_enough_coins" });
+          var bot = Cache.Bots.findOneById(req.params.id);
+          if (!bot) return res.json({ err: "no_bot_found" });
+          use.bal = use.bal - req.query.coins;
+          use.save();
+          bot.votes = bot.votes + parseInt(Vote);
+          bot.save();
+          res.json({ bot });
+          if (bot.webhook) {
+            const hmm = JSON.stringify({
+              user: Cache.Users.clean(use),
+              coins: parseInt(req.query.coins),
+              votes: Vote,
+              currentVotes: bot.votes,
+            });
+            fetch(`${bot.webhook}?code=${bot.code}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: bot.code,
+              },
+              body: hmm,
+            })
+              .then((r) => {
+                if (r.status >= 300 || r.status < 200) {
+                  fetch(`${process.env.DOMAIN}/api/client/log`, {
+                    method: "POST",
+                    headers: {
+                      "content-type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      secret: process.env.SECRET,
+                      title: `Failed to send data to ${bot.tag}`,
+                      desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+                      owners: bot.owners,
+                      img: bot.avatarURL,
+                    }),
+                  });
+                }
+              })
+              .catch((e) => {
+                fetch(`${process.env.DOMAIN}/api/client/log`, {
+                  method: "POST",
+                  headers: {
+                    "content-type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    secret: process.env.SECRET,
+                    title: `Failed to send data to ${bot.tag}`,
+                    desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+                    owners: bot.owners,
+                    img: bot.avatarURL,
+                  }),
+                });
+              });
+          }
+        });
+        }
         });
       });
   }
@@ -386,11 +482,10 @@ router.delete("/:id", async (req, res) => {
               },
               body: JSON.stringify({
                 secret: process.env.SECRET,
-                desc: `Bot <@!${req.params.id}> has been deleted by <@!${
-                  d.id
-                }>\nThe data deleted is:\n\`\`\`\n${JSON.stringify(
-                  bot
-                )}\n\`\`\`\nIncase it was deleted accidentally, the above data may be added back again manually if the bot is added back to RDL`,
+                desc: `Bot <@!${req.params.id}> has been deleted by <@!${d.id
+                  }>\nThe data deleted is:\n\`\`\`\n${JSON.stringify(
+                    bot
+                  )}\n\`\`\`\nIncase it was deleted accidentally, the above data may be added back again manually if the bot is added back to RDL`,
                 title: "Bot Deleted!",
                 color: "#ff0000",
                 owners: bot.owners,
@@ -893,17 +988,14 @@ router.post("/new", async (req, res) => {
                           body: JSON.stringify({
                             secret: process.env.SECRET,
                             img: bot.avatarURL,
-                            desc: `**${user.username}** has been ${
-                              !bot.imported
+                            desc: `**${user.username}** has been ${!bot.imported
                                 ? "added"
                                 : `imported from ${bot.imported},`
-                            } by ${
-                              "<@!" + bot.owners[0] + ">"
-                            }\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${
-                              dd.condition == true
+                              } by ${"<@!" + bot.owners[0] + ">"
+                              }\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${dd.condition == true
                                 ? "\nThe bot has been already added to the server, so they are saved as 'added'"
                                 : ""
-                            }`,
+                              }`,
                             title: `New Bot Added!`,
                             color: "#31CB00",
                             owners: bot.owners,
