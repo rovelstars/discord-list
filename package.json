@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.0",
-    "bulma": "0.9.3",
+    "bulma": "0.9.4",
     "ejs-lint": "^1.2.1",
     "eslint": "^7.31.0",
     "keyboard-css": "1.2.4",
