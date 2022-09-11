@@ -30,11 +30,6 @@
 
 [Server Invite](https://discord.gg/E6PhZK4tU9)
 
-# Want to quickly deploy RDL? Choose Railway.app!
-
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/9RMDDn?referralCode=k0jRPL)
-
-
 # Can I contribute ?
 
 Yes! Please use the default prettier configuration if you use prettier.
