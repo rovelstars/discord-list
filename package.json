@@ -37,7 +37,7 @@
     "helmet": "4.6.0",
     "html-entities": "2.3.2",
     "html-minifier": "4.0.0",
-    "i18n": "0.13.3",
+    "i18n": "0.15.1",
     "isomorphic-ws": "4.0.1",
     "marked": "^4.0.12",
     "min-indent": "1.0.1",
