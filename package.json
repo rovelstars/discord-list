@@ -38,7 +38,7 @@
     "html-entities": "2.3.2",
     "html-minifier": "4.0.0",
     "i18n": "0.13.3",
-    "isomorphic-ws": "4.0.1",
+    "isomorphic-ws": "5.0.0",
     "marked": "^4.0.12",
     "min-indent": "1.0.1",
     "module-alias": "^2.2.2",
