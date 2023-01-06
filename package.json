@@ -48,7 +48,7 @@
     "node-schedule": "2.0.0",
     "passport": "0.4.1",
     "proxy-list-random": "1.0.2",
-    "purgecss": "4.0.3",
+    "purgecss": "5.0.0",
     "rdl-i18n": "github:rovelstars/rdl-i18n",
     "rovel.js": "1.2.0",
     "sanitize-html": "2.4.0",
