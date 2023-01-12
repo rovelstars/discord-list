@@ -1,6 +1,6 @@
 var run = function () {
   var emojiparse = function (body) {
-    return twemoji.parse(body, emojiopts);
+    return globalThis?.twemoji?.parse(body, emojiopts);
   };
   var theme = $("#meta-theme");
   if (theme) {
@@ -129,7 +129,7 @@ var run = function () {
   if (logout) {
     logout.href = `/logout?return=${encodeURI(window.location)}`;
   }
-  twemoji.parse(document.body, emojiopts);
+  globalThis?.twemoji?.parse(document.body, emojiopts);
   // Check for click events on the navbar burger icon
   $(".navbar-burger").addEventListener("click", function () {
     // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
