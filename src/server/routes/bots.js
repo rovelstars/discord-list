@@ -479,7 +479,7 @@ router.delete("/:id", async (req, res) => {
           Bots.deleteOne({ id: req.params.id }, function (err) {
             if (err) return res.json(err);
             res.json({ deleted: true });
-            fetch(`${process.env.DOMAIN}/api/client/log", {
+            fetch(`${process.env.DOMAIN}/api/client/log`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
