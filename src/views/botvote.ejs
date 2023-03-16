@@ -13,7 +13,7 @@ imglink: bot.bg
        var coins = document.getElementById("coins");
        var submitbutton = document.getElementById("submitbutton");
        submitbutton.classList.add("is-loading");
-       fetch(`https://discord.rovelstars.com/api/bots/<%= bot.id %>/vote?coins=${coins.value}`).then(r=>r.json()).then(d=>{
+       fetch(`<%= process.env.DOMAIN %>/api/bots/<%= bot.id %>/vote?coins=${coins.value}`).then(r=>r.json()).then(d=>{
         submitbutton.classList.remove("is-loading");
         if(d.err){
          if(d.err=="coins_not_divisible") d.err="The amount you requested to spend is not divisible by 10. Remember: R$10 = 1 vote"
@@ -22,7 +22,7 @@ imglink: bot.bg
         }
         else{
          Swal.fire({icon: "success", title: `You Voted <%= bot.username %> with R$ ${coins.value}!`}).then(()=>{
-           window.location="https://discord.rovelstars.com/bots/<%= bot.id %>"
+           window.location="<%= process.env.DOMAIN %>/bots/<%= bot.id %>"
          })
         }
        })

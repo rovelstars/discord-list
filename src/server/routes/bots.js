@@ -343,7 +343,7 @@ router.get("/:id/sync", (req, res) => {
   if (!user) {
     res.json({ err: "not_found" });
   } else {
-    fetch("https://discord.rovelstars.com/api/client/users/" + user.id)
+    fetch(`${process.env.DOMAIN}/api/client/users/` + user.id)
       .then((r) => r.json())
       .then((u) => {
         if (
@@ -368,7 +368,7 @@ router.get("/:id/sync", (req, res) => {
           }
           user.save();
           res.json({ success: true, bot: user });
-          fetch("https://discord.rovelstars.com/api/client/log", {
+          fetch(`${process.env.DOMAIN}/api/client/log`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -379,7 +379,7 @@ router.get("/:id/sync", (req, res) => {
               desc: num,
               title: `Bot ${u.tag} Data Updated!`,
               color: "#FEE75C",
-              url: `https://discord.rovelstars.com/bots/${u.id}`,
+              url: `${process.env.DOMAIN}/bots/${u.id}`,
             }),
           });
         }
@@ -479,7 +479,7 @@ router.delete("/:id", async (req, res) => {
           Bots.deleteOne({ id: req.params.id }, function (err) {
             if (err) return res.json(err);
             res.json({ deleted: true });
-            fetch("https://discord.rovelstars.com/api/client/log", {
+            fetch(`${process.env.DOMAIN}/api/client/log", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -494,7 +494,7 @@ router.delete("/:id", async (req, res) => {
                 color: "#ff0000",
                 owners: bot.owners,
                 img: bot.avatarURL,
-                url: `https://discord.rovelstars.com/`,
+                url: process.env.DOMAIN,
               }),
             });
           });
@@ -984,7 +984,7 @@ router.post("/new", async (req, res) => {
                             ?.catch((e) => console.log(e));
                         });
                         res.send({ success: true });
-                        fetch("https://discord.rovelstars.com/api/client/log", {
+                    fetch(`${process.env.DOMAIN}/api/client/log`, {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json",
@@ -1003,7 +1003,7 @@ router.post("/new", async (req, res) => {
                             title: `New Bot Added!`,
                             color: "#31CB00",
                             owners: bot.owners,
-                            url: `https://discord.rovelstars.com/bots/${bot.id}`,
+                            url: `${process.env.DOMAIN}/bots/${bot.id}`,
                           }),
                         });
                       }

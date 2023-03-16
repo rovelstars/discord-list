@@ -44,7 +44,7 @@ router.get("/:id/delete", (req, res) => {
       }
 
       res.json({ deleted: true });
-      fetch("https://discord.rovelstars.com/api/client/log", {
+      fetch(`${process.env.DOMAIN}/api/client/log`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +56,7 @@ router.get("/:id/delete", (req, res) => {
           color: "#ff0000",
           owners: [user.id],
           img: user.avatarURL,
-          url: `https://discord.rovelstars.com/`,
+          url: process.env.DOMAIN,
         }),
       });
       Cache.Users.deleteOne({ id: user.id }, () => {});
@@ -67,7 +67,7 @@ router.get("/:id/sync", (req, res) => {
   Users.findOne({ id: req.params.id }).then((user) => {
     if (!user) return res.json({ err: "not_found" });
     else {
-      fetch("https://discord.rovelstars.com/api/client/users/" + user.id)
+      fetch(`${process.env.DOMAIN}/api/client/users/` + user.id)
         .then((r) => r.json())
         .then((u) => {
           if (
@@ -87,7 +87,7 @@ router.get("/:id/sync", (req, res) => {
               user.discriminator = u.discriminator;
             }
             user.save();
-            fetch("https://discord.rovelstars.com/api/client/log", {
+            fetch(`${process.env.DOMAIN}/api/client/log`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -100,7 +100,7 @@ router.get("/:id/sync", (req, res) => {
                 )}\n\`\`\``,
                 title: ` User ${u.tag} Data Updated!`,
                 color: "#FEE75C",
-                url: `https://discord.rovelstars.com/users/${u.id}`,
+                url: `${process.env.DOMAIN}/users/${u.id}`,
               }),
             });
             res.json({ success: true });
