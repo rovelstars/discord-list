@@ -1,5 +1,5 @@
 let router = require("express").Router();
-
+/*
 router.all("*", (req, res, next) => {
   if (req.hostname == "rovelstars.com") {
     res.set("location", `https://discord.rovelstars.com${req.path}`);
@@ -70,5 +70,6 @@ router.get("*", (req, res, next) => {
     next();
   }
 });
-
+*/
+//we disabled the link service until the main domain is renewed
 module.exports = router;
