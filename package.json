@@ -45,7 +45,7 @@
     "mongodb": "4.0.1",
     "mongoose": "5.13.3",
     "node-fetch": "2",
-    "node-schedule": "2.0.0",
+    "node-schedule": "2.1.1",
     "passport": "0.4.1",
     "proxy-list-random": "1.0.2",
     "purgecss": "4.0.3",
