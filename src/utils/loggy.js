@@ -1,4 +1,9 @@
 const { fetch } = require("rovel.js");
+
+/**
+ * Logs a message to a specified console log endpoint.
+ * @param {string} text - The text to be logged.
+ */
 function log(text) {
   fetch(process.env.CONSOLE_LOG, {
     method: "POST",
@@ -10,9 +15,17 @@ function log(text) {
       content: text,
     }),
   });
-  if (process.env.CONSOLE_LOG) globalThis.logg(text);
+
+  // Call the globalThis.logg() function if CONSOLE_LOG is defined
+  if (process.env.CONSOLE_LOG) {
+    globalThis.logg(text);
+  }
 }
 
+/**
+ * Logs an error message to a specified console log endpoint.
+ * @param {string} text - The text of the error message.
+ */
 function error(text) {
   fetch(process.env.CONSOLE_LOG, {
     method: "POST",
@@ -24,9 +37,17 @@ function error(text) {
       content: text,
     }),
   });
-  if (process.env.CONSOLE_LOG) globalThis.logerr(text);
+
+  // Call the globalThis.logerr() function if CONSOLE_LOG is defined
+  if (process.env.CONSOLE_LOG) {
+    globalThis.logerr(text);
+  }
 }
 
+/**
+ * Logs a warning message to a specified console log endpoint.
+ * @param {string} text - The text of the warning message.
+ */
 function warn(text) {
   fetch(process.env.CONSOLE_LOG, {
     method: "POST",
@@ -38,6 +59,11 @@ function warn(text) {
       content: text,
     }),
   });
-  if (process.env.CONSOLE_LOG) globalThis.warnn(text);
+
+  // Call the globalThis.warnn() function if CONSOLE_LOG is defined
+  if (process.env.CONSOLE_LOG) {
+    globalThis.warnn(text);
+  }
 }
+
 module.exports = { log, error, warn };

@@ -1,24 +1,22 @@
-Search = (array, string) => {
-  string = string.toLowerCase().trim();
-  const copied = [...array];
-  if (typeof array[0] == "object") {
-    array = array.map((i) => {
-      return JSON.stringify(i);
-    });
-  }
-  array = array.map((i) => {
-    return i.toLowerCase();
+const search = (array, string) => {
+  const searchString = string.toLowerCase().trim();
+  const copiedArray = [...array];
+
+  const transformedArray = array.map((element) => {
+    if (typeof element === "object") {
+      return JSON.stringify(element).toLowerCase();
+    }
+    return element.toLowerCase();
   });
 
-  var indexes = [];
-  for (var i = 0; i < array.length; i++) {
-    if (array[i].includes(string)) {
-      indexes.push(i);
+  const indexes = transformedArray.reduce((acc, element, index) => {
+    if (element.includes(searchString)) {
+      acc.push(index);
     }
-  }
-  return indexes.map((index) => {
-    return copied[index];
-  });
+    return acc;
+  }, []);
+
+  return indexes.map((index) => copiedArray[index]);
 };
 
-module.exports = Search;
+module.exports = search;

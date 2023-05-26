@@ -1,27 +1,28 @@
-require("module-alias/register");
-Error.stackTraceLimit = Infinity;
-globalThis.WebSocket = require("isomorphic-ws");
-const v = process.version.slice(1, 3);
+require("module-alias/register"); // Enable module aliases
+Error.stackTraceLimit = Infinity; // Set the maximum stack trace limit
+globalThis.WebSocket = require("isomorphic-ws"); // Assign WebSocket to globalThis
+const v = process.version.slice(1, 3); // Get the Node.js version (e.g., "16")
 if (v < 16 && process.platform != "android") {
   console.error("[ERROR] Node.js v16 or above is required.");
   process.exit(1);
 }
-var rovel = require("rovel.js");
-rovel.env.config();
+var rovel = require("rovel.js"); // Import the rovel.js module
+rovel.env.config(); // Configure environment variables using rovel.js
 rovel.fetch = function (url, opts) {
   return require("node-fetch")(encodeURI(url), opts);
-};
-const mongoose = require("mongoose");
+}; // Override the fetch function in rovel.js with node-fetch
+const mongoose = require("mongoose"); // Import the mongoose module
 mongoose.connect(process.env.DB, {
   useNewUrlParser: true,
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
   useCreateIndex: true,
-});
-globalThis.shell = require("shelljs");
-const loggy = require("@utils/loggy.js");
+}); // Connect to the MongoDB database
+globalThis.shell = require("shelljs"); // Assign shelljs to globalThis
+const loggy = require("@utils/loggy.js"); // Import the loggy.js module
 if (process.env.WEBLOG_CONSOLE == "true") {
+  // Check if WEBLOG_CONSOLE environment variable is set to true
   globalThis.logg = console.log;
   globalThis.console.log = loggy.log;
   globalThis.logerr = console.error;
@@ -30,8 +31,9 @@ if (process.env.WEBLOG_CONSOLE == "true") {
   globalThis.console.warn = loggy.warn;
 }
 console.log("[STARTING]");
-globalThis.fetch = rovel.fetch;
+globalThis.fetch = rovel.fetch; // Assign the overridden fetch function to globalThis
 globalThis.console.debug = function (obj) {
+  // Assign a custom console.debug function to globalThis
   if (typeof obj.stack == "string" && typeof obj == "object") {
     console.log(obj.stack);
   } else console.log(obj);
@@ -48,29 +50,28 @@ globalThis.db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function () {
-  console.log("[DB] We're connected to database!");
-  require("./cache.js");
+  console.log("[DB] We're connected to the database!");
+  require("./cache.js"); // Require the cache.js file
 });
-require("@bot/index.js");
+require("@bot/index.js"); // Require the index.js file in the @bot directory
 
-const Sentry = require("@sentry/node");
-const Tracing = require("@sentry/tracing");
-if(process.env.SENTRY){
-Sentry.init({
-  dsn: process.env.SENTRY,
-  tracesSampleRate: 1.0,
-});
-console.log(
-  "[SENTRY] Initialized!\nAll issues and performance are being sent!"
-);
+const Sentry = require("@sentry/node"); // Import the Sentry module
+const Tracing = require("@sentry/tracing"); // Import the Sentry Tracing module
+if (process.env.SENTRY) {
+  // Check if SENTRY environment variable is set
+  Sentry.init({
+    dsn: process.env.SENTRY,
+    tracesSampleRate: 1.0,
+  }); // Initialize Sentry with the provided DSN
+  console.log("[SENTRY] Initialized!\nAll issues and performance are being sent!");
 }
 process.on("unhandledRejection", (error) => {
   console.warn("An Error Occurred!\n" + error.stack);
 });
 
-const { app, port } = require("@server/app.js");
-globalThis.app = app;
-globalThis.port = port;
+const { app, port } = require("@server/app.js"); // Import the app and port variables from @server/app.js
+globalThis.app = app; // Assign app to globalThis
+globalThis.port = port; // Assign port to globalThis
 
 globalThis.analytics = {};
 analytics.total = 1008;
@@ -85,7 +86,7 @@ globalThis.random = function random(n) {
   return random == 0 ? ans : 0;
 };
 process.on("SIGTERM", () => {
-  console.log("SIGTERM Recieved!");
+  console.log("SIGTERM Received!");
   console.log("Closing off bots");
   privatebot.destroy();
   publicbot.destroy();
@@ -100,7 +101,7 @@ process.on("SIGTERM", () => {
   }, 3000);
 });
 process.on("SIGINT", () => {
-  console.log("\nSIGINT Recieved!");
+  console.log("\nSIGINT Received!");
   console.log("Closing off bots");
   privatebot.destroy();
   publicbot.destroy();
@@ -117,7 +118,7 @@ process.on("SIGINT", () => {
 globalThis.isCopy = function () {
   if (
     process.env.DOMAIN != "https://discord.rovelstars.com" &&
-   ( !process.env.DOMAIN.includes("localhost:") || !process.env.DOMAIN.includes("127.0.0.1:"))
+    (!process.env.DOMAIN.includes("localhost:") || !process.env.DOMAIN.includes("127.0.0.1:"))
   ) {
     return false;
   } else return true;
@@ -127,9 +128,9 @@ app.get("*", (req, res) => {
   res.status(404).render("404.ejs", { path: req.originalUrl });
 });
 
-  globalThis.server = app.listen(port, () => {
-    console.log(`[SERVER] Started on port: ${port}`);
-  });
+globalThis.server = app.listen(port, () => {
+  console.log(`[SERVER] Started on port: ${port}`);
+});
 
 globalThis.selfbot = async function (path) {
   return await fetch(`https://discord.com/api/v9${path}`, {
@@ -138,23 +139,24 @@ globalThis.selfbot = async function (path) {
     },
   }).then((r) => r.json());
 };
-if(process.env.SELFBOT_TOKEN) {
-selfbot("/users/@me").then((user) => {
-  if (user.message == "401: Unauthorized") {
-    console.log("[SELFBOT] Failed to login:");
-    console.log(user.message);
-    process.exit(0);
-  } else {
-    console.log(
-      `[SELFBOT] Logged in as ${
-        user.username + "#" + user.discriminator + " [" + user.id + "]"
-      }`
-    );
-  }
-});
+if (process.env.SELFBOT_TOKEN) {
+  selfbot("/users/@me").then((user) => {
+    if (user.message == "401: Unauthorized") {
+      console.log("[SELFBOT] Failed to login:");
+      console.log(user.message);
+      process.exit(0);
+    } else {
+      console.log(
+        `[SELFBOT] Logged in as ${
+          user.username + "#" + user.discriminator + " [" + user.id + "]"
+        }`
+      );
+    }
+  });
 }
 
 function addCommas(num, opts) {
+  // Function to add commas to numbers
   if (opts.separator === false) {
     return num.toString();
   }
@@ -174,7 +176,9 @@ function addCommas(num, opts) {
   });
   return out.reverse().join("");
 }
+
 function formatDec(num, base, opts) {
+  // Function to format numbers with decimal points
   var workingNum = num / base;
   var ROUND = opts.round ? "round" : "floor";
   if (opts.decimal === false) {
@@ -195,12 +199,15 @@ function formatDec(num, base, opts) {
   }
   return num;
 }
+
 var THOUSAND = 1000;
 var TEN_THOUSAND = 10000;
 var MILLION = 1000000;
 var BILLION = 1000000000;
 var TRILLION = 1000000000000;
+
 rovel.approx = function (num, opts) {
+  // Function to approximate large numbers
   if (isNaN(num)) return num;
   else if (num == Infinity || num == "Infinity") return "∞";
   else {
@@ -237,7 +244,9 @@ rovel.approx = function (num, opts) {
 };
 
 globalThis.TOPTOKENS = process.env.TOPTOKEN.split("|");
+
 globalThis.TOPGGTOKEN = function () {
+  // Function to get a random TOP.GG token
   const index = Math.floor(Math.random() * (TOPTOKENS.length - 1) + 1);
   return TOPTOKENS[index];
 };
