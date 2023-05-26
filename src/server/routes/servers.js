@@ -60,7 +60,7 @@ router.get("/:id/invite", (req, res) => {
   if (!guild) {
     res.json({ err: "guild_not_found" });
   } else {
-    if(guild.vanityURLCode){
+    if (guild.vanityURLCode) {
       res.json({ code: guild.vanityURLCode });
     }
     else if (guild.me.permissions.has("MANAGE_GUILD")) {

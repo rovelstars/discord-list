@@ -1,7 +1,7 @@
 let router = require("express").Router();
 let path = require("path");
 let auth = require("@utils/auth.js");
-const {marked} = require("marked");
+const { marked } = require("marked");
 var proxy = require("proxy-list-random");
 
 let sitemap;
@@ -36,7 +36,7 @@ if (
 }
 
 router.get("/", async (req, res) => {
-  
+
   res.render("index.ejs", {
     bots: Cache.Bots.sortTopVoted(),
     servers: shuffle(Cache.AllServers).slice(0, 10)
@@ -66,7 +66,7 @@ router.get("/servers/:id", async (req, res) => {
     if (!r.err) {
       r = await fetch(
         `https://discord.com/api/v9/invites/${r.code}?with_counts=true`
-      ,{headers:{"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36"}});
+        , { headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36" } });
       r = await r.json();
       console.log(r);
       if (!r.message) {
@@ -181,7 +181,7 @@ router.get("/dashboard", async (req, res) => {
     let botus = [];
     Users.findOne({ id: res.locals.user.id }).then(async (u) => {
       res.locals.user.bal = u?.bal || "Error. Contact Support Server.";
-      if(res.locals.user.bal=="Error. Contact Support Server.") console.log(u.id + " has issues on dashboard");
+      if (res.locals.user.bal == "Error. Contact Support Server.") console.log(u.id + " has issues on dashboard");
       res.locals.user.status = privatebot.guilds.cache
         .get("602906543356379156")
         .members.cache.get(u.id)?.presence?.status;
@@ -309,18 +309,18 @@ router.get("/login", (req, res) => {
   res.set("X-Robots-Tag", "noindex");
   res.cookie("newuser", "true", { maxAge: 1000 * 60 * 60 });
   let loginlink = auth.auth.link;
-  if (req.query.servers=="false"){
-    loginlink=loginlink.replace("%20guilds.join","");
+  if (req.query.servers == "false") {
+    loginlink = loginlink.replace("%20guilds.join", "");
   }
-  if(req.query.email=="false"){
-    loginlink=loginlink.replace("%20email","");
+  if (req.query.email == "false") {
+    loginlink = loginlink.replace("%20email", "");
   }
   res.redirect(loginlink);
 });
 
 router.get("/logout", async (req, res) => {
   if (req.cookies["key"]) {
-    const user = await auth.getUser(req.cookies["key"]).catch(() => {});
+    const user = await auth.getUser(req.cookies["key"]).catch(() => { });
     fetch(`${process.env.DOMAIN}/api/client/log`, {
       method: "POST",
       headers: {
@@ -329,9 +329,8 @@ router.get("/logout", async (req, res) => {
       body: JSON.stringify({
         secret: process.env.SECRET,
         title: `${user ? user.tag : "IDK who"} Logged out!`,
-        desc: `Bye bye ${
-          user ? user.tag : "Unknown Guy"
-        }\nSee you soon back on RDL!`,
+        desc: `Bye bye ${user ? user.tag : "Unknown Guy"
+          }\nSee you soon back on RDL!`,
         color: "#ff0000",
         img: user ? user.avatarUrl(128) : `${process.env.DOMAIN}/favicon.ico`,
         owners: user ? user.id : null,

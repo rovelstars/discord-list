@@ -55,14 +55,14 @@ require("@bot/index.js");
 
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
-if(process.env.SENTRY){
-Sentry.init({
-  dsn: process.env.SENTRY,
-  tracesSampleRate: 1.0,
-});
-console.log(
-  "[SENTRY] Initialized!\nAll issues and performance are being sent!"
-);
+if (process.env.SENTRY) {
+  Sentry.init({
+    dsn: process.env.SENTRY,
+    tracesSampleRate: 1.0,
+  });
+  console.log(
+    "[SENTRY] Initialized!\nAll issues and performance are being sent!"
+  );
 }
 process.on("unhandledRejection", (error) => {
   console.warn("An Error Occurred!\n" + error.stack);
@@ -117,7 +117,7 @@ process.on("SIGINT", () => {
 globalThis.isCopy = function () {
   if (
     process.env.DOMAIN != "https://discord.rovelstars.com" &&
-   ( !process.env.DOMAIN.includes("localhost:") || !process.env.DOMAIN.includes("127.0.0.1:"))
+    (!process.env.DOMAIN.includes("localhost:") || !process.env.DOMAIN.includes("127.0.0.1:"))
   ) {
     return false;
   } else return true;
@@ -127,9 +127,9 @@ app.get("*", (req, res) => {
   res.status(404).render("404.ejs", { path: req.originalUrl });
 });
 
-  globalThis.server = app.listen(port, () => {
-    console.log(`[SERVER] Started on port: ${port}`);
-  });
+globalThis.server = app.listen(port, () => {
+  console.log(`[SERVER] Started on port: ${port}`);
+});
 
 globalThis.selfbot = async function (path) {
   return await fetch(`https://discord.com/api/v9${path}`, {
@@ -138,20 +138,19 @@ globalThis.selfbot = async function (path) {
     },
   }).then((r) => r.json());
 };
-if(process.env.SELFBOT_TOKEN) {
-selfbot("/users/@me").then((user) => {
-  if (user.message == "401: Unauthorized") {
-    console.log("[SELFBOT] Failed to login:");
-    console.log(user.message);
-    process.exit(0);
-  } else {
-    console.log(
-      `[SELFBOT] Logged in as ${
-        user.username + "#" + user.discriminator + " [" + user.id + "]"
-      }`
-    );
-  }
-});
+if (process.env.SELFBOT_TOKEN) {
+  selfbot("/users/@me").then((user) => {
+    if (user.message == "401: Unauthorized") {
+      console.log("[SELFBOT] Failed to login:");
+      console.log(user.message);
+      process.exit(0);
+    } else {
+      console.log(
+        `[SELFBOT] Logged in as ${user.username + "#" + user.discriminator + " [" + user.id + "]"
+        }`
+      );
+    }
+  });
 }
 
 function addCommas(num, opts) {

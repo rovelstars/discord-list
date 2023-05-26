@@ -7,7 +7,7 @@ router.get("/", (req, res) => {
   if (req.query.q) {
     res.json(shuffle(Search(Cache.Users.clean(Cache.AllUsers), req.query.q)).slice(0, 10));
   } else {
-    if(req.query.secret==process.env.SECRET) res.json(Cache.AllUsers);
+    if (req.query.secret == process.env.SECRET) res.json(Cache.AllUsers);
     else res.json(Cache.Users.clean(Cache.AllUsers));
   }
 });
@@ -32,9 +32,8 @@ router.get("/:id/delete", (req, res) => {
           body: JSON.stringify({
             secret: process.env.SECRET,
             title: `${user ? user.tag : "IDK who"} Logged out!`,
-            desc: `Bye bye ${
-              user ? user.tag : "Unknown Guy"
-            }\nSee you soon back on RDL!`,
+            desc: `Bye bye ${user ? user.tag : "Unknown Guy"
+              }\nSee you soon back on RDL!`,
             color: "#ff0000",
             img: user ? user.avatarURL : `${process.env.DOMAIN}/favicon.ico`,
             owners: user ? user.id : null,
@@ -59,7 +58,7 @@ router.get("/:id/delete", (req, res) => {
           url: process.env.DOMAIN,
         }),
       });
-      Cache.Users.deleteOne({ id: user.id }, () => {});
+      Cache.Users.deleteOne({ id: user.id }, () => { });
     });
   }
 });

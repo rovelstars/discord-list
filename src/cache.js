@@ -119,16 +119,16 @@
     if (arg == undefined) {
       return { err: "not_found" };
     }
-    else if(Array.isArray(arg)){
-      return arg.map(b=>{
+    else if (Array.isArray(arg)) {
+      return arg.map(b => {
         const { _id, code, webhook, ...bot } = b._doc;
-      bot.addedAt=_id;
-      return bot;
+        bot.addedAt = _id;
+        return bot;
       })
     }
     else {
       const { _id, code, webhook, ...bot } = arg._doc;
-      bot.addedAt=_id;
+      bot.addedAt = _id;
       return bot;
     }
   };
@@ -153,45 +153,45 @@
     }).filter(Boolean);
   };
 
-  Bots.importByID = function (id,message) {
+  Bots.importByID = function (id, message) {
     fetch(`https://top.gg/api/bots/${id}`, {
-          method: "GET",
+      method: "GET",
+      headers: {
+        Authorization: `${globalThis.TOPGGTOKEN()}`,
+      },
+    })
+      .then((r) => r.json())
+      .then((bot) => {
+        if (bot.error) {
+          return message.reply(bot.error.toLowerCase().split(" ").join("_"));
+        }
+        message.reply(`Importing Bot ${bot.username}`);
+        var abot = {
+          id: bot.id,
+          lib: bot.lib == "" ? "none" : bot.lib,
+          prefix: bot.prefix,
+          short: bot.shortdesc,
+          desc: bot.longdesc,
+          support: bot.support,
+          bg: bot.bannerUrl,
+          owners: bot.owners,
+          invite: bot.invite,
+          github: bot.github,
+          website: bot.website,
+          imported: "Backup DB",
+        };
+        fetch(`${process.env.DOMAIN}/api/bots/new`, {
+          method: "POST",
           headers: {
-            Authorization: `${globalThis.TOPGGTOKEN()}`,
+            "content-type": "application/json",
           },
+          body: JSON.stringify(abot),
         })
           .then((r) => r.json())
-          .then((bot) => {
-            if (bot.error){
-              return message.reply(bot.error.toLowerCase().split(" ").join("_"));
-            }
-            message.reply(`Importing Bot ${bot.username}`);
-              var abot = {
-                id: bot.id,
-                lib: bot.lib == "" ? "none" : bot.lib,
-                prefix: bot.prefix,
-                short: bot.shortdesc,
-                desc: bot.longdesc,
-                support: bot.support,
-                bg: bot.bannerUrl,
-                owners: bot.owners,
-                invite: bot.invite,
-                github: bot.github,
-                website: bot.website,
-                imported: "Backup DB",
-              };
-              fetch(`${process.env.DOMAIN}/api/bots/new`, {
-                method: "POST",
-                headers: {
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify(abot),
-              })
-                .then((r) => r.json())
-                .then((d) => {
-                  message.reply("```json\n"+JSON.stringify(d)+"\n```");
-                });
+          .then((d) => {
+            message.reply("```json\n" + JSON.stringify(d) + "\n```");
           });
+      });
   }
 
   Bots.deleteOne = function (obj, callback) {
@@ -284,10 +284,10 @@
     if (arg == undefined) {
       return { err: "not_found" };
     }
-    else if(Array.isArray(arg)){
-      return arg.map(b=>{
+    else if (Array.isArray(arg)) {
+      return arg.map(b => {
         const { _id, email, address, lastLogin, keys, votes, ...user } = b._doc;
-      return user;
+        return user;
       })
     }
     else {
