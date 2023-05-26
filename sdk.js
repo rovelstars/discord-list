@@ -1,69 +1,56 @@
-// Shorthand for selecting a single element
-const $ = (selector) => document.querySelector(selector);
-
-// Shorthand for selecting multiple elements
-const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-
-// Function to create a new element with optional attributes
-const createElement = (tag, attributes = {}) => {
-  const element = document.createElement(tag);
-  Object.entries(attributes).forEach(([key, value]) => {
-    element.setAttribute(key, value);
-  });
-  return element;
+// Function to select a single element using a CSS selector
+var $ = function (selector) {
+  return document.querySelector(selector);
 };
 
-// Function to append an array of elements to a parent element
-const appendElements = (parent, elements) => {
-  elements.forEach((element) => {
-    parent.appendChild(element);
-  });
+// Function to select multiple elements using a CSS selector
+var $$ = function (selector) {
+  return Array.from(document.querySelectorAll(selector));
 };
 
-const showRDLMenu = () => {
+// Event listener for User Settings button click
+$('[aria-label="User Settings"]').addEventListener("click", showRDLmenu);
+
+function showRDLmenu() {
   setTimeout(() => {
-    const settingsMenu = $(".side-8zPYf6");
+    // Create RDLmenu element
+    var RDLmenu = document.createElement("div");
+    RDLmenu.classList.add("header-2RyJ0Y");
+    RDLmenu.tabIndex = "-1";
+    RDLmenu.role = "button";
+    RDLmenu.innerText = "Rovel Discord List";
 
-    // Create the RDL menu
-    const RDLMenu = createElement("div", {
-      class: "header-2RyJ0Y",
-      tabIndex: "-1",
-      role: "button",
-      textContent: "Rovel Discord List"
-    });
-    settingsMenu.insertBefore(RDLMenu, $(".header-2RyJ0Y"));
+    // Find the settings menu container
+    var settingsmenu = $(".side-8zPYf6");
+    // Insert RDLmenu before the first header in the settings menu
+    settingsmenu.insertBefore(RDLmenu, $(".header-2RyJ0Y"));
 
-    // Create the Info tab
-    const RDLMenuInfo = createElement("div", {
-      class: "item-PXvHYJ themed-OHr7kt",
-      role: "tab",
-      "aria-controls": "rdl-info",
-      tabIndex: "-1",
-      "aria-label": "Info",
-      textContent: "Info"
-    });
-    RDLMenu.after(RDLMenuInfo);
+    // Create RDLmenu_info element
+    var RDLmenu_info = document.createElement("div");
+    RDLmenu_info.classList.add("item-PXvHYJ", "themed-OHr7kt");
+    RDLmenu_info.setAttribute("role", "tab");
+    RDLmenu_info.setAttribute("aria-controls", "rdl-info");
+    RDLmenu_info.tabIndex = "-1";
+    RDLmenu_info.ariaLabel = "Info";
+    RDLmenu_info.innerText = "Info";
 
-    // Create the content window for the Info tab
-    const discordSettingsWindow = $(".contentColumn-2hrIYH.contentColumnDefault-1VQkGM");
-    const RDLInfoWindow = createElement("div", {
-      id: "rdl-info-window",
-      innerHTML: '<div class="sectionTitle-2vauyC"><h1 class="colorStandard-2KCXvj size14-e6ZScH h1-1qdNzo title-3sZWYQ defaultColor-1_ajX0 defaultMarginh1-peT3GC">Welcome Back!</h1></div>'
-    });
-    discordSettingsWindow.innerHTML = "";
-    discordSettingsWindow.appendChild(RDLInfoWindow);
+    // Insert RDLmenu_info after RDLmenu
+    RDLmenu.after(RDLmenu_info);
 
-    // Set up click event listener for the Info tab
-    RDLMenuInfo.addEventListener("click", () => {
-      const selectedTab = $(".selected-3s45Ha");
-      selectedTab.tabIndex = "-1";
-      selectedTab.classList.remove("selected-3s45Ha");
+    var discordsettingswindow = $(".contentColumn-2hrIYH.contentColumnDefault-1VQkGM");
 
-      RDLMenuInfo.classList.add("selected-3s45Ha");
-      RDLMenuInfo.setAttribute("aria-selected", "true");
-      RDLMenuInfo.tabIndex = "0";
+    RDLmenu_info.addEventListener("click", () => {
+      // Remove selected class from the current selected tab
+      $(".selected-3s45Ha").tabIndex = "-1";
+      $(".selected-3s45Ha").classList.remove("selected-3s45Ha");
+      
+      // Add selected class to RDLmenu_info
+      RDLmenu_info.classList.add("selected-3s45Ha");
+      RDLmenu_info.setAttribute("aria-selected", "true");
+      RDLmenu_info.tabIndex = "0";
+      
+      // Update the content of discordsettingswindow
+      discordsettingswindow.innerHTML = '<div><div id="rdl-info-window"><div class="sectionTitle-2vauyC"><h1 class="colorStandard-2KCXvj size14-e6ZScH h1-1qdNzo title-3sZWYQ defaultColor-1_ajX0 defaultMarginh1-peT3GC">Welcome Back!</h1></div></div></div>';
     });
   }, 100);
-};
-
-$('[aria-label="User Settings"]').addEventListener("click", showRDLMenu);
+}
