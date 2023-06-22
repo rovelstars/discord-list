@@ -51,7 +51,7 @@
     "purgecss": "4.0.3",
     "rdl-i18n": "github:rovelstars/rdl-i18n",
     "rovel.js": "1.2.0",
-    "sanitize-html": "2.4.0",
+    "sanitize-html": "2.11.0",
     "shelljs": "0.8.4",
     "socket.io": "^4.2.0",
     "translatte": "^3.0.1",
