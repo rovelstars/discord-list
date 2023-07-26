@@ -44,7 +44,7 @@
     "module-alias": "^2.2.2",
     "mongodb": "4.0.1",
     "mongoose": "5.13.3",
-    "node-fetch": "2",
+    "node-fetch": "3.3.2",
     "node-schedule": "2.0.0",
     "passport": "0.4.1",
     "proxy-list-random": "1.0.2",
