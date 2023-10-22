@@ -55,7 +55,7 @@
     "shelljs": "0.8.4",
     "socket.io": "^4.2.0",
     "translatte": "^3.0.1",
-    "validator": "13.7.0",
+    "validator": "13.11.0",
     "ws": "^7.5.3"
   },
   "devDependencies": {
