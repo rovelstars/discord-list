@@ -35,7 +35,7 @@
     "express-ws": "^5.0.2",
     "fetch-base64": "2.1.2",
     "helmet": "4.6.0",
-    "html-entities": "2.3.2",
+    "html-entities": "2.4.0",
     "html-minifier": "4.0.0",
     "i18n": "0.13.3",
     "isomorphic-ws": "4.0.1",
