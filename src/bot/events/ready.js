@@ -7,7 +7,7 @@ client.once("ready", () => {
     "and Coding!",
     "and Checking all Bots are fine or not",
     "Never gonna let you down!",
-    "on https://discord.gg/E6PhZK4tU9",
+    "on https://discord.gg/eWbt297SkU",
     "and defeating top.gg!",
     "and wondering what's next?",
     "Among Us",
