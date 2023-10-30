@@ -28,7 +28,7 @@
 
 [Website Link](https://discord.rovelstars.com)
 
-[Server Invite](https://discord.gg/E6PhZK4tU9)
+[Server Invite](https://discord.gg/eWbt297SkU)
 
 # Can I contribute ?
 
