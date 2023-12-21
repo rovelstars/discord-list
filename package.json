@@ -18,7 +18,7 @@
   },
   "checkCache": "true",
   "dependencies": {
-    "@sentry/node": "6.17.2",
+    "@sentry/node": "7.90.0",
     "@sentry/tracing": "^6.9.0",
     "cloudflare-express": "1.0.1",
     "compression": "1.7.4",
