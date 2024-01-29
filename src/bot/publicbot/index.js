@@ -4,7 +4,8 @@ const normalText = require("diacritics").remove;
 var client = new Discord.Client({
   intents: [new Discord.Intents(32767)], //32509
 });
-client.login(process.env.PUBLIC_TOKEN);
+if (process.env.PUBLIC_TOKEN)
+  client.login(process.env.PUBLIC_TOKEN);
 globalThis.publicbot = client;
 const { fetch } = require("rovel.js");
 const { owners, emojiapprovers, mods, contributors } = require("../../data.js");

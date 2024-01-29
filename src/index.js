@@ -12,7 +12,7 @@ rovel.fetch = function (url, opts) {
   return require("node-fetch")(encodeURI(url), opts);
 };
 const mongoose = require("mongoose");
-mongoose.connect(process.env.DB, {
+mongoose.connect(process.env.DB || "mongodb://127.0.0.1:27017/test", {
   useNewUrlParser: true,
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -235,7 +235,7 @@ rovel.approx = function (num, opts) {
   }
 };
 
-globalThis.TOPTOKENS = process.env.TOPTOKEN.split("|");
+globalThis.TOPTOKENS = process.env.TOPTOKEN?.split?.("|") || [];
 globalThis.TOPGGTOKEN = function () {
   const index = Math.floor(Math.random() * (TOPTOKENS.length - 1) + 1);
   return TOPTOKENS[index];

@@ -12,23 +12,9 @@ $danger: #ed4245;
 @font-face {
   font-family: discord;
   font-display: swap;
-  src: url(/assets/font/sans.otf);
+  src: url(/assets/font/ggsans.ttf);
 }
 
-@font-face {
-  font-family: burbank;
-  src: url(/assets/font/Burbank.otf);
-}
-
-@font-face {
-  font-family: angrybirds;
-  src: url(/assets/font/angrybirds.ttf);
-}
-
-@font-face {
-  font-family: bangers;
-  src: url(/assets/font/Bangers.ttf);
-}
 
 img.vert-move {
   -webkit-animation: mover 1s infinite alternate;
@@ -114,6 +100,12 @@ h6,
   font-family: discord, sans-serif;
 }
 
+.title {
+  font-size: 3rem;
+}
+.subtitle {
+  font-size: 2rem;
+}
 div.content iframe {
   width: 100%;
   height: 100vh;
@@ -149,11 +141,16 @@ div.content discord-messages {
 .section {
   padding: 3rem 0.5rem;
 }
-
+.rdllogo {
+  margin-left: 4px;
+  margin-right: 4px;
+}
 .rdllogo:hover {
   content: url("/assets/img/bot/pet.gif");
-  height: 30;
-  width: 30;
+  height: 56px;
+  width: 56px;
+  margin-left: 0px;
+  margin-right: 0px;
 }
 
 textarea {

@@ -6,7 +6,8 @@ var client = new Discord.Client({
   intents: [new Discord.Intents(32767)],
   allowedMentions: { parse: ["users", "roles"], repliedUser: true },
 });
-client.login(process.env.TOKEN);
+if (process.env.TOKEN)
+  client.login(process.env.TOKEN);
 globalThis.privatebot = client;
 const { fetch } = require("rovel.js");
 const { owners, emojiapprovers, mods, contributors } = require("../data.js");
@@ -223,7 +224,7 @@ router.post("/log", (req, res) => {
         .setTimestamp()
         .setThumbnail(
           req?.body?.img ||
-            `${process.env.DOMAIN}/assets/img/bot/logo-512.png`
+          `${process.env.DOMAIN}/assets/img/bot/logo-512.png`
         );
       if (req.body.channel != "private") {
         client.guilds.cache
@@ -253,11 +254,10 @@ router.post("/log", (req, res) => {
                 .setTimestamp()
                 .setThumbnail(
                   req.body.img ||
-                    `${process.env.DOMAIN}/assets/img/bot/logo-512.png`
+                  `${process.env.DOMAIN}/assets/img/bot/logo-512.png`
                 )
                 .setFooter(
-                  `${
-                    client.users.cache.get(owner).username
+                  `${client.users.cache.get(owner).username
                   }, If you have read this message, click tick to delete this notification.`
                 );
 
@@ -278,6 +278,6 @@ router.post("/log", (req, res) => {
     } else {
       res.json({ error: "wrong_or_no_key" });
     }
-  } catch {}
+  } catch { }
 });
 module.exports = router;
