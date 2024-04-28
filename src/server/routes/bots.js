@@ -60,7 +60,7 @@ router.get("/", (req, res) => {
   } else {
     if (req.query.secret == process.env.SECRET) res.json(Cache.AllBots);
     else {
-      const limit = Math.min(req.query.limit, 30);
+      const limit = Math.min(req.query.limit || 30, 30);
       const offset = req.query.offset || 0;
       return res.json(Cache.Bots.clean(Cache.AllBots).slice(offset, offset + limit));
     }
