@@ -59,7 +59,11 @@ router.get("/", (req, res) => {
     );
   } else {
     if (req.query.secret == process.env.SECRET) res.json(Cache.AllBots);
-    else res.json(Cache.Bots.clean(Cache.AllBots));
+    else {
+      const limit = Math.min(req.query.limit, 30);
+      const offset = req.query.offset || 0;
+      return res.json(Cache.Bots.clean(Cache.AllBots).slice(offset, offset + limit));
+    }
   }
 });
 
@@ -73,20 +77,20 @@ router.get("/:id/changeVoteType", (req, res) => {
         if (req.query.type) {
           let bot = Cache.Bots.findOneById(req.params.id);
           if (!bot) return res.json({ err: "bot_not_found" });
-          if(!bot.owners.includes(d.id)) return res.json({err: "unauth"});
+          if (!bot.owners.includes(d.id)) return res.json({ err: "unauth" });
           if (req.query.type == "coins") {
             bot.opted_coins = true;
             bot.save();
           }
-          else if(req.query.type == "time"){
+          else if (req.query.type == "time") {
             bot.opted_coins = false;
             bot.save();
           }
-          return res.json({type: bot.opted_coins?"coins":"time"});
+          return res.json({ type: bot.opted_coins ? "coins" : "time" });
         }
-        else{
+        else {
           let bot = Cache.Bots.findOneById(req.params.id);
-          return res.json({type: bot.opted_coins?"coins":"time"});
+          return res.json({ type: bot.opted_coins ? "coins" : "time" });
         }
       });
   }
@@ -158,48 +162,64 @@ router.get("/:id/vote", async (req, res) => {
         //check if the votes array of user has the bot
         Cache.Users.findOne({ id: d.id }).then(async (use) => {
           let bot = await Cache.Bots.findOneById(req.params.id);
-          let votingType = bot.opted_coins?"coins":"time";
+          let votingType = bot.opted_coins ? "coins" : "time";
           let hmm;
-          if(votingType=="time"){
-          if (!use.votes) use.votes = [];
-          //find the bot from votes: [{bot, at}]
-          let Vote = use.votes.find((b) => b.bot == req.params.id);
-          let allow = false;
-          if (Vote) {
-            //check if Vote.at is older than 24 hours
-            if (Date.now() - Vote.at > 86400000) {
-              //if it is older than 24 hours, remove it from the votes array
-              use.votes = use.votes.filter((b) => b.bot != req.params.id);
-              allow = true;
+          if (votingType == "time") {
+            if (!use.votes) use.votes = [];
+            //find the bot from votes: [{bot, at}]
+            let Vote = use.votes.find((b) => b.bot == req.params.id);
+            let allow = false;
+            if (Vote) {
+              //check if Vote.at is older than 24 hours
+              if (Date.now() - Vote.at > 86400000) {
+                //if it is older than 24 hours, remove it from the votes array
+                use.votes = use.votes.filter((b) => b.bot != req.params.id);
+                allow = true;
+              }
             }
-          }
-          if (!Vote) allow = true;
-          if (allow) {
-            //we can approve the vote
-            use.votes.push({ bot: req.params.id, at: Date.now() });
-            use.save();
-            bot.votes = bot.votes + 1;
-            bot.save();
-            res.json({ success: true });
-            if (bot.webhook) {
-               hmm = JSON.stringify({
-                user: Cache.Users.clean(use),
-                id: use.id,
-                coins: 10,
-                votes: 1,
-                currentVotes: bot.votes,
-              });
+            if (!Vote) allow = true;
+            if (allow) {
+              //we can approve the vote
+              use.votes.push({ bot: req.params.id, at: Date.now() });
+              use.save();
+              bot.votes = bot.votes + 1;
+              bot.save();
+              res.json({ success: true });
+              if (bot.webhook) {
+                hmm = JSON.stringify({
+                  user: Cache.Users.clean(use),
+                  id: use.id,
+                  coins: 10,
+                  votes: 1,
+                  currentVotes: bot.votes,
+                });
 
-              fetch(`${bot.webhook}?code=${bot.code}`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: bot.code,
-                },
-                body: hmm,
-              })
-                .then((r) => {
-                  if (r.status >= 300 || r.status < 200) {
+                fetch(`${bot.webhook}?code=${bot.code}`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: bot.code,
+                  },
+                  body: hmm,
+                })
+                  .then((r) => {
+                    if (r.status >= 300 || r.status < 200) {
+                      fetch(`${process.env.DOMAIN}/api/client/log`, {
+                        method: "POST",
+                        headers: {
+                          "content-type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          secret: process.env.SECRET,
+                          title: `Failed to send data to ${bot.tag}`,
+                          desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+                          owners: bot.owners,
+                          img: bot.avatarURL,
+                        }),
+                      });
+                    }
+                  })
+                  .catch((e) => {
                     fetch(`${process.env.DOMAIN}/api/client/log`, {
                       method: "POST",
                       headers: {
@@ -208,116 +228,100 @@ router.get("/:id/vote", async (req, res) => {
                       body: JSON.stringify({
                         secret: process.env.SECRET,
                         title: `Failed to send data to ${bot.tag}`,
-                        desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+                        desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
                         owners: bot.owners,
                         img: bot.avatarURL,
                       }),
                     });
-                  }
-                })
-                .catch((e) => {
-                  fetch(`${process.env.DOMAIN}/api/client/log`, {
-                    method: "POST",
-                    headers: {
-                      "content-type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      secret: process.env.SECRET,
-                      title: `Failed to send data to ${bot.tag}`,
-                      desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
-                      owners: bot.owners,
-                      img: bot.avatarURL,
-                    }),
                   });
-                });
-            }
-          } else {
-            let start = new Date(Vote.at);
-            start.setDate(start.getDate() + 1);
-            let start2 = new Date();
-            let ree = Math.floor((start.getTime() - start2.getTime()) / 1000);
-            function secondsToHms(d) {
-              d = Number(d);
-              var h = Math.floor(d / 3600);
-              var m = Math.floor((d % 3600) / 60);
-              var s = Math.floor((d % 3600) % 60);
+              }
+            } else {
+              let start = new Date(Vote.at);
+              start.setDate(start.getDate() + 1);
+              let start2 = new Date();
+              let ree = Math.floor((start.getTime() - start2.getTime()) / 1000);
+              function secondsToHms(d) {
+                d = Number(d);
+                var h = Math.floor(d / 3600);
+                var m = Math.floor((d % 3600) / 60);
+                var s = Math.floor((d % 3600) % 60);
 
-              var hDisplay = h > 0 ? h + (h == 1 ? " hour " : " hours ") : "";
-              var mDisplay =
-                m > 0 ? m + (m == 1 ? " minute " : " minutes ") : "";
-              var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-              return hDisplay + mDisplay + sDisplay;
+                var hDisplay = h > 0 ? h + (h == 1 ? " hour " : " hours ") : "";
+                var mDisplay =
+                  m > 0 ? m + (m == 1 ? " minute " : " minutes ") : "";
+                var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+                return hDisplay + mDisplay + sDisplay;
+              }
+              res.json({ success: false, try_after: secondsToHms(ree) });
             }
-            res.json({ success: false, try_after: secondsToHms(ree) });
           }
-        }
-        else if(votingType=="coins"){
-          if (!req.query.coins) return res.json({ err: "no_coins" });
-        if (req.query.coins <= 0) return res.json({ err: "negative_coins" });
-        if (req.query.coins % 10 != 0)
-          return res.json({ err: "coins_not_divisible" });
-        const Vote = parseInt(req.query.coins) / 10;
-        Users.findOne({ id: d.id }).then((use) => {
-          if (!use) return res.json({ err: "no_user_found" });
-          if (use.bal < req.query.coins)
-            return res.json({ err: "not_enough_coins" });
-          var bot = Cache.Bots.findOneById(req.params.id);
-          if (!bot) return res.json({ err: "no_bot_found" });
-          use.bal = use.bal - req.query.coins;
-          use.save();
-          bot.votes = bot.votes + parseInt(Vote);
-          bot.save();
-          res.json({ bot });
-          if (bot.webhook) {
-            const hmm = JSON.stringify({
-              user: Cache.Users.clean(use),
-              coins: parseInt(req.query.coins),
-              votes: Vote,
-              currentVotes: bot.votes,
-            });
-            fetch(`${bot.webhook}?code=${bot.code}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: bot.code,
-              },
-              body: hmm,
-            })
-              .then((r) => {
-                if (r.status >= 300 || r.status < 200) {
-                  fetch(`${process.env.DOMAIN}/api/client/log`, {
-                    method: "POST",
-                    headers: {
-                      "content-type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      secret: process.env.SECRET,
-                      title: `Failed to send data to ${bot.tag}`,
-                      desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
-                      owners: bot.owners,
-                      img: bot.avatarURL,
-                    }),
-                  });
-                }
-              })
-              .catch((e) => {
-                fetch(`${process.env.DOMAIN}/api/client/log`, {
+          else if (votingType == "coins") {
+            if (!req.query.coins) return res.json({ err: "no_coins" });
+            if (req.query.coins <= 0) return res.json({ err: "negative_coins" });
+            if (req.query.coins % 10 != 0)
+              return res.json({ err: "coins_not_divisible" });
+            const Vote = parseInt(req.query.coins) / 10;
+            Users.findOne({ id: d.id }).then((use) => {
+              if (!use) return res.json({ err: "no_user_found" });
+              if (use.bal < req.query.coins)
+                return res.json({ err: "not_enough_coins" });
+              var bot = Cache.Bots.findOneById(req.params.id);
+              if (!bot) return res.json({ err: "no_bot_found" });
+              use.bal = use.bal - req.query.coins;
+              use.save();
+              bot.votes = bot.votes + parseInt(Vote);
+              bot.save();
+              res.json({ bot });
+              if (bot.webhook) {
+                const hmm = JSON.stringify({
+                  user: Cache.Users.clean(use),
+                  coins: parseInt(req.query.coins),
+                  votes: Vote,
+                  currentVotes: bot.votes,
+                });
+                fetch(`${bot.webhook}?code=${bot.code}`, {
                   method: "POST",
                   headers: {
-                    "content-type": "application/json",
+                    "Content-Type": "application/json",
+                    Authorization: bot.code,
                   },
-                  body: JSON.stringify({
-                    secret: process.env.SECRET,
-                    title: `Failed to send data to ${bot.tag}`,
-                    desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
-                    owners: bot.owners,
-                    img: bot.avatarURL,
-                  }),
-                });
-              });
+                  body: hmm,
+                })
+                  .then((r) => {
+                    if (r.status >= 300 || r.status < 200) {
+                      fetch(`${process.env.DOMAIN}/api/client/log`, {
+                        method: "POST",
+                        headers: {
+                          "content-type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          secret: process.env.SECRET,
+                          title: `Failed to send data to ${bot.tag}`,
+                          desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+                          owners: bot.owners,
+                          img: bot.avatarURL,
+                        }),
+                      });
+                    }
+                  })
+                  .catch((e) => {
+                    fetch(`${process.env.DOMAIN}/api/client/log`, {
+                      method: "POST",
+                      headers: {
+                        "content-type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        secret: process.env.SECRET,
+                        title: `Failed to send data to ${bot.tag}`,
+                        desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+                        owners: bot.owners,
+                        img: bot.avatarURL,
+                      }),
+                    });
+                  });
+              }
+            });
           }
-        });
-        }
         });
       });
   }
@@ -984,7 +988,7 @@ router.post("/new", async (req, res) => {
                             ?.catch((e) => console.log(e));
                         });
                         res.send({ success: true });
-                    fetch(`${process.env.DOMAIN}/api/client/log`, {
+                        fetch(`${process.env.DOMAIN}/api/client/log`, {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json",
@@ -993,8 +997,8 @@ router.post("/new", async (req, res) => {
                             secret: process.env.SECRET,
                             img: bot.avatarURL,
                             desc: `**${user.username}** has been ${!bot.imported
-                                ? "added"
-                                : `imported from ${bot.imported},`
+                              ? "added"
+                              : `imported from ${bot.imported},`
                               } by ${"<@!" + bot.owners[0] + ">"
                               }\nInfo:\n\`\`\`\n${bot.short}\n\`\`\`${dd.condition == true
                                 ? "\nThe bot has been already added to the server, so they are saved as 'added'"
