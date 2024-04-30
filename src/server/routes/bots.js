@@ -67,6 +67,11 @@ router.get("/", (req, res) => {
   }
 });
 
+router.get("/top", (req, res) => {
+  //Cache.Bots.sortTopVoted()
+  return res.json(Cache.Bots.clean(Cache.Bots.sortTopVoted()));
+});
+
 router.get("/:id/changeVoteType", (req, res) => {
   if (!req.query.key) res.json({ err: "not_logged in" });
   else {

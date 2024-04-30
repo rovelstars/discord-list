@@ -63,7 +63,7 @@ Users.virtual("avatarURL").get(function () {
   }
 });
 Users.virtual("tag").get(function () {
-  return `${this.username}#${this.discriminator}`;
+  return `${this.username}`; //discriminator is DEPRECATED.
 });
 
 var users;
