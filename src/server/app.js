@@ -176,23 +176,6 @@ app.get("/api/download", (req, res) => {
 });
 app.get("/api", (req, res) => { res.json({ hello: "coder!" }); });
 
-app.get("/api/report", (req, res) => {
-  if (req.query.link) {
-    fetch("https://discord.rovelstars.com/api/client/log", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        secret: process.env.SECRET,
-        channel: "838067036080963584",
-        title: "Other's Deployment of RDL!",
-        desc: `**Link:** ${req.query.link}`,
-      }),
-    });
-  }
-});
-
 app.post("/api/translate", async (req, res) => {
   if (!req.body.text) {
     res.json({ err: "no_text" });
