@@ -718,6 +718,7 @@ router.post("/edit", async (req, res) => {
             member = privatebot.guilds.cache
               .get("602906543356379156")
               .members.cache.get(meme);
+            if (!member) return;
             member.roles.remove(role).catch((e) => console.log(e));
           });
           bot.owners = req.body.owners;
@@ -725,6 +726,7 @@ router.post("/edit", async (req, res) => {
             member = privatebot.guilds.cache
               .get("602906543356379156")
               .members.cache.get(meme);
+            if (!member) return;
             member.roles.add(role).catch((e) => console.log(e));
           });
         }
