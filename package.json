@@ -39,7 +39,7 @@
     "html-minifier": "4.0.0",
     "i18n": "0.13.3",
     "isomorphic-ws": "4.0.1",
-    "marked": "^4.0.12",
+    "marked": "^13.0.0",
     "min-indent": "1.0.1",
     "module-alias": "^2.2.2",
     "mongodb": "4.0.1",
