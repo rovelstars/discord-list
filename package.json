@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "deno run src/index.js",
-    "build": "deno run build.js",
-    "build-f": "deno run build.js --force",
+    "build": "node build.js",
+    "build-f": "node build.js --force",
     "all": "npm run build-f && npm start",
     "pretty": "npx prettier --write \"./**/*.{js,jsx,json}\""
   },
