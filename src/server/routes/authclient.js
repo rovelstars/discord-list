@@ -1,8 +1,9 @@
-let router = require("express").Router();
-var { fetch } = require("rovel.js");
-let auth = require("@utils/auth.js");
-const validate = require("validator");
-router.use(require("express").json());
+import { Router } from "express";
+const router = Router();
+import { fetch } from "rovel.js";
+import auth from "../../utils/auth.js";
+import validate from "validator";
+router.use((await import("express")).json());
 
 router.get("/", async (req, res) => {
   try {
@@ -271,4 +272,4 @@ router.get("/earn", (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

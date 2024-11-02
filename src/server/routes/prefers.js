@@ -1,5 +1,6 @@
-let router = require("express").Router();
-var { fetch } = require("rovel.js");
+import { Router } from "express";
+const router = Router();
+import { fetch } from "rovel.js";
 
 router.get("/themes/:name", (req, res) => {
   var name = req.params.name;
@@ -49,4 +50,4 @@ router.get("/emojis/:name", (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

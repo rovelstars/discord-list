@@ -41,7 +41,7 @@
   }
   else if(input.innerText=="$ RUN"){
    const code = prompt("Enter code to run!");
-   eval(code);
+   (`(async()=>{${code}})()`);
    input.innerText="$ ";
   }
   else if(input.innerText=="$ PLAY"){

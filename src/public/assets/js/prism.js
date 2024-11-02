@@ -415,7 +415,7 @@ var _self =
     }
     return M;
   })(_self);
-"undefined" != typeof module && module.exports && (module.exports = Prism),
+"undefined" != typeof module && module.exports && (export default Prism),
   "undefined" != typeof global && (global.Prism = Prism);
 (Prism.languages.markup = {
   comment: /<!--[\s\S]*?-->/,

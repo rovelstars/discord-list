@@ -17,21 +17,21 @@ imglink: undefined
       <img class="image is-128x128" style="margin: auto; border-radius: 50%;" src="<%= user.avatarUrl() %>" alt="<%= user.tag %> Avatar">
      </div>
      <div class="column is-10">
-         <h1 class="title"> <%= __("dashboard.welcome") %> <%= user.username %><span class="text-muted">#<%= user.discriminator %>
+         <h1 class="title"> Welcome To Your Dashboard <%= user.username %><span class="text-muted">#<%= user.discriminator %>
    </h1><br />
    <h4 class="subtitle">
-    <%= __("dashboard.subtitle") %>
+    Here you can manage your Account, Bots, and Servers!
    </h4>
    <div class="field is-grouped is-grouped-multiline">
    <div class="control" onclick="sync()">
     <div class="tags has-addons">
-    <span class="tag is-outlined"><%= __("dashboard.sync.title") %></span>
-    <span class="tag is-success" id="sync"><%= __("dashboard.sync.normal") %></span>
+    <span class="tag is-outlined">Sync</span>
+    <span class="tag is-success" id="sync">Data</span>
     </div>
   </div><br />
    <div class="control">
     <div class="tags has-addons">
-     <span class="tag is-outlined"><%= __("dashboard.balance") %></span>
+     <span class="tag is-outlined">Balance</span>
      <span class="tag is-danger">R$ <%= (user.bal)?user.bal.toString():"0" %></span>
     </div>
   </div><br />

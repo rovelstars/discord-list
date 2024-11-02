@@ -1,4 +1,4 @@
-const { fetch } = require("rovel.js");
+import { fetch } from "rovel.js";
 function log(text) {
   fetch(process.env.CONSOLE_LOG, {
     method: "POST",
@@ -40,4 +40,4 @@ function warn(text) {
   });
   if (process.env.CONSOLE_LOG) globalThis.warnn(text);
 }
-module.exports = { log, error, warn };
+export { log, error, warn };

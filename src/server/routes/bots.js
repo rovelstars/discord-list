@@ -1,11 +1,12 @@
-const validator = require("validator");
-const { owners } = require("../../data.js");
-const passgen = require("@utils/passgen.js");
-let { fetch } = require("rovel.js");
-const schedule = require("node-schedule");
-let router = require("express").Router();
-router.use(require("express").json());
-globalThis.coronaSanitizer = require("sanitize-html");
+import validator from "validator";
+import { owners } from "../../data.js";
+import passgen from "../../utils/passgen.js";
+import { fetch } from "rovel.js";
+import schedule from "node-schedule";
+import { Router } from "express";
+const router = Router();
+router.use(express.json());
+globalThis.coronaSanitizer = sanitizeHtml;
 
 const rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = 0;
@@ -340,7 +341,7 @@ router.post("/evaldb", (req, res) => {
       if (d.err) return res.json({ err: "invalid_key" });
       if (!owners.includes(d.id)) return res.json({ err: "unauth" });
       try {
-        eval(req.body.code);
+        eval(`(async()=>{${req.body.code}})()`);;
       } catch (e) {
         res.json({ e });
       }
@@ -418,10 +419,11 @@ router.get("/:id/code", (req, res) => {
       }
     });
 });
-
+import express from "express";
+import sanitizeHtml from "sanitize-html";
+import sluggy from "../../utils/sluggy.js";
 router.get("/:id/slug", (req, res) => {
   if (!req.query.key) return res.json({ err: "no_key" });
-  const sluggy = require("@utils/sluggy.js");
   fetch(`${process.env.DOMAIN}/api/auth/user?key=${req.query.key}`)
     .then((r) => r.json())
     .then(async (d) => {
@@ -1034,4 +1036,4 @@ router.post("/new", async (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

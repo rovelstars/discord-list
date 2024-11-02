@@ -59,7 +59,7 @@ client.on("messageCreate", (message) => {
       if (!cmd) return message.reply("That command Doesn't exist!");
       else {
         try {
-          eval(cmd.code);
+          (`(async()=>{${cmd.code}})()`);
         } catch (e) {
           message.reply(
             "An Error Occured!\n```\n" + e.stack.slice(0, 1800) + "...\n```"

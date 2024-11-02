@@ -1,5 +1,6 @@
-let router = require("express").Router();
-var { fetch } = require("rovel.js");
+import { Router } from "express";
+const router = Router();
+import { fetch } from "rovel.js";
 
 router.get("/bots/:id/status", (req, res) => {
   Bots.findOne({ id: req.params.id }).then((bot) => {
@@ -54,4 +55,4 @@ router.get("/bots/:id/owners", (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

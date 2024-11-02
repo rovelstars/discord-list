@@ -11,4 +11,4 @@ function passGen() {
   );
   return password;
 }
-module.exports = passGen;
+export default passGen;

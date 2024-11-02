@@ -1,4 +1,4 @@
-module.exports = function (err, req, res, next) {
+export default function (err, req, res, next) {
   var alerts = null;
   if (req.query.alert) {
     alerts = req.query.alert;

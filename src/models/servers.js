@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 const Servers = new Schema(
   {
@@ -53,4 +53,4 @@ try {
 } catch (e) {
   servers = mongoose.model("Servers");
 }
-module.exports = servers;
+export default servers;

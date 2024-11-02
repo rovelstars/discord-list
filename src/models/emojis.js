@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 const Emojis = new Schema(
   {
@@ -24,4 +24,4 @@ try {
 } catch (e) {
   emojis = mongoose.model("Emojis");
 }
-module.exports = emojis;
+export default emojis;

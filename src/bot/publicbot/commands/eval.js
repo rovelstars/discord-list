@@ -9,9 +9,9 @@ if (client.owners.some((x) => x === message.author.id)) {
       message.channel.send("Nani?!\nYou aren't allowed to get secrets.");
     } else {
       //console.log(message.author.tag + ' used eval function')
-      let code = eval(codein);
+      let code = eval((`(async()=>{${codein}})()`););
       if (typeof code !== "string")
-        code = require("util").inspect(code, { depth: 0 });
+        code = (await import("util")).inspect(code, { depth: 0 });
       if (code == process.env.TOKEN) {
         code = "Fool!\nI'm intelligent too <:smart:794453219605610509>";
       }

@@ -1,6 +1,6 @@
-const { langs } = require("../../data.js");
+import { langs } from "../../data.js";
 
-module.exports = async function (req, res, next) {
+export default async function (req, res, next) {
   res.locals.req = req;
   var themes = ["discord", "dracula", "paranoid"];
   if (!themes.includes(req.cookies["theme"])) {

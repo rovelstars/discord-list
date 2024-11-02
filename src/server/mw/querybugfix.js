@@ -1,4 +1,4 @@
-module.exports = function (err, req, res, next) {
+export default function (err, req, res, next) {
   var dup = new URLSearchParams(req.query);
   for (const [key, value] of Object.entries(req.query)) {
     req.query[key] = dup.get(key);

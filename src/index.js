@@ -1,26 +1,26 @@
-require("module-alias/register");
 Error.stackTraceLimit = Infinity;
-globalThis.WebSocket = require("isomorphic-ws");
+import WebSocket from "isomorphic-ws";
+globalThis.WebSocket = WebSocket;
 const v = process.version.slice(1, 3);
-if (v < 16 && process.platform != "android") {
-  console.error("[ERROR] Node.js v16 or above is required.");
+if (v < 20 && process.platform != "android") {
+  console.error("[ERROR] Node.js v20 or above is required.");
   process.exit(1);
 }
-var rovel = require("rovel.js");
+import rovel from "rovel.js";
 rovel.env.config();
+import fetch from "node-fetch";
 rovel.fetch = function (url, opts) {
-  return require("node-fetch")(encodeURI(url), opts);
+  return fetch(encodeURI(url), opts);
 };
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 mongoose.connect(process.env.DB || "mongodb://127.0.0.1:27017/test", {
   useNewUrlParser: true,
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
 });
-globalThis.shell = require("shelljs");
-const loggy = require("@utils/loggy.js");
+import shell from "shelljs";
+globalThis.shell = shell;
+import * as loggy from "./utils/loggy.js";
 if (process.env.WEBLOG_CONSOLE == "true") {
   globalThis.logg = console.log;
   globalThis.console.log = loggy.log;
@@ -47,14 +47,15 @@ if (process.env.DOMAIN.endsWith("/")) {
 globalThis.db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", function () {
+db.once("open", async function () {
   console.log("[DB] We're connected to database!");
-  require("./cache.js");
+  await import("./cache.js");
 });
-require("@bot/index.js");
 
-const Sentry = require("@sentry/node");
-const Tracing = require("@sentry/tracing");
+import "./bot/index.js"
+
+import Sentry from "@sentry/node";
+import Tracing from "@sentry/tracing";
 if (process.env.SENTRY) {
   Sentry.init({
     dsn: process.env.SENTRY,
@@ -68,7 +69,8 @@ process.on("unhandledRejection", (error) => {
   console.warn("An Error Occurred!\n" + error.stack);
 });
 
-const { app, port } = require("@server/app.js");
+import {app, port} from "./server/app.js";
+
 globalThis.app = app;
 globalThis.port = port;
 

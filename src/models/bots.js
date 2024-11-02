@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema } = mongoose;
-const { fetch } = require("rovel.js");
+import { fetch } from "rovel.js";
 const Bots = new Schema(
   {
     _id: {
@@ -95,4 +95,4 @@ try {
 } catch (e) {
   bots = mongoose.model("Bots");
 }
-module.exports = bots;
+export default bots;

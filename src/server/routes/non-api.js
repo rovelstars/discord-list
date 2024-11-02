@@ -1,8 +1,9 @@
-let router = require("express").Router();
-let path = require("path");
-let auth = require("@utils/auth.js");
-const { marked } = require("marked");
-var proxy = require("proxy-list-random");
+import { Router } from "express";
+const router = Router();
+import path from "node:path";
+import auth from "../../utils/auth.js";
+import { marked } from "marked";
+import proxy from "proxy-list-random";
 
 let sitemap;
 
@@ -358,4 +359,4 @@ router.get("/ads.txt", (req, res) => {
   res.sendFile(path.resolve("src/public/assets/ads.txt"));
 });
 
-module.exports = router;
+export default router;

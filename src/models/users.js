@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 const Users = new Schema(
   {
@@ -73,4 +73,4 @@ try {
 } catch (e) {
   users = mongoose.model("Users");
 }
-module.exports = users;
+export default users;

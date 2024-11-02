@@ -1,4 +1,4 @@
-Search = (array, string) => {
+let Search = (array, string) => {
   string = string.toLowerCase().trim();
   const copied = [...array];
   if (typeof array[0] == "object") {
@@ -21,4 +21,4 @@ Search = (array, string) => {
   });
 };
 
-module.exports = Search;
+export default Search;

@@ -1,4 +1,4 @@
-module.exports = async function (req, res, next) {
+export default async function (req, res, next) {
   const space = " ";
   let isFinished = false;
   let isDataSent = false;

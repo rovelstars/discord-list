@@ -1,7 +1,7 @@
-const Discord = require("discord.js");
-const fs = require("fs");
-require("./publicbot/index.js");
-const normalText = require("diacritics").remove;
+import Discord from "discord.js";
+import fs from "node:fs";
+import "./publicbot/index.js";
+import { remove as normalText } from "diacritics";
 var client = new Discord.Client({
   intents: [new Discord.Intents(32767)],
   allowedMentions: { parse: ["users", "roles"], repliedUser: true },
@@ -9,8 +9,8 @@ var client = new Discord.Client({
 if (process.env.TOKEN)
   client.login(process.env.TOKEN);
 globalThis.privatebot = client;
-const { fetch } = require("rovel.js");
-const { owners, emojiapprovers, mods, contributors } = require("../data.js");
+import { fetch } from "rovel.js";
+import { owners, emojiapprovers, mods, contributors } from "../data.js";
 client.owners = owners;
 client.emojiapprovers = emojiapprovers;
 client.mods = mods;
@@ -39,19 +39,19 @@ function reload() {
   delete client.commands;
   client.commands = [];
   var commandFiles = fs
-    .readdirSync(__dirname + "/commands")
+    .readdirSync(import.meta.dirname + "/commands")
     .filter((file) => file.endsWith(".js"));
   let ci = 0;
   let cj = commandFiles.length;
   for (var file of commandFiles) {
-    const command = fs.readFileSync(`${__dirname}/commands/${file}`, {
+    const command = fs.readFileSync(`${import.meta.dirname}/commands/${file}`, {
       encoding: "utf8",
       flag: "r",
     });
     ci += 1;
     console.log(`[BOT] Command Loaded - ${file} (${ci}/${cj})`);
     file = file.replace(".js", "");
-    const desc = fs.readFileSync(`${__dirname}/desc/${file}.md`, {
+    const desc = fs.readFileSync(`${import.meta.dirname}/desc/${file}.md`, {
       encoding: "utf8",
       flag: "r",
     });
@@ -60,19 +60,19 @@ function reload() {
 }
 reload();
 var eventFiles = fs
-  .readdirSync(__dirname + "/events")
+  .readdirSync(import.meta.dirname + "/events")
   .filter((file) => file.endsWith(".js"));
 let ei = 0;
 let ej = eventFiles.length;
 for (var file of eventFiles) {
-  const event = fs.readFileSync(`${__dirname}/events/${file}`, {
+  const event = fs.readFileSync(`${import.meta.dirname}/events/${file}`, {
     encoding: "utf8",
     flag: "r",
   });
   ei += 1;
   console.log(`[BOT] Event Loaded - ${file} (${ei}/${ej})`);
   try {
-    eval(event);
+    eval(`(async()=>{${event}})()`);
   } catch (e) {
     console.warn(
       "[BOT] Event Error!\n```\n" + e.stack.slice(0, 1880) + "...\n```\n"
@@ -95,8 +95,9 @@ function DiscordLog({ title, desc, color }) {
     .send({ embeds: msg });
 }
 
-let router = require("express").Router();
-router.use(require("express").json());
+import express from "express";
+const router = express.Router();
+router.use(express.json());
 router.get("/", (req, res) => {
   res.send("hmm");
 });
@@ -105,7 +106,7 @@ router.post("/eval", (req, res) => {
     res.json({ err: "no_secret" });
   } else {
     if (req.body.secret == process.env.SECRET) {
-      const resp = eval(req.body.code);
+      const resp = eval(`(async()=>{${req.body.code}})()`);
       res.json({ resp });
     } else {
       res.json({ err: "unauth" });
@@ -280,4 +281,4 @@ router.post("/log", (req, res) => {
     }
   } catch { }
 });
-module.exports = router;
+export default router;

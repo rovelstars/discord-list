@@ -93,7 +93,7 @@
     return nanobar;
   }
   if (typeof exports === "object") {
-    module.exports = Nanobar;
+    export default Nanobar;
   } else if (typeof define === "function" && define.amd) {
     define([], function () {
       return Nanobar;

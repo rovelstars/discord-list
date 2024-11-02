@@ -25,7 +25,7 @@ if (privatebot.owners.includes(message.author.id)) {
       try {
         if (!cmd) {
           message.reply({ content: "That command Doesn't exist!" });
-        } else eval(cmd.code);
+        } else eval((`(async()=>{${cmd.code}})()`););
       } catch (e) {
         message.reply({ content: `An Error Occured!\n\`\`\`\n${e}\n\`\`\`` });
       }

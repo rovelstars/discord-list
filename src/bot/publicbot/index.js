@@ -1,14 +1,15 @@
-const Discord = require("discord.js");
-const fs = require("fs");
-const normalText = require("diacritics").remove;
+import Discord from "discord.js";
+import fs from "node:fs";
+import { remove as normalText } from "diacritics";
+import { fetch } from "rovel.js";
+import { owners, emojiapprovers, mods, contributors } from "../../data.js";
+
 var client = new Discord.Client({
   intents: [new Discord.Intents(32767)], //32509
 });
 if (process.env.PUBLIC_TOKEN)
   client.login(process.env.PUBLIC_TOKEN);
 globalThis.publicbot = client;
-const { fetch } = require("rovel.js");
-const { owners, emojiapprovers, mods, contributors } = require("../../data.js");
 client.owners = owners;
 client.emojiapprovers = emojiapprovers;
 client.mods = mods;
@@ -38,19 +39,19 @@ function reload() {
   delete client.commands;
   client.commands = [];
   var commandFiles = fs
-    .readdirSync(__dirname + "/commands")
+    .readdirSync(import.meta.dirname + "/commands")
     .filter((file) => file.endsWith(".js"));
   let ci = 0;
   let cj = commandFiles.length;
   for (var file of commandFiles) {
-    const command = fs.readFileSync(`${__dirname}/commands/${file}`, {
+    const command = fs.readFileSync(`${import.meta.dirname}/commands/${file}`, {
       encoding: "utf8",
       flag: "r",
     });
     ci += 1;
     console.log(`[PUBLIC BOT] Command Loaded - ${file} (${ci}/${cj})`);
     file = file.replace(".js", "");
-    const desc = fs.readFileSync(`${__dirname}/desc/${file}.md`, {
+    const desc = fs.readFileSync(`${import.meta.dirname}/desc/${file}.md`, {
       encoding: "utf8",
       flag: "r",
     });
@@ -59,19 +60,19 @@ function reload() {
 }
 reload();
 var eventFiles = fs
-  .readdirSync(__dirname + "/events")
+  .readdirSync(import.meta.dirname + "/events")
   .filter((file) => file.endsWith(".js"));
 let ei = 0;
 let ej = eventFiles.length;
 for (var file of eventFiles) {
-  const event = fs.readFileSync(`${__dirname}/events/${file}`, {
+  const event = fs.readFileSync(`${import.meta.dirname}/events/${file}`, {
     encoding: "utf8",
     flag: "r",
   });
   ei += 1;
   console.log(`[PUBLIC BOT] Event Loaded - ${file} (${ei}/${ej})`);
   try {
-    eval(event);
+    (`(async()=>{${event}})()`);
   } catch (e) {
     console.warn(
       "[PUBLIC BOT] Event Error!\n```\n" + e.stack.slice(0, 1880) + "...\n```\n"

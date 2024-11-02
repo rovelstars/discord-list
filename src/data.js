@@ -118,4 +118,4 @@ let langs = {
   yo: "Yoruba",
   zu: "Zulu",
 };
-module.exports = { owners, emojiapprovers, mods, contributors, langs };
+export { owners, emojiapprovers, mods, contributors, langs };

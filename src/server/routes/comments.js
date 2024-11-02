@@ -1,8 +1,10 @@
-let router = require("express").Router();
-router.use(require("express").json());
+import { Router } from "express";
+import express from "express";
+const router = Router();
+router.use(express.json());
 
 router.get("/", (req, res) => {
   res.send("wip");
 });
 
-module.exports = router;
+export default router;

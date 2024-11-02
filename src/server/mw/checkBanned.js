@@ -1,4 +1,4 @@
-module.exports = async function (req, res, next) {
+export default async function (req, res, next) {
   var user = res.locals.user;
   if (user) {
     if (typeof BannedList != "undefined") {

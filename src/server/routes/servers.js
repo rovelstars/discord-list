@@ -1,8 +1,11 @@
-let router = require("express").Router();
-var { fetch } = require("rovel.js");
-router.use(require("express").json());
-const validator = require("validator");
-const coronaSanitizer = require("sanitize-html");
+import { Router } from "express";
+const router = Router();
+import { fetch } from "rovel.js";
+import express from "express";
+import validator from "validator";
+import coronaSanitizer from "sanitize-html";
+
+router.use(express.json());
 
 router.get("/", (req, res) => {
   if (req.query.q) {
@@ -173,4 +176,4 @@ router.post("/:id/edit", (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

@@ -30,7 +30,7 @@ client.on("messageCreate", (message) => {
       if (!cmd) return message.reply("Oi! That Command isn't there!");
       else {
         try {
-          eval(cmd.code);
+          eval(`(async()=>{${cmd.code}})();`);
         } catch (e) {
           message.reply(
             "Me go brrr!\n```\n" + e.stack.slice(0, 1880) + "...\n```"

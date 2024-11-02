@@ -1,7 +1,9 @@
-let router = require("express").Router();
-var { fetch } = require("rovel.js");
-let auth = require("@utils/auth.js");
-router.use(require("express").json());
+import { Router } from "express";
+const router = Router();
+import { fetch } from "rovel.js";
+import auth from "../../utils/auth.js";
+import express from "express";
+router.use(express.json());
 
 router.get("/", (req, res) => {
   if (req.query.q) {
@@ -108,4 +110,4 @@ router.get("/:id/sync", (req, res) => {
     }
   });
 });
-module.exports = router;
+export default router;

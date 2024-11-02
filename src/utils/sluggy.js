@@ -18,4 +18,4 @@ function generateURL(name) {
     .join("");
 }
 
-module.exports = generateURL;
+export default generateURL;

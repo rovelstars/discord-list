@@ -1,4 +1,5 @@
-let router = require("express").Router();
+import { Router } from "express";
+const router = Router();
 
 router.all("*", (req, res, next) => {
   if (req.hostname == "rovelstars.com") {
@@ -72,4 +73,4 @@ router.get("*", (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;

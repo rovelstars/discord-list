@@ -1,4 +1,4 @@
-module.exports = function (req, res, next) {
+export default function (req, res, next) {
   if (!globalThis.started) {
     console.log("[WAITING] Booting: " + process.uptime());
     if (
