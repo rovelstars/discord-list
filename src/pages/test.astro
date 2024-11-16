@@ -1,0 +1,29 @@
+---
+import Root from "@/layouts/Layout.astro";
+import type { Bot } from "@/components/bot-card";
+import BotCardList from "@/components/bot-card-list";
+
+import * as motion from "motion/react-client";
+let res = await fetch("http://localhost:4321/api/bots");
+let data = await res.json();
+---
+
+<Root title="Rovel Discord List">
+  <h1>Hello, Astro!</h1>
+    <div>
+      <motion.h1
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { duration: 1, delay: 1 } }}
+        className="font-heading text-4xl font-bold mb-4 text-center"
+      >
+        We could say its the same old Rovel Discord List
+      </motion.h1>
+      <motion.h2
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { duration: 1, delay: 2 } }}
+        className="font-heading text-3xl font-bold mb-4 text-center"
+      >
+        But its not...
+      </motion.h2>
+     <BotCardList client:load client:only="react" list={data} />
+</Root>

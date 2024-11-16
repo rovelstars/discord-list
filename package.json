@@ -1,0 +1,44 @@
+{
+  "name": "rdl",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/cloudflare": "^11.2.0",
+    "@astrojs/react": "^3.6.2",
+    "@astrojs/tailwind": "^5.1.2",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-dropdown-menu": "^2.1.2",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "approximate-number": "^2.1.1",
+    "astro": "^4.16.13",
+    "astro-font": "^0.1.81",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "colorthief": "^2.6.0",
+    "lucide-react": "^0.460.0",
+    "motion": "^11.11.17",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-twemoji": "^0.6.0",
+    "swr": "^2.2.5",
+    "tailwind-merge": "^2.5.4",
+    "tailwindcss": "^3.4.15",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.6.3",
+    "vaul": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/react-twemoji": "^0.4.3"
+  }
+}

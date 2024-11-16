@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "GG Sans";
+  src: url("/fonts/ggsans.ttf") format("ttf");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 216 7% 14%;
+
+    --card: 210 11% 93%;
+    --card-foreground: 216 7% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 216 7% 14%;
+
+    --primary: 235 86% 65%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 51 99% 68%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 228 6% 33%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 11% 93%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 359 83% 59%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 210 11% 93%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 216 7% 14%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 214 7% 19%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 8% 7%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 216 7% 14%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 235 86% 65%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 51 99% 68%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 0 0% 33%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 0 0% 33%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 359 83% 59%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 216 7% 14%;
+    --input: 0 0% 33%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
