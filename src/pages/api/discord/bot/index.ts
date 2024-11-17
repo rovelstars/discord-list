@@ -34,19 +34,18 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     const body = await request.clone().arrayBuffer();
     const signature = request.headers.get('x-signature-ed25519') || '';
     const timestamp = request.headers.get('x-signature-timestamp') || '';
-    const valid = verifyKey(
-      body,
-      signature,
-      timestamp,
-      env.DISCORD_PUBLIC_KEY
-    );
+    const valid =
+      signature &&
+      timestamp &&
+      (await verifyKey(body, signature, timestamp, env.DISCORD_PUBLIC_KEY));
+    console.log(signature, timestamp, env.DISCORD_PUBLIC_KEY, valid);
     if (!valid) {
       console.log("invalid!!");
       return new Response('Invalid Request Signature', { status: 401 });
     }
     const interaction = await request.json();
     console.log(interaction);
-    if(!interaction){
+    if (!interaction) {
       return new Response('Invalid Request Signature', { status: 401 });
     }
     if (interaction.type === InteractionType.PING) {
