@@ -1,18 +1,5 @@
 import chalk from "chalk";
 let oc = console;
-let runtime = "browser";
-
-if (typeof Bun !== "undefined") {
-  runtime = "bun";
-} else if (typeof process !== "undefined") {
-  if (process.versions.node) {
-    runtime = "node";
-  }
-  if (typeof Deno !== "undefined") {
-    runtime = "deno";
-  }
-}
-
 
 export default function styleit(message, ...styles) {
   // Split the message by the placeholder %c and trim the spaces
@@ -122,20 +109,18 @@ function logWithStyle(type, message, ...styles) {
   oc[type](styleit(message, ...styles));
 }
 
-if (runtime == "node" || runtime == "bun") {
-  globalThis.console = {
-    ...oc,
-    log: (...args) => {
-      logWithStyle("log", ...args);
-    },
-    warn: (...args) => {
-      logWithStyle("warn", ...args);
-    },
-    error: (...args) => {
-      logWithStyle("error", ...args);
-    },
-    info: (...args) => {
-      logWithStyle("info", ...args);
-    },
-  };
-}
+globalThis.console = {
+  ...oc,
+  log: (...args) => {
+    logWithStyle("log", ...args);
+  },
+  warn: (...args) => {
+    logWithStyle("warn", ...args);
+  },
+  error: (...args) => {
+    logWithStyle("error", ...args);
+  },
+  info: (...args) => {
+    logWithStyle("info", ...args);
+  },
+};
