@@ -1,19 +1,20 @@
-import rest from "./util";
+import RestClient from "./util";
 import { Routes } from "discord-api-types/v10";
 import ping from "./commands/ping";
 
 const commands = [ping.data];
 const commandFns = [ping.run];
 
-export default async function registerCommands() {
+export default async function registerCommands(env) {
+    const rest = RestClient(env);
     //register the commands
     console.log("%cRegistering commands...", "color: #5865F2");
     await rest.put(
-        import.meta.env.MODE == "development" ? Routes.applicationGuildCommands(import.meta.env.DISCORD_BOT_ID, import.meta.env.DISCORD_GUILD_ID) :
-            Routes.applicationCommands(import.meta.env.DISCORD_BOT_ID), {
+        env.MODE == "development" ? Routes.applicationGuildCommands(env.DISCORD_BOT_ID, env.DISCORD_GUILD_ID) :
+            Routes.applicationCommands(env.DISCORD_BOT_ID), {
         body: commands
     });
-    console.log("%cSuccessfully registered commands!", "color: #57F287");
+    console.log(`%cSuccessfully registered commands %c${env.MODE == "development" ? "locally" : "globally"}!`, "color: #57F287", "color: #EB459E");
 }
 
 export { commandFns as runs, commands };

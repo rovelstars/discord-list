@@ -7,14 +7,28 @@ import nacl from "tweetnacl";
 import { commands, runs } from '@/bot/register';
 
 import type { APIRoute } from 'astro';
-
-export const GET: APIRoute = async ({ params, request }) => {
-  return new Response(`👋 ${import.meta.env.DISCORD_BOT_ID}`);
+declare global {
+  namespace App {
+    interface Locals {
+      runtime: {
+        env: {
+          DISCORD_BOT_ID: string;
+          DISCORD_PUBLIC_KEY: string;
+        };
+      };
+    }
+  }
 }
 
-export const POST: APIRoute = async ({ params, request }) => {
+export const GET: APIRoute = async ({ locals }) => {
+  const { env } = locals.runtime || import.meta;
+  console.log(env);
+  return new Response(`👋 ${env.DISCORD_BOT_ID}`);
+}
+export const POST: APIRoute = async ({ params, request, locals }) => {
+  const { env } = locals.runtime || import.meta;
   try {
-    if(import.meta.env.DISCORD_PUBLIC_KEY === undefined) {
+    if (env.DISCORD_PUBLIC_KEY === undefined) {
       return new Response("No public key found in env", { status: 500 });
     }
     const body = await request.text();
@@ -24,7 +38,7 @@ export const POST: APIRoute = async ({ params, request }) => {
     const timestamp = request.headers.get('x-signature-timestamp') || '';
     let valid = nacl.sign.detached.verify(
       Buffer.from(timestamp + body), Buffer.from(signature, 'hex'),
-      Buffer.from(import.meta.env.DISCORD_PUBLIC_KEY, 'hex'));
+      Buffer.from(env.DISCORD_PUBLIC_KEY, 'hex'));
     if (!valid) {
 
       return new Response('invalid request signature', { status: 401 });
@@ -55,7 +69,7 @@ export const POST: APIRoute = async ({ params, request }) => {
       // get the function to run
       let run = runs[index];
       // run the function
-      let response = await run(message);
+      let response = await run(message, env);
     } else {
       return new Response(JSON.stringify({ error: 'Unknown Interaction Type' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
