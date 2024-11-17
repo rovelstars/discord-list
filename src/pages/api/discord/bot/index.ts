@@ -46,6 +46,9 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     }
     const interaction = await request.json();
     console.log(interaction);
+    if(!interaction){
+      return new Response('Invalid Request Signature', { status: 401 });
+    }
     if (interaction.type === InteractionType.PING) {
       console.log("%c[DISCORD] %cReceived %cPING", "color: #5865f2",
         "color: #fee75c", "color: #fee75c;font-weight: bold");
@@ -74,10 +77,10 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
       // run the function
       let response = await run(interaction, env);
     } else {
-      return new Response(JSON.stringify({ error: 'Unknown Interaction Type' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+      return new Response('Unknown Interaction Type');
     }
   } catch (e) {
     console.log("invalid!!");
-    return new Response(JSON.stringify({ error: 'Invalid Request Signature' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+    return new Response('Invalid Request Signature', { status: 401 });
   }
 }
