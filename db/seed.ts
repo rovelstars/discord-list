@@ -1,4 +1,3 @@
-import { db, Bots, Users, Servers } from 'astro:db';
 import "@/lib/console-log";
 // https://astro.build/db/seed
 export default async function seed() {

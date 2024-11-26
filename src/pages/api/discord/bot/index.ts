@@ -71,7 +71,7 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
       // get the function to run
       let run = runs[index];
       // run the function
-      let response = await run(interaction, env);
+      let response = await run(interaction, env as Env);
     } else {
       return new Response('Unknown Interaction Type');
     }

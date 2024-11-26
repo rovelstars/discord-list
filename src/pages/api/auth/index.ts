@@ -22,7 +22,7 @@ export const GET: APIRoute = async ({ locals, params, request }) => {
     const userData = await oauth.getUser(data.access_token);
     await joinServer({ oauth, token: data.access_token, env: env as Env });
     await SendLog({
-      env,
+      env: env as Env,
       body: {
         title: `${userData.username} logged in!`,
         desc: `Hello ${userData.global_name}!\nWelcome to RDL!`,
