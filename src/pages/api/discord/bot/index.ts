@@ -8,14 +8,14 @@ import {
 import { commands, runs } from '@/bot/register';
 
 import type { APIRoute } from 'astro';
+import type { Env } from '@/lib/env';
+
+
 declare global {
   namespace App {
     interface Locals {
       runtime: {
-        env: {
-          DISCORD_BOT_ID: string;
-          DISCORD_PUBLIC_KEY: string;
-        };
+        env: Env;
       };
     }
   }
@@ -38,13 +38,10 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
       signature &&
       timestamp &&
       (await verifyKey(body, signature, timestamp, env.DISCORD_PUBLIC_KEY));
-    console.log(signature, timestamp, env.DISCORD_PUBLIC_KEY, valid);
     if (!valid) {
-      console.log("invalid!!");
       return new Response('Invalid Request Signature', { status: 401 });
     }
     const interaction = await request.json();
-    console.log(interaction);
     if (!interaction) {
       return new Response('Invalid Request Signature', { status: 401 });
     }
@@ -79,7 +76,6 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
       return new Response('Unknown Interaction Type');
     }
   } catch (e) {
-    console.log("invalid!!");
     return new Response('Invalid Request Signature', { status: 401 });
   }
 }

@@ -1,9 +1,15 @@
 ---
 import Root from "@/layouts/Layout.astro";
 let { id } = Astro.params;
+import { db, Bots, eq } from "astro:db";
+import getAvatarURL from "@/lib/get-avatar-url";
+import { type Bot } from "@/components/bot-card";
+import BotPage from "@/components/bot-page";
+const bot = (await db.select().from(Bots).where(eq(Bots.id, id)))[0];
+
 ---
 
 <Root title="Rovel Discord List">
-  <h1>Hello, Astro!</h1>
-  <h3>{id}</h3>
+  <div class="mt-24"></div>
+  <BotPage client:load client:only="react" bot={bot as any} />
 </Root>

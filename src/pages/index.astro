@@ -1,8 +1,20 @@
 ---
 import Root from "@/layouts/Layout.astro";
-import MainPage from "@/layouts/MainPage";
+import BotCardList from "@/components/bot-card-list.astro";
+
+import { db, Bots, not, like } from "astro:db";
+import { desc } from "astro:db";
+const data = await db.select().from(Bots).orderBy(desc(Bots.votes)).limit(20);
 ---
 
 <Root title="Rovel Discord List">
-  <MainPage client:load client:only="react" />
-</Root>
+  <div class="mt-24">
+    <h1 class="font-heading text-4xl font-bold mb-4 text-center">
+      We could say its the same old Rovel Discord List
+    </h1>
+    <h2 class="font-heading text-3xl font-bold mb-4 text-center">
+      But its not...
+    </h2>
+    <BotCardList list={data as any} />
+  </div></Root
+>

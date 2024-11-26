@@ -2,18 +2,6 @@ import registerCommands from "@/bot/register";
 import unregisterCommands from "@/bot/unregister";
 
 import type { APIContext, APIRoute } from 'astro';
-declare global {
-  namespace App {
-    interface Locals {
-      runtime: {
-        env: {
-          DISCORD_BOT_ID: string;
-          DISCORD_PUBLIC_KEY: string;
-        };
-      };
-    }
-  }
-}
 
 export const GET: APIRoute = async ({ request, locals }: { request: Request, locals: any }) => {
   const {env} = locals.runtime || import.meta;

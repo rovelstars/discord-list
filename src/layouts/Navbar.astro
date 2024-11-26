@@ -1,0 +1,19 @@
+---
+import { Menubar, MenubarGroup } from "@/components/ui/menubar";
+import { ModeToggle } from "@/components/mode-toggle";
+import LogoNavbar from "@/components/logo-navbar";
+---
+
+<Menubar className="z-50 min-h-16 min-w-full bg-popover border-card drop-shadow-xl fixed top-0 flex">
+  <MenubarGroup>
+    <LogoNavbar client:load />
+  </MenubarGroup>
+  <MenubarGroup className="flex items-center space-x-4">
+    <a href="/" class="text-lg font-bold text-primary">Home</a>
+    <a href="/add" class="text-lg font-bold text-primary">Add Bot</a>
+    <a href="/bots" class="text-lg font-bold text-primary">Bots</a>
+    <a href="/servers" class="text-lg font-bold text-primary">Servers</a>
+    <a href="/about" class="text-lg font-bold text-primary">About</a>
+      <ModeToggle client:idle client:only="react" />
+  </MenubarGroup>
+</Menubar>

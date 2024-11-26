@@ -1,14 +1,13 @@
 import { Compass, Eye, UserRoundPlus, Vote } from "lucide-react";
 //@ts-ignore
 import approx from "approximate-number";
-import getAvatarURL from "@/lib/getAvatarURL";
+import getAvatarURL from "@/lib/get-avatar-url";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Twemoji from "react-twemoji";
 import { Skeleton } from "@/components/ui/skeleton";
 //@ts-ignore
 import ColorThief from "colorthief";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 
 interface Card {
   img: string;
@@ -20,8 +19,7 @@ interface Bot {
   IS_SKELETON?: boolean; //this is going to be a placeholder, remove it when you have the actual data
   card: Card;
   owners: string[];
-  verified: boolean;
-  added: boolean;
+  approved: boolean;
   servers: number;
   promoted: boolean;
   votes: number;
@@ -69,16 +67,7 @@ export default function BotCard({ bot }: { bot: Bot }) {
   }, [imageRef]);
 
   return (
-    <motion.div
-      key={bot.id}
-      layoutId={bot.id}
-      initial={{
-        opacity: 0,
-        // if odd index card,slide from right instead of left
-        y: 50,
-      }}
-      animate={{ opacity: 1, y: 0, transition: { duration: 0.5 } }}
-      viewport={{ once: false }}
+    <div
       className="block bg-popover rounded-lg w-96 md:max-w-80 shadow-black/90 hover:shadow-2xl hover:-translate-y-2 animation duration-300 mb-4 border"
       style={
         bot.bg
@@ -100,7 +89,7 @@ export default function BotCard({ bot }: { bot: Bot }) {
         ) : (
           <>
             <img
-              src={getAvatarURL(bot.id, bot.avatar)}
+              src={getAvatarURL(bot.id, bot.avatar,96)}
               ref={imageRef}
               alt="avatar"
               crossOrigin="anonymous"
@@ -242,7 +231,7 @@ export default function BotCard({ bot }: { bot: Bot }) {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

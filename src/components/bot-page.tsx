@@ -1,5 +1,5 @@
 import type { Bot } from "./bot-card";
-import getAvatarURL from "@/lib/getAvatarURL";
+import getAvatarURL from "@/lib/get-avatar-url";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -43,9 +43,9 @@ export default function BotPage({ bot }: { bot: Bot }) {
         />
       </div>
       <Popup
-        title={`${bot.username}#${bot.discriminator} has not been listed!`}
-        description={`Please do not add this bot since it's waiting for approval. You can join our server to get informed about when Ayako will be approved. Or just sit back here and scream!`}
-        shouldOpen={!bot.added}
+        title={`${bot.username}#${bot.discriminator} has not been approved!`}
+        description={`Please do not add this bot since it's waiting for approval. You can join our server to get informed about when ${bot.username}#${bot.discriminator} will be approved. Or just sit back here and scream!`}
+        shouldOpen={!bot.approved}
       />
     </motion.div>
   );

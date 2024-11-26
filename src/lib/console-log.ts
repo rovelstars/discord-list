@@ -100,7 +100,7 @@ function logWithStyle(type, message, ...styles) {
     return;
   }
   //if message is an object or json, return back to original console.
-  if (typeof message === "object" || typeof message === "json") {
+  if (typeof message === "object") {
     return oc[type](message, ...styles);
   }
   if (!message?.includes?.("%c") || !styles?.length) {
@@ -112,15 +112,19 @@ function logWithStyle(type, message, ...styles) {
 globalThis.console = {
   ...oc,
   log: (...args) => {
+    //@ts-ignore
     logWithStyle("log", ...args);
   },
   warn: (...args) => {
+    //@ts-ignore
     logWithStyle("warn", ...args);
   },
   error: (...args) => {
+    //@ts-ignore
     logWithStyle("error", ...args);
   },
   info: (...args) => {
+    //@ts-ignore
     logWithStyle("info", ...args);
   },
 };

@@ -1,31 +1,28 @@
-import * as React from "react"
-import { Moon, Sun } from "lucide-react"
+import * as React from "react";
+import { Moon, Sun } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 export function ModeToggle() {
   const [theme, setThemeState] = React.useState<
     "theme-light" | "dark" | "system"
-  >("theme-light")
-
-  React.useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains("dark")
-    setThemeState(isDarkMode ? "dark" : "theme-light")
-  }, [])
+  >("theme-light");
 
   React.useEffect(() => {
     const isDark =
       theme === "dark" ||
       (theme === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
-    document.documentElement.classList[isDark ? "add" : "remove"]("dark")
-  }, [theme])
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const isDarkMode = localStorage.getItem("theme") === "dark";
+    setThemeState(isDarkMode ? "dark" : "theme-light");
+    document.documentElement.classList[isDarkMode ? "add" : "remove"]("dark");
+  }, [theme]);
 
   return (
     <DropdownMenu>
@@ -37,16 +34,36 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setThemeState("theme-light")}>
+        <DropdownMenuItem
+          onClick={() => {
+            setThemeState("theme-light");
+            localStorage.setItem("theme", "theme-light");
+          }}
+        >
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setThemeState("dark")}>
+        <DropdownMenuItem
+          onClick={() => {
+            setThemeState("dark");
+            localStorage.setItem("theme", "theme-light");
+          }}
+        >
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setThemeState("system")}>
+        <DropdownMenuItem
+          onClick={() => {
+            setThemeState("system");
+            localStorage.setItem(
+              "theme",
+              window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "theme-light",
+            );
+          }}
+        >
           System
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

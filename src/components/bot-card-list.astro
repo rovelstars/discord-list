@@ -1,0 +1,12 @@
+---
+import BotCard from "./bot-card";
+const {list} = Astro.props;
+import type { Bot } from "./bot-card";
+
+---
+<div class="flex flex-wrap justify-center gap-4 mx-4">
+  {list.map(bot => (
+    <BotCard transition:persist transition:name={`bot-${bot.id}`} bot={bot as any} client:load client:only="react" />
+  ))}
+  <BotCard transition:persist transition:name={`bot-skeleton`} bot={{ IS_SKELETON: true } as Bot} client:load client:only="react" />
+</div>

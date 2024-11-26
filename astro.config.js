@@ -6,12 +6,19 @@ import react from '@astrojs/react';
 
 import cloudflare from '@astrojs/cloudflare';
 
+import db from '@astrojs/db';
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [tailwind({
     applyBaseStyles: false,
-  }), react()],
+  }), react(), db()],
 
   output: 'server',
-  adapter: cloudflare()
+  adapter: cloudflare(),
+  vite: {
+    ssr: {
+      external: ['node:buffer', 'node:path', 'node:crypto'],
+    },
+  },
 });
