@@ -18,7 +18,8 @@ export default defineConfig({
   adapter: cloudflare(),
   vite: {
     ssr: {
-      external: ['node:buffer', 'node:path', 'node:crypto'],
+      noExternal: false,
+      //external: ['node:buffer', 'node:path', 'node:crypto','node:https'],
     },
   },
 });
