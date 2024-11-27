@@ -4,7 +4,22 @@ import BotCardList from "@/components/bot-card-list.astro";
 
 import { db, Bots, not, like } from "astro:db";
 import { desc } from "astro:db";
-const data = await db.select().from(Bots).orderBy(desc(Bots.votes)).limit(20);
+const data = await db
+  .select({
+    id: Bots.id,
+    slug: Bots.slug,
+    avatar: Bots.avatar,
+    username: Bots.username,
+    discriminator: Bots.discriminator,
+    short: Bots.short,
+    votes: Bots.votes,
+    servers: Bots.servers,
+    invite: Bots.invite,
+    bg: Bots.bg,
+  })
+  .from(Bots)
+  .orderBy(desc(Bots.votes))
+  .limit(20);
 ---
 
 <Root title="Rovel Discord List">
