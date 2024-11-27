@@ -8,6 +8,8 @@ import cloudflare from '@astrojs/cloudflare';
 
 import db from '@astrojs/db';
 
+import netlify from "@astrojs/netlify";
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [tailwind({
@@ -15,7 +17,7 @@ export default defineConfig({
   }), react(), db()],
 
   output: 'server',
-  adapter: cloudflare(),
+  adapter: netlify(),
   vite: {
     ssr: {
       external: ["buffer", "path", "fs", "os", "crypto", "async_hooks", "https", "http", "zlib", "events"].flatMap((i) => [`node:${i}`, i]),

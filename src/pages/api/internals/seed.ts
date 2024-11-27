@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import type { Env } from "@/lib/env";
 import { db, Bots, Users } from "astro:db";
-export const GET: APIRoute = async ({ params, request, locals }) => {
+export const GET: APIRoute = async ({ locals }) => {
   const { env } = locals.runtime || import.meta;
   console.log("%cSeeding data from discord.rovelstars.com", "color: #57F287");
   const data = await fetch(`https://discord.rovelstars.com/api/download?pass=${env.DOWNLOAD_PASS}`).then(res => res.json());
