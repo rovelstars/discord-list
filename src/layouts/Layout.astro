@@ -7,7 +7,6 @@ import Navbar from "./Navbar.astro";
 import { AstroFont } from "astro-font";
 import { join } from "node:path";
 const { title } = Astro.props;
-const fontPrefix = import.meta.env.DOMAIN || process.env.DOMAIN || "";
 ---
 
 <script is:inline>
@@ -49,7 +48,7 @@ const fontPrefix = import.meta.env.DOMAIN || process.env.DOMAIN || "";
             {
               weight: "normal",
               style: "normal",
-              path: join(fontPrefix, "fonts", "ggsans.ttf"),
+              path: join("fonts", "ggsans.ttf"),
             },
           ],
           name: "GG Sans",
