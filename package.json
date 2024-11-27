@@ -12,7 +12,8 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/cloudflare": "^11.2.0",
-    "@astrojs/db": "npm:@renhiyama/astro-db@^0.14.3",
+    "@astrojs/db": "npm:@renhiyama/astro-db@0.14.3",
+    "@renhiyama/astro-db": "0.14.3",
     "@astrojs/react": "^3.6.2",
     "@astrojs/tailwind": "^5.1.2",
     "@discordjs/builders": "^1.9.0",
