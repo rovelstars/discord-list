@@ -34,7 +34,8 @@ const Bots = defineTable({
     { on: ['slug'], unique: true },
     { on: ['approved'] },
     { on: ['promoted'] },
-    { on: ['short'] }
+    { on: ['short'] },
+    { on: ['votes'] }
   ],
   // foreignKeys: [
   //   {
