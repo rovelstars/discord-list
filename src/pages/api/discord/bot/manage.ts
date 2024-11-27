@@ -4,7 +4,7 @@ import unregisterCommands from "@/bot/unregister";
 import type { APIContext, APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ request, locals }: { request: Request, locals: any }) => {
-  const {env} = locals.runtime || import.meta;
+  const env = locals.runtime?.env ?? import.meta.env ?? process.env;
   const url = new URL(request.url);
   const query = url.searchParams;
 

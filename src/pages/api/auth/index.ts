@@ -6,7 +6,7 @@ import type { Env } from '@/lib/env';
 import SendLog from '@/bot/log';
 import getAvatarURL from '@/lib/get-avatar-url';
 export const GET: APIRoute = async ({ locals, params, request }) => {
-  const { env } = locals.runtime || import.meta;
+  const env = locals.runtime?.env ?? import.meta.env ?? process.env;
   try {
     const oauth = new DiscordOauth2({
       clientId: env.DISCORD_BOT_ID,

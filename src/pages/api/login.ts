@@ -3,7 +3,7 @@ import DiscordOauth2 from "discord-oauth2";
 import crypto from "node:crypto";
 
 export const GET: APIRoute = async ({ locals, params, request }) => {
-  const { env } = locals.runtime || import.meta;
+  const env = locals.runtime?.env ?? import.meta.env ?? process.env;
   try {
     const oauth = new DiscordOauth2({
       clientId: env.DISCORD_BOT_ID,
