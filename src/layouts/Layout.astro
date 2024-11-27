@@ -7,9 +7,7 @@ import Navbar from "./Navbar.astro";
 import { AstroFont } from "astro-font";
 import { join } from "node:path";
 const { title } = Astro.props;
-const fontPrefix = import.meta.env.PROD || process.env.PROD
-  ? Astro.site.toString()
-  : join(process.cwd(), "public");
+const fontPrefix = import.meta.env.DOMAIN || process.env.DOMAIN || "";
 ---
 
 <script is:inline>
