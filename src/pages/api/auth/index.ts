@@ -4,8 +4,9 @@ import DiscordOauth2 from "discord-oauth2";
 import crypto from "node:crypto";
 import type { Env } from '@/lib/env';
 import SendLog from '@/bot/log';
+import { db, Users, eq } from "astro:db";
 import getAvatarURL from '@/lib/get-avatar-url';
-export const GET: APIRoute = async ({ locals, params, request }) => {
+export const GET: APIRoute = async ({ locals, params, request, cookies }) => {
   const env = locals.runtime?.env ?? import.meta.env ?? process.env;
   try {
     const oauth = new DiscordOauth2({
@@ -20,6 +21,14 @@ export const GET: APIRoute = async ({ locals, params, request }) => {
       grantType: "authorization_code"
     });
     const userData = await oauth.getUser(data.access_token);
+    const user = (await db.select({ id: Users.id }).from(Users).where(eq(Users.id, userData.id)))[0];
+    if (!user) console.log("User doesnt exists in DB");
+    // const refreshToken = await oauth.tokenRequest({
+    //   scope: ["identify", "email", "guilds.join"].join(" "),
+    //   refreshToken: data.refresh_token,
+    //   grantType: "refresh_token"
+    // });
+    // console.log(refreshToken);
     await joinServer({ oauth, token: data.access_token, env: env as Env });
     await SendLog({
       env: env as Env,
@@ -29,7 +38,8 @@ export const GET: APIRoute = async ({ locals, params, request }) => {
         color: "#57F287",
         img: getAvatarURL(userData.id, userData.avatar, 128),
       }
-    })
+    });
+    cookies.set("key", data.access_token, { httpOnly: true, maxAge: 90 * 3600 * 24 * 1000 });
     console.log(data, userData);
     return new Response(JSON.stringify(data), {
       headers: {

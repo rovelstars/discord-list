@@ -2,9 +2,10 @@
 import { Menubar, MenubarGroup } from "@/components/ui/menubar";
 import { ModeToggle } from "@/components/mode-toggle";
 import LogoNavbar from "@/components/logo-navbar";
+import LoginButton from "@/components/login-button";
 ---
 
-<Menubar className="z-50 min-h-16 min-w-full bg-popover border-card drop-shadow-xl fixed top-0 flex">
+<Menubar className="z-50 min-h-16 min-w-full bg-popover rounded-t-none drop-shadow-xl fixed top-0 flex">
   <MenubarGroup>
     <LogoNavbar client:load />
   </MenubarGroup>
@@ -14,6 +15,7 @@ import LogoNavbar from "@/components/logo-navbar";
     <a href="/bots" class="text-lg font-bold text-primary">Bots</a>
     <a href="/servers" class="text-lg font-bold text-primary">Servers</a>
     <a href="/about" class="text-lg font-bold text-primary">About</a>
-      <ModeToggle client:idle client:only="react" />
+    <LoginButton client:load client:only="react" />
+      <ModeToggle class:list={"right-0"} client:idle client:only="react" />
   </MenubarGroup>
 </Menubar>

@@ -1,0 +1,286 @@
+---
+import getAvatarURL from "@/lib/get-avatar-url";
+import isColorDark from "@/lib/is-color-dark";
+import TwemojiText from "./twemoji-text";
+import type { Bot } from "./bot-card";
+import { Label } from "./ui/label";
+import {
+  ChevronUpCircle,
+  Compass,
+  Github,
+  Globe,
+  LinkIcon,
+  SquareArrowOutUpRight,
+  Vote,
+} from "lucide-react";
+
+import approx from "approximate-number";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import Discord from "./svgs/discord";
+import toJSX from "@/lib/to-jsx";
+const { bot } = Astro.props;
+const description = toJSX({ html: bot.desc });
+---
+
+<style>
+  :root {
+    --gradient-color: 0, 0, 0;
+    --gradient-border-color: 0, 0, 0;
+  }
+</style>
+
+<script>
+  import isColorDark from "@/lib/is-color-dark";
+  import ColorThief from "colorthief";
+  const colorThief = new ColorThief();
+  const bgRef = document.getElementById("bg-ref");
+  const bgimgRef = document.getElementById("bgimg-ref") as HTMLImageElement;
+  console.log(bgimgRef);
+  if (bgimgRef) {
+    if (bgimgRef.complete) {
+      const color = colorThief.getColor(bgimgRef);
+      console.log(color);
+      setColor(bgimgRef);
+    }
+    bgimgRef.onload = () => {
+      const color = colorThief.getColor(bgimgRef);
+      console.log(color);
+      setColor(bgimgRef);
+    };
+  }
+  function setColor(imgEl: HTMLImageElement) {
+    const color = colorThief.getColor(imgEl);
+    console.log(color);
+    document.documentElement.style.setProperty("--gradient-color", color);
+    /*
+      style={isColorDark(gradientColor) && isDarkMode
+        ? {
+            borderColor: `rgb(${gradientColor})`,
+          }
+        : {}}
+      */
+    if (
+      (isColorDark(color) && localStorage.getItem("theme") == "dark") ||
+      (localStorage.getItem("theme") == "system" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.style.setProperty(
+        "--gradient-border-color",
+        color,
+      );
+    }
+  }
+  let bgColor = [0, 0, 0];
+</script>
+
+<div
+  class="col-span-3 w-full mx-auto bg-card min-h-screen rounded-lg shadow-black/90"
+>
+  <div
+    class="flex flex-col items-center md:rounded-t-lg h-72"
+    style={bot.bg
+      ? {
+          backgroundImage: bot.bg.startsWith("#") ? `none` : `url(${bot.bg})`,
+          backgroundColor: bot.bg.startsWith("#") ? `${bot.bg}` : `transparent`,
+          backgroundSize: "cover",
+
+          backgroundPosition: "center",
+        }
+      : {}}
+  >
+    {
+      bot.bg && (
+        <img
+          src={bot.bg}
+          id="bgimg-ref"
+          width={1280}
+          height={720}
+          class="w-auto h-auto opacity-0 -z-10"
+          alt="bot background"
+          crossorigin="anonymous"
+        />
+      )
+    }
+  </div>
+
+  <div
+    class="grid grid-cols-1 md:grid-cols-4 md:gap-4 p-4 bg-gradient-to-b via-transparent to-transparent h-full"
+    style={{
+      "--tw-gradient-from": `rgba(--gradient-color, 0.1) var(--tw-gradient-from-position)`,
+      "--tw-gradient-to": `rgba(--gradient-color, 0.01) var(--tw-gradient-to-position)`,
+      "--tw-gradient-stops": "var(--tw-gradient-from), var(--tw-gradient-to)",
+    }}
+  >
+    <div
+      id="bg-ref"
+      class="flex flex-col col-span-3 border-popover px-4 pb-8 border-b-2 md:border-b-0 md:border-r-2 h-full"
+      style={{
+        borderColor: `rgb(--gradient-border-color)`,
+      }}
+    >
+      <img
+        src={getAvatarURL(bot.id, bot.avatar)}
+        crossorigin="anonymous"
+        class="w-36 h-36 rounded-full bg-card border-card border-8 mt-[-5.3rem] mb-4"
+        alt={`${bot.username}'s Avatar`}
+      />
+      <h1
+        class="text-3xl md:text-5xl font-heading text-center md:text-start my-4 font-black"
+      >
+        {bot.username}
+        <span class="text-muted text-lg mx-2 font-bold">
+          #{bot.discriminator}
+        </span>
+      </h1>
+      <div
+        class="border-b-2"
+        style={{
+          borderColor: `rgb(--gradient-border-color)`,
+        }}
+      >
+        <TwemojiText client:load client:only="react">
+          {bot.short}
+        </TwemojiText>
+      </div>
+      <div
+        class="min-w-full prose md:prose-xl dark:prose-invert prose-code:before:content-[''] prose-code:after:content-[''] prose-code:bg-popover prose-code:px-2 prose-code:py-1 prose-code:rounded-md"
+      >
+        <TwemojiText client:load client:only="react">
+          {description}
+        </TwemojiText>
+      </div>
+    </div>
+    <div class="flex flex-col col-span-1 w-full">
+      <Label
+        className="flex text-muted text-md justify-center"
+        style={{
+          color: `rgb(--gradient-border-color)`,
+        }}
+      >
+        <Compass className="w-5 h-5 mr-1 mt-0.5 text-primary/70" /> in{" "}
+        {approx(bot.servers)} servers
+      </Label>
+      <Label
+        className="flex text-muted text-md justify-center"
+        style={{
+          color: `rgb(--gradient-border-color)`,
+        }}
+      >
+        <Vote className="w-5 h-5 mr-1 mt-0.5 text-green-600/70" /> with{" "}
+        {approx(bot.votes)} votes
+      </Label>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="default"
+            className="mt-4 w-1/2 mx-auto md:mx-4 md:w-auto"
+          >
+            <SquareArrowOutUpRight className="w-4 h-4 mr-2" />
+            Invite
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>Invite Type</DropdownMenuLabel>
+          <DropdownMenuItem>
+            <a
+              href={bot.invite}
+              class="inline-flex text-blue-500 hover:underline"
+            >
+              Original Invite
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <a
+              href={`https://discord.com/oauth2/authorize?scope=bot+applications.commands&permissions=0&client_id=${bot.id}`}
+              class="inline-flex text-blue-500 hover:underline"
+            >
+              Invite Without Any Permissions
+            </a>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Button
+        variant="outline"
+        className="mt-4 w-1/2 mx-auto md:mx-4 md:w-auto"
+        asChild
+      >
+        <a href={`/bots/${bot.id}/vote`}>
+          <ChevronUpCircle className="w-4 h-4 mr-2" /> Vote
+        </a>
+      </Button>
+      <div
+        class="border-b-2 my-8 w-12 mx-auto"
+        style={{
+          borderColor: `rgb(--gradient-border-color)`,
+        }}
+      >
+      </div>
+      <p
+        class="inline-flex text-muted text-md font-semibold mb-2 mx-auto md:mx-0 md:ml-auto cursor-default"
+        style={{
+          color: `rgb(--gradient-border-color)`,
+        }}
+      >
+        <LinkIcon className="w-5 h-5 mr-1 mt-0.5" />
+        Links
+      </p>
+      {
+        bot.website && (
+          <Button
+            variant="link"
+            size="sm"
+            className="w-auto md:w-min ml-auto"
+            asChild
+          >
+            <a href={bot.website} class="inline-flex">
+              <Globe className="w-4 h-4 mr-2" />
+              Website
+            </a>
+          </Button>
+        )
+      }
+      {
+        bot.github && (
+          <Button
+            variant="link"
+            size="sm"
+            className="w-auto md:w-min ml-auto"
+            asChild
+          >
+            <a href={bot.github} class="inline-flex">
+              <Github className="w-4 h-4 mr-2" />
+              GitHub
+            </a>
+          </Button>
+        )
+      }
+      {
+        bot.support && (
+          <Button
+            variant="link"
+            size="sm"
+            className="w-auto md:w-min ml-auto"
+            asChild
+          >
+            <a
+              href={new URL(bot.support, "https://discord.gg/").toString()}
+              class="inline-flex"
+            >
+              <Discord className="w-4 h-4 mr-2" />
+              Support Server
+            </a>
+          </Button>
+        )
+      }
+    </div>
+  </div>
+</div>

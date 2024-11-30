@@ -1,0 +1,56 @@
+---
+import Root from "@/layouts/Layout.astro";
+let { id } = Astro.params;
+import { Separator } from "@/components/ui/separator";
+import { db, Bots, eq } from "astro:db";
+import getAvatarURL from "@/lib/get-avatar-url";
+import { type Bot } from "@/components/bot-card";
+import PopupDesktop from "@/components/botpage-popup-desktop";
+import TwemojiText from "@/components/twemoji-text";
+import BotPage from "@/components/legacy-bot-page";
+import { getBanner } from "../../api/internals/users/[id]/banner";
+import { asDrizzleTable } from "@astrojs/db/runtime";
+const bot = (
+  await db
+    .select({
+      id: Bots.id,
+      slug: Bots.slug,
+      avatar: Bots.avatar,
+      username: Bots.username,
+      discriminator: Bots.discriminator,
+      short: Bots.short,
+      votes: Bots.votes,
+      servers: Bots.servers,
+      invite: Bots.invite,
+      bg: Bots.bg,
+      desc: Bots.desc,
+      badges: Bots.badges,
+    })
+    .from(Bots)
+    .where(eq(Bots.slug, id))
+)[0];
+if (!bot)
+  return new Response("", {
+    status: 302,
+    headers: {
+      location: "/404",
+    },
+  });
+if (!bot.bg) {
+  const botbanner = await getBanner(bot.id, import.meta.env.DISCORD_TOKEN);
+  if (botbanner) {
+    bot.bg = botbanner;
+    await db.update(Bots).set({ bg: botbanner }).where(eq(Bots.id, bot.id));
+  }
+}
+---
+
+<Root title="Rovel Discord List">
+  <div>
+    <div class="grid grid-cols-1 md:grid-cols-4 md:gap-4 p-4">
+      {bot && <BotPage bot={bot as any} client:load client:only="react" />}
+      {/* <SimilarBots /> */}
+    </div>
+  </div>
+</Root>
+<!-- {bot && <PopupDesktop bot={bot as any} client:media="!(min-width: 768px)" />} -->

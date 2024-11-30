@@ -1,6 +1,5 @@
 import type { Bot } from "./bot-card";
 import getAvatarURL from "@/lib/get-avatar-url";
-import { motion } from "framer-motion";
 import { useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
@@ -22,27 +21,11 @@ import {
 } from "@/components/ui/drawer";
 export default function BotPage({ bot }: { bot: Bot }) {
   return (
-    <motion.div
-      initial={{ x: 300, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: 300, opacity: 0 }}
-    >
-      <h1 className="font-heading text-4xl font-bold mb-4 text-center">
-        {bot.username}#{bot.discriminator}
-      </h1>
-      <div className="flex justify-center">
-        <img
-          src={getAvatarURL(bot.id, bot.avatar)}
-          alt={`${bot.username}#${bot.discriminator}`}
-          className="w-24 h-24 rounded-full"
-        />
-      </div>
       <Popup
         title={`${bot.username}#${bot.discriminator} has not been approved!`}
         description={`Please do not add this bot since it's waiting for approval. You can join our server to get informed about when ${bot.username}#${bot.discriminator} will be approved. Or just sit back here and scream!`}
         shouldOpen={!bot.approved}
       />
-    </motion.div>
   );
 }
 
@@ -55,7 +38,6 @@ export function Popup({
   description: string;
   shouldOpen?: boolean;
 }) {
-  console.log(shouldOpen);
   const [open, setOpen] = useState(Boolean(shouldOpen));
   const isDesktop = useMediaQuery("(min-width: 768px)");
 

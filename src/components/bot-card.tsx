@@ -3,11 +3,11 @@ import { Compass, Eye, UserRoundPlus, Vote } from "lucide-react";
 import approx from "approximate-number";
 import getAvatarURL from "@/lib/get-avatar-url";
 import { Button, buttonVariants } from "@/components/ui/button";
-import Twemoji from "react-twemoji";
 import { Skeleton } from "@/components/ui/skeleton";
 //@ts-ignore
 import ColorThief from "colorthief";
 import { useEffect, useRef, useState } from "react";
+import TwemojiText from "./twemoji-text";
 
 interface Card {
   img: string;
@@ -34,12 +34,13 @@ interface Bot {
   prefix: string;
   lib: string;
   support: string;
-  bg: string;
-  github: string;
-  website: string;
-  donate: string;
+  bg?: string;
+  banner?: string;
+  github?: string;
+  website?: string;
+  donate?: string;
   invite: string;
-  slug: string;
+  slug?: string;
   owned: boolean;
   status: "online" | "offline" | "idle" | "dnd";
   addedAt: string;
@@ -89,7 +90,7 @@ export default function BotCard({ bot }: { bot: Bot }) {
         ) : (
           <>
             <img
-              src={getAvatarURL(bot.id, bot.avatar,96)}
+              src={getAvatarURL(bot.id, bot.avatar, 96)}
               ref={imageRef}
               alt="avatar"
               crossOrigin="anonymous"
@@ -193,13 +194,9 @@ export default function BotCard({ bot }: { bot: Bot }) {
                 </div>
               </div>
             ) : (
-              <Twemoji
-                options={{
-                  className: "twemoji w-auto h-[1em] inline -translate-y-0.5",
-                }}
-              >
+              <TwemojiText>
                 {bot.short}
-              </Twemoji>
+              </TwemojiText>
             )}
           </div>
           <div className="mt-8 mx-2 flex flex-col gap-2">
@@ -219,13 +216,15 @@ export default function BotCard({ bot }: { bot: Bot }) {
                   <Eye className="w-4 h-4 mr-2" />
                   View
                 </a>
-                <Button
-                  variant="default"
-                  className="bg-muted hover:bg-muted/90 text-white w-full"
+                <a
+                href={`${bot.invite}`}
+                  className={buttonVariants({
+                    variant: "outline",
+                  })}
                 >
                   <UserRoundPlus className="w-4 h-4 mr-2" />
                   Invite
-                </Button>
+                </a>
               </>
             )}
           </div>

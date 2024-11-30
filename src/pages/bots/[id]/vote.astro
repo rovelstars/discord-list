@@ -1,0 +1,114 @@
+---
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import Root from "@/layouts/Layout.astro";
+import getAvatarURL from "@/lib/get-avatar-url";
+let { id } = Astro.params;
+import { db, Bots, Users, eq } from "astro:db";
+import DiscordOauth2 from "discord-oauth2";
+const bot = (
+  await db
+    .select({
+      id: Bots.id,
+      avatar: Bots.avatar,
+      username: Bots.username,
+      discriminator: Bots.discriminator,
+      opted_coins: Bots.opted_coins,
+    })
+    .from(Bots)
+    .where(eq(Bots.slug, id))
+)[0];
+if (!bot)
+  return new Response("", {
+    status: 302,
+    headers: {
+      location: "/404",
+    },
+  });
+const key = Astro.cookies.get("key")?.value;
+console.log(key);
+const oauth2 = new DiscordOauth2({
+  clientId: import.meta.env.DISCORD_BOT_ID || process.env.DISCORD_BOT_ID,
+  clientSecret: import.meta.env.DISCORD_SECRET || process.env.DISCORD_SECRET,
+  redirectUri: (import.meta.env.DOMAIN || process.env.DOMAIN) + "/api/auth",
+});
+const userData = key ? await oauth2.getUser(key) : null;
+---
+
+<Root title="Rovel Discord List">
+  <div class="w-full block md:px-4">
+    <div
+      class="w-full border-popover px-4 pb-8 border-b-2 md:border-b-0 md:border-r-2 h-full"
+    >
+      <img
+        src={getAvatarURL(bot.id, bot.avatar)}
+        crossorigin="anonymous"
+        class="mx-auto w-36 h-36 rounded-full bg-card border-card border-8"
+        alt={`${bot.username}'s Avatar`}
+      />
+      <h1 class="text-3xl md:text-5xl font-heading text-center my-4 font-black">
+        {bot.username}
+      </h1>
+    </div>
+    {
+      userData && (
+        <>
+          <Input
+            id="coins"
+            type="number"
+            placeholder="Coins"
+            disabled={!!bot.opted_coins}
+            className="w-full mt-4"
+          />
+          <div class="flex justify-center mt-4">
+            <Button
+              className="w-1/2 md:w-36"
+              id="vote-button"
+              data-x-id={`${id}`}
+            >
+              Vote
+            </Button>
+          </div>
+        </>
+      )
+    }
+    {
+      !userData && (
+        <div class="flex justify-center mt-4">
+          <a
+          class={buttonVariants({
+                    variant: "secondary",
+                  })+" w-1/2 md:w-36"}
+            href={`/login?redirect=${encodeURIComponent(
+              `/bots/${id}/vote`,
+            )}`}
+          >
+            Login in order to vote
+          </a>
+        </div>
+      )
+    }
+  </div>
+</Root>
+
+<script>
+  alert("The website is being updated, so the voting system is disabled for now. Sorry for the inconvenience.");
+  const voteButton = document.getElementById("vote-button");
+  const coins = document.getElementById("coins") as HTMLInputElement;
+  voteButton.addEventListener("click", async () => {
+    const res = await fetch(
+      `/api/bots/${voteButton.getAttribute("data-x-id")}/vote${coins?.value ? `?coins=${coins.value}` : ""}`,
+      {
+        method: "POST",
+      },
+    );
+    if (res.ok) {
+      alert("Voted!");
+      window.location.href = `/bots/${voteButton.getAttribute("data-x-id")}`;
+    } else {
+      //show error
+      const data = await res.json();
+      alert(data.err.replace("_", " "));
+    }
+  });
+</script>

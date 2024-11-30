@@ -3,8 +3,9 @@ import type { Env } from "@/lib/env";
 import { db, Bots, Users } from "astro:db";
 export const GET: APIRoute = async ({ locals }) => {
   const env = locals.runtime?.env ?? import.meta.env ?? process.env;
+  return new Response("This route is disabled in production", { status: 403 });
   console.log("%cSeeding data from discord.rovelstars.com", "color: #57F287");
-  const data = await fetch(`https://discord.rovelstars.com/api/download?pass=${env.DOWNLOAD_PASS}`).then(res => res.json());
+  const data = await fetch(`http://localhost:3000/api/download?pass=${env.DOWNLOAD_PASS}`).then(res => res.json());
   console.log(`%cReceived %c${data.bots.length} %cBots, %c${data.users.length} %cUsers, %c${data.servers.length} %cServers`,
     "color: #57F287", "color: #FEE75C", "color: #57F287", "color: #FEE75C", "color: #57F287", "color: #FEE75C", "color: #57F287");
 
@@ -15,7 +16,7 @@ export const GET: APIRoute = async ({ locals }) => {
         approved: bot.verified || bot.added, //approve bots on our list if they are verified by discord or added by us.
         servers: bot.servers,
         promoted: bot.promoted,
-        votes: bot.votes,
+        votes: bot.votes,//+(Math.floor(Math.random()*bot.servers/1000)+Math.floor(Math.random()*10)),
         badges: bot.badges,
         opted_coins: bot.opted_coins, //if the bot has opted for coins, default is false
         id: bot.id,
@@ -43,7 +44,6 @@ export const GET: APIRoute = async ({ locals }) => {
       return new Response(`Failed to insert bot: ${bot.username}#${bot.discriminator} (${bot.id})`, { status: 500 });
     }
   }));
-  return new Response("Successfully seeded data from discord.rovelstars.com", { status: 200 });
   await Promise.all(data.users.map(async user => {
     try {
       await db.insert(Users).values({
@@ -68,4 +68,5 @@ export const GET: APIRoute = async ({ locals }) => {
       console.log(`%cFailed to insert user ${user.username}#${user.discriminator} due to %c${error.message}`, "color: #FEE75C", "color: #FF0000");
     }
   }));
+  return new Response("Successfully seeded data from discord.rovelstars.com", { status: 200 });
 };

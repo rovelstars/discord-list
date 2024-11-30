@@ -1,6 +1,7 @@
 
 import DiscordOauth2 from "discord-oauth2";
 import type { APIRoute } from "astro";
+import {db, Bots, eq, inArray} from "astro:db";
 
 export const GET: APIRoute = async ({ params, request, locals, cookies }) => {
   const env = locals.runtime?.env ?? import.meta.env ?? process.env;
@@ -14,7 +15,10 @@ export const GET: APIRoute = async ({ params, request, locals, cookies }) => {
   });
   try {
     const userData = await oauth.getUser(key);
-    return new Response(JSON.stringify(userData), { headers: { "Content-Type": "application/json" } });
+    console.log(userData.id);
+    const bots = await db.select({ id: Bots.id, username: Bots.username }).from(Bots).where(inArray(Bots.owners, ["189759562910400512"]));
+    
+    return new Response(JSON.stringify(bots), { headers: { "Content-Type": "application/json" } });
   } catch {
     cookies.delete("key");
     return new Response(JSON.stringify({ error: "invalid_key" }), { status: 400, headers: { "Content-Type": "application/json" } });

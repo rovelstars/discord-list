@@ -6,7 +6,6 @@ import type { Bot } from "./bot-card";
 ---
 <div class="flex flex-wrap justify-center gap-4 mx-4">
   {list.map((bot: Bot) => (
-    <BotCard transition:persist transition:name={`bot-${bot.id}`} bot={bot as Bot} client:load client:only="react" />
+    <BotCard bot={bot as Bot} client:load client:only="react" />
   ))}
-  <BotCard transition:persist transition:name={`bot-skeleton`} bot={{ IS_SKELETON: true } as Bot} client:load client:only="react" />
 </div>

@@ -37,14 +37,6 @@ const Bots = defineTable({
     { on: ['short'] },
     { on: ['votes'] }
   ],
-  // foreignKeys: [
-  //   {
-  //     columns: ['owners'],
-  //     references: () => {
-  //       return [Users.columns.id]
-  //     }
-  //   }
-  // ]
 });
 
 const Users = defineTable({

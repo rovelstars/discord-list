@@ -4,6 +4,8 @@ import BotCardList from "@/components/bot-card-list.astro";
 
 import { db, Bots, not, like } from "astro:db";
 import { desc } from "astro:db";
+import { Flame } from "lucide-react";
+import Discord from "@/components/svgs/discord";
 const data = await db
   .select({
     id: Bots.id,
@@ -23,13 +25,16 @@ const data = await db
 ---
 
 <Root title="Rovel Discord List">
-  <div class="mt-24">
-    <h1 class="font-heading text-4xl font-bold mb-4 text-center">
-      We could say its the same old Rovel Discord List
-    </h1>
-    <h2 class="font-heading text-3xl font-bold mb-4 text-center">
-      But its not...
-    </h2>
-    <BotCardList list={data as any} />
-  </div></Root
->
+  <Discord className="w-24 h-24 mx-auto text-primary my-12" />
+  <h1 class="font-heading text-6xl font-bold mb-4 text-center">
+    Rovel Discord List
+  </h1>
+  <h2 class="font-heading text-4xl font-bold mb-4 text-center">
+    Imagine a better place - where you can find everything about discord!
+  </h2>
+  <h3 class="font-heading text-3xl font-bold mb-4 text-center mt-12">
+    <Flame className="w-8 h-8 inline-block text-primary -mt-2" />
+    Top 10 Bots
+  </h3>
+  <BotCardList list={data as any} />
+</Root>
