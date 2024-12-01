@@ -66,24 +66,38 @@ export default function BotCard({ bot }: { bot: Bot }) {
       }
     }
   }, [imageRef]);
-
+if(bot.bg && !bot.bg.startsWith("http")) bot.bg = `https://cdn.discordapp.com/banners/${bot.id}/${bot.bg}.webp?size=512`;
   return (
-    <div
-      className="block bg-popover rounded-lg w-96 md:max-w-80 shadow-black/90 hover:shadow-2xl hover:-translate-y-2 animation duration-300 mb-4 border"
-      style={
-        bot.bg
-          ? {
-              backgroundImage: `url(${bot.bg})`,
-              backgroundSize: "contain",
-              backgroundPosition: "center",
-            }
-          : {
-              backgroundColor: `rgb(${bgColor})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }
-      }
+    <div className="block bg-popover rounded-lg w-96 md:max-w-80 shadow-black/90 hover:shadow-2xl hover:-translate-y-2 animation duration-300 mb-4 border"
+    style={
+      bot.bg
+        ? {
+            backgroundImage: `url(${bot.bg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }
+        : {
+            backgroundColor: `rgb(${bgColor})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }
+    }
     >
+      <div className="h-32 w-full rounded-t-lg"
+        style={
+          bot.bg
+            ? {
+                backgroundImage: `url(${bot.bg})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }
+            : {
+                backgroundColor: `rgb(${bgColor})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }
+        }
+      />
       <div className="relative">
         {bot.IS_SKELETON ? (
           <Skeleton className="w-16 h-16 rounded-full absolute top-8 left-4 shadow-black shadow-2xl bg-muted" />
@@ -96,10 +110,10 @@ export default function BotCard({ bot }: { bot: Bot }) {
               crossOrigin="anonymous"
               width={64}
               height={64}
-              className="w-16 h-16 rounded-full absolute top-8 left-4 border-4 border-card bg-popover shadow-black shadow-2xl"
+              className="z-10 w-16 h-16 rounded-full absolute -top-8 left-4 border-4 border-card bg-popover shadow-black shadow-2xl"
             />
             <span
-              className={`-bottom-24 left-16 absolute w-6 h-6 ${
+              className={`z-10 -bottom-8 left-16 absolute w-6 h-6 ${
                 bot.status == "online"
                   ? "bg-green-500"
                   : bot.status == "offline"
@@ -112,8 +126,8 @@ export default function BotCard({ bot }: { bot: Bot }) {
           </>
         )}
       </div>
-      <div className="mt-16 pb-2 bg-popover rounded-b-md">
-        <div className="m-4 pt-12">
+      <div className=" pb-2 bg-popover hover:bg-popover/90 backdrop-blur-md animate animate-[bg] duration-300 rounded-b-md">
+        <div className="mx-4 pt-12">
           {bot.IS_SKELETON ? (
             <>
               <Skeleton className="w-32 my-1 h-6" />
@@ -135,7 +149,7 @@ export default function BotCard({ bot }: { bot: Bot }) {
               </span>
             </>
           )}
-          <div className="mt-4 flex items-center">
+          <div className="my-4 flex items-center">
             {bot.IS_SKELETON ? (
               <div className="flex gap-2">
                 <div className="flex">
@@ -194,9 +208,7 @@ export default function BotCard({ bot }: { bot: Bot }) {
                 </div>
               </div>
             ) : (
-              <TwemojiText>
-                {bot.short}
-              </TwemojiText>
+              <TwemojiText>{bot.short}</TwemojiText>
             )}
           </div>
           <div className="mt-8 mx-2 flex flex-col gap-2">
@@ -217,7 +229,7 @@ export default function BotCard({ bot }: { bot: Bot }) {
                   View
                 </a>
                 <a
-                href={`${bot.invite}`}
+                  href={`${bot.invite}`}
                   className={buttonVariants({
                     variant: "outline",
                   })}

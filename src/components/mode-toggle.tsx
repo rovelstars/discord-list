@@ -21,7 +21,6 @@ export function ModeToggle() {
         window.matchMedia("(prefers-color-scheme: dark)").matches);
     const isDarkMode = localStorage.getItem("theme") === "dark";
     setThemeState(isDarkMode ? "dark" : "theme-light");
-    console.log(isDark, isDarkMode);
     document.documentElement.classList[(isDarkMode || isDark) ? "add" : "remove"]("dark");
   }, [theme]);
 

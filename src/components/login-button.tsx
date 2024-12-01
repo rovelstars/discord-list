@@ -20,7 +20,7 @@ export default function LoginButton() {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="default">Login</Button>
+          <Button variant="default" id="login-button">Login</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -66,9 +66,12 @@ export default function LoginButton() {
             <Button
               onClick={() => {
                 setOpen(false);
+                const redirect = new URL(window.location.href).pathname;
                 const url = new URL("/login", window.location.href);
                 url.searchParams.append("servers", servers.toString());
                 url.searchParams.append("email", email.toString());
+                //save cookie redirect
+                document.cookie = `redirect=${redirect}; path=/;`;
                 window.location.href = url.toString();
               }}
             >

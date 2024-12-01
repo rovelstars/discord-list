@@ -3,6 +3,25 @@ import { Menubar, MenubarGroup } from "@/components/ui/menubar";
 import { ModeToggle } from "@/components/mode-toggle";
 import LogoNavbar from "@/components/logo-navbar";
 import LoginButton from "@/components/login-button";
+const key = Astro.cookies.get("key")?.value;
+import { db, Bots, Users, eq } from "astro:db";
+import DiscordOauth2 from "discord-oauth2";
+const oauth2 = new DiscordOauth2({
+  clientId: import.meta.env.DISCORD_BOT_ID || process.env.DISCORD_BOT_ID,
+  clientSecret: import.meta.env.DISCORD_SECRET || process.env.DISCORD_SECRET,
+  redirectUri: (import.meta.env.DOMAIN || process.env.DOMAIN) + "/api/auth",
+});
+const userData = key ? await oauth2.getUser(key) : null;
+const user = userData
+  ? (
+      await db
+        .select({
+          bal: Users.bal,
+        })
+        .from(Users)
+        .where(eq(Users.id, userData.id))
+    )[0]
+  : null;
 ---
 
 <Menubar className="z-50 min-h-16 min-w-full bg-popover rounded-t-none drop-shadow-xl fixed top-0 flex">
@@ -15,7 +34,19 @@ import LoginButton from "@/components/login-button";
     <a href="/bots" class="text-lg font-bold text-primary">Bots</a>
     <a href="/servers" class="text-lg font-bold text-primary">Servers</a>
     <a href="/about" class="text-lg font-bold text-primary">About</a>
-    <LoginButton client:load client:only="react" />
+    {
+      user && (
+        <>
+          <a href="/dashboard" class="text-lg font-bold text-primary">Dashboard</a>
+          <a href={`/logout?redirect=${new URL(Astro.url).pathname}`} class="text-lg font-bold text-primary">Logout</a>
+        </>
+      )
+    }
+    {
+      !user && (
+        <LoginButton client:load client:only="react" />
+      )
+    }
       <ModeToggle class:list={"right-0"} client:idle client:only="react" />
   </MenubarGroup>
 </Menubar>

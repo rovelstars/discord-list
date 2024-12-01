@@ -6,7 +6,6 @@ export const GET: APIRoute = async ({ params, request, locals, cookies }) => {
   const env = locals.runtime?.env ?? import.meta.env ?? process.env;
   const key = new URL(request.url).searchParams.get("key") ?? request.headers.get("Authorization") ?? request.headers.get("RDL-key") ?? cookies.get("key")?.value;
   if (!key) return new Response(JSON.stringify({ err: "no_key" }), { status: 400, headers: { "Content-Type": "application/json" } });
-  console.log(key);
   const oauth = new DiscordOauth2({
     clientId: env.DISCORD_BOT_ID,
     clientSecret: env.DISCORD_SECRET,

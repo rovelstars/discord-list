@@ -35,6 +35,7 @@ import isColorDark from "@/lib/is-color-dark";
 
 const colorThief = new ColorThief();
 export default function BotPage({ bot }: { bot: Bot }) {
+  if(bot.bg && !bot.bg.startsWith("http")) bot.bg = `https://cdn.discordapp.com/banners/${bot.id}/${bot.bg}.webp?size=2048`;
   const isDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const [botBg, setBotBg] = useState<string>(bot.bg);
   

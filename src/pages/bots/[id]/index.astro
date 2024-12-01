@@ -2,7 +2,7 @@
 import Root from "@/layouts/Layout.astro";
 let { id } = Astro.params;
 import { Separator } from "@/components/ui/separator";
-import { db, Bots, eq } from "astro:db";
+import { db, Bots, eq,or } from "astro:db";
 import getAvatarURL from "@/lib/get-avatar-url";
 import { type Bot } from "@/components/bot-card";
 import PopupDesktop from "@/components/botpage-popup-desktop";
@@ -10,6 +10,7 @@ import TwemojiText from "@/components/twemoji-text";
 import BotPage from "@/components/legacy-bot-page";
 import { getBanner } from "../../api/internals/users/[id]/banner";
 import { asDrizzleTable } from "@astrojs/db/runtime";
+import getBannerURL from "@/lib/get-banner-url";
 const bot = (
   await db
     .select({
@@ -27,7 +28,7 @@ const bot = (
       badges: Bots.badges,
     })
     .from(Bots)
-    .where(eq(Bots.slug, id))
+    .where(or(eq(Bots.slug, id), eq(Bots.id, id)))
 )[0];
 if (!bot)
   return new Response("", {
@@ -36,12 +37,18 @@ if (!bot)
       location: "/404",
     },
   });
+
 if (!bot.bg) {
   const botbanner = await getBanner(bot.id, import.meta.env.DISCORD_TOKEN);
   if (botbanner) {
-    bot.bg = botbanner;
+    bot.bg = getBannerURL({ banner: botbanner, id: bot.id });
+    console.log(bot.bg);
     await db.update(Bots).set({ bg: botbanner }).where(eq(Bots.id, bot.id));
   }
+}
+if (bot.bg && bot.bg.startsWith("https://cdn.discordapp.com/banners")) {
+  //we get banners from discord. we dont save it though, so we can modify image as we want.
+  bot.bg = getBannerURL({ banner: bot.bg, id: bot.id });
 }
 ---
 

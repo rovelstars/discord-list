@@ -39,13 +39,12 @@ export const GET: APIRoute = async ({ locals, params, request, cookies }) => {
         img: getAvatarURL(userData.id, userData.avatar, 128),
       }
     });
-    cookies.set("key", data.access_token, { httpOnly: true, maxAge: 90 * 3600 * 24 * 1000 });
+    cookies.set("key", data.access_token, { httpOnly: true, maxAge: 90 * 3600 * 24 * 1000, path:"/" });
     console.log(data, userData);
-    return new Response(JSON.stringify(data), {
-      headers: {
-        "content-type": "application/json"
-      }
-    });
+    const redirect = cookies.get("redirect")?.value;
+    cookies.delete("redirect");
+    if (redirect) return new Response(null, { status: 302, headers: { Location: new URL(redirect, env.DOMAIN).toString() } });
+    return new Response(null, { status: 302, headers: { Location: env.DOMAIN } });
   }
   catch (e) {
     console.log(e);

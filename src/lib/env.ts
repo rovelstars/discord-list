@@ -20,4 +20,5 @@ export type Env = {
   DISCORD_GUILD_ID: string;
   MODE: string;
   LOGS_CHANNEL_ID: string;
+  FAILED_DMS_LOGS_CHANNEL_ID: string;
 };

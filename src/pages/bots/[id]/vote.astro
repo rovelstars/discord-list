@@ -1,10 +1,11 @@
 ---
+export const prerender = false;
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Root from "@/layouts/Layout.astro";
 import getAvatarURL from "@/lib/get-avatar-url";
 let { id } = Astro.params;
-import { db, Bots, Users, eq } from "astro:db";
+import { db, Bots, Users, eq, or } from "astro:db";
 import DiscordOauth2 from "discord-oauth2";
 const bot = (
   await db
@@ -16,7 +17,7 @@ const bot = (
       opted_coins: Bots.opted_coins,
     })
     .from(Bots)
-    .where(eq(Bots.slug, id))
+    .where(or(eq(Bots.slug, id), eq(Bots.id, id)))
 )[0];
 if (!bot)
   return new Response("", {
@@ -26,13 +27,22 @@ if (!bot)
     },
   });
 const key = Astro.cookies.get("key")?.value;
-console.log(key);
 const oauth2 = new DiscordOauth2({
   clientId: import.meta.env.DISCORD_BOT_ID || process.env.DISCORD_BOT_ID,
   clientSecret: import.meta.env.DISCORD_SECRET || process.env.DISCORD_SECRET,
   redirectUri: (import.meta.env.DOMAIN || process.env.DOMAIN) + "/api/auth",
 });
 const userData = key ? await oauth2.getUser(key) : null;
+const user = userData
+  ? (
+      await db
+        .select({
+          bal: Users.bal,
+        })
+        .from(Users)
+        .where(eq(Users.id, userData.id))
+    )[0]
+  : null;
 ---
 
 <Root title="Rovel Discord List">
@@ -52,39 +62,33 @@ const userData = key ? await oauth2.getUser(key) : null;
     </div>
     {
       userData && (
-        <>
-          <Input
-            id="coins"
-            type="number"
-            placeholder="Coins"
-            disabled={!!bot.opted_coins}
-            className="w-full mt-4"
-          />
-          <div class="flex justify-center mt-4">
+        <div class="md:max-w-lg mx-auto flex flex-col items-center">
+          {bot.opted_coins && (
+            <Input
+              id="coins"
+              type="number"
+              placeholder={`You have R$${user.bal}`}
+              className="mt-4 mx-4 w-4/5 md:mx-0 md:w-1/2"
+            />
+          )}
+          <div class="flex justify-center mt-4 w-full">
             <Button
-              className="w-1/2 md:w-36"
+              className="mx-8 w-full md:mx-0 md:w-1/2"
               id="vote-button"
               data-x-id={`${id}`}
             >
               Vote
             </Button>
           </div>
-        </>
+        </div>
       )
     }
     {
       !userData && (
         <div class="flex justify-center mt-4">
-          <a
-          class={buttonVariants({
-                    variant: "secondary",
-                  })+" w-1/2 md:w-36"}
-            href={`/login?redirect=${encodeURIComponent(
-              `/bots/${id}/vote`,
-            )}`}
-          >
+          <Button className="w-1/2 md:w-36" variant="secondary">
             Login in order to vote
-          </a>
+          </Button>
         </div>
       )
     }
@@ -92,7 +96,9 @@ const userData = key ? await oauth2.getUser(key) : null;
 </Root>
 
 <script>
-  alert("The website is being updated, so the voting system is disabled for now. Sorry for the inconvenience.");
+  // alert(
+  //   "The website is being updated, so the voting system is disabled for now. Sorry for the inconvenience.",
+  // );
   const voteButton = document.getElementById("vote-button");
   const coins = document.getElementById("coins") as HTMLInputElement;
   voteButton.addEventListener("click", async () => {
@@ -103,8 +109,15 @@ const userData = key ? await oauth2.getUser(key) : null;
       },
     );
     if (res.ok) {
-      alert("Voted!");
-      window.location.href = `/bots/${voteButton.getAttribute("data-x-id")}`;
+      const data = await res.json();
+      console.log(data);
+      if (!data.success && data.try_after)
+        return alert(`You can vote again in ${data.try_after}.`);
+      else if (!data.success) return alert(data.err);
+      else if (data.success) {
+        alert("Voted successfully!");
+        window.location.href = `/bots/${voteButton.getAttribute("data-x-id")}`;
+      }
     } else {
       //show error
       const data = await res.json();

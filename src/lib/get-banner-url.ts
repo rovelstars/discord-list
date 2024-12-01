@@ -3,5 +3,5 @@ export default function getBannerURL({ banner, id }: {
   id: string;
 }) {
   if (!banner) return null;
-  return `https://cdn.discordapp.com/banners/${id}/${banner}.${banner.startsWith("a_") ? "gif" : "png"}?size=4096`;
+  return `https://cdn.discordapp.com/banners/${id}/${banner}.${banner.startsWith("a_") ? "gif" : "webp"}?size=4096`;
 }

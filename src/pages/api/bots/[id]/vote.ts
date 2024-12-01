@@ -1,6 +1,9 @@
 import type { APIRoute } from "astro";
 import DiscordOauth2 from "discord-oauth2";
 import { db, Bots, Users, eq, and } from "astro:db";
+import SendLog from "@/bot/log";
+import type { Env } from "@/lib/env";
+import getAvatarURL from "@/lib/get-avatar-url";
 export const POST: APIRoute = async ({ params, request, cookies, locals }) => {
   const env = locals.runtime?.env ?? import.meta.env ?? process.env;
   const key = new URL(request.url).searchParams.get("key") ?? request.headers.get("Authorization") ?? request.headers.get("RDL-key") ?? cookies.get("key")?.value;
@@ -16,179 +19,89 @@ export const POST: APIRoute = async ({ params, request, cookies, locals }) => {
   const userData = await oauth2.getUser(key);
   const user = (await db.select({ bal: Users.bal, votes: Users.votes }).from(Users).where(eq(Users.id, userData.id)))[0] as { bal: number, votes: { bot: string, at: number }[] };
   if (!user) return new Response(JSON.stringify({ err: "invalid_key" }), { status: 400, headers: { "Content-Type": "application/json" } });
-  const bot = (await db.select({ votes: Bots.votes, opted_coins: Bots.opted_coins, webhook: Bots.webhook, code: Bots.code }).from(Bots).where(eq(Bots.id, id)))[0];
+  const bot = (await db.select({ votes: Bots.votes, opted_coins: Bots.opted_coins, webhook: Bots.webhook, code: Bots.code, username: Bots.username, avatar: Bots.avatar, owners: Bots.owners }).from(Bots).where(eq(Bots.id, id)))[0];
   if (!bot) return new Response(JSON.stringify({ err: "no_bot_found" }), { status: 400, headers: { "Content-Type": "application/json" } });
   let votingType = bot.opted_coins ? "coins" : "time";
-  if (votingType == "time") {
-    if (!user.votes) user.votes = [];
-    //find the bot from votes: [{bot, at}]
-    let vote = user.votes.find((b) => b.bot == id);
-    let allow = false;
-    if (vote) {
-      //check if Vote.at is older than 24 hours
-      if (Date.now() - vote.at > 86400000) {
-        //if it is older than 24 hours, remove it from the votes array
-        user.votes = user.votes.filter((b) => b.bot != id);
-        allow = true;
-      }
-    }
-    if (!vote) allow = true;
-    if (allow) {
-      //we can approve the vote
-      user.votes.push({ bot: id, at: Date.now() });
-      await db.update(Users).set({ votes: user.votes }).where(eq(Users.id, userData.id));
-      bot.votes = bot.votes + 1;
-      await db.update(Bots).set({ votes: bot.votes }).where(eq(Bots.id, id));
-
-      if (bot.webhook) {
-        const postdata = JSON.stringify({
-          user: { id: userData.id, bal: user.bal, votes: user.votes, username: userData.username, avatar: userData.avatar },
-          id: userData.id,
-          coins: 10,
-          votes: 1,
-          currentVotes: bot.votes,
-        });
-
-        fetch(`${bot.webhook}?code=${bot.code}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: bot.code,
-          },
-          body: postdata,
-        })
-          .then((r) => {
-            //TODO: log this error
-            return;
-            /*
-            if (r.status >= 300 || r.status < 200) {
-              fetch(`${Deno.env.get("DOMAIN")}/api/client/log`, {
-                method: "POST",
-                headers: {
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  secret: Deno.env.get("SECRET"),
-                  title: `Failed to send data to ${bot.tag}`,
-                  desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
-                  owners: bot.owners,
-                  img: bot.avatarURL,
-                }),
-              });
-            }
-              */
-          })
-          .catch((e) => {
-            //TODO: log this error
-            return;
-            /*
-            fetch(`${Deno.env.get("DOMAIN")}/api/client/log`, {
-              method: "POST",
-              headers: {
-                "content-type": "application/json",
-              },
-              body: JSON.stringify({
-                secret: Deno.env.get("SECRET"),
-                title: `Failed to send data to ${bot.tag}`,
-                desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
-                owners: bot.owners,
-                img: bot.avatarURL,
-              }),
-            });
-            */
-          });
-        return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
-      }
-    } else {
-      let start = new Date(vote.at);
-      start.setDate(start.getDate() + 1);
-      let start2 = new Date();
-      let ree = Math.floor((start.getTime() - start2.getTime()) / 1000);
-      function secondsToHms(d) {
-        d = Number(d);
-        var h = Math.floor(d / 3600);
-        var m = Math.floor((d % 3600) / 60);
-        var s = Math.floor((d % 3600) % 60);
-
-        var hDisplay = h > 0 ? h + (h == 1 ? " hour " : " hours ") : "";
-        var mDisplay =
-          m > 0 ? m + (m == 1 ? " minute " : " minutes ") : "";
-        var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-        return hDisplay + mDisplay + sDisplay;
-      }
-      return new Response(JSON.stringify({ success: false, try_after: secondsToHms(ree) }), { headers: { "Content-Type": "application/json" } });
-    }
-  } else if (votingType == "coins") {
-    if (!queryCoins) return new Response(JSON.stringify({ err: "no_coins" }), { status: 400, headers: { "Content-Type": "application/json" } });
+  if (queryCoins && !bot.opted_coins) return new Response(JSON.stringify({ err: "invalid_voting_type" }), { headers: { "Content-Type": "application/json" } });
+  if (queryCoins && bot.opted_coins) {
     queryCoins = parseInt(queryCoins);
-    if (isNaN(queryCoins)) return new Response(JSON.stringify({ err: "NaN" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    if (queryCoins <= 0) return new Response(JSON.stringify({ err: "negative_coins" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    if (queryCoins % 10 != 0)
-      return new Response(JSON.stringify({ err: "coins_not_divisible" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    const vote = queryCoins / 10;
-    if (user.bal < queryCoins)
-      return new Response(JSON.stringify({ err: "not_enough_coins" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    user.bal = user.bal - queryCoins;
-    await db.update(Users).set({ bal: user.bal }).where(eq(Users.id, userData.id));
-    bot.votes = bot.votes + vote;
-    await db.update(Bots).set({ votes: bot.votes }).where(eq(Bots.id, id));;
-    if (bot.webhook) {
-      const hmm = JSON.stringify({
-        user: { id: userData.id, bal: user.bal, votes: user.votes, username: userData.username, avatar: userData.avatar },
-        coins: queryCoins,
-        votes: vote,
-        currentVotes: bot.votes,
-      });
-      fetch(`${bot.webhook}?code=${bot.code}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: bot.code,
-        },
-        body: hmm,
-      })
-        .then((r) => {
-          //TODO: log this error
-          return;
-          /*
-          if (r.status >= 300 || r.status < 200) {
-            fetch(`${Deno.env.get("DOMAIN")}/api/client/log`, {
-              method: "POST",
-              headers: {
-                "content-type": "application/json",
-              },
-              body: JSON.stringify({
-                secret: Deno.env.get("SECRET"),
-                title: `Failed to send data to ${bot.tag}`,
-                desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
-                owners: bot.owners,
-                img: bot.avatarURL,
-              }),
-            });
-          }
-            */
-        })
-        .catch((e) => {
-          //TODO: log this error
-          return;
-          /*
-          fetch(`${Deno.env.get("DOMAIN")}/api/client/log`, {
-            method: "POST",
-            headers: {
-              "content-type": "application/json",
-            },
-            body: JSON.stringify({
-              secret: Deno.env.get("SECRET"),
-              title: `Failed to send data to ${bot.tag}`,
-              desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${hmm}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
-              owners: bot.owners,
-              img: bot.avatarURL,
-            }),
-          });
-          */
-        });
+    if (isNaN(queryCoins)) return new Response(JSON.stringify({ err: "invalid_coins" }), { headers: { "Content-Type": "application/json" } });
+    if (queryCoins < 1) return new Response(JSON.stringify({ err: "invalid_coins" }), { headers: { "Content-Type": "application/json" } });
+    //coins should be divisble by 10. 10 coins = 1 vote
+    if (queryCoins % 10 !== 0) return new Response(JSON.stringify({ err: "coins_not_divisble_by_10" }), { headers: { "Content-Type": "application/json" } });
+    if (user.bal < queryCoins) return new Response(JSON.stringify({ err: "insufficient_coins" }), { headers: { "Content-Type": "application/json" } });
+    user.bal -= queryCoins;
+  }
+  const lastVote = user.votes.find(vote => vote.bot === id);
+  //try after is a human readable time, that denotes when the user can vote again. If the user can vote again, try_after should be null
+  let try_after = null;
+  if (lastVote) {
+    let time = 86400000 - (Date.now() - lastVote.at);
+    if (time > 0) {
+      try_after = new Date(time).toISOString().substr(11, 8);
     }
   }
-  //shouldnt come to this point. If it does, then bot data is messed up :skull:
-  return new Response(JSON.stringify({ err: "invalid_voting_type" }), { headers: { "Content-Type": "application/json" } });
+  //try_after should be a user readable time
+  if ((lastVote && lastVote.at > Date.now() - 86400000) && !bot.opted_coins) return new Response(JSON.stringify({ err: "cooldown", try_after }), { headers: { "Content-Type": "application/json" } });
+  //if the user has voted for the bot before, remove the vote
+  user.votes = user.votes.filter(vote => vote.bot !== id);
+  if (!bot.opted_coins) {
+    user.votes.push({ bot: id, at: Date.now() }); //no cooldown for RDL coins.
+  }
+  //@ts-ignore
+  bot.votes = bot.opted_coins ? bot.votes + parseInt(queryCoins) / 10 : bot.votes + 1;
+  await db.update(Users).set({ bal: user.bal, votes: user.votes }).where(eq(Users.id, userData.id));
+  await db.update(Bots).set({ votes: bot.votes }).where(eq(Bots.id, id));
+  if (bot.webhook) {
+    const body = {
+      user: {
+        id: userData.id,
+        username: userData.username,
+        discriminator: userData.discriminator,
+        avatar: userData.avatar,
+        bal: user.bal,
+      },
+      coins: queryCoins,
+      //@ts-ignore
+      votes: bot.opted_coins ? parseInt(queryCoins) / 10 : 1,
+      currentVotes: bot.votes,
+    };
+    fetch(`${bot.webhook}?code=${bot.code}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: bot.code,
+      },
+      body: JSON.stringify(body),
+    })
+      .then(async (r) => {
+        if (r.status >= 300 || r.status < 200) {
+          await SendLog({
+            env: env as Env,
+            body: {
+              title: `Failed to send data to ${bot.username} (${id})`,
+              desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${body}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+              color: "#ED4245",
+              img: getAvatarURL(id, bot.avatar),
+            }
+          })
+        }
+      })
+      .catch((e) => {
+        fetch(`${process.env.DOMAIN}/api/client/log`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            secret: process.env.SECRET,
+            title: `Failed to send data to ${bot.username} (${id})`,
+            desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${body}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+            owners: bot.owners,
+            img: getAvatarURL(id, bot.avatar),
+          }),
+        });
+      });
+  }
+  return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
 };
