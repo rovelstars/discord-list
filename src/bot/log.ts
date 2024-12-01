@@ -15,7 +15,7 @@ export default async function SendLog({ env, body }: { env: Env, body: any }) {
         .setURL(body.url || env.DOMAIN)
         .setThumbnail(
           body.img ||
-          `${env.DOMAIN}/assets/img/bot/logo-512.png`
+          `${env.DOMAIN}/img/bot/logo-512.png`
         )
         .setTimestamp()
         .toJSON()

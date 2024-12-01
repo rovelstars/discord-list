@@ -45,7 +45,11 @@ const user = userData
   : null;
 ---
 
-<Root title="Rovel Discord List">
+<Root
+  title={`Vote for ${bot.username}#${bot.discriminator} Discord Bot on Discord List`}
+  description={`Vote for ${bot.username}#${bot.discriminator} on Rovel Discord List and get rewards!`}
+  smallImgLink={getAvatarURL(bot.id, bot.avatar)}
+>
   <div class="w-full block md:px-4">
     <div
       class="w-full border-popover px-4 pb-8 border-b-2 md:border-b-0 md:border-r-2 h-full"

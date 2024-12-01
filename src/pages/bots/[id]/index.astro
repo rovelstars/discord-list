@@ -1,8 +1,9 @@
 ---
 import Root from "@/layouts/Layout.astro";
 let { id } = Astro.params;
+import approx from "approximate-number";
 import { Separator } from "@/components/ui/separator";
-import { db, Bots, eq,or } from "astro:db";
+import { db, Bots, eq, or } from "astro:db";
 import getAvatarURL from "@/lib/get-avatar-url";
 import { type Bot } from "@/components/bot-card";
 import PopupDesktop from "@/components/botpage-popup-desktop";
@@ -52,7 +53,12 @@ if (bot.bg && bot.bg.startsWith("https://cdn.discordapp.com/banners")) {
 }
 ---
 
-<Root title="Rovel Discord List">
+<Root
+  title={`${bot.username}#${bot.discriminator} Discord Bot | The Best Discord Bot List`}
+  smallImgLink={getAvatarURL(bot.id, bot.avatar)}
+  imgLink={bot.bg}
+  description={`${bot.username} is in ${approx(bot.servers).toUpperCase()} servers, Add It Today! ${bot.short}`}
+>
   <div>
     <div class="grid grid-cols-1 md:grid-cols-4 md:gap-4 p-4">
       {bot && <BotPage bot={bot as any} client:load client:only="react" />}

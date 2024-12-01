@@ -1,12 +1,22 @@
 ---
 interface Props {
   title: string;
+  imgLink?: string | null;
+  smallImgLink?: string | null;
+  description?: string | null;
 }
 import "@/styles/global.css";
 import Navbar from "./Navbar.astro";
 import { AstroFont } from "astro-font";
 import { join } from "node:path";
-const { title } = Astro.props;
+let { title, imgLink, smallImgLink, description } = Astro.props || {
+  imgLink: null,
+  smallImgLink: null,
+  description: null,
+  title: "Rovel Discord List",
+};
+if (!smallImgLink)
+  smallImgLink = "/img/bot/logo.svg";
 ---
 
 <script is:inline>
@@ -38,52 +48,102 @@ const { title } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/img/bot/logo.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
-    <AstroFont
-      config={[
-        {
-          src: [
-            {
-              weight: "normal",
-              style: "normal",
-              path: join("fonts", "ggsans.ttf"),
-            },
-          ],
-          name: "GG Sans",
-          preload: true,
-          display: "swap",
-          cssVariable: "font-heading",
-          fallback: "sans-serif",
-        },
-        {
-          src: [],
-          name: "K2D",
-          // Google Fonts URL
-          googleFontsURL:
-            "https://fonts.googleapis.com/css2?family=K2D:ital,wght@0,400;0,600;1,400;1,700&display=swap",
-          preload: true,
-          display: "swap",
-          cssVariable: "font-sans",
-          fallback: "sans-serif",
-        },
-        {
-          src: [],
-          name: "Source Code Pro",
-          googleFontsURL:
-            "https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap",
-          preload: true,
-          display: "swap",
-          cssVariable: "font-mono",
-          fallback: "monospace",
-        },
-      ]}
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="RDL" />
+    <meta name="canonical" content={`${Astro.url}`} />
+    <meta name="apple-mobile-web-app-title" content={title} />
+    <meta name="theme-color" content="#5865F2" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="msapplication-navbutton-color" content="#5865F2" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
     />
+    <meta name="og:image" content={imgLink || smallImgLink} />
+    <meta name="og:site_name" content="Rovel Discord List" />
+    {
+      imgLink && (
+        <>
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta
+            name="og:image:type"
+            content={`image/${imgLink.endsWith(".gif") ? "gif" : "jpeg"}`}
+          />
+          <meta name="og:image:width" content="1920" />
+          <meta name="og:image:height" content="1080" />
+        </>
+      )
+    }
+    <meta name="twitter:image" content={imgLink || smallImgLink} />
+    <meta name="twitter:creator" content="@rovelstars" />
+    <meta name="og:title" content={title} />
+    <meta name="twitter:text:title" content={title} />
+    <meta name="twitter:title" content={title} />
+    <meta name="msapplication-starturl" content="/" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link rel="shortcut icon" href={smallImgLink} />
+    <link
+      rel="apple-touch-icon"
+      type="image"
+      sizes="256x256"
+      href={smallImgLink}
+    />
+    <meta name="description" content={description} />
+    <meta name="og:description" content={description} />
+    <meta name="twitter:description" content={description} />
+
+    <title>{title}</title>
   </head>
+  <AstroFont
+    config={[
+      {
+        src: [
+          {
+            weight: "normal",
+            style: "normal",
+            path: join("fonts", "ggsans.ttf"),
+          },
+        ],
+        name: "GG Sans",
+        preload: true,
+        display: "swap",
+        cssVariable: "font-heading",
+        fallback: "sans-serif",
+      },
+      {
+        src: [],
+        name: "K2D",
+        // Google Fonts URL
+        googleFontsURL:
+          "https://fonts.googleapis.com/css2?family=K2D:ital,wght@0,400;0,600;1,400;1,700&display=swap",
+        preload: true,
+        display: "swap",
+        cssVariable: "font-sans",
+        fallback: "sans-serif",
+      },
+      {
+        src: [],
+        name: "Source Code Pro",
+        googleFontsURL:
+          "https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap",
+        preload: true,
+        display: "swap",
+        cssVariable: "font-mono",
+        fallback: "monospace",
+      },
+    ]}
+  />
+
   <body>
     <Navbar id="navbar" />
     <div class="block mt-24"></div>
     <slot />
   </body>
+
 </html>

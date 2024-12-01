@@ -1,10 +1,8 @@
 import { Compass, Eye, UserRoundPlus, Vote } from "lucide-react";
-//@ts-ignore
 import approx from "approximate-number";
 import getAvatarURL from "@/lib/get-avatar-url";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-//@ts-ignore
 import ColorThief from "colorthief";
 import { useEffect, useRef, useState } from "react";
 import TwemojiText from "./twemoji-text";
@@ -66,24 +64,27 @@ export default function BotCard({ bot }: { bot: Bot }) {
       }
     }
   }, [imageRef]);
-if(bot.bg && !bot.bg.startsWith("http")) bot.bg = `https://cdn.discordapp.com/banners/${bot.id}/${bot.bg}.webp?size=512`;
+  if (bot.bg && !bot.bg.startsWith("http"))
+    bot.bg = `https://cdn.discordapp.com/banners/${bot.id}/${bot.bg}.webp?size=512`;
   return (
-    <div className="block bg-popover rounded-lg w-96 md:max-w-80 shadow-black/90 hover:shadow-2xl hover:-translate-y-2 animation duration-300 mb-4 border"
-    style={
-      bot.bg
-        ? {
-            backgroundImage: `url(${bot.bg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }
-        : {
-            backgroundColor: `rgb(${bgColor})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }
-    }
+    <div
+      className="block bg-popover rounded-lg w-96 md:max-w-80 shadow-black/90 hover:shadow-2xl hover:-translate-y-2 animation duration-300 mb-4 border"
+      style={
+        bot.bg
+          ? {
+              backgroundImage: `url(${bot.bg})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }
+          : {
+              backgroundColor: `rgb(${bgColor})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }
+      }
     >
-      <div className="h-32 w-full rounded-t-lg"
+      <div
+        className="h-32 w-full rounded-t-lg"
         style={
           bot.bg
             ? {

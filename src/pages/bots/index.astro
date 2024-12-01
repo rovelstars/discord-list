@@ -1,0 +1,45 @@
+---
+import Root from "@/layouts/Layout.astro";
+import BotCardList from "@/components/bot-card-list.astro";
+
+import { db, Bots, not, like } from "astro:db";
+import { desc } from "astro:db";
+import { Flame } from "lucide-react";
+import Discord from "@/components/svgs/discord";
+const data = await db
+  .select({
+    id: Bots.id,
+    slug: Bots.slug,
+    avatar: Bots.avatar,
+    username: Bots.username,
+    discriminator: Bots.discriminator,
+    short: Bots.short,
+    votes: Bots.votes,
+    servers: Bots.servers,
+    invite: Bots.invite,
+    bg: Bots.bg,
+  })
+  .from(Bots)
+  .orderBy(desc(Bots.servers))
+  .limit(10);
+const q = new URL(Astro.url).searchParams.get("q");
+---
+
+<Root
+  title={`${q ? `Find Bots Related to ${q} on The Best Discord List!` : "Bots | The Best Discord Bot List"}`}
+  description={`${q?`Showing Bots for the search term "${q}" !`:"Find the Next Bot to use on The Best Discord Bot List"}`}
+  smallImgLink="/img/bot/logo-512.png"
+>
+  <Discord className="w-24 h-24 mx-auto text-primary my-12" />
+  <h1 class="font-heading text-6xl font-bold mb-4 text-center">
+    Rovel Discord List
+  </h1>
+  <h2 class="font-heading text-4xl font-bold mb-4 text-center">
+    Find your next favorite bot on the best discord bot list!
+  </h2>
+  <h3 class="font-heading text-3xl font-bold mb-4 text-center mt-12">
+    <Flame className="w-8 h-8 inline-block text-primary -mt-2" />
+    Most Popular Bots
+  </h3>
+  <BotCardList list={data as any} />
+</Root>
