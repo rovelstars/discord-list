@@ -7,7 +7,7 @@ export type Env = {
   DOWNLOAD_PASS: string;
   HTTPS: string;
   NPM_CONFIG_PRODUCTION: string;
-  PREFIX: string;
+  BOT_PREFIX: string;
   DISCORD_SECRET: string;
   SELFBOT_TOKEN: string;
   SENTRY: string;
