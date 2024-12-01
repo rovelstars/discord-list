@@ -56,7 +56,9 @@ if (bot.bg && bot.bg.startsWith("https://cdn.discordapp.com/banners")) {
 <Root
   title={`${bot.username}#${bot.discriminator} Discord Bot | The Best Discord Bot List`}
   smallImgLink={getAvatarURL(bot.id, bot.avatar)}
-  imgLink={bot.bg}
+  imgLink={bot.bg.startsWith("https")
+    ? bot.bg
+    : getBannerURL({ banner: bot.bg, id: bot.id })}
   description={`${bot.username} is in ${approx(bot.servers).toUpperCase()} servers, Add It Today! ${bot.short}`}
 >
   <div>
