@@ -22,11 +22,11 @@ declare global {
 }
 
 export const GET: APIRoute = async ({ locals }) => {
-  const env = locals.runtime?.env ?? import.meta.env ?? process.env;
+  const env = locals.runtime?.env ?? process.env;
   return new Response(`👋 ${env.DISCORD_BOT_ID}`);
 }
 export const POST: APIRoute = async ({ params, request, locals }) => {
-  const env = locals.runtime?.env ?? import.meta.env ?? process.env;
+  const env = locals.runtime?.env ?? process.env;
   try {
     if (env.DISCORD_PUBLIC_KEY === undefined) {
       return new Response("No public key found in env", { status: 500 });

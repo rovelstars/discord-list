@@ -5,7 +5,7 @@ import SendLog from "@/bot/log";
 import type { Env } from "@/lib/env";
 import getAvatarURL from "@/lib/get-avatar-url";
 export const POST: APIRoute = async ({ params, request, cookies, locals }) => {
-  const env = locals.runtime?.env ?? import.meta.env ?? process.env;
+  const env = locals.runtime?.env ?? process.env;
   const key = new URL(request.url).searchParams.get("key") ?? request.headers.get("Authorization") ?? request.headers.get("RDL-key") ?? cookies.get("key")?.value;
   let queryCoins: number | string = new URL(request.url).searchParams.get("coins");
   //get id from params, and code from query or authentification header

@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 export const GET: APIRoute = async ({ locals, params, request }) => {
   const noServerScope = new URL(request.url).searchParams.get("servers") === "false";
   const noEmailScope = new URL(request.url).searchParams.get("email") === "false";
-  const env = locals.runtime?.env ?? import.meta.env ?? process.env;
+  const env = locals.runtime?.env ?? process.env;
   try {
     const oauth = new DiscordOauth2({
       clientId: env.DISCORD_BOT_ID,

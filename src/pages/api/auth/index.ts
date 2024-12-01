@@ -7,11 +7,8 @@ import SendLog from '@/bot/log';
 import { db, Users, eq } from "astro:db";
 import getAvatarURL from '@/lib/get-avatar-url';
 export const GET: APIRoute = async ({ locals, params, request, cookies }) => {
-  const env = locals.runtime?.env ?? import.meta.env ?? process.env;
+  const env = locals.runtime?.env ?? process.env;
   console.log(env);
-  console.log(locals.runtime?.env);
-  console.log(import.meta.env);
-  console.log(process.env);
   try {
     const oauth = new DiscordOauth2({
       clientId: env.DISCORD_BOT_ID,
