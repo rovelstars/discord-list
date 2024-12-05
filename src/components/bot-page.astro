@@ -27,6 +27,7 @@ import Discord from "./svgs/discord";
 import toJSX from "@/lib/to-jsx";
 const { bot } = Astro.props;
 const description = toJSX({ html: bot.desc });
+
 ---
 
 <style>
@@ -42,22 +43,18 @@ const description = toJSX({ html: bot.desc });
   const colorThief = new ColorThief();
   const bgRef = document.getElementById("bg-ref");
   const bgimgRef = document.getElementById("bgimg-ref") as HTMLImageElement;
-  console.log(bgimgRef);
   if (bgimgRef) {
     if (bgimgRef.complete) {
       const color = colorThief.getColor(bgimgRef);
-      console.log(color);
       setColor(bgimgRef);
     }
     bgimgRef.onload = () => {
       const color = colorThief.getColor(bgimgRef);
-      console.log(color);
       setColor(bgimgRef);
     };
   }
   function setColor(imgEl: HTMLImageElement) {
     const color = colorThief.getColor(imgEl);
-    console.log(color);
     document.documentElement.style.setProperty("--gradient-color", color);
     /*
       style={isColorDark(gradientColor) && isDarkMode
@@ -279,6 +276,18 @@ const description = toJSX({ html: bot.desc });
               Support Server
             </a>
           </Button>
+        )
+      }
+      {
+        (!bot.website && !bot.github && !bot.support) && (
+          <p
+            class="text-muted text-md font-semibold mb-2 mx-auto md:mx-0 md:ml-auto"
+            style={{
+              color: `rgb(--gradient-border-color)`,
+            }}
+          >
+            No links available
+          </p>
         )
       }
     </div>

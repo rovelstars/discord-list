@@ -80,7 +80,7 @@ export const POST: APIRoute = async ({ params, request, cookies, locals }) => {
             env: env as Env,
             body: {
               title: `Failed to send data to ${bot.username} (${id})`,
-              desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${body}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+              desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${JSON.stringify(body)}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
               color: "#ED4245",
               img: getAvatarURL(id, bot.avatar),
             }
@@ -96,7 +96,7 @@ export const POST: APIRoute = async ({ params, request, cookies, locals }) => {
           body: JSON.stringify({
             secret: process.env.SECRET,
             title: `Failed to send data to ${bot.username} (${id})`,
-            desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${body}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
+            desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${JSON.stringify(body)}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
             owners: bot.owners,
             img: getAvatarURL(id, bot.avatar),
           }),

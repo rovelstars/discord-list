@@ -8,7 +8,6 @@ import { db, Users, eq } from "astro:db";
 import getAvatarURL from '@/lib/get-avatar-url';
 export const GET: APIRoute = async ({ locals, params, request, cookies }) => {
   const env = locals.runtime?.env ?? process.env;
-  console.log(env);
   try {
     const oauth = new DiscordOauth2({
       clientId: env.DISCORD_BOT_ID,
@@ -24,12 +23,6 @@ export const GET: APIRoute = async ({ locals, params, request, cookies }) => {
     const userData = await oauth.getUser(data.access_token);
     const user = (await db.select({ id: Users.id }).from(Users).where(eq(Users.id, userData.id)))[0];
     if (!user) console.log("User doesnt exists in DB");
-    // const refreshToken = await oauth.tokenRequest({
-    //   scope: ["identify", "email", "guilds.join"].join(" "),
-    //   refreshToken: data.refresh_token,
-    //   grantType: "refresh_token"
-    // });
-    // console.log(refreshToken);
     await joinServer({ oauth, token: data.access_token, env: env as Env });
     await SendLog({
       env: env as Env,
@@ -41,7 +34,6 @@ export const GET: APIRoute = async ({ locals, params, request, cookies }) => {
       }
     });
     cookies.set("key", data.access_token, { httpOnly: true, maxAge: 90 * 3600 * 24 * 1000, path:"/" });
-    console.log(data, userData);
     const redirect = cookies.get("redirect")?.value;
     cookies.delete("redirect");
     if (redirect) return new Response(null, { status: 302, headers: { Location: new URL(redirect, env.DOMAIN).toString() } });

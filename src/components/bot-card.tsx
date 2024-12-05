@@ -16,7 +16,7 @@ interface Card {
 interface Bot {
   IS_SKELETON?: boolean; //this is going to be a placeholder, remove it when you have the actual data
   card: Card;
-  owners: string[];
+  owners: string[] | { id: string; username: string; avatar: string }[];
   approved: boolean;
   servers: number;
   promoted: boolean;
@@ -48,7 +48,7 @@ export type { Bot, Card };
 
 const colorThief = new ColorThief();
 
-export default function BotCard({ bot }: { bot: Bot }) {
+export default function BotCard({ bot, edit }: { bot: Bot; edit: Boolean }) {
   const imageRef = useRef(null);
   const [bgColor, setBgColor] = useState();
   useEffect(() => {
@@ -68,7 +68,7 @@ export default function BotCard({ bot }: { bot: Bot }) {
     bot.bg = `https://cdn.discordapp.com/banners/${bot.id}/${bot.bg}.webp?size=512`;
   return (
     <div
-      className="block bg-popover rounded-lg w-96 md:max-w-80 shadow-black/90 hover:shadow-2xl hover:-translate-y-2 animation duration-300 mb-4 border"
+      className="block bg-popover rounded-lg w-96 md:max-w-80 shadow-black/90 group hover:shadow-2xl hover:-translate-y-2 animation duration-300 mb-4 border"
       style={
         bot.bg
           ? {
@@ -121,13 +121,13 @@ export default function BotCard({ bot }: { bot: Bot }) {
                   ? "bg-gray-500"
                   : bot.status == "idle"
                   ? "bg-secondary"
-                  : "bg-destructive"
+                  : "bg-green-500"
               } border-4 border-card rounded-full`}
             ></span>
           </>
         )}
       </div>
-      <div className=" pb-2 bg-popover hover:bg-popover/90 backdrop-blur-md animate animate-[bg] duration-300 rounded-b-md">
+      <div className="pb-2 bg-popover group-hover:bg-popover/90 backdrop-blur-md animate animate-[bg] duration-300 rounded-b-md">
         <div className="mx-4 pt-12">
           {bot.IS_SKELETON ? (
             <>
@@ -138,7 +138,7 @@ export default function BotCard({ bot }: { bot: Bot }) {
               </div>
             </>
           ) : (
-            <>
+            <div className="h-20 overflow-y-scroll">
               <h2 className="font-heading text-2xl font-semibold">
                 {bot.username}
               </h2>
@@ -148,7 +148,7 @@ export default function BotCard({ bot }: { bot: Bot }) {
               <span className="relative bottom-1 ml-1 bg-primary text-white rounded-md px-1 text-xs font-heading">
                 APP
               </span>
-            </>
+            </div>
           )}
           <div className="my-4 flex items-center">
             {bot.IS_SKELETON ? (
@@ -238,6 +238,18 @@ export default function BotCard({ bot }: { bot: Bot }) {
                   <UserRoundPlus className="w-4 h-4 mr-2" />
                   Invite
                 </a>
+                {
+                  edit && (
+                    <a
+                      href={`/dashboard/bots/edit/${bot.id}`}
+                      className={buttonVariants({
+                        variant: "secondary",
+                      })}
+                    >
+                      Edit
+                    </a>
+                  )
+                }
               </>
             )}
           </div>

@@ -114,7 +114,6 @@ const user = userData
     );
     if (res.ok) {
       const data = await res.json();
-      console.log(data);
       if (!data.success && data.try_after)
         return alert(`You can vote again in ${data.try_after}.`);
       else if (!data.success) return alert(data.err);

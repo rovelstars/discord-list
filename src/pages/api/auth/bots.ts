@@ -14,7 +14,6 @@ export const GET: APIRoute = async ({ params, request, locals, cookies }) => {
   });
   try {
     const userData = await oauth.getUser(key);
-    console.log(userData.id);
     const bots = await db.select({ id: Bots.id, username: Bots.username }).from(Bots).where(inArray(Bots.owners, ["189759562910400512"]));
     
     return new Response(JSON.stringify(bots), { headers: { "Content-Type": "application/json" } });

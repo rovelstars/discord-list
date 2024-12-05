@@ -1,11 +1,18 @@
 ---
 import BotCard from "./bot-card";
-const {list} = Astro.props;
+const { list, permissions } = Astro.props;
 import type { Bot } from "./bot-card";
-
 ---
+
 <div class="flex flex-wrap justify-center gap-4 mx-4">
-  {list.map((bot: Bot) => (
-    <BotCard bot={bot as Bot} client:load client:only="react" />
-  ))}
+  {
+    list.map((bot: Bot) => (
+      <BotCard
+        bot={bot as Bot}
+        client:load
+        client:only="react"
+        edit={permissions == "edit"}
+      />
+    ))
+  }
 </div>

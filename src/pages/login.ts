@@ -21,7 +21,6 @@ export const GET: APIRoute = async ({ locals, params, request }) => {
       state: crypto.randomBytes(16).toString("hex"),
       prompt: import.meta.env.PROD ? "none" : "consent",
     });
-    console.log(url);
     //redirect to the url
     return new Response(null, {
       status: 302,

@@ -30,14 +30,14 @@ const data = await db
   smallImgLink="/img/bot/logo-512.png"
 >
   <Discord className="w-24 h-24 mx-auto text-primary my-12" />
-  <h1 class="font-heading text-6xl font-bold mb-4 text-center">
+  <h1 class="font-heading text-4xl md:text-6xl font-bold mb-4 text-center">
     Rovel Discord List
   </h1>
-  <h2 class="font-heading text-4xl font-bold mb-4 text-center">
+  <h2 class="font-heading text-2xl md:text-4xl font-bold mb-4 text-center">
     Imagine a better place - where you can find everything about discord!
   </h2>
   <h3 class="font-heading text-3xl font-bold mb-4 text-center mt-12">
-    <Flame className="w-8 h-8 inline-block text-primary -mt-2" />
+    <img src="/img/fire.svg" class="w-8 h-8 inline-block text-primary -mt-2" />
     Top 10 Bots
   </h3>
   <BotCardList list={data as any} />

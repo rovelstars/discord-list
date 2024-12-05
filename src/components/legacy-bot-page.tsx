@@ -1,5 +1,5 @@
 import type { Bot } from "./bot-card";
-import getAvatarURL  from "@/lib/get-avatar-url";
+import getAvatarURL from "@/lib/get-avatar-url";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -35,10 +35,11 @@ import isColorDark from "@/lib/is-color-dark";
 
 const colorThief = new ColorThief();
 export default function BotPage({ bot }: { bot: Bot }) {
-  if(bot.bg && !bot.bg.startsWith("http")) bot.bg = `https://cdn.discordapp.com/banners/${bot.id}/${bot.bg}.webp?size=2048`;
-  const isDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  if (bot.bg && !bot.bg.startsWith("http"))
+    bot.bg = `https://cdn.discordapp.com/banners/${bot.id}/${bot.bg}.webp?size=2048`;
+  const isDarkMode = localStorage.getItem("theme") === "dark";
   const [botBg, setBotBg] = useState<string>(bot.bg);
-  
+
   const description = toJSX({ html: bot.desc });
   const imageRef = useRef(null);
   const [bgColor, setBgColor] = useState<[number, number, number]>([0, 0, 0]);
@@ -74,7 +75,7 @@ export default function BotPage({ bot }: { bot: Bot }) {
           }
         } catch (e) {
           console.log(
-            "Failed to get gradient color. Probably Image cannot be loaded."
+            "Failed to get gradient color. Probably Image cannot be loaded.",
           );
         }
       }
@@ -83,10 +84,7 @@ export default function BotPage({ bot }: { bot: Bot }) {
     }
   }, [gradientRef, bgColor, botBg]);
   return (
-    <motion.div
-      initial={{ x: 300, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: 300, opacity: 0 }}
+    <div
       className="col-span-3 w-full mx-auto bg-card min-h-screen rounded-lg shadow-black/90"
     >
       <div
@@ -129,8 +127,12 @@ export default function BotPage({ bot }: { bot: Bot }) {
         className="grid grid-cols-1 md:grid-cols-4 md:gap-4 p-4 bg-gradient-to-b via-transparent to-transparent "
         style={{
           //@ts-ignore
-          "--tw-gradient-from": `rgba(${gradientColor?.join?.(",")}, 0.1) var(--tw-gradient-from-position)`,
-          "--tw-gradient-to": `rgba(${gradientColor?.join?.(",")}, 0.01) var(--tw-gradient-to-position)`,
+          "--tw-gradient-from": `rgba(${gradientColor?.join?.(
+            ",",
+          )}, 0.1) var(--tw-gradient-from-position)`,
+          "--tw-gradient-to": `rgba(${gradientColor?.join?.(
+            ",",
+          )}, 0.01) var(--tw-gradient-to-position)`,
           "--tw-gradient-stops":
             "var(--tw-gradient-from), var(--tw-gradient-to)",
         }}
@@ -149,10 +151,10 @@ export default function BotPage({ bot }: { bot: Bot }) {
             ref={imageRef}
             src={getAvatarURL(bot.id, bot.avatar)}
             crossOrigin="anonymous"
-            className="w-36 h-36 rounded-full bg-card border-card border-8 mt-[-5.3rem] mb-4"
+            className="bot-img w-36 h-36 rounded-full bg-card border-card border-8 mt-[-5.3rem] mb-4 mx-auto md:mx-0"
             alt={`${bot.username}'s Avatar`}
           />
-          <h1 className="text-3xl md:text-5xl font-heading text-center md:text-start my-4 font-black">
+          <h1 className="bot-name text-3xl md:text-5xl font-heading text-center md:text-start my-4 font-black">
             {bot.username}
             <span className="text-muted text-lg mx-2 font-bold">
               #{bot.discriminator}
@@ -168,15 +170,15 @@ export default function BotPage({ bot }: { bot: Bot }) {
                 : {}
             }
           >
-            <span className="text-2xl text-primary">
-            <Twemoji
-              options={{
-                className:
-                  "twemoji w-auto h-[1em] inline-flex -translate-y-0.5 m-0",
-              }}
-            >
-              {bot.short}
-            </Twemoji>
+            <span className="text-2xl text-primary text-center md:text-left">
+              <Twemoji
+                options={{
+                  className:
+                    "twemoji w-auto h-[1em] inline-flex -translate-y-0.5 m-0",
+                }}
+              >
+                {bot.short}
+              </Twemoji>
             </span>
           </div>
           <div className="mt-8 min-w-full prose md:prose-xl dark:prose-invert prose-code:before:content-[''] prose-code:after:content-[''] prose-code:bg-popover prose-code:px-2 prose-code:py-1 prose-code:rounded-md">
@@ -190,7 +192,7 @@ export default function BotPage({ bot }: { bot: Bot }) {
             </Twemoji>
           </div>
         </div>
-        <div className="flex flex-col col-span-1 w-full">
+        <div className="mt-6 md:mt-0 flex flex-col col-span-1 w-full">
           <Label
             className="flex text-muted text-md justify-center"
             style={
@@ -251,7 +253,7 @@ export default function BotPage({ bot }: { bot: Bot }) {
 
           <Button
             variant="outline"
-            className="mt-4 w-1/2 mx-auto md:mx-4 md:w-auto"
+            className="mt-4 w-1/2 mx-auto md:mx-4 md:w-auto votebutton"
             asChild
           >
             <Link href={`/bots/${bot.id}/vote`}>
@@ -269,7 +271,7 @@ export default function BotPage({ bot }: { bot: Bot }) {
             }
           />
           <p
-            className="inline-flex text-muted text-md font-semibold mb-2 mx-auto md:mx-0 md:ml-auto cursor-default"
+            className="inline-flex text-muted text-md font-semibold mb-2 mx-auto md:mx-0 md:ml-auto md:mr-3 cursor-default"
             style={
               isColorDark(gradientColor)
                 ? {
@@ -323,8 +325,65 @@ export default function BotPage({ bot }: { bot: Bot }) {
               </Link>
             </Button>
           )}
+          {!bot.website && !bot.github && !bot.support && (
+            <p
+              className="text-muted text-md font-semibold mb-2 mx-auto md:mx-0 md:ml-auto"
+              style={{
+                color: `rgb(--gradient-border-color)`,
+              }}
+            >
+              No links available
+            </p>
+          )}
+          <div
+            className="border-b-2 my-8 w-12 mx-auto"
+            style={
+              isColorDark(gradientColor)
+                ? {
+                    borderColor: `rgb(${gradientColor})`,
+                  }
+                : {}
+            }
+          />
+          <p
+            className="owners inline-flex text-muted text-md font-semibold mb-2 mx-auto md:mx-0 md:ml-auto md:mr-3 cursor-default"
+            style={
+              isColorDark(gradientColor)
+                ? {
+                    color: `rgb(${gradientColor})`,
+                  }
+                : {}
+            }
+          >
+            <LinkIcon className="w-5 h-5 mr-1 mt-0.5" />
+            Owners
+          </p>
+          {
+            //show buttons for owners
+            (
+              bot.owners as { id: string; avatar: string; username: string }[]
+            ).map(owner => (
+                <Button
+                variant="ghost"
+                className="w-full md:w-auto ml-auto bg-background rounded-full px-4 py-8 text-black dark:text-white hover:bg-slate-100 dark:hover:bg-popover font-semibold"
+                asChild
+                >
+                <Link href={`/users/${owner.id}`} className="inline-flex items-center my-2">
+                  <img
+                  src={getAvatarURL(owner.id, owner.avatar)}
+                  onError={e => {
+                    e.currentTarget.src = `https://cdn.discordapp.com/embed/avatars/0.png`;
+                  }}
+                  className="w-12 h-12 mr-4 rounded-full"
+                  alt={`${owner.username}'s Avatar`}
+                  />
+                  {owner.username}
+                </Link>
+                </Button>
+            ))
+          }
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

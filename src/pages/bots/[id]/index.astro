@@ -3,7 +3,7 @@ import Root from "@/layouts/Layout.astro";
 let { id } = Astro.params;
 import approx from "approximate-number";
 import { Separator } from "@/components/ui/separator";
-import { db, Bots, eq, or } from "astro:db";
+import { db, Bots, eq, or, not, desc, Users } from "astro:db";
 import getAvatarURL from "@/lib/get-avatar-url";
 import { type Bot } from "@/components/bot-card";
 import PopupDesktop from "@/components/botpage-popup-desktop";
@@ -12,6 +12,8 @@ import BotPage from "@/components/legacy-bot-page";
 import { getBanner } from "../../api/internals/users/[id]/banner";
 import { asDrizzleTable } from "@astrojs/db/runtime";
 import getBannerURL from "@/lib/get-banner-url";
+import BotCardList from "@/components/bot-card-list.astro";
+
 const bot = (
   await db
     .select({
@@ -27,6 +29,10 @@ const bot = (
       bg: Bots.bg,
       desc: Bots.desc,
       badges: Bots.badges,
+      github: Bots.source_repo,
+      support: Bots.support,
+      website: Bots.website,
+      owners: Bots.owners,
     })
     .from(Bots)
     .where(or(eq(Bots.slug, id), eq(Bots.id, id)))
@@ -43,7 +49,6 @@ if (!bot.bg) {
   const botbanner = await getBanner(bot.id, import.meta.env.DISCORD_TOKEN);
   if (botbanner) {
     bot.bg = getBannerURL({ banner: botbanner, id: bot.id });
-    console.log(bot.bg);
     await db.update(Bots).set({ bg: botbanner }).where(eq(Bots.id, bot.id));
   }
 }
@@ -51,12 +56,47 @@ if (bot.bg && bot.bg.startsWith("https://cdn.discordapp.com/banners")) {
   //we get banners from discord. we dont save it though, so we can modify image as we want.
   bot.bg = getBannerURL({ banner: bot.bg, id: bot.id });
 }
+const bots = (await db
+  .select({
+    id: Bots.id,
+    slug: Bots.slug,
+    avatar: Bots.avatar,
+    username: Bots.username,
+    discriminator: Bots.discriminator,
+    short: Bots.short,
+    votes: Bots.votes,
+    servers: Bots.servers,
+    invite: Bots.invite,
+    bg: Bots.bg,
+  })
+  .from(Bots)
+  .where(not(eq(Bots.id, bot.id)))
+  .orderBy(desc(Bots.servers))
+  .limit(10)) as Bot[];
+
+bot.owners = (
+  await Promise.all(
+    (bot.owners as string[]).map(async owner => {
+      const user = (
+        await db
+          .select({
+            username: Users.username,
+            avatar: Users.avatar,
+            id: Users.id,
+          })
+          .from(Users)
+          .where(eq(Users.id, owner))
+      )[0];
+      return user;
+    }),
+  )
+).filter(x => x);
 ---
 
 <Root
   title={`${bot.username}#${bot.discriminator} Discord Bot | The Best Discord Bot List`}
   smallImgLink={getAvatarURL(bot.id, bot.avatar)}
-  imgLink={bot.bg.startsWith("https")
+  imgLink={bot.bg && bot.bg.startsWith("https")
     ? bot.bg
     : getBannerURL({ banner: bot.bg, id: bot.id })}
   description={`${bot.username} is in ${approx(bot.servers).toUpperCase()} servers, Add It Today! ${bot.short}`}
@@ -64,7 +104,18 @@ if (bot.bg && bot.bg.startsWith("https://cdn.discordapp.com/banners")) {
   <div>
     <div class="grid grid-cols-1 md:grid-cols-4 md:gap-4 p-4">
       {bot && <BotPage bot={bot as any} client:load client:only="react" />}
-      {/* <SimilarBots /> */}
+      {
+        bots && (
+          <div class="hidden md:block bg-card rounded-lg max-h-screen overflow-y-auto">
+            <h3 class="sticky text-4xl font-bold p-4 backdrop-blur z-10">
+              Similar Bots
+            </h3>
+            <div class="overflow-y-auto">
+              <BotCardList list={bots} />
+            </div>
+          </div>
+        )
+      }
     </div>
   </div>
 </Root>
