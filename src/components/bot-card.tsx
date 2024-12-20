@@ -105,7 +105,7 @@ export default function BotCard({ bot, edit }: { bot: Bot; edit: Boolean }) {
         ) : (
           <>
             <img
-              src={getAvatarURL(bot.id, bot.avatar, 96)}
+              src={getAvatarURL(bot.id, bot.avatar, 96).replace("png","webp")}
               ref={imageRef}
               alt="avatar"
               crossOrigin="anonymous"
@@ -116,7 +116,7 @@ export default function BotCard({ bot, edit }: { bot: Bot; edit: Boolean }) {
                 //we need to send an api req to update bot's info.
                 const data = await (await fetch(`/api/internals/update/bot/${bot.id}`)).json();
                 if(data.success){
-                  e.currentTarget.src = getAvatarURL(bot.id, data.avatar, 96);
+                  e.currentTarget.src = getAvatarURL(bot.id, data.avatar, 96).replace("png","webp");
                 }
               }}
               className="z-10 w-16 h-16 rounded-full absolute -top-8 left-4 border-4 border-card bg-popover shadow-black shadow-2xl"
