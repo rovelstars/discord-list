@@ -1,10 +1,10 @@
-import type { Env } from "@/lib/env";
+
 import RestClient from "./util";
 import { Routes } from "discord-api-types/v10";
 
 const commands = [];
 
-export default async function unregisterCommands(env:Env) {
+export default async function unregisterCommands(env: { DISCORD_BOT_ID: string, DISCORD_GUILD_ID: string, DISCORD_TOKEN: string }) {
   const rest = RestClient(env);
   console.log("%cUnregistering commands...", "color: #5865F2");
   //get all the commands

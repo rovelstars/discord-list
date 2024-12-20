@@ -111,6 +111,10 @@ export default function BotCard({ bot, edit }: { bot: Bot; edit: Boolean }) {
               crossOrigin="anonymous"
               width={64}
               height={64}
+              loading="lazy"
+              onError={(e) => {
+                //we need to send an api req to update bot's info.
+              }}
               className="z-10 w-16 h-16 rounded-full absolute -top-8 left-4 border-4 border-card bg-popover shadow-black shadow-2xl"
             />
             <span

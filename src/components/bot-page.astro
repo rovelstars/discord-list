@@ -96,6 +96,7 @@ const description = toJSX({ html: bot.desc });
       bot.bg && (
         <img
           src={bot.bg}
+          loading="lazy"
           id="bgimg-ref"
           width={1280}
           height={720}
@@ -124,6 +125,7 @@ const description = toJSX({ html: bot.desc });
     >
       <img
         src={getAvatarURL(bot.id, bot.avatar)}
+        loading="lazy"
         crossorigin="anonymous"
         class="w-36 h-36 rounded-full bg-card border-card border-8 mt-[-5.3rem] mb-4"
         alt={`${bot.username}'s Avatar`}

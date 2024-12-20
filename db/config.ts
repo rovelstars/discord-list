@@ -28,6 +28,7 @@ const Bots = defineTable({
     slug: column.text(), // bot vanity url, e.g. /bots/:slug. if not set, it will be bot id
     added_at: column.date({ default: new Date(), primaryKey: true }), //added at
     owners: column.json(), //owners is an array of user ids referencing the Users table
+    tags: column.json({ default: [] })
   },
   indexes: [
     { on: ['id', 'username'], unique: true },
@@ -35,13 +36,16 @@ const Bots = defineTable({
     { on: ['approved'] },
     { on: ['promoted'] },
     { on: ['short'] },
-    { on: ['votes'] }
+    { on: ['votes'] },
+    { on: ['tags'] }
   ],
 });
 
 const Users = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
+    globalname: column.text({ optional: true }),
+    accent_color: column.text({ optional: true }),
     username: column.text(),
     discriminator: column.text(),
     avatar: column.text(),
@@ -61,7 +65,8 @@ const Users = defineTable({
   indexes: [
     { on: ['id', 'username'], unique: true },
     { on: ['email'], unique: true },
-    { on: ['bal'] }
+    { on: ['bal'] },
+    { on: ['keys'] }
   ]
 });
 

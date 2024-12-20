@@ -1,11 +1,10 @@
 import type { APIRoute } from "astro";
-import type { Env } from "@/lib/env";
 import { db, Bots, Users } from "astro:db";
+import { DOWNLOAD_PASS } from "astro:env/server";
 export const GET: APIRoute = async ({ locals }) => {
-  const env = locals.runtime?.env ?? process.env;
   return new Response("This route is disabled in production", { status: 403 });
   console.log("%cSeeding data from discord.rovelstars.com", "color: #57F287");
-  const data = await fetch(`http://localhost:3000/api/download?pass=${env.DOWNLOAD_PASS}`).then(res => res.json());
+  const data = await fetch(`http://localhost:3000/api/download?pass=${DOWNLOAD_PASS}`).then(res => res.json());
   console.log(`%cReceived %c${data.bots.length} %cBots, %c${data.users.length} %cUsers, %c${data.servers.length} %cServers`,
     "color: #57F287", "color: #FEE75C", "color: #57F287", "color: #FEE75C", "color: #57F287", "color: #FEE75C", "color: #57F287");
 

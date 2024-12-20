@@ -1,8 +1,15 @@
 import RestClient from "./util";
 import { Routes } from "discord-api-types/v10";
 import { EmbedBuilder } from "@discordjs/builders";
-import type { Env } from "@/lib/env";
-export default async function SendLog({ env, body }: { env: Env, body: any }) {
+
+export default async function SendLog({ env, body }: {
+  env: {
+    LOGS_CHANNEL_ID: string,
+    FAILED_DMS_LOGS_CHANNEL_ID: string,
+    DOMAIN: string,
+    DISCORD_TOKEN: string,
+  }, body: any
+}) {
   const rest = RestClient(env);
   const owners = body.owners || [];
   const Body = {

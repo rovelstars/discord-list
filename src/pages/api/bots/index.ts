@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { db, Bots, like, or, desc, asc } from 'astro:db';
+import { db, Bots, like, or, desc } from 'astro:db';
 export const GET: APIRoute = async ({ params, request }) => {
   let url = new URL(request.url);
 

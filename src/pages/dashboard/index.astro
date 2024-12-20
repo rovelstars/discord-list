@@ -4,12 +4,13 @@ import Root from "@/layouts/Layout.astro";
 import getAvatarURL from "@/lib/get-avatar-url";
 import BotCardList from "@/components/bot-card-list.astro";
 import DiscordOauth2 from "discord-oauth2";
+import { DISCORD_BOT_ID, DISCORD_SECRET, DOMAIN } from "astro:env/server";
 
 const key = Astro.cookies.get("key")?.value;
 const oauth2 = new DiscordOauth2({
-  clientId: import.meta.env.DISCORD_BOT_ID || process.env.DISCORD_BOT_ID,
-  clientSecret: import.meta.env.DISCORD_SECRET || process.env.DISCORD_SECRET,
-  redirectUri: (import.meta.env.DOMAIN || process.env.DOMAIN) + "/api/auth",
+  clientId: DISCORD_BOT_ID,
+  clientSecret: DISCORD_SECRET,
+  redirectUri: DOMAIN + "/api/auth",
 });
 const userData = key ? await oauth2.getUser(key) : null;
 const user = userData

@@ -2,9 +2,8 @@
 import Root from "@/layouts/Layout.astro";
 import BotCardList from "@/components/bot-card-list.astro";
 
-import { db, Bots, not, like } from "astro:db";
+import { db, Bots } from "astro:db";
 import { desc } from "astro:db";
-import { Flame } from "lucide-react";
 import Discord from "@/components/svgs/discord";
 const data = await db
   .select({

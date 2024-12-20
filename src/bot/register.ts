@@ -1,12 +1,10 @@
 import RestClient from "./util";
 import { Routes } from "discord-api-types/v10";
 import ping from "./commands/ping";
-import type { Env } from "@/lib/env";
-
 const commands = [ping.data];
 const commandFns = [ping.run];
 
-export default async function registerCommands(env:Env) {
+export default async function registerCommands(env: { DISCORD_BOT_ID: string, DISCORD_GUILD_ID: string, MODE: string, DISCORD_TOKEN: string }) {
     const rest = RestClient(env);
     //register the commands
     console.log("%cRegistering commands...", "color: #5865F2");

@@ -8,27 +8,14 @@ import {
 import { commands, runs } from '@/bot/register';
 
 import type { APIRoute } from 'astro';
-import type { Env } from '@/lib/env';
-
-
-declare global {
-  namespace App {
-    interface Locals {
-      runtime: {
-        env: Env;
-      };
-    }
-  }
-}
+import { DISCORD_BOT_ID, DISCORD_GUILD_ID, DISCORD_PUBLIC_KEY, DISCORD_TOKEN, MODE } from 'astro:env/server';
 
 export const GET: APIRoute = async ({ locals }) => {
-  const env = locals.runtime?.env ?? process.env;
-  return new Response(`👋 ${env.DISCORD_BOT_ID}`);
+  return new Response(`👋 ${DISCORD_BOT_ID}`);
 }
 export const POST: APIRoute = async ({ params, request, locals }) => {
-  const env = locals.runtime?.env ?? process.env;
   try {
-    if (env.DISCORD_PUBLIC_KEY === undefined) {
+    if (DISCORD_PUBLIC_KEY === undefined) {
       return new Response("No public key found in env", { status: 500 });
     }
     const body = await request.clone().arrayBuffer();
@@ -37,7 +24,7 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     const valid =
       signature &&
       timestamp &&
-      (await verifyKey(body, signature, timestamp, env.DISCORD_PUBLIC_KEY));
+      (await verifyKey(body, signature, timestamp, DISCORD_PUBLIC_KEY));
     if (!valid) {
       return new Response('Invalid Request Signature', { status: 401 });
     }
@@ -71,7 +58,7 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
       // get the function to run
       let run = runs[index];
       // run the function
-      let response = await run(interaction, env as Env);
+      let response = await run(interaction, { MODE, DISCORD_BOT_ID, DISCORD_GUILD_ID, DISCORD_TOKEN });
     } else {
       return new Response('Unknown Interaction Type');
     }

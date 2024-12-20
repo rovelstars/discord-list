@@ -41,6 +41,7 @@ const processingInstructions = [
           src={node.attribs.src
             .replaceAll("discordapp.com", "discordapp.xyz")
             .replaceAll("discordapp.net", "discordapp.xyz")}
+            loading="lazy"
           alt={node.attribs.alt}
           width={node.attribs.width || 100}
           height={node.attribs.height || 100}

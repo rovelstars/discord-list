@@ -2,19 +2,18 @@ import type { APIRoute } from "astro";
 import DiscordOauth2 from "discord-oauth2";
 import { db, Bots, Users, eq, and } from "astro:db";
 import SendLog from "@/bot/log";
-import type { Env } from "@/lib/env";
 import getAvatarURL from "@/lib/get-avatar-url";
-export const POST: APIRoute = async ({ params, request, cookies, locals }) => {
-  const env = locals.runtime?.env ?? process.env;
+import { DISCORD_BOT_ID, DISCORD_SECRET, DISCORD_TOKEN, DOMAIN, FAILED_DMS_LOGS_CHANNEL_ID, LOGS_CHANNEL_ID } from "astro:env/server";
+export const POST: APIRoute = async ({ params, request, cookies }) => {
   const key = new URL(request.url).searchParams.get("key") ?? request.headers.get("Authorization") ?? request.headers.get("RDL-key") ?? cookies.get("key")?.value;
   let queryCoins: number | string = new URL(request.url).searchParams.get("coins");
   //get id from params, and code from query or authentification header
   const id = params.id;
   if (!key) return new Response(JSON.stringify({ err: "not_logged_in" }), { status: 400, headers: { "Content-Type": "application/json" } });
   const oauth2 = new DiscordOauth2({
-    clientId: env.DISCORD_BOT_ID,
-    clientSecret: env.DISCORD_SECRET,
-    redirectUri: env.DOMAIN + "/api/auth",
+    clientId: DISCORD_BOT_ID,
+    clientSecret: DISCORD_SECRET,
+    redirectUri: DOMAIN + "/api/auth",
   });
   const userData = await oauth2.getUser(key);
   const user = (await db.select({ bal: Users.bal, votes: Users.votes }).from(Users).where(eq(Users.id, userData.id)))[0] as { bal: number, votes: { bot: string, at: number }[] };
@@ -77,7 +76,7 @@ export const POST: APIRoute = async ({ params, request, cookies, locals }) => {
       .then(async (r) => {
         if (r.status >= 300 || r.status < 200) {
           await SendLog({
-            env: env as Env,
+            env: { DOMAIN, FAILED_DMS_LOGS_CHANNEL_ID, LOGS_CHANNEL_ID, DISCORD_TOKEN },
             body: {
               title: `Failed to send data to ${bot.username} (${id})`,
               desc: `Uh Oh! It seems as if the bot sent unexpected response!\nThe data we posted was:\n\`\`\`json\n${JSON.stringify(body)}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
@@ -88,13 +87,13 @@ export const POST: APIRoute = async ({ params, request, cookies, locals }) => {
         }
       })
       .catch((e) => {
-        fetch(`${process.env.DOMAIN}/api/client/log`, {
+        fetch(`${DOMAIN}/api/client/log`, {
           method: "POST",
           headers: {
             "content-type": "application/json",
           },
           body: JSON.stringify({
-            secret: process.env.SECRET,
+            secret: DISCORD_SECRET,
             title: `Failed to send data to ${bot.username} (${id})`,
             desc: `Uh Oh! It seems as if the bot couldn't recieve the vote data!\nThe data we posted was:\n\`\`\`json\n${JSON.stringify(body)}\n\`\`\`\nPlease send this data to your bot incase the bot wanted it.`,
             owners: bot.owners,

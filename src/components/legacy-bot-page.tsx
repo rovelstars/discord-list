@@ -112,6 +112,7 @@ export default function BotPage({ bot }: { bot: Bot }) {
         {botBg && (
           <img
             src={botBg}
+            loading="lazy"
             ref={gradientRef}
             width={1280}
             height={720}
@@ -149,6 +150,7 @@ export default function BotPage({ bot }: { bot: Bot }) {
         >
           <img
             ref={imageRef}
+            loading="lazy"
             src={getAvatarURL(bot.id, bot.avatar)}
             crossOrigin="anonymous"
             className="bot-img w-36 h-36 rounded-full bg-card border-card border-8 mt-[-5.3rem] mb-4 mx-auto md:mx-0"
@@ -370,6 +372,7 @@ export default function BotPage({ bot }: { bot: Bot }) {
                 >
                 <Link href={`/users/${owner.id}`} className="inline-flex items-center my-2">
                   <img
+                  loading="lazy"
                   src={getAvatarURL(owner.id, owner.avatar)}
                   onError={e => {
                     e.currentTarget.src = `https://cdn.discordapp.com/embed/avatars/0.png`;

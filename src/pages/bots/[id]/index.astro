@@ -13,6 +13,7 @@ import { getBanner } from "../../api/internals/users/[id]/banner";
 import { asDrizzleTable } from "@astrojs/db/runtime";
 import getBannerURL from "@/lib/get-banner-url";
 import BotCardList from "@/components/bot-card-list.astro";
+import { DISCORD_TOKEN } from "astro:env/server";
 
 const bot = (
   await db
@@ -46,7 +47,7 @@ if (!bot)
   });
 
 if (!bot.bg) {
-  const botbanner = await getBanner(bot.id, import.meta.env.DISCORD_TOKEN);
+  const botbanner = await getBanner(bot.id, DISCORD_TOKEN);
   if (botbanner) {
     bot.bg = getBannerURL({ banner: botbanner, id: bot.id });
     await db.update(Bots).set({ bg: botbanner }).where(eq(Bots.id, bot.id));

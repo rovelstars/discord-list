@@ -1,16 +1,16 @@
 import type { APIRoute } from 'astro';
 import DiscordOauth2 from "discord-oauth2";
 import crypto from "node:crypto";
+import { DOMAIN, DISCORD_SECRET, DISCORD_BOT_ID, MODE } from "astro:env/server";
 
-export const GET: APIRoute = async ({ locals, params, request }) => {
+export const GET: APIRoute = async ({ request }) => {
   const noServerScope = new URL(request.url).searchParams.get("servers") === "false";
   const noEmailScope = new URL(request.url).searchParams.get("email") === "false";
-  const env = locals.runtime?.env ?? process.env;
   try {
     const oauth = new DiscordOauth2({
-      clientId: env.DISCORD_BOT_ID,
-      clientSecret: env.DISCORD_SECRET,
-      redirectUri: env.DOMAIN + "/api/auth",
+      clientId: DISCORD_BOT_ID,
+      clientSecret: DISCORD_SECRET,
+      redirectUri: DOMAIN + "/api/auth",
     });
     const scopes = ["identify"];
     if (!noEmailScope) scopes.push("email");
@@ -19,7 +19,7 @@ export const GET: APIRoute = async ({ locals, params, request }) => {
     const url = oauth.generateAuthUrl({
       scope: scopes.join(" "),
       state: crypto.randomBytes(16).toString("hex"),
-      prompt: import.meta.env.PROD ? "none" : "consent",
+      prompt: MODE == "production" ? "none" : "consent",
     });
     //redirect to the url
     return new Response(null, {
