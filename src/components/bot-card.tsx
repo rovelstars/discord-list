@@ -112,8 +112,12 @@ export default function BotCard({ bot, edit }: { bot: Bot; edit: Boolean }) {
               width={64}
               height={64}
               loading="lazy"
-              onError={(e) => {
+              onError={async (e) => {
                 //we need to send an api req to update bot's info.
+                const data = await (await fetch(`/api/internals/update/bot/${bot.id}`)).json();
+                if(data.success){
+                  e.currentTarget.src = getAvatarURL(bot.id, data.avatar, 96);
+                }
               }}
               className="z-10 w-16 h-16 rounded-full absolute -top-8 left-4 border-4 border-card bg-popover shadow-black shadow-2xl"
             />
