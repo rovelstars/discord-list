@@ -20,7 +20,7 @@ export default function LoginButton() {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="default" id="login-button">Login</Button>
+          <Button variant="default" id="login-button" className="mr-4">Login</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

@@ -1,0 +1,20 @@
+---
+import Root from "@/layouts/Layout.astro";
+import BotCardList from "@/components/bot-card-list.astro";
+
+import { db, Bots } from "astro:db";
+import { desc } from "astro:db";
+import Discord from "@/components/svgs/discord";
+
+---
+
+<Root
+  title="The Best Discord List for Bots, Servers, Emojis..."
+  description="Imagine a place - where you find everything about discord! Users, Servers, Bots, Emojis, Templates, PFPs and Banners, We got you covered!"
+  smallImgLink="/img/bot/logo-512.png"
+>
+  <img src="/img/bot/404.svg" class="w-24 h-24 mx-auto text-primary my-12" alt="404 Icon" />
+  <h1 class="font-heading text-4xl md:text-6xl font-bold text-center my-12">
+    Page Not Found
+  </h1>
+</Root>

@@ -7,6 +7,9 @@ const key = Astro.cookies.get("key")?.value;
 import { db, Bots, Users, eq, like } from "astro:db";
 import DiscordOauth2, { type TokenRequestResult } from "discord-oauth2";
 import { DISCORD_BOT_ID, DISCORD_SECRET, DOMAIN } from "astro:env/server";
+import { max } from "astro:db";
+import { Button } from "@/components/ui/button";
+import { Bot, Home, LayoutDashboard } from "lucide-react";
 const oauth2 = new DiscordOauth2({
   clientId: DISCORD_BOT_ID,
   clientSecret: DISCORD_SECRET,
@@ -44,18 +47,26 @@ if (key) {
       console.log(result.keys);
       if (result.keys.length > 0) {
         const keyData = result.keys[0];
-        const tokenData = await oauth2.tokenRequest({
-          grantType: "refresh_token",
-          refreshToken: keyData.refresh_token,
-          scope: keyData.scope,
-        });
-        console.log("refresh token", tokenData);
-        //TODO: confirm whether this would work incase above one still doesnt work...
-        Astro.cookies.set("key", tokenData.access_token, {
-          maxAge: tokenData.expires_in,
-          path: "/",
-        });
-        userData = await oauth2.getUser(tokenData.access_token);
+        try {
+          const tokenData = await oauth2.tokenRequest({
+            grantType: "refresh_token",
+            refreshToken: keyData.refresh_token,
+            scope: keyData.scope,
+          });
+
+          console.log("refresh token", tokenData);
+          //TODO: confirm whether this would work   incase above one still doesnt work...
+          Astro.cookies.set("key", tokenData.access_token, {
+            maxAge: tokenData.expires_in,
+            path: "/",
+          });
+          userData = await oauth2.getUser(tokenData.access_token);
+        } catch (error) {
+          console.error("Deleting cookie due to:", error);
+          //delete cookie
+          Astro.cookies.delete("key", { path: "/" });
+          console.log(Astro.cookies.has("key"));
+        }
       }
     }
     // console.error("Error fetching user data:", error);
@@ -74,32 +85,40 @@ const user = userData
 ---
 
 <Menubar
-  className="z-50 min-h-16 min-w-full bg-popover rounded-t-none drop-shadow-xl fixed top-0 flex"
+  className="z-50 min-h-16 min-w-full bg-popover rounded-t-none drop-shadow-xl fixed top-0 flex overflow-x-auto"
 >
   <MenubarGroup>
-    <LogoNavbar client:load />
+    <LogoNavbar client:load client:only="react" />
   </MenubarGroup>
-  <MenubarGroup className="flex items-center space-x-4 w-full">
-    <a href="/" class="text-lg font-bold text-primary">Home</a>
-    <a href="/bots" class="text-lg font-bold text-primary">Bots</a>
+  <MenubarGroup className="flex items-center space-x-4 w-full px-6">
+    <a href="/" class="flex text-lg font-bold text-primary">
+      <Home size={24} className="mt-0.5" />
+      <span class="ml-1 hidden md:block">Home</span>
+    </a>
+    <a href="/bots" class="flex text-lg font-bold text-primary">
+    <Bot size={24} className="mt-0.5" />
+      <span class="ml-1 hidden md:block">Bots</span>
+    </a>
     {
       user && (
         <>
-          <a href="/dashboard" class="text-lg font-bold text-primary">
-            Dashboard
+          <a href="/dashboard" class="flex text-lg font-bold text-primary">
+            <LayoutDashboard size={24} className="mt-0.5" />
+            <span class="ml-1 hidden md:block">Dashboard</span>
           </a>
-          <a
-            href={`/logout?redirect=${new URL(Astro.url).pathname}`}
-            class="text-lg font-bold text-primary"
-          >
-            Logout
-          </a>
-        </>
+        </D>
       )
     }
-    {!user && <LoginButton client:load client:only="react" />}
   </MenubarGroup>
   <div class="ml-auto flex items-center pr-2 md:pr-4">
+    {!user && <LoginButton client:load client:only="react" />}
+    {
+      user && (
+        <Button variant="destructive" className="text-lg font-bold mr-4">
+          <a href={`/logout?redirect=${new URL(Astro.url).pathname}`}>Logout</a>
+        </Button>
+      )
+    }
     <ModeToggle class:list={"right-0"} client:idle client:only="react" />
   </div>
 </Menubar>

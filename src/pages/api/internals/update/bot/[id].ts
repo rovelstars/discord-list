@@ -11,15 +11,15 @@ export const GET: APIRoute = async ({ params }) => {
   const botDBData = (await db.select({ username: Bots.username, discriminator: Bots.discriminator, avatar: Bots.avatar, servers: Bots.servers, tags: Bots.tags }).from(Bots).where(eq(Bots.id, params.id)).limit(1))[0];
   if (!botDBData) return new Response(JSON.stringify({ success: false }), { status: 200, headers: { "content-type": "application/json" } });
   //compare the data, and update as according, and also send a sendLog to the logs channel
-  if (botDBData.username != data.bot.username || botDBData.discriminator != data.bot.discriminator || botDBData.avatar != data.bot.avatar) {
+  if ((botDBData.username != data.bot.username || botDBData.discriminator != data.bot.discriminator || botDBData.avatar != data.bot.avatar) || params.modified) {
     await db.update(Bots).set({ username: data.bot.username, discriminator: data.bot.discriminator, avatar: data.bot.avatar }).where(eq(Bots.id, params.id));
     //send a sendLog to the logs channel
     await SendLog({
 
       env: { DOMAIN, FAILED_DMS_LOGS_CHANNEL_ID, LOGS_CHANNEL_ID, DISCORD_TOKEN },
       body: {
-        title: `Bot ${data.bot.username}#${data.bot.discriminator} Data updated!`,
-        desc: `Bot ${data.bot.username}#${data.bot.discriminator} has been updated!`,
+        title: `Bot ${data.bot.username}#${data.bot.discriminator} ${params.modified ? "has been modified!" : "Data updated!"}`,
+        desc: `Bot ${data.bot.username}#${data.bot.discriminator} has been updated${params.modified ? ` by <@!${params.modified}>` : ""}!`,
         color: "#FEE75C",
         img: getAvatarURL(data.bot.id, data.bot.avatar)
       }

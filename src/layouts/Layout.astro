@@ -7,6 +7,7 @@ interface Props {
 }
 import "@/styles/global.css";
 import Navbar from "./Navbar.astro";
+import Footer from "./Footer.astro";
 import { AstroFont } from "astro-font";
 import { join } from "node:path";
 let { title, imgLink, smallImgLink, description } = Astro.props || {
@@ -119,6 +120,7 @@ if (!smallImgLink)
     <Navbar id="navbar" />
     <div class="block mt-24"></div>
     <slot />
+    <Footer />
   </body>
 
 </html>

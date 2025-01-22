@@ -35,7 +35,7 @@ export default function Link(params: any) {
       <>
         <a
           {...params}
-          href="#!"
+          href={params.href}
           onClick={e => {
             e.preventDefault();
             setOpen(true);

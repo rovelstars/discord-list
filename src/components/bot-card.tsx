@@ -14,15 +14,16 @@ interface Card {
 }
 
 interface Bot {
+  code?: string;
   IS_SKELETON?: boolean; //this is going to be a placeholder, remove it when you have the actual data
-  card: Card;
-  owners: string[] | { id: string; username: string; avatar: string }[];
-  approved: boolean;
-  servers: number;
-  promoted: boolean;
-  votes: number;
-  badges: string[];
-  opted_coins: boolean;
+  card?: Card;
+  owners: string[] | { id: string; username: string; avatar: string }[] | unknown;
+  approved?: boolean;
+  servers?: number;
+  promoted?: boolean;
+  votes?: number;
+  badges?: string[] | unknown;
+  opted_coins?: boolean;
   id: string;
   username: string;
   discriminator: string;
@@ -34,14 +35,15 @@ interface Bot {
   support: string;
   bg?: string;
   banner?: string;
-  github?: string;
+  source_repo?: string;
+  webhook?: string;
   website?: string;
   donate?: string;
   invite: string;
   slug?: string;
-  owned: boolean;
-  status: "online" | "offline" | "idle" | "dnd";
-  addedAt: string;
+  owned?: boolean;
+  status?: "online" | "offline" | "idle" | "dnd";
+  addedAt?: string;
 }
 
 export type { Bot, Card };

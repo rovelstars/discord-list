@@ -1,10 +1,10 @@
 /** @type {import('tailwindcss').Config} */
-
+import plugin from 'tailwindcss/plugin';
 export default {
   darkMode: ["class"],
   content: [
     './src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'
-	],
+  ],
   prefix: "",
   theme: {
     container: {
@@ -15,7 +15,7 @@ export default {
       },
     },
     extend: {
-      fontFamily:{
+      fontFamily: {
         heading: ['var(--font-heading)'],
         sans: ['var(--font-sans)'],
         mono: ['var(--font-code)'],
@@ -76,5 +76,8 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography"),
+  plugin(function ({ addVariant }) {
+    addVariant('prose-inline-code', '&.prose :where(:not(pre)>code):not(:where([class~="not-prose"] *))');
+  })],
 }

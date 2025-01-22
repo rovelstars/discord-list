@@ -1,0 +1,31 @@
+---
+import { Mail } from "lucide-react";
+import { SiDiscord, SiX } from "@icons-pack/react-simple-icons";
+---
+
+<footer class="text-center mt-12">
+  <a href="https://github.com/rovelstars" class="text-primary"
+    >Rovel Stars © 2020-{new Date().getFullYear()} All Rights Reserved.</a
+  >
+  <p class="text-muted-foreground">
+    We are not affiliated with Discord in any way. All trademarks, copyrights
+    and logos belong to their respective companies. Discord, Twitter And GitHub
+    logos is owned by their respective companies.
+  </p>
+  <p class="text-muted-foreground">Have a nice day!</p>
+  <p class="my-4 text-xl">Contact Us</p>
+  <div class="text-center">
+    <p class="flex justify-center items-center text-primary">
+      <Mail className="mr-2 my-2" /><a href="mailto:support@rovelstars.com">
+        support@rovelstars.com</a
+      >
+    </p>
+    <p class="flex justify-center items-center text-primary">
+      <SiDiscord className="mr-2 my-2" /><a href="/server">Discord</a>
+    </p>
+    <p class="flex justify-center items-center text-primary">
+      <SiX className="mr-2 my-2" /><a href="https://x.com/RovelStars">Twitter</a>
+    </p>
+  </div>
+  <img class="w-full h-auto" src="/assets/img/wavedown.svg" />
+</footer>

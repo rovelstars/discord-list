@@ -1,0 +1,90 @@
+---
+import { db, Users, eq, like, Bots, inArray, or, and } from "astro:db";
+import BotEditForm from "@/components/bot-edit";
+let { id } = Astro.params;
+import Root from "@/layouts/Layout.astro";
+import DiscordOauth2 from "discord-oauth2";
+import { DISCORD_BOT_ID, DISCORD_SECRET, DOMAIN } from "astro:env/server";
+import type { Bot } from "@/components/bot-card";
+
+const key = Astro.cookies.get("key")?.value;
+const oauth2 = new DiscordOauth2({
+  clientId: DISCORD_BOT_ID,
+  clientSecret: DISCORD_SECRET,
+  redirectUri: DOMAIN + "/api/auth",
+});
+const userData = key ? await oauth2.getUser(key) : null;
+const user = userData
+  ? (
+      await db
+        .select({
+          bal: Users.bal,
+        })
+        .from(Users)
+        .where(eq(Users.id, userData.id))
+    )[0]
+  : null;
+if (!user) {
+  return new Response("", {
+    status: 302,
+    headers: {
+      location: "/login",
+    },
+  });
+}
+const bot: Bot = (
+  await db
+    .select({
+      id: Bots.id,
+      slug: Bots.slug,
+      avatar: Bots.avatar,
+      username: Bots.username,
+      discriminator: Bots.discriminator,
+      short: Bots.short,
+      invite: Bots.invite,
+      bg: Bots.bg,
+      owners: Bots.owners,
+      lib: Bots.lib,
+      prefix: Bots.prefix,
+      desc: Bots.desc,
+      servers: Bots.servers,
+      votes: Bots.votes,
+      badges: Bots.badges,
+      source_repo: Bots.source_repo,
+      support: Bots.support,
+      website: Bots.website,
+      webhook: Bots.webhook,
+      donate: Bots.donate,
+      code: Bots.code,
+    })
+    .from(Bots)
+    .where(
+      and(
+        or(eq(Bots.slug, id), eq(Bots.id, id)),
+        like(Bots.owners, `%${userData.id}%`),
+      ),
+    )
+)[0];
+if (!bot)
+  return new Response("", {
+    status: 302,
+    headers: {
+      location: "/404",
+    },
+  });
+---
+
+<Root title="Dashboard" description="Dashboard">
+  {
+    !userData && (
+      <h1 class="font-heading text-4xl font-bold mb-4 mx-2 md:mx-4">
+        You need to login to view this page
+      </h1>
+    )
+  }
+  {
+    userData && (
+      <BotEditForm client:load client:only="react" bot={bot} user={userData} />
+    )
+  }
+</Root>
