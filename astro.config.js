@@ -1,9 +1,13 @@
-import MillionLint from "@million/lint";
-import { defineConfig, envField } from "astro/config";
-import tailwind from "@astrojs/tailwind";
-import react from "@astrojs/react";
-import cloudflare from "@astrojs/cloudflare";
-import db from "@astrojs/db";
+import { defineConfig, envField } from 'astro/config';
+
+import tailwind from '@astrojs/tailwind';
+
+import react from '@astrojs/react';
+
+import cloudflare from '@astrojs/cloudflare';
+
+import db from '@astrojs/db';
+
 import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
@@ -12,7 +16,6 @@ export default defineConfig({
     prefetchAll: true,
     defaultStrategy: "viewport"
   },
-
   env: {
     
     schema: {
@@ -35,21 +38,15 @@ export default defineConfig({
       FAILED_DMS_LOGS_CHANNEL_ID: envField.string({ context: "server", access: "public", optional: false }),
     }
   },
-
   integrations: [tailwind({
     applyBaseStyles: false,
   }), react(), db()],
 
-  output: "server",
+  output: 'server',
   adapter: netlify(),
-
   vite: {
     ssr: {
       external: ["buffer", "path", "fs", "os", "crypto", "async_hooks", "https", "http", "zlib", "events"].flatMap((i) => [`node:${i}`, i]),
     },
   },
-
-  plugins: [MillionLint.vite({
-    enabled: true
-  })]
 });

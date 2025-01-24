@@ -31,5 +31,3 @@ pnpm-debug.log*
 .go-tetris.log
 
 .netlify/
-# Million Lint
-.million
