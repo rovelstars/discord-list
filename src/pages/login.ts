@@ -3,7 +3,7 @@ import DiscordOauth2 from "discord-oauth2";
 import crypto from "node:crypto";
 import { DOMAIN, DISCORD_SECRET, DISCORD_BOT_ID, MODE } from "astro:env/server";
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request,cookies }) => {
   const noServerScope = new URL(request.url).searchParams.get("servers") === "false";
   const noEmailScope = new URL(request.url).searchParams.get("email") === "false";
   try {
@@ -15,7 +15,8 @@ export const GET: APIRoute = async ({ request }) => {
     const scopes = ["identify"];
     if (!noEmailScope) scopes.push("email");
     if (!noServerScope) scopes.push("guilds.join");
-
+    //save cookie for scopes used
+    cookies.set("scopes", JSON.stringify(scopes), { path: "/" });
     const url = oauth.generateAuthUrl({
       scope: scopes.join(" "),
       state: crypto.randomBytes(16).toString("hex"),

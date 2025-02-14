@@ -12,9 +12,18 @@ export const GET: APIRoute = async ({ request, cookies }) => {
       clientSecret: DISCORD_SECRET,
       redirectUri: DOMAIN + "/api/auth",
     });
+    let scopes: string[];
+    if(cookies.get("scopes")) {
+      try{
+      scopes = JSON.parse(cookies.get("scopes").value);
+      }
+      catch(e){
+        scopes = ["identify"];
+      }
+    }
     const url = new URL(request.url);
     let data = await oauth.tokenRequest({
-      scope: ["identify", "email", "guilds.join"].join(" "),
+      scope: scopes.join(" "),
       code: url.searchParams.get("code"),
       grantType: "authorization_code"
     }) as TokenRequestResult & { expireTimestamp: EpochTimeStamp }; //expireTimestamp isnt available by default, we add it to improve compatibility with our existing old db.
@@ -52,6 +61,7 @@ export const GET: APIRoute = async ({ request, cookies }) => {
       await db.update(Users).set({
         keys: user.keys
       }).where(eq(Users.id, userData.id));
+      console.log("Saving DB for ", userData.username);
     }
     //user doesnt exist, create a new user
     else {
