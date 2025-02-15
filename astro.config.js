@@ -43,7 +43,7 @@ export default defineConfig({
   }), react(), db()],
 
   output: 'server',
-  adapter: netlify(),
+  adapter: cloudflare(),
   vite: {
     ssr: {
       external: ["buffer", "path", "fs", "os", "crypto", "async_hooks", "https", "http", "zlib", "events"].flatMap((i) => [`node:${i}`, i]),
