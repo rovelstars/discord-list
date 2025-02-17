@@ -22,9 +22,11 @@ export const GET: APIRoute = async ({ request, cookies }) => {
       }
     }
     const url = new URL(request.url);
+    const code = url.searchParams.get("code");
+    console.log(scopes, code);
     let data = await oauth.tokenRequest({
       scope: scopes.join(" "),
-      code: url.searchParams.get("code"),
+      code: code,
       grantType: "authorization_code"
     }) as TokenRequestResult & { expireTimestamp: EpochTimeStamp }; //expireTimestamp isnt available by default, we add it to improve compatibility with our existing old db.
     data.expireTimestamp = Date.now() + data.expires_in * 1000 - 10000;
