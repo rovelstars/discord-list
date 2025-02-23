@@ -12,12 +12,8 @@ import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
-  prefetch:{
-    prefetchAll: true,
-    defaultStrategy: "viewport"
-  },
   env: {
-    
+
     schema: {
       DISCORD_BOT_ID: envField.string({ context: "server", access: "public", optional: false }),
       DISCORD_PUBLIC_KEY: envField.string({ context: "server", access: "public", optional: false }),
