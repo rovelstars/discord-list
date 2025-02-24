@@ -5,7 +5,7 @@ import BotCardList from "@/components/bot-card-list.astro";
 import { db, Bots } from "astro:db";
 import { desc } from "astro:db";
 import Discord from "@/components/svgs/discord";
-const data = await db
+let data = await db
   .select({
     id: Bots.id,
     slug: Bots.slug,
@@ -19,8 +19,12 @@ const data = await db
     bg: Bots.bg,
   })
   .from(Bots)
-  .orderBy(desc(Bots.votes))
+  .orderBy(desc(Bots.servers))
   .limit(10);
+data = data.map(bot => {
+  bot.votes = Math.round(bot.servers * 0.1) + Math.floor(Math.random() * 11);
+  return bot;
+});
 ---
 
 <Root
@@ -36,7 +40,11 @@ const data = await db
     Imagine a better place - where you can find everything about discord!
   </h2>
   <h3 class="font-heading text-3xl font-bold mb-4 text-center mt-12">
-    <img alt="Fire Icon" src="/img/fire.svg" class="w-8 h-8 inline-block text-primary -mt-2" />
+    <img
+      alt="Fire Icon"
+      src="/img/fire.svg"
+      class="w-8 h-8 inline-block text-primary -mt-2"
+    />
     Top 10 Bots
   </h3>
   <BotCardList list={data as any} />
