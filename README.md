@@ -1,7 +1,7 @@
 <div align='center'>
   <img src="https://discord.rovelstars.com/assets/img/bot/logo.svg" height='100px' width='100px' />
   <h1>Rovel Discord List</h1>
-  <h3>The Ultimate Discord List for Emojis, Users, Servers & Bots!</h3>
+  <h3>Imagine a better place - where you can find everything about discord!</h3>
 </div>
 
 ---
@@ -13,6 +13,12 @@
 ### Light Theme
 
 ![light mode homepage](light.png)
+
+---
+
+### Looking for the old version?
+
+It's publicly archived at [rovelstars/discord-list-old](https://github.com/rovelstars/discord-list-old).
 
 ---
 
