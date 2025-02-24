@@ -60,11 +60,6 @@ if (q) {
     .orderBy(desc(Bots.servers))
     .limit(limit)
     .offset(offset);
-    data = data.map((bot) => {
-      bot.votes = 
-      Math.round(bot.servers * 0.1) + Math.floor(Math.random() * 11)
-      return bot;
-    });
 }
 ---
 
