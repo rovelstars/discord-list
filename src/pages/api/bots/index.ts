@@ -1,19 +1,25 @@
 import type { APIRoute } from 'astro';
-import { db, Bots, like, or, desc } from 'astro:db';
+import { db, Bots, like, or, desc, eq } from 'astro:db';
 export const GET: APIRoute = async ({ params, request }) => {
   let url = new URL(request.url);
 
   const limit = Math.min(parseInt(url.searchParams.get("limit") || "10"), 50);
   const offset = parseInt(url.searchParams.get("offset") || "0");
 
+  if (limit == Infinity || offset == Infinity || limit < 0 || offset < 0) {
+    return new Response(JSON.stringify({ err: "invalid_number" }), { status: 400, headers: { "content-type": "application/json" } });
+  }
+  if (limit > 50) {
+    return new Response(JSON.stringify({ err: "limit_too_high" }), { status: 400, headers: { "content-type": "application/json" } });
+  }
+
   const needNew = url.searchParams.has("new") ? true : false;
   const needTrending = url.searchParams.has("trending") ? true : false;
-
+  const q = url.searchParams.get("q");
   if (needNew && needTrending) {
     return new Response(JSON.stringify({ err: "no_multi_sort" }), { status: 400, headers: { "content-type": "application/json" } });
   }
-
-  if (url.searchParams.get("q")) {
+  if (q) {
     //search for bots
     const bots = await db.select({
       id: Bots.id,
@@ -28,7 +34,7 @@ export const GET: APIRoute = async ({ params, request }) => {
       bg: Bots.bg,
     }).from(Bots)
       .orderBy(needNew ? desc(Bots.added_at) : needTrending ? desc(Bots.votes) : null)
-      .where(or(like(Bots.username, `%${url.searchParams.get("q")}%`), like(Bots.short, `%${url.searchParams.get("q")}%`)))
+      .where(or(like(Bots.username, `%${q}%`), like(Bots.short, `%${q}%`)))
       .limit(limit).offset(offset);
     return new Response(JSON.stringify(bots), {
       headers: {

@@ -17,7 +17,10 @@ interface Bot {
   code?: string;
   IS_SKELETON?: boolean; //this is going to be a placeholder, remove it when you have the actual data
   card?: Card;
-  owners: string[] | { id: string; username: string; avatar: string }[] | unknown;
+  owners:
+    | string[]
+    | { id: string; username: string; avatar: string }[]
+    | unknown;
   approved?: boolean;
   servers?: number;
   promoted?: boolean;
@@ -107,18 +110,28 @@ export default function BotCard({ bot, edit }: { bot: Bot; edit: Boolean }) {
         ) : (
           <>
             <img
-              src={getAvatarURL(bot.id, bot.avatar, 96).replace("png","webp")}
+              src={
+                bot.avatar == "0"
+                  ? getAvatarURL(bot.id, bot.avatar)
+                  : getAvatarURL(bot.id, bot.avatar, 96).replace("png", "webp")
+              }
               ref={imageRef}
               alt="avatar"
               crossOrigin="anonymous"
               width={64}
               height={64}
               loading="lazy"
-              onError={async (e) => {
+              onError={async e => {
                 //we need to send an api req to update bot's info.
-                const data = await (await fetch(`/api/internals/update/bot/${bot.id}`)).json();
-                if(data.success){
-                  e.currentTarget.src = getAvatarURL(bot.id, data.avatar, 96).replace("png","webp");
+                const data = await (
+                  await fetch(`/api/internals/update/bot/${bot.id}`)
+                ).json();
+                if (data.success) {
+                  e.currentTarget.src = getAvatarURL(
+                    bot.id,
+                    data.avatar,
+                    96,
+                  ).replace("png", "webp");
                 }
               }}
               className="z-10 w-16 h-16 rounded-full absolute -top-8 left-4 border-4 border-card bg-popover shadow-black shadow-2xl"
@@ -248,18 +261,16 @@ export default function BotCard({ bot, edit }: { bot: Bot; edit: Boolean }) {
                   <UserRoundPlus className="w-4 h-4 mr-2" />
                   Invite
                 </a>
-                {
-                  edit && (
-                    <a
-                      href={`/dashboard/bots/edit/${bot.id}`}
-                      className={buttonVariants({
-                        variant: "secondary",
-                      })}
-                    >
-                      Edit
-                    </a>
-                  )
-                }
+                {edit && (
+                  <a
+                    href={`/dashboard/bots/edit/${bot.id}`}
+                    className={buttonVariants({
+                      variant: "secondary",
+                    })}
+                  >
+                    Edit
+                  </a>
+                )}
               </>
             )}
           </div>
