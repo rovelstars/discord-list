@@ -25,10 +25,6 @@ Permissions of this strong copyleft license are conditioned on making available 
 
 ---
 
-## Contributing
-
----
-
 ## Self Hosting
 
 We use Astro to build the website. To run the website locally, you need to have Node.js installed on your machine. If you don't have Node.js installed, you can download it from [here](https://nodejs.org/). Alternatively, feel free to use [Bun](https://bun.sh) to run the website locally. Our current project is configured to build for Netlify, if you want to build for Vercel, you can change the configuration in the `astro.config.js` file. The same goes for other platforms.
