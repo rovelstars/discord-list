@@ -18,7 +18,7 @@
 
 ## License Notice
 
-![license picture](license.png)
+![license picture](lic.png)
 
 This project is licensed under the GNU GPLv3 License. You can view the license [here](LICENSE).
 Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights. When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
