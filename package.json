@@ -15,7 +15,7 @@
     "@astrojs/db": "0.14.6",
     "@astrojs/netlify": "^6.1.0",
     "@astrojs/react": "4.1.6",
-    "@astrojs/tailwind": "5.1.5",
+    "@astrojs/tailwind": "6.0.2",
     "@discordjs/builders": "^1.9.0",
     "@discordjs/rest": "^2.4.0",
     "@hookform/resolvers": "^3.10.0",
