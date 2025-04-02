@@ -51,7 +51,7 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.2",
     "react-twemoji": "^0.6.0",
-    "sonner": "^1.7.2",
+    "sonner": "^2.0.3",
     "swr": "^2.2.5",
     "tailwind-merge": "^2.5.4",
     "tailwindcss": "^3.4.15",
