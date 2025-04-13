@@ -24,6 +24,7 @@ import { BlurredTextCopy } from "./blurred-text-copy";
 import { formSchema } from "./bot-form-schema";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
 const marked = new Marked(
   markedHighlight({
@@ -35,8 +36,28 @@ const marked = new Marked(
     },
   }),
 );
+interface NewBotData
+  extends Omit<Bot, "short" | "prefix" | "lib" | "support" | "desc"> {
+  short?: string; // Make 'short' optional here
+  prefix?: string;
+  lib?: string;
+  support?: string;
+  desc?: string;
+}
 
-export default function BotEditForm({ bot, user }: { bot: Bot; user: any }) {
+interface EditBotData extends Bot {
+  opted_coins?: boolean;
+}
+
+export default function BotEditForm<TYPE extends "new" | "edit">({
+  bot,
+  user,
+  TYPE,
+}: {
+  bot: TYPE extends "new" ? NewBotData : EditBotData;
+  user: any;
+  TYPE: TYPE;
+}) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,6 +75,7 @@ export default function BotEditForm({ bot, user }: { bot: Bot; user: any }) {
       donate: bot.donate,
       invite: bot.invite,
       slug: bot.slug,
+      opted_coins: bot.opted_coins,
     },
   });
 
@@ -61,12 +83,11 @@ export default function BotEditForm({ bot, user }: { bot: Bot; user: any }) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log("Data to be sent:", JSON.stringify(values, null, 2));
     //validate
     if (true) {
       //formSchema.safeParse(values).success) {
       //send data
-      fetch(`/api/bots/${bot.id}/edit`, {
+      fetch(`/api/bots/${bot.id}/${TYPE.toLowerCase()}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,6 +111,10 @@ export default function BotEditForm({ bot, user }: { bot: Bot; user: any }) {
             toast("Details submitted successfully", {
               description: "Your bot details have been successfully submitted.",
             });
+            if(TYPE=="new"){
+              //redirect to bot page
+              location.href = `/bots/${bot.id}`;
+            }
           }
         });
     }
@@ -102,7 +127,7 @@ export default function BotEditForm({ bot, user }: { bot: Bot; user: any }) {
           value="edit"
           className="md:mx-2 w-full rounded-3xl py-2 md:py-4 data-[state=active]:bg-popover font-heading text-center md:text-4xl font-bold"
         >
-          Edit {bot.username}#{bot.discriminator}
+          Adding {bot.username}#{bot.discriminator}
         </TabsTrigger>
         <TabsTrigger
           value="preview"
@@ -248,6 +273,45 @@ export default function BotEditForm({ bot, user }: { bot: Bot; user: any }) {
                 description="The invite link for the bot."
                 placeholder="https://discord.com/oauth2/authorize?client_id=123456789012345678&permissions=0&scope=bot"
               />
+              <FormField
+                control={form.control}
+                name="opted_coins"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Choose How People Vote</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        value={field.value ? "true" : "false"}
+                        onValueChange={value =>
+                          field.onChange(value === "true")
+                        }
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="true" id="opted_coins_true" />
+                          <FormLabel htmlFor="opted_coins_true">
+                            R$ Coins
+                          </FormLabel>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem
+                            value="false"
+                            id="opted_coins_false"
+                          />
+                          <FormLabel htmlFor="opted_coins_false">
+                            Once Daily
+                          </FormLabel>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormDescription>
+                      R$ can be earned by the users for free. This allows your
+                      users to vote your bot multiple times, as opposed to once
+                      daily. R$10 = 1 vote
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormChild
                 form={form}
                 name="slug"
@@ -255,21 +319,31 @@ export default function BotEditForm({ bot, user }: { bot: Bot; user: any }) {
                 description="The vanity URL name for the bot."
                 placeholder="my-bot"
               />
-              <h2 className="font-heading text-destructive text-lg mt-4 md:text-2xl font-semibold">
-                Sensitive Zone
-              </h2>
-              <FormItem>
-                <FormLabel>Bot Code</FormLabel>
-                <BlurredTextCopy text={bot.code} />
-                <FormDescription>
-                  The bot code is a token, which is a sensitive piece of
-                  information. Do not share it with anyone. This code is used to
-                  authenticate the bot with our RDL API.
-                </FormDescription>
-                <Button type="button" variant="destructive" onClick={() => {toast("Function not implemented! Yikes...")}}>
-                  Regenerate Bot Code
-                </Button>
-              </FormItem>
+              {TYPE == "edit" && (
+                <>
+                  <h2 className="font-heading text-destructive text-lg mt-4 md:text-2xl font-semibold">
+                    Sensitive Zone
+                  </h2>
+                  <FormItem>
+                    <FormLabel>Bot Code</FormLabel>
+                    <BlurredTextCopy text={bot.code} />
+                    <FormDescription>
+                      The bot code is a token, which is a sensitive piece of
+                      information. Do not share it with anyone. This code is
+                      used to authenticate the bot with our RDL API.
+                    </FormDescription>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={() => {
+                        toast("Function not implemented! Yikes...");
+                      }}
+                    >
+                      Regenerate Bot Code
+                    </Button>
+                  </FormItem>
+                </>
+              )}
               <div className="flex justify-center">
                 <Button type="submit" size="lg">
                   Submit
@@ -306,28 +380,26 @@ function FormChild({ form, name, label, description, placeholder }) {
 }
 
 function LivePreview({ form, bot, user }) {
-  const longdesc = marked.parse(form.getValues().desc.replace(/&gt;+/g, ">"));
-  console.log(longdesc);
-  const liveowners = form
-    .getValues()
-    .owners
-    .map(owner => {
-      if (owner === user.id) {
-        return {
-          id: user.id,
-          username: user.username,
-          discriminator: user.discriminator,
-          avatar: user.avatar,
-        };
-      } else {
-        return {
-          id: owner,
-          username: "Unknown",
-          discriminator: "0000",
-          avatar: 1,
-        };
-      }
-    });
+  const longdesc = marked.parse(
+    form.getValues()?.desc?.replace?.(/&gt;+/g, ">") || "",
+  );
+  const liveowners = form.getValues().owners.map(owner => {
+    if (owner === user.id) {
+      return {
+        id: user.id,
+        username: user.username,
+        discriminator: user.discriminator,
+        avatar: user.avatar,
+      };
+    } else {
+      return {
+        id: owner,
+        username: "Unknown",
+        discriminator: "0000",
+        avatar: 1,
+      };
+    }
+  });
 
   //this uses the form hook to read the latest values as edited in the form, and reflect changes in the live preview
   return (

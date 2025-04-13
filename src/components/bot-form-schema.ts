@@ -16,8 +16,8 @@ export const formSchema = z.object({
     }),
   prefix: z
     .string()
-    .max(3, {
-      message: "Prefix must be at most 3 characters.",
+    .max(20, {
+      message: "Prefix must be at most 20 characters.",
     })
     .optional(),
   short: z
@@ -44,4 +44,5 @@ export const formSchema = z.object({
   donate: z.string().optional(),
   invite: z.string(),
   slug: z.string().optional(),
+  opted_coins: z.boolean().optional(),
 });

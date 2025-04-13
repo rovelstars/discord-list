@@ -1,0 +1,123 @@
+---
+import { db, Users, eq, like, Bots, inArray, or, and } from "astro:db";
+import BotEditForm from "@/components/bot-edit";
+let { id } = Astro.params;
+import Root from "@/layouts/Layout.astro";
+import DiscordOauth2 from "discord-oauth2";
+import {
+  DISCORD_BOT_ID,
+  DISCORD_SECRET,
+  DOMAIN,
+  SELFBOT_TOKEN,
+} from "astro:env/server";
+import type { Bot } from "@/components/bot-card";
+import UserAccountFetch from "@/functions/user-bot";
+
+const key = Astro.cookies.get("key")?.value;
+const oauth2 = new DiscordOauth2({
+  clientId: DISCORD_BOT_ID,
+  clientSecret: DISCORD_SECRET,
+  redirectUri: DOMAIN + "/api/auth",
+});
+const userData = key ? await oauth2.getUser(key) : null;
+const user = userData
+  ? (
+      await db
+        .select({
+          bal: Users.bal,
+        })
+        .from(Users)
+        .where(eq(Users.id, userData.id))
+    )[0]
+  : null;
+if (!user) {
+  return new Response("", {
+    status: 302,
+    headers: {
+      location: "/login",
+    },
+  });
+}
+
+const url = new URL(Astro.url);
+const bot_ID = url.searchParams.get("id");
+let isError = false;
+
+if (!bot_ID || bot_ID == "") {
+  isError = true;
+}
+
+let data;
+if (!isError) {
+  data = await UserAccountFetch(
+    `/oauth2/authorize?client_id=${bot_ID}&scope=bot`,
+    { SELFBOT_TOKEN },
+  );
+
+  isError =
+    data.code == 50010 ||
+    data.code == 10002 ||
+    data.code == 10013 ||
+    data.code == 20026;
+}
+let botExists;
+if (!isError && data.bot.id) {
+  botExists = (
+    await db
+      .select({
+        id: Bots.id,
+      })
+      .from(Bots)
+      .where(eq(Bots.id, data.bot.id))
+  )[0];
+}
+---
+
+<Root title="Dashboard" description="Dashboard">
+  {
+    !userData && (
+      <h1 class="text-center font-heading text-4xl font-bold mb-4 mx-2 md:mx-4">
+        You need to login to view this page
+      </h1>
+    )
+  }
+  {
+    isError && (
+      <h1 class="text-center font-heading text-4xl font-bold mb-4 mx-2 md:mx-4">
+        Could not find a bot with the ID {bot_ID || "(not given)"}
+      </h1>
+    )
+  }
+  {
+    botExists && (
+      <h1 class="text-center font-heading text-4xl font-bold mb-4 mx-2 md:mx-4">
+        This bot is already in the list. Contact support if someone else added
+        it.
+      </h1>
+    )
+  }
+  {
+    !isError && userData && (
+      <BotEditForm
+        TYPE="new"
+        client:load
+        client:only="react"
+        bot={{
+          id: data.bot.id,
+          slug: data.application.name,
+          avatar: data.bot.avatar,
+          username: data.bot.username,
+          discriminator: data.bot.discriminator,
+          owners: [userData.id],
+          servers: data.bot.approximate_guild_count,
+          votes: 0,
+          invite: `https://discord.com/oauth2/authorize?client_id=${data.bot.id}&scope=${
+            data.application.install_params.scopes.join("%20") || "bot"
+          }&permissions=${data.application.install_params.permissions || 0}`,
+          opted_coins: true,
+        }}
+        user={userData}
+      />
+    )
+  }
+</Root>

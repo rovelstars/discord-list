@@ -255,21 +255,23 @@ export default function BotPage({ bot }: { bot: Bot }) {
                 </span>
               )}
             </Label>
-            <Label
-              className="flex text-muted my-1 text-md"
-              style={
-                isColorDark(gradientColor)
-                  ? {
-                      color: `rgb(${gradientColor})`,
-                    }
-                  : {}
-              }
-            >
-              <Heart className="w-5 h-5 mr-1 mt-0.5 text-destructive/70" />
-              <span>
-                Made with <span className="font-semibold">{bot.lib}</span>
-              </span>
-            </Label>
+            {bot.lib && (
+              <Label
+                className="flex text-muted my-1 text-md"
+                style={
+                  isColorDark(gradientColor)
+                    ? {
+                        color: `rgb(${gradientColor})`,
+                      }
+                    : {}
+                }
+              >
+                <Heart className="w-5 h-5 mr-1 mt-0.5 text-destructive/70" />
+                <span>
+                  Made with <span className="font-semibold">{bot.lib}</span>
+                </span>
+              </Label>
+            )}
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

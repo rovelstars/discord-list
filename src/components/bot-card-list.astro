@@ -1,6 +1,7 @@
 ---
+import AddOrImportBot from "./add-or-import-bot";
 import BotCard from "./bot-card";
-const { list, permissions } = Astro.props;
+const { list, permissions, show_new } = Astro.props;
 import type { Bot } from "./bot-card";
 ---
 
@@ -15,4 +16,5 @@ import type { Bot } from "./bot-card";
       />
     ))
   }
+  {show_new && <AddOrImportBot client:load client:only="react" />}
 </div>

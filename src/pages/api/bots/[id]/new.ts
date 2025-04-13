@@ -2,10 +2,13 @@ import type { APIRoute } from "astro";
 import { db, Bots, Users, eq, or } from "astro:db";
 import DiscordOauth2 from "discord-oauth2";
 import { formSchema as BotFormSchema } from "@/components/bot-form-schema";
-import { DISCORD_BOT_ID, DISCORD_SECRET, DOMAIN, FAILED_DMS_LOGS_CHANNEL_ID, LOGS_CHANNEL_ID } from "astro:env/server";
+import { DISCORD_BOT_ID, DISCORD_SECRET, DISCORD_TOKEN, DOMAIN, FAILED_DMS_LOGS_CHANNEL_ID, LOGS_CHANNEL_ID, SELFBOT_TOKEN } from "astro:env/server";
 import type { Bot } from "@/components/bot-card";
 import isValidHttpUrl from "@/functions/valid-url";
 import { GET as UpdateBotInfo } from "@/pages/api/internals/update/bot/[id]";
+import UserAccountFetch from "@/functions/user-bot";
+import SendLog from "@/bot/log";
+import getAvatarURL from "@/lib/get-avatar-url";
 
 
 export const POST: APIRoute = async ({ params, request, cookies }) => {
@@ -24,71 +27,44 @@ export const POST: APIRoute = async ({ params, request, cookies }) => {
   if (!user) return new Response(JSON.stringify({ err: "invalid_key" }), { status: 400, headers: { "Content-Type": "application/json" } });
   /* END USER AUTH */
 
-  const bot: Bot = (await db.select({
-    id: Bots.id,
-    slug: Bots.slug,
-    avatar: Bots.avatar,
-    username: Bots.username,
-    discriminator: Bots.discriminator,
-    short: Bots.short,
-    invite: Bots.invite,
-    bg: Bots.bg,
-    owners: Bots.owners,
-    lib: Bots.lib,
-    prefix: Bots.prefix,
-    desc: Bots.desc,
-    source_repo: Bots.source_repo,
-    support: Bots.support,
-    website: Bots.website,
-    webhook: Bots.webhook,
-    donate: Bots.donate,
-  }).from(Bots).where(or(eq(Bots.id, params.id), eq(Bots.slug, params.id))))[0];
-  if (!bot) return new Response(JSON.stringify({ err: "no_bot_found" }), { status: 404, headers: { "Content-Type": "application/json" } });
-  if (!(bot.owners as string[]).includes(userData.id)) return new Response(JSON.stringify({ err: "not_owner" }), { status: 403, headers: { "Content-Type": "application/json" } });
   const body = await request.json();
   const validation = BotFormSchema.safeParse(body);
   if (!validation.success) return new Response(JSON.stringify({ err: validation.error.errors[0].message }), { status: 400, headers: { "Content-Type": "application/json" } });
 
-  if (body.slug && body.slug !== bot.slug) {
-    const slug = await db.select({ id: Bots.id }).from(Bots).where(eq(Bots.slug, body.slug));
+  if (body.slug) {
+    const slug = await db.select({ id: Bots.id }).from(Bots).where(eq(Bots.slug, body.slug)).limit(1);
     if (slug.length > 0) return new Response(JSON.stringify({ err: "slug_taken" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }
+
   //if owners are changed, check if the user is the index 0 of the owners array. if not, he is not the main owner, hence cant modify the owners
-  if (body.owners && body.owners.toString() !== bot.owners.toString()) {
+  if (!Array.isArray(body.owners)) return new Response(JSON.stringify({ err: "owners_not_array" }), { status: 400, headers: { "Content-Type": "application/json" } });
+  if (body.owners[0] !== userData.id) return new Response(JSON.stringify({ err: "main_owner_cant_be_changed" }), { status: 403, headers: { "Content-Type": "application/json" } });
 
-    if (!Array.isArray(body.owners)) return new Response(JSON.stringify({ err: "owners_not_array" }), { status: 400, headers: { "Content-Type": "application/json" } });
-    console.log(bot.owners, body.owners);
-    if (bot.owners[0] !== userData.id) return new Response(JSON.stringify({ err: "not_main_owner" }), { status: 403, headers: { "Content-Type": "application/json" } });
-    if (body.owners[0] !== userData.id) return new Response(JSON.stringify({ err: "main_owner_cant_be_changed" }), { status: 403, headers: { "Content-Type": "application/json" } });
-  }
 
-  if (body.webhook && body.webhook !== bot.webhook) {
+  if (body.webhook) {
     if (!isValidHttpUrl(body.webhook)) return new Response(JSON.stringify({ err: "invalid_webhook" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }
 
-  if (body.source_repo && body.source_repo !== bot.source_repo) {
+  if (body.source_repo) {
     if (!isValidHttpUrl(body.source_repo)) return new Response(JSON.stringify({ err: "invalid_source_repo" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }
 
-  if (body.website && body.website !== bot.website) {
+  if (body.website) {
     if (!isValidHttpUrl(body.website)) return new Response(JSON.stringify({ err: "invalid_website" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }
 
-  if (body.donate && body.donate !== bot.donate) {
+  if (body.donate) {
     if (!isValidHttpUrl(body.donate)) return new Response(JSON.stringify({ err: "invalid_donate" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }
 
-  if (body.bg && body.bg !== bot.bg) {
+  if (body.bg) {
     if (!isValidHttpUrl(body.bg)) return new Response(JSON.stringify({ err: "invalid_bg" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }
 
-  if (body.invite && body.invite !== bot.invite) {
+  if (body.invite) {
     if (!isValidHttpUrl(body.invite)) return new Response(JSON.stringify({ err: "invalid_invite" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }
-  if (body.lib && body.lib !== bot.lib) {
-    if (body.lib.length > 20) return new Response(JSON.stringify({ err: "lib_too_long" }), { status: 400, headers: { "Content-Type": "application/json" } });
-  }
-  if (body.support && body.support !== bot.support) {
+  if (body.support) {
     if (isValidHttpUrl(body.support)) {
       body.support = new URL(body.support)
       if (body.support.hostname == "discord.gg") body.support = body.support.pathname.slice(1);
@@ -97,31 +73,62 @@ export const POST: APIRoute = async ({ params, request, cookies }) => {
     }
     //bot.support is just the invite code now. perfect for the discord api
     const apiData = await fetch(`https://discord.com/api/invites/${body.support}`).then((res) => res.json());
-    console.log(apiData);
     if (apiData.message == "Unknown Invite") return new Response(JSON.stringify({ err: "expired_support" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }
 
-  //finally, update the bot
-  await db.update(Bots).set({
-    lib: body.lib,
-    owners: body.owners as string[],
-    prefix: body.prefix,
-    short: body.short,
-    desc: body.desc,
-    support: body.support,
-    source_repo: body.source_repo,
-    website: body.website,
-    webhook: body.webhook,
-    bg: body.bg,
-    donate: body.donate,
-    invite: body.invite,
+  const botInfo = await UserAccountFetch(
+    `/oauth2/authorize?client_id=${id}&scope=bot`,
+    { SELFBOT_TOKEN },
+  );
+
+  if (botInfo.code == 50010 ||
+    botInfo.code == 10002 ||
+    botInfo.code == 10013 ||
+    botInfo.code == 20026) {
+    return new Response(JSON.stringify({ err: "invalid_bot" }), { status: 400, headers: { "Content-Type": "application/json" } });
+  }
+  if (!botInfo.bot.bot) {
+    return new Response(JSON.stringify({ err: "bot_is_user" }), { status: 400, headers: { "Content-Type": "application/json" } });
+  }
+
+  //finally, create a new bot
+  await db.insert(Bots).values({
+    id: id,
     slug: body.slug,
-    opted_coins: body.opted_coins,
-  }).where(eq(Bots.id, bot.id));
+    owners: body.owners,
+    username: botInfo.bot.username,
+    discriminator: botInfo.bot.discriminator,
+    avatar: botInfo.bot.avatar || "0",
+    servers: botInfo.bot.approximate_guild_count,
+    tags: body.tags || [],
+    invite: body.invite || "",
+    desc: body.desc || "",
+    source_repo: body.source_repo || "",
+    support: body.support || "",
+    website: body.website || "",
+    webhook: body.webhook || "",
+    donate: body.donate || "",
+    bg: body.bg || "",
+    lib: body.lib || "",
+    prefix: body.prefix || "",
+    short: body.short || "",
+    votes: 0,
+    approved: false,
+    badges: [],
+    promoted: false,
+    opted_coins: body.opted_coins || false,
+  });
 
-  //@ts-ignore
-  await UpdateBotInfo({ params: { id: bot.id, modified: userData.id } });
+  await SendLog({
 
+    env: { DOMAIN, FAILED_DMS_LOGS_CHANNEL_ID, LOGS_CHANNEL_ID, DISCORD_TOKEN },
+    body: {
+      title: `Bot ${botInfo.bot.username} Added!`,
+      desc: `Bot ${botInfo.bot.username}#${botInfo.bot.discriminator} has been added by ${userData.global_name} (<@!${body.owners[0]}>)!`,
+      color: "#57F287",
+      img: getAvatarURL(botInfo.bot.id, botInfo.bot.avatar)
+    }
+  })
 
   return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json" } });
 };

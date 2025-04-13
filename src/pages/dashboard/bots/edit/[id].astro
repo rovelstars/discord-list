@@ -56,6 +56,7 @@ const bot: Bot = (
       webhook: Bots.webhook,
       donate: Bots.donate,
       code: Bots.code,
+      opted_coins: Bots.opted_coins,
     })
     .from(Bots)
     .where(
@@ -84,7 +85,7 @@ if (!bot)
   }
   {
     userData && (
-      <BotEditForm client:load client:only="react" bot={bot} user={userData} />
+      <BotEditForm TYPE="edit" client:load client:only="react" bot={bot} user={userData} />
     )
   }
 </Root>

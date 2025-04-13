@@ -90,7 +90,8 @@ const bots = await db
               You don't have any bots yet
             </h2>
           )}
-          <BotCardList list={bots} permissions="edit" />
+          <BotCardList list={bots} permissions="edit" show_new={true} />
+          
         </div>
       </div>
     )
