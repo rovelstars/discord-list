@@ -115,7 +115,7 @@ export const POST: APIRoute = async ({ params, request, cookies }) => {
     bg: body.bg,
     donate: body.donate,
     invite: body.invite,
-    slug: body.slug,
+    slug: body.slug.toLowerCase(),
     opted_coins: body.opted_coins,
   }).where(eq(Bots.id, bot.id));
 

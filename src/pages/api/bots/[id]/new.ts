@@ -94,7 +94,7 @@ export const POST: APIRoute = async ({ params, request, cookies }) => {
   //finally, create a new bot
   await db.insert(Bots).values({
     id: id,
-    slug: body.slug,
+    slug: body.slug.toLowerCase(),
     owners: body.owners,
     username: botInfo.bot.username,
     discriminator: botInfo.bot.discriminator,
