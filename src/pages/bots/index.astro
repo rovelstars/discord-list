@@ -2,10 +2,11 @@
 import Root from "@/layouts/Layout.astro";
 import BotCardList from "@/components/bot-card-list.astro";
 
-import { db, Bots, not, like, or } from "astro:db";
+import { db, Bots, not, like, or, sql } from "astro:db";
 import { desc } from "astro:db";
 import { Flame } from "lucide-react";
 import Discord from "@/components/svgs/discord";
+import { Button } from "@/components/ui/button";
 
 const url = new URL(Astro.url);
 const q = url.searchParams.get("q");
@@ -14,6 +15,7 @@ const offset = parseInt(url.searchParams.get("offset") || "0");
 
 const needNew = url.searchParams.has("new") ? true : false;
 const needTrending = url.searchParams.has("trending") ? true : false;
+const lucky = url.searchParams.has("lucky") ? true : false;
 //redirect
 if (limit < 1 || offset < 0) {
   return Astro.redirect("/bots");
@@ -37,7 +39,13 @@ if (q) {
     })
     .from(Bots)
     .orderBy(
-      needNew ? desc(Bots.added_at) : needTrending ? desc(Bots.votes) : null,
+      lucky
+        ? sql`RANDOM()`
+        : needNew
+          ? desc(Bots.added_at)
+          : needTrending
+            ? desc(Bots.votes)
+            : null,
     )
     .where(or(like(Bots.username, `%${q}%`), like(Bots.short, `%${q}%`)))
     .limit(limit)
@@ -57,10 +65,27 @@ if (q) {
       bg: Bots.bg,
     })
     .from(Bots)
-    .orderBy(desc(Bots.servers))
+    .orderBy(
+      lucky
+        ? sql`RANDOM()`
+        : needNew
+          ? desc(Bots.added_at)
+          : needTrending
+            ? desc(Bots.votes)
+            : desc(Bots.servers),
+    )
     .limit(limit)
     .offset(offset);
 }
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=120, stale-while-revalidate=300",
+);
+Astro.response.headers.set(
+  "Netlify-Vary",
+  "query=key|slug|code|q|limit|offset|new|trending|lucky,cookie=key|code,header=user-agent",
+);
 ---
 
 <Root
@@ -76,9 +101,89 @@ if (q) {
     Find your next favorite bot on the best discord bot list!
   </h2>
   <h3 class="font-heading text-3xl font-bold mb-4 text-center mt-12">
-    <Flame className="w-8 h-8 inline-block text-primary -mt-2" />
-    Most Popular Bots
+    {
+      q ? (
+        `Search Results for "${q}"`
+      ) : needNew ? (
+        "Newest Bots"
+      ) : needTrending ? (
+        <>
+          <Flame className="w-8 h-8 inline-block text-primary -mt-2" />
+          Most Popular Bots
+        </>
+      ) : lucky ? (
+        "Feeling Lucky? Here are some bots!"
+      ) : (
+        "All Bots"
+      )
+    }
   </h3>
+  <p class="text-center text-xl font-bold mb-4">
+    Search for bots by name or description, and find the perfect bot for your
+    server!
+  </p>
+  <div class="my-8 mx-auto text-center">
+    <Button asChild>
+      <a
+        href={`/bots?lucky=${Math.random().toString(36).substring(2, 4) + Math.floor(Math.random() * 10)}`}
+        class="ml-2 p-2 bg-primary text-white rounded-md py-4"
+      >
+        <img
+          alt="Bot Wink Icon"
+          src="/img/bot/wink.svg"
+          class="w-8 h-8 inline-block text-primary -mt-1"
+        />
+        Feeling Lucky?
+      </a>
+    </Button>
+    {needNew && (
+      <Button asChild>
+        <a
+          href={`/bots?trending`}
+          class="ml-2 p-2 bg-primary text-white rounded-md py-4"
+        >
+          <img
+            alt="Popularity Icon"
+            src="/img/popularity.svg"
+            class="w-8 h-8 inline-block text-primary -mt-1"
+          />
+          Find Popular Bots
+        </a>
+      </Button>
+    )}
+    {needTrending && (
+      <Button asChild>
+        <a
+          href={`/bots?new`}
+          class="ml-2 p-2 bg-primary text-white rounded-md py-4"
+        >
+          <img
+            alt="Chemical Icon"
+            src="/img/chemical.svg"
+            class="w-8 h-8 inline-block text-primary -mt-1"
+          />
+          Find New Bots
+        </a>
+      </Button>
+    )}
+    {
+      (!needNew && !needTrending) && (
+        <Button asChild>
+          <a
+            href={`/bots?trending`}
+            class="ml-2 p-2 bg-primary text-white rounded-md py-4"
+          >
+            <img
+              alt="Popularity Icon"
+              src="/img/popularity.svg"
+              class="w-8 h-8 inline-block text-primary -mt-1"
+            />
+            Find Popular Bots
+          </a>
+        </Button>
+      )
+    }
+  </div>
   <form method="get" class="mb-8 text-center">
     <input
       type="text"
@@ -92,44 +197,48 @@ if (q) {
     </button>
   </form>
   <BotCardList list={data as any} />
-  <div class="mt-12 w-full mx-auto text-center">
-    <a
-      href={`?limit=${limit}&offset=${offset - limit}${q ? `&q=${q}` : ""}`}
-      class="ml-2 p-2 bg-primary text-white rounded-md"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="inline -translate-y-0.5 size-6"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        ></path>
-      </svg>
-    </a>
-    <a
-      href={`?limit=${limit}&offset=${offset + limit}${q ? `&q=${q}` : ""}`}
-      class="ml-2 p-2 bg-primary text-white rounded-md"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="inline -translate-y-0.5 size-6"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        ></path>
-      </svg>
-    </a>
-  </div>
+  {
+    !lucky && (
+      <div class="mt-12 w-full mx-auto text-center">
+        <a
+          href={`?limit=${limit}&offset=${offset - limit}${q ? `&q=${q}` : ""}`}
+          class="ml-2 p-2 bg-primary text-white rounded-md"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="inline -translate-y-0.5 size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            />
+          </svg>
+        </a>
+        <a
+          href={`?limit=${limit}&offset=${offset + limit}${q ? `&q=${q}` : ""}`}
+          class="ml-2 p-2 bg-primary text-white rounded-md"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="inline -translate-y-0.5 size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            />
+          </svg>
+        </a>
+      </div>
+    )
+  }
 </Root>

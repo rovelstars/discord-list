@@ -44,6 +44,8 @@ const user = userData
         .where(eq(Users.id, userData.id))
     )[0]
   : null;
+
+  Astro.response.headers.set("Netlify-Vary", "cookie=key|code,header=user-agent");
 ---
 
 <Root
@@ -64,6 +66,9 @@ const user = userData
       <h1 class="text-3xl md:text-5xl font-heading text-center my-4 font-black">
         {bot.username}
       </h1>
+      <p class="text-center text-xl font-bold">
+        Tip: Votes are updated on main site every few minutes. Your vote may not be updated immediately on bot page. Fear not, your vote is counted!
+        </p>
     </div>
     {
       userData && (

@@ -2,10 +2,12 @@
 import Root from "@/layouts/Layout.astro";
 import BotCardList from "@/components/bot-card-list.astro";
 
-import { db, Bots } from "astro:db";
+import { db, Bots, or, like, and, eq } from "astro:db";
 import { desc } from "astro:db";
 import Discord from "@/components/svgs/discord";
-const data = await db
+import { not } from "astro:db";
+import { Music } from "lucide-react";
+const topbotsdata = await db
   .select({
     id: Bots.id,
     slug: Bots.slug,
@@ -21,6 +23,106 @@ const data = await db
   .from(Bots)
   .orderBy(desc(Bots.votes))
   .limit(10);
+
+const musicbotsdata = await db
+  .select({
+    id: Bots.id,
+    slug: Bots.slug,
+    avatar: Bots.avatar,
+    username: Bots.username,
+    discriminator: Bots.discriminator,
+    short: Bots.short,
+    votes: Bots.votes,
+    servers: Bots.servers,
+    invite: Bots.invite,
+    bg: Bots.bg,
+  })
+  .from(Bots)
+  .where(
+    and(
+      or(like(Bots.username, `%music%`), like(Bots.short, `%music%`)),
+      not(
+        or(
+          eq(Bots.avatar, "0"),
+          eq(Bots.avatar, "1"),
+          eq(Bots.avatar, "2"),
+          eq(Bots.avatar, "3"),
+          eq(Bots.avatar, "4"),
+        ),
+      ),
+    ),
+  )
+  .orderBy(desc(Bots.servers))
+  .limit(10);
+
+const gamebotsdata = await db
+  .select({
+    id: Bots.id,
+    slug: Bots.slug,
+    avatar: Bots.avatar,
+    username: Bots.username,
+    discriminator: Bots.discriminator,
+    short: Bots.short,
+    votes: Bots.votes,
+    servers: Bots.servers,
+    invite: Bots.invite,
+    bg: Bots.bg,
+  })
+  .from(Bots)
+  .where(
+    and(
+      or(like(Bots.username, `%game%`), like(Bots.short, `%game%`), like(Bots.username, `%esports%`),like(Bots.short, `%esports%`),like(Bots.username,"%gaming%"),like(Bots.short,"%gaming%")),
+      not(
+        or(
+          eq(Bots.avatar, "0"),
+          eq(Bots.avatar, "1"),
+          eq(Bots.avatar, "2"),
+          eq(Bots.avatar, "3"),
+          eq(Bots.avatar, "4"),
+        ),
+      ),
+    ),
+  )
+  .orderBy(desc(Bots.servers))
+  .limit(10);
+
+const modbotsdata = await db
+  .select({
+    id: Bots.id,
+    slug: Bots.slug,
+    avatar: Bots.avatar,
+    username: Bots.username,
+    discriminator: Bots.discriminator,
+    short: Bots.short,
+    votes: Bots.votes,
+    servers: Bots.servers,
+    invite: Bots.invite,
+    bg: Bots.bg,
+  })
+  .from(Bots)
+  .where(
+    and(
+      or(like(Bots.username, `%moder%`), like(Bots.short, `%moder%`)),
+      not(
+        or(
+          eq(Bots.avatar, "0"),
+          eq(Bots.avatar, "1"),
+          eq(Bots.avatar, "2"),
+          eq(Bots.avatar, "3"),
+          eq(Bots.avatar, "4"),
+        ),
+      ),
+    ),
+  )
+  .orderBy(desc(Bots.servers))
+  .limit(10);
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=120, stale-while-revalidate=300",
+);
+Astro.response.headers.set("Netlify-Vary", "query=key|slug|code,cookie=key|code,header=user-agent");
+
 ---
 
 <Root
@@ -32,12 +134,55 @@ const data = await db
   <h1 class="font-heading text-4xl md:text-6xl font-bold mb-4 text-center">
     Rovel Discord List
   </h1>
-  <h2 class="font-heading text-2xl md:text-4xl font-bold mb-4 text-center">
+  <h2 class="font-heading text-2xl md:text-4xl font-bold mb-4 text-center text-gray-600 dark:text-gray-300">
     Imagine a better place - where you can find everything about discord!
   </h2>
-  <h3 class="font-heading text-3xl font-bold mb-4 text-center mt-12">
-    <img alt="Fire Icon" src="/img/fire.svg" class="w-8 h-8 inline-block text-primary -mt-2" />
-    Top 10 Bots
+  <h3 class="font-heading text-4xl font-bold mb-4 md:text-left mt-12 md:mx-32 text-center">
+    <img
+      alt="Fire Icon"
+      src="/img/mostvote.svg"
+      class="w-8 h-8 inline-block text-primary -mt-2"
+    />
+    Best Bots of the Month
   </h3>
-  <BotCardList list={data as any} />
+  <p class="text-gray-600 dark:text-gray-300 text-xl mb-8 md:mx-32 mx-4 md:text-left text-center font-semibold">
+    The best Discord bots, voted by you! Find the top-rated bots to supercharge your server.
+  </p>
+  <BotCardList list={topbotsdata as any} />
+
+  <h3 class="font-heading text-4xl font-bold mb-4 md:text-left mt-12 md:mx-32 text-center">
+    <Music className="w-8 h-8 inline-block text-primary -mt-2" strokeWidth={4} />
+    Featured Music Bots
+  </h3>
+  <p class="text-gray-600 dark:text-gray-300 text-xl mb-8 md:mx-32 mx-4 md:text-left text-center font-semibold">
+    Bring the music to your community! Discover highly-used and reliable music bots that offer seamless playback and enjoyable listening experiences for your Discord server.
+  </p>
+  <BotCardList list={musicbotsdata as any} />
+
+  <h3 class="font-heading text-4xl font-bold mb-4 md:text-left mt-12 md:mx-32 text-center">
+    <img
+      alt="Fire Icon"
+      src="/img/game-controller.svg"
+      class="w-8 h-8 inline-block text-primary -mt-2"
+    />
+    Esports Tools & Text Adventures
+  </h3>
+  <p class="text-gray-600 dark:text-gray-300 text-xl mb-8 md:mx-32 mx-4 md:text-left text-center font-semibold">
+    Get the competitive edge and have some text-based fun! Find Discord bots designed for esports organization and those offering engaging in-channel games.
+  </p>
+  <BotCardList list={gamebotsdata as any} />
+
+  <h3 class="font-heading text-4xl font-bold mb-4 md:text-left mt-12 md:mx-32 text-center">
+    <img
+      alt="Fire Icon"
+      src="/img/mod.svg"
+      class="w-8 h-8 inline-block text-primary -mt-2"
+    />
+    Community Care Bots
+  </h3>
+  <p class="text-gray-600 dark:text-gray-300 text-xl mb-8 md:mx-32 mx-4 md:text-left text-center font-semibold">
+    Ensure a healthy and positive environment in your Discord server with these moderation bots, offering tools for filtering, managing, and protecting your members.
+  </p>
+  <BotCardList list={modbotsdata as any} />
+
 </Root>
