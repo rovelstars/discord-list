@@ -6,6 +6,11 @@ import { db, Bots } from "astro:db";
 import { desc } from "astro:db";
 import Discord from "@/components/svgs/discord";
 
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=1200, stale-while-revalidate=1200",
+);
+
 ---
 
 <Root

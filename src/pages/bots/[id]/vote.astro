@@ -45,7 +45,12 @@ const user = userData
     )[0]
   : null;
 
-  Astro.response.headers.set("Netlify-Vary", "cookie=key|code,header=user-agent");
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=120, stale-while-revalidate=60",
+);
+
+Astro.response.headers.set("Netlify-Vary", "cookie=key|code,header=user-agent");
 ---
 
 <Root
@@ -67,8 +72,9 @@ const user = userData
         {bot.username}
       </h1>
       <p class="text-center text-xl font-bold">
-        Tip: Votes are updated on main site every few minutes. Your vote may not be updated immediately on bot page. Fear not, your vote is counted!
-        </p>
+        Tip: Votes are updated on main site every few minutes. Your vote may not
+        be updated immediately on bot page. Fear not, your vote is counted!
+      </p>
     </div>
     {
       userData && (

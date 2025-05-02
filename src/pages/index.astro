@@ -119,7 +119,7 @@ const modbotsdata = await db
 
 Astro.response.headers.set(
   "Cache-Control",
-  "public, max-age=120, stale-while-revalidate=300",
+  "public, max-age=600, stale-while-revalidate=1200",
 );
 Astro.response.headers.set("Netlify-Vary", "query=key|slug|code,cookie=key|code,header=user-agent");
 
