@@ -40,7 +40,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "colorthief": "^2.6.0",
-    "discord-api-types": "^0.37.105",
+    "discord-api-types": "^0.38.3",
     "discord-interactions": "^4.1.0",
     "discord-oauth2": "^2.12.1",
     "highlight.js": "^11.11.1",
