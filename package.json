@@ -10,12 +10,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/cloudflare": "12.2.0",
-    "@astrojs/db": "0.14.6",
-    "@astrojs/netlify": "^6.1.0",
-    "@astrojs/react": "4.1.6",
-    "@astrojs/tailwind": "5.1.5",
+    "@astrojs/check": "0.9.6",
+    "@astrojs/cloudflare": "12.6.12",
+    "@astrojs/db": "0.18.3",
+    "@astrojs/netlify": "6.6.3",
+    "@astrojs/react": "4.4.2",
+    "@astrojs/tailwind": "6.0.2",
     "@discordjs/builders": "^1.9.0",
     "@discordjs/rest": "^2.4.0",
     "@hookform/resolvers": "^3.10.0",
@@ -33,9 +33,10 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "approximate-number": "^2.1.1",
-    "astro": "5.1.8",
+    "astro": "5.16.8",
     "astro-font": "^0.1.81",
-    "caniuse-lite": "^1.0.30001713",
+    "baseline-browser-mapping": "^2.9.14",
+    "caniuse-lite": "^1.0.30001763",
     "chalk": "^5.3.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -63,7 +64,7 @@
     "typescript": "^5.6.3",
     "usehooks-ts": "^3.1.0",
     "vaul": "^1.1.1",
-    "zod": "^3.24.1"
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.15",
