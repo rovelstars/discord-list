@@ -21,7 +21,7 @@
 [build]
   # Directory containing the built output after `npm run build` / `bun run build`.
   # SvelteKit's adapter-auto produces a Netlify-compatible build here.
-  publish = ".svelte-kit/output"
+  publish = "build"
 
   # The command Netlify runs to build the site.
   command = "bun run build"
@@ -33,15 +33,10 @@
 # SvelteKit / adapter-netlify compatibility
 # ---------------------------------------------------------------------------
 
-# Tell Netlify to treat all unmatched paths as a SvelteKit SSR function rather
-# than returning a 404.  adapter-auto wires this up automatically, but being
-# explicit here avoids surprises if you ever switch to adapter-netlify directly.
-[[redirects]]
-  from   = "/*"
-  to     = "/.netlify/functions/handler"
-  status = 200
-  # Only apply this catch-all when no static file matches.
-  force  = false
+# adapter-netlify (invoked by adapter-auto on Netlify) injects its own
+# catch-all redirect and SSR function automatically during the build step.
+# Do NOT add a manual [[redirects]] catch-all here — it will conflict with
+# the adapter and break SSR routes.
 
 # ---------------------------------------------------------------------------
 # Scheduled function: CDN background-URL refresh
