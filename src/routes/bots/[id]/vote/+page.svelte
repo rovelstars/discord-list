@@ -20,14 +20,17 @@
 		} | null;
 	};
 
-	const { bot, user } = data;
+	const { bot } = data;
+	// Coerce bal to a number — libSQL can return INTEGER columns as strings
+	// depending on the driver version, so we normalise it here once.
+	const user = data.user ? { ...data.user, bal: Number(data.user.bal) || 0 } : null;
 
 	$: avatarSrc = bot.avatar
 		? getAvatarURL(bot.id, bot.avatar, 128)
 		: '/assets/img/bot/logo-144.png';
 
 	// Coin input (only relevant when bot.opted_coins)
-	let coins: string = '';
+	let coins: number = 0;
 
 	// UI state
 	let loading = false;
@@ -41,7 +44,7 @@
 		successMsg = null;
 
 		try {
-			const qs = coins.trim() ? `?coins=${encodeURIComponent(coins.trim())}` : '';
+			const qs = coins ? `?coins=${encodeURIComponent(coins)}` : '';
 			const res = await fetch(`/api/bots/${bot.id}/vote${qs}`, { method: 'POST' });
 			const data = await res.json();
 
@@ -62,6 +65,7 @@
 			}, 1200);
 		} catch (e) {
 			errorMsg = 'A network error occurred. Please try again.';
+			console.error('Vote error:', e);
 		} finally {
 			loading = false;
 		}
@@ -114,7 +118,7 @@
 							type="number"
 							min="10"
 							step="10"
-							placeholder="You have R$ {user.bal}"
+							placeholder="You have R$ {Number(user.bal) || 0}"
 							bind:value={coins}
 							class="w-full pl-9 pr-3 py-2 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
 						/>

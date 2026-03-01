@@ -71,15 +71,10 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 	}
 
 	// Parse owners from stored JSON text
-	let owners: string[] = [];
-	try {
-		const parsed = JSON.parse((bot.owners as string) ?? '[]');
-		owners = Array.isArray(parsed) ? parsed : [];
-	} catch {
-		owners = [];
-	}
+	let owners: string[] = bot.owners as string[];
 
 	// Only an owner may access the edit page
+	console.log('Bot owners:', owners, 'Current user ID:', userData.id);
 	if (!owners.includes(userData.id)) {
 		throw error(403, 'You are not an owner of this bot');
 	}

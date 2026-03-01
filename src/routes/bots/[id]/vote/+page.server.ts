@@ -57,7 +57,7 @@ export const load: PageServerLoad = async ({ params, cookies, setHeaders }) => {
 				.where(eq(Users.id, userData.id))
 				.limit(1);
 
-			const bal = userRows.length > 0 ? ((userRows[0] as any).bal ?? 0) : 0;
+			const bal = userRows.length > 0 ? Number((userRows[0] as any).bal) || 0 : 0;
 
 			user = {
 				id: userData.id,

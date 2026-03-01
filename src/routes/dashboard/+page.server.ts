@@ -114,7 +114,15 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	let voteHistory: { bot: string; at: number }[] = [];
 	try {
 		const parsed = JSON.parse((dbUser.votes as string) ?? '[]');
-		voteHistory = Array.isArray(parsed) ? parsed : [];
+		const raw: { bot: string; at: unknown }[] = Array.isArray(parsed) ? parsed : [];
+		// Normalise `at` to a numeric ms timestamp.
+		// Old AstroDB rows stored `at` as ISO strings (e.g. "2022-07-16T00:00:00.000Z"),
+		// while new votes written by the app use Date.now() (a number).
+		// Mixing the two makes the numeric sort produce NaN, so we coerce here.
+		voteHistory = raw.map((v) => ({
+			bot: String(v.bot ?? ''),
+			at: typeof v.at === 'number' ? v.at : new Date(v.at as string).getTime() || 0
+		}));
 	} catch {
 		voteHistory = [];
 	}
@@ -153,7 +161,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			bio: dbUser.bio ?? '',
 			banner: dbUser.banner ?? '',
 			bal: typeof dbUser.bal === 'number' ? dbUser.bal : Number(dbUser.bal) || 0,
-			added_at: dbUser.added_at != null ? Number(dbUser.added_at) : null,
+			added_at: dbUser.added_at != null ? String(dbUser.added_at) : null,
 			nitro: Boolean(dbUser.nitro),
 			globalname: dbUser.globalname ?? null
 		},

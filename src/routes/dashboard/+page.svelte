@@ -15,7 +15,7 @@
 			bio: string;
 			banner: string;
 			bal: number;
-			added_at: number | null;
+			added_at: string | null;
 			nitro: boolean;
 			globalname: string | null;
 		};
@@ -72,14 +72,12 @@
 			: `@${discordUser.username}`;
 
 	// ── Member since ──────────────────────────────────────────────────────────
-	console.log(user);
-	$: memberSince = user.added_at
-		? new Date(user.added_at).toLocaleDateString('en-US', {
-				year: 'numeric',
-				month: 'long',
-				day: 'numeric'
-			})
-		: 'Unknown';
+	$: memberSince = (() => {
+		if (!user.added_at) return 'Unknown';
+		const d = new Date(user.added_at);
+		if (isNaN(d.getTime())) return 'Unknown';
+		return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+	})();
 
 	// ── Profile form ──────────────────────────────────────────────────────────
 	let bio = user.bio === "The user doesn't have bio set!" ? '' : (user.bio ?? '');
