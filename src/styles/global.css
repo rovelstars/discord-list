@@ -1,83 +1,141 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/forms";
+@plugin "tailwindcss-animate";
 
+@theme {
+	/* ── Radius ─────────────────────────────────────────── */
+	--radius: 0.5rem;
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+
+	/* ── Typography ─────────────────────────────────────── */
+	--font-family-heading: var(--font-heading);
+	--font-family-sans: var(--font-sans);
+	--font-family-mono: var(--font-code);
+
+	/* ── Light-mode color tokens ─────────────────────────
+     Values mirror the :root block from the old file.
+     In v4 these are registered as utility-generatable tokens
+     under their semantic names (bg-background, text-primary, etc.)
+  ─────────────────────────────────────────────────────── */
+	--color-background: hsl(0 0% 100%);
+	--color-foreground: hsl(216 7% 14%);
+
+	--color-card: hsl(210 11% 93%);
+	--color-card-foreground: hsl(216 7% 14%);
+
+	--color-popover: hsl(0 0% 100%);
+	--color-popover-foreground: hsl(216 7% 14%);
+
+	--color-primary: hsl(235 86% 65%);
+	--color-primary-foreground: hsl(210 40% 98%);
+
+	--color-secondary: hsl(51 99% 68%);
+	--color-secondary-foreground: hsl(222.2 47.4% 11.2%);
+
+	--color-muted: hsl(228 6% 33%);
+	--color-muted-foreground: hsl(215.4 16.3% 46.9%);
+
+	--color-accent: hsl(210 11% 93%);
+	--color-accent-foreground: hsl(222.2 47.4% 11.2%);
+
+	--color-destructive: hsl(359 83% 59%);
+	--color-destructive-foreground: hsl(210 40% 98%);
+
+	--color-border: hsl(210 11% 93%);
+	--color-input: hsl(214.3 31.8% 91.4%);
+	--color-ring: hsl(216 7% 14%);
+}
+
+/* ── Dark-mode overrides ────────────────────────────────
+   Tailwind v4 uses @variant dark { … } for media / class
+   variants. We use the .dark class strategy here.
+─────────────────────────────────────────────────────── */
+@variant dark (&:where(.dark, .dark *)) {
+	/* intentionally empty — overrides live in the :root block below */
+}
+
+/* Class-based dark mode token overrides */
+:root {
+	color-scheme: light;
+}
+
+.dark {
+	color-scheme: dark;
+
+	--color-background: hsl(214 7% 19%);
+	--color-foreground: hsl(210 40% 98%);
+
+	--color-card: hsl(220 8% 7%);
+	--color-card-foreground: hsl(210 40% 98%);
+
+	--color-popover: hsl(216 7% 14%);
+	--color-popover-foreground: hsl(210 40% 98%);
+
+	--color-primary: hsl(235 86% 65%);
+	--color-primary-foreground: hsl(210 40% 98%);
+
+	--color-secondary: hsl(51 99% 68%);
+	--color-secondary-foreground: hsl(222.2 47.4% 11.2%);
+
+	--color-muted: hsl(0 0% 33%);
+	--color-muted-foreground: hsl(215 20.2% 65.1%);
+
+	--color-accent: hsl(0 0% 33%);
+	--color-accent-foreground: hsl(210 40% 98%);
+
+	--color-destructive: hsl(359 83% 59%);
+	--color-destructive-foreground: hsl(210 40% 98%);
+
+	--color-border: hsl(216 7% 14%);
+	--color-input: hsl(0 0% 33%);
+	--color-ring: hsl(212.7 26.8% 83.9%);
+}
+
+/* ── Base layer ─────────────────────────────────────────
+   Apply border color globally and set body defaults.
+─────────────────────────────────────────────────────── */
+@layer base {
+	*,
+	::before,
+	::after,
+	::backdrop {
+		border-color: var(--color-border);
+	}
+
+	body {
+		background-color: var(--color-background);
+		color: var(--color-foreground);
+		font-synthesis: none;
+		text-rendering: optimizeLegibility;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+}
+
+/* ── Prose overrides ────────────────────────────────────
+   Ensure iframes inside .prose (e.g. rich bot descriptions)
+   always take up the full available width and have a sensible
+   minimum height so the embedded page isn't clipped.
+   600px covers a typical embedded webpage comfortably; the
+   aspect-ratio keeps it proportional on wider containers.
+─────────────────────────────────────────────────────── */
+@layer base {
+	.prose iframe {
+		width: 100%;
+		min-height: 600px;
+		aspect-ratio: 16 / 9;
+		display: block;
+	}
+}
+
+/* ── Custom font face ───────────────────────────────────  */
 @font-face {
-  font-family: "GG Sans";
-  src: url("/fonts/ggsans.ttf") format("ttf");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 216 7% 14%;
-
-    --card: 210 11% 93%;
-    --card-foreground: 216 7% 14%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 216 7% 14%;
-
-    --primary: 235 86% 65%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 51 99% 68%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 228 6% 33%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 11% 93%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 359 83% 59%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 210 11% 93%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 216 7% 14%;
-
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 214 7% 19%;
-    --foreground: 210 40% 98%;
-
-    --card: 220 8% 7%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 216 7% 14%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 235 86% 65%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 51 99% 68%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 0 0% 33%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 0 0% 33%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 359 83% 59%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 216 7% 14%;
-    --input: 0 0% 33%;
-    --ring: 212.7 26.8% 83.9%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+	font-family: 'GG Sans';
+	src: url('/assets/fonts/ggsans.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
 }

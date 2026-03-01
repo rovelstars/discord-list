@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /logout
+
+Allow: /
+
+Sitemap: https://discord.rovelstars.com/sitemap.xml

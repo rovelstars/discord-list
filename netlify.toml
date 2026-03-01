@@ -1,0 +1,61 @@
+# netlify.toml
+#
+# Netlify build & function configuration for the discord-list SvelteKit site.
+#
+# Scheduled functions:
+#   scheduled-cdn-refresh — runs every 12 hours to refresh stale Discord CDN
+#   attachment URLs stored in the Bots.bg column of the database.
+#
+# Required environment variables (set in Netlify UI → Site → Environment vars):
+#   INTERNAL_SECRET   — shared secret used to authenticate calls from the
+#                       scheduled function to /api/internals/refresh-cdn-bgs
+#   SITE_URL          — your deployed origin, e.g. https://yoursite.netlify.app
+#   DISCORD_TOKEN     — Discord Bot token used to call the refresh-urls API
+#   DATABASE_URL      — libSQL / Turso database URL
+#   TURSO_TOKEN       — (optional) Turso auth token if your DB requires one
+
+# ---------------------------------------------------------------------------
+# Build settings
+# ---------------------------------------------------------------------------
+
+[build]
+  # Directory containing the built output after `npm run build` / `bun run build`.
+  # SvelteKit's adapter-auto produces a Netlify-compatible build here.
+  publish = ".svelte-kit/output"
+
+  # The command Netlify runs to build the site.
+  command = "bun run build"
+
+  # Directory where Netlify looks for function source files.
+  functions = "netlify/functions"
+
+# ---------------------------------------------------------------------------
+# SvelteKit / adapter-netlify compatibility
+# ---------------------------------------------------------------------------
+
+# Tell Netlify to treat all unmatched paths as a SvelteKit SSR function rather
+# than returning a 404.  adapter-auto wires this up automatically, but being
+# explicit here avoids surprises if you ever switch to adapter-netlify directly.
+[[redirects]]
+  from   = "/*"
+  to     = "/.netlify/functions/handler"
+  status = 200
+  # Only apply this catch-all when no static file matches.
+  force  = false
+
+# ---------------------------------------------------------------------------
+# Scheduled function: CDN background-URL refresh
+# ---------------------------------------------------------------------------
+# NOTE: Netlify reads the schedule from the function's exported `config` object
+# (see netlify/functions/scheduled-cdn-refresh.mts).  The [[functions]] block
+# below is kept for documentation / override purposes and to ensure Netlify's
+# build system picks up the function directory even if auto-detection misses it.
+
+[[functions]]
+  # Match the filename (without extension) of the scheduled function.
+  path = "/scheduled-cdn-refresh"
+
+  # How long Netlify allows the function to run before forcibly timing it out.
+  # 15 minutes is the maximum on the free tier; the actual refresh cycle
+  # typically completes in well under a second for reasonable bot counts.
+  timeout = 900   # seconds (15 min — free-tier maximum)
