@@ -9,11 +9,11 @@
  * Cached for 12 hours so it doesn't hit the DB on every crawl request.
  */
 
-import type { RequestHandler } from '@sveltejs/kit';
-import { getAllBotSlugs } from '$lib/db/queries';
-import { env } from '$env/dynamic/private';
+import type { RequestHandler } from "@sveltejs/kit";
+import { getAllBotSlugs } from "$lib/db/queries";
+import { env } from "$env/dynamic/private";
 
-const SITE_URL = 'https://discord.rovelstars.com';
+const SITE_URL = "https://discord.rovelstars.com";
 
 /** Format a JS Date or epoch-ms number as YYYY-MM-DD for lastmod */
 function toDateStr(ts: number | null | undefined): string {
@@ -24,11 +24,11 @@ function toDateStr(ts: number | null | undefined): string {
 /** Escape XML special characters in URL strings */
 function escapeXml(str: string): string {
 	return str
-		.replace(/&/g, '&amp;')
-		.replace(/'/g, '&apos;')
-		.replace(/"/g, '&quot;')
-		.replace(/>/g, '&gt;')
-		.replace(/</g, '&lt;');
+		.replace(/&/g, "&amp;")
+		.replace(/'/g, "&apos;")
+		.replace(/"/g, "&quot;")
+		.replace(/>/g, "&gt;")
+		.replace(/</g, "&lt;");
 }
 
 function urlEntry({
@@ -43,15 +43,15 @@ function urlEntry({
 	priority?: string;
 }): string {
 	return [
-		'  <url>',
+		"  <url>",
 		`    <loc>${escapeXml(loc)}</loc>`,
-		lastmod ? `    <lastmod>${lastmod}</lastmod>` : '',
-		changefreq ? `    <changefreq>${changefreq}</changefreq>` : '',
-		priority ? `    <priority>${priority}</priority>` : '',
-		'  </url>'
+		lastmod ? `    <lastmod>${lastmod}</lastmod>` : "",
+		changefreq ? `    <changefreq>${changefreq}</changefreq>` : "",
+		priority ? `    <priority>${priority}</priority>` : "",
+		"  </url>"
 	]
 		.filter(Boolean)
-		.join('\n');
+		.join("\n");
 }
 
 export const GET: RequestHandler = async () => {
@@ -60,128 +60,128 @@ export const GET: RequestHandler = async () => {
 	// ── Static pages ──────────────────────────────────────────────────────────
 	const staticEntries = [
 		// Home page — highest priority, changes frequently
-		urlEntry({ loc: SITE_URL + '/', lastmod: today, changefreq: 'daily', priority: '1.0' }),
+		urlEntry({ loc: SITE_URL + "/", lastmod: today, changefreq: "daily", priority: "1.0" }),
 
 		// Bot listing pages
 		urlEntry({
-			loc: SITE_URL + '/bots',
+			loc: SITE_URL + "/bots",
 			lastmod: today,
-			changefreq: 'hourly',
-			priority: '0.9'
+			changefreq: "hourly",
+			priority: "0.9"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/bots?new',
+			loc: SITE_URL + "/bots?new",
 			lastmod: today,
-			changefreq: 'hourly',
-			priority: '0.8'
+			changefreq: "hourly",
+			priority: "0.8"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/bots?trending',
+			loc: SITE_URL + "/bots?trending",
 			lastmod: today,
-			changefreq: 'daily',
-			priority: '0.8'
+			changefreq: "daily",
+			priority: "0.8"
 		}),
 
 		// Legal & informational pages
 		urlEntry({
-			loc: SITE_URL + '/about',
+			loc: SITE_URL + "/about",
 			lastmod: today,
-			changefreq: 'monthly',
-			priority: '0.6'
+			changefreq: "monthly",
+			priority: "0.6"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/privacy',
+			loc: SITE_URL + "/privacy",
 			lastmod: today,
-			changefreq: 'monthly',
-			priority: '0.5'
+			changefreq: "monthly",
+			priority: "0.5"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/terms',
+			loc: SITE_URL + "/terms",
 			lastmod: today,
-			changefreq: 'monthly',
-			priority: '0.5'
+			changefreq: "monthly",
+			priority: "0.5"
 		}),
 
 		// Dedicated feature pages
 		urlEntry({
-			loc: SITE_URL + '/top',
+			loc: SITE_URL + "/top",
 			lastmod: today,
-			changefreq: 'daily',
-			priority: '0.9'
+			changefreq: "daily",
+			priority: "0.9"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/new',
+			loc: SITE_URL + "/new",
 			lastmod: today,
-			changefreq: 'hourly',
-			priority: '0.8'
+			changefreq: "hourly",
+			priority: "0.8"
 		}),
 
 		// Category landing pages
 		urlEntry({
-			loc: SITE_URL + '/categories',
+			loc: SITE_URL + "/categories",
 			lastmod: today,
-			changefreq: 'weekly',
-			priority: '0.8'
+			changefreq: "weekly",
+			priority: "0.8"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/categories/music',
+			loc: SITE_URL + "/categories/music",
 			lastmod: today,
-			changefreq: 'weekly',
-			priority: '0.8'
+			changefreq: "weekly",
+			priority: "0.8"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/categories/moderation',
+			loc: SITE_URL + "/categories/moderation",
 			lastmod: today,
-			changefreq: 'weekly',
-			priority: '0.8'
+			changefreq: "weekly",
+			priority: "0.8"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/categories/gaming',
+			loc: SITE_URL + "/categories/gaming",
 			lastmod: today,
-			changefreq: 'weekly',
-			priority: '0.8'
+			changefreq: "weekly",
+			priority: "0.8"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/categories/economy',
+			loc: SITE_URL + "/categories/economy",
 			lastmod: today,
-			changefreq: 'weekly',
-			priority: '0.7'
+			changefreq: "weekly",
+			priority: "0.7"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/categories/utility',
+			loc: SITE_URL + "/categories/utility",
 			lastmod: today,
-			changefreq: 'weekly',
-			priority: '0.7'
+			changefreq: "weekly",
+			priority: "0.7"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/categories/fun',
+			loc: SITE_URL + "/categories/fun",
 			lastmod: today,
-			changefreq: 'weekly',
-			priority: '0.7'
+			changefreq: "weekly",
+			priority: "0.7"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/categories/anime',
+			loc: SITE_URL + "/categories/anime",
 			lastmod: today,
-			changefreq: 'weekly',
-			priority: '0.7'
+			changefreq: "weekly",
+			priority: "0.7"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/categories/logging',
+			loc: SITE_URL + "/categories/logging",
 			lastmod: today,
-			changefreq: 'weekly',
-			priority: '0.6'
+			changefreq: "weekly",
+			priority: "0.6"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/categories/leveling',
+			loc: SITE_URL + "/categories/leveling",
 			lastmod: today,
-			changefreq: 'weekly',
-			priority: '0.6'
+			changefreq: "weekly",
+			priority: "0.6"
 		}),
 		urlEntry({
-			loc: SITE_URL + '/categories/roleplay',
+			loc: SITE_URL + "/categories/roleplay",
 			lastmod: today,
-			changefreq: 'weekly',
-			priority: '0.6'
+			changefreq: "weekly",
+			priority: "0.6"
 		})
 	];
 
@@ -190,18 +190,18 @@ export const GET: RequestHandler = async () => {
 	try {
 		const slugs = await getAllBotSlugs();
 		botEntries = slugs
-			.filter((s) => s.slug && s.slug.trim() !== '')
+			.filter((s) => s.slug && s.slug.trim() !== "")
 			.map((s) =>
 				urlEntry({
 					loc: `${SITE_URL}/bots/${encodeURIComponent(s.slug)}`,
 					lastmod: toDateStr(s.added_at ?? undefined),
-					changefreq: 'weekly',
-					priority: '0.6'
+					changefreq: "weekly",
+					priority: "0.6"
 				})
 			);
 	} catch (err) {
 		// Non-fatal — serve static-only sitemap if DB is unavailable
-		console.error('[sitemap.xml] Failed to fetch bot slugs:', err);
+		console.error("[sitemap.xml] Failed to fetch bot slugs:", err);
 	}
 
 	const xml = [
@@ -209,16 +209,16 @@ export const GET: RequestHandler = async () => {
 		'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
 		...staticEntries,
 		...botEntries,
-		'</urlset>'
-	].join('\n');
+		"</urlset>"
+	].join("\n");
 
 	return new Response(xml, {
 		status: 200,
 		headers: {
-			'Content-Type': 'application/xml; charset=utf-8',
+			"Content-Type": "application/xml; charset=utf-8",
 			// Cache for 12 hours at CDN, serve stale for up to 24 h while revalidating
-			'Cache-Control': 'public, max-age=43200, stale-while-revalidate=86400',
-			'X-Robots-Tag': 'noindex' // don't index the sitemap itself
+			"Cache-Control": "public, max-age=43200, stale-while-revalidate=86400",
+			"X-Robots-Tag": "noindex" // don't index the sitemap itself
 		}
 	});
 };

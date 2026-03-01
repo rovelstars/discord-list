@@ -1,7 +1,7 @@
 <script lang="ts">
-	import SEO from '$lib/components/SEO.svelte';
-	import BotCard from '$lib/components/BotCard.svelte';
-	import getAvatarURL from '$lib/get-avatar-url';
+	import SEO from "$lib/components/SEO.svelte";
+	import BotCard from "$lib/components/BotCard.svelte";
+	import getAvatarURL from "$lib/get-avatar-url";
 
 	export let data: {
 		bots: Array<{
@@ -26,15 +26,15 @@
 	const currentYear = new Date().getFullYear();
 
 	function approx(n: number): string {
-		if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
-		if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k';
+		if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+		if (n >= 1_000) return (n / 1_000).toFixed(1) + "k";
 		return String(n);
 	}
 
 	function rankMedal(rank: number): string {
-		if (rank === 1) return '🥇';
-		if (rank === 2) return '🥈';
-		if (rank === 3) return '🥉';
+		if (rank === 1) return "🥇";
+		if (rank === 2) return "🥈";
+		if (rank === 3) return "🥉";
 		return String(rank);
 	}
 
@@ -42,41 +42,41 @@
 	const faqs = [
 		{
 			q: `What are the best Discord bots in ${currentYear}?`,
-			a: `The top Discord bots are ranked by community votes on Rovel Discord List. The current #1 bot is ${bots[0]?.username ?? 'updated regularly'}. Rankings update in real time as users cast votes every 12 hours.`
+			a: `The top Discord bots are ranked by community votes on Rovel Discord List. The current #1 bot is ${bots[0]?.username ?? "updated regularly"}. Rankings update in real time as users cast votes every 12 hours.`
 		},
 		{
-			q: 'How is the leaderboard ranking calculated?',
-			a: 'Each bot is ranked purely by the total number of votes received from real Discord users. Anyone logged in with their Discord account can vote for their favourite bot once every 12 hours.'
+			q: "How is the leaderboard ranking calculated?",
+			a: "Each bot is ranked purely by the total number of votes received from real Discord users. Anyone logged in with their Discord account can vote for their favourite bot once every 12 hours."
 		},
 		{
-			q: 'How do I vote for a bot?',
-			a: 'Log in with your Discord account, find the bot you want to support, and click the Vote button on its detail page. You can vote for the same bot again after 12 hours.'
+			q: "How do I vote for a bot?",
+			a: "Log in with your Discord account, find the bot you want to support, and click the Vote button on its detail page. You can vote for the same bot again after 12 hours."
 		},
 		{
-			q: 'Can I list my own bot on the leaderboard?',
-			a: 'Yes! Log in with Discord, head to your Dashboard, and submit your bot. Once approved it will appear in the listings and be eligible for community votes.'
+			q: "Can I list my own bot on the leaderboard?",
+			a: "Yes! Log in with Discord, head to your Dashboard, and submit your bot. Once approved it will appear in the listings and be eligible for community votes."
 		}
 	];
 
 	// JSON-LD: FAQPage schema
 	const faqSchema = {
-		'@context': 'https://schema.org',
-		'@type': 'FAQPage',
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
 		mainEntity: faqs.map((f) => ({
-			'@type': 'Question',
+			"@type": "Question",
 			name: f.q,
-			acceptedAnswer: { '@type': 'Answer', text: f.a }
+			acceptedAnswer: { "@type": "Answer", text: f.a }
 		}))
 	};
 
 	// JSON-LD: ItemList schema for the top 10
 	const listSchema = {
-		'@context': 'https://schema.org',
-		'@type': 'ItemList',
+		"@context": "https://schema.org",
+		"@type": "ItemList",
 		name: `Top Discord Bots ${currentYear}`,
 		description: `The most voted Discord bots on Rovel Discord List as of ${currentYear}.`,
 		itemListElement: bots.slice(0, 10).map((bot) => ({
-			'@type': 'ListItem',
+			"@type": "ListItem",
 			position: bot.rank,
 			name: bot.username,
 			description: bot.short,
@@ -151,16 +151,19 @@
 					<!-- Avatar + name + short -->
 					<a href="/bots/{bot.slug}" class="flex items-center gap-3 min-w-0">
 						<img
-							src={getAvatarURL(bot.id, bot.avatar ?? '0', 48)}
+							src={getAvatarURL(bot.id, bot.avatar ?? "0", 48)}
 							alt="{bot.username} avatar"
 							class="w-10 h-10 rounded-full shrink-0 bg-muted"
 							loading="lazy"
 						/>
 						<div class="min-w-0">
-							<p class="font-semibold text-sm text-foreground truncate group-hover:text-primary transition-colors">
+							<p
+								class="font-semibold text-sm text-foreground truncate group-hover:text-primary transition-colors"
+							>
 								{bot.username}
-								{#if bot.discriminator && bot.discriminator !== '0'}
-									<span class="text-muted-foreground font-normal text-xs">#{bot.discriminator}</span>
+								{#if bot.discriminator && bot.discriminator !== "0"}
+									<span class="text-muted-foreground font-normal text-xs">#{bot.discriminator}</span
+									>
 								{/if}
 							</p>
 							<p class="text-xs text-muted-foreground truncate">{bot.short}</p>
@@ -202,9 +205,7 @@
 		</p>
 	</section>
 {:else}
-	<p class="text-center text-muted-foreground py-20 text-lg">
-		No bots found — check back soon!
-	</p>
+	<p class="text-center text-muted-foreground py-20 text-lg">No bots found — check back soon!</p>
 {/if}
 
 <!-- ── Top 3 cards ───────────────────────────────────────────────────────── -->
@@ -245,14 +246,12 @@
 	<p>
 		Unlike editorial lists curated by a single team, every position in this leaderboard is earned
 		through genuine user votes. Each Discord user can vote once every 12 hours, which means bots
-		that consistently deliver value keep climbing while ones that disappoint fade over time. It's
-		a living, breathing reflection of what the Discord community actually uses and loves.
+		that consistently deliver value keep climbing while ones that disappoint fade over time. It's a
+		living, breathing reflection of what the Discord community actually uses and loves.
 	</p>
 
 	<h3>Categories Represented</h3>
-	<p>
-		The leaderboard spans every major bot category:
-	</p>
+	<p>The leaderboard spans every major bot category:</p>
 	<ul>
 		<li><strong>Music bots</strong> — stream from YouTube, Spotify, SoundCloud and more</li>
 		<li><strong>Moderation bots</strong> — auto-mod, logging, role management, anti-raid</li>
@@ -264,10 +263,9 @@
 
 	<h3>How to Climb the Rankings</h3>
 	<p>
-		Bot developers can improve their ranking by building high-quality, reliable bots and
-		encouraging their user base to vote. Votes reset over time, so consistently delivering value
-		is what keeps a bot at the top. The best way to get more votes is to simply be the best bot
-		in your category.
+		Bot developers can improve their ranking by building high-quality, reliable bots and encouraging
+		their user base to vote. Votes reset over time, so consistently delivering value is what keeps a
+		bot at the top. The best way to get more votes is to simply be the best bot in your category.
 	</p>
 </section>
 

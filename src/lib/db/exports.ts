@@ -13,11 +13,11 @@
  * Keep this file minimal — implementation details live in their own modules.
  */
 
-import { getClient, getDb, ping, withDb } from './index';
-export { getClient, getDb, ping, withDb } from './index';
-export type { DrizzleDb } from './index';
-export * from './schema';
-export * from './queries/helpers';
+import { getClient, getDb, ping, withDb } from "./index";
+export { getClient, getDb, ping, withDb } from "./index";
+export type { DrizzleDb } from "./index";
+export * from "./schema";
+export * from "./queries/helpers";
 
 // Default export provides the most commonly-used runtime helpers for convenience.
 export default {

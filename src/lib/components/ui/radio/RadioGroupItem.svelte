@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { RadioGroupContext } from './RadioGroup.svelte';
+	import { getContext } from "svelte";
+	import type { RadioGroupContext } from "./RadioGroup.svelte";
 
 	export let value: string;
 	export let id: string | undefined = undefined;
 	export let disabled: boolean = false;
 
-	const ctx = getContext<RadioGroupContext>('radio-group');
+	const ctx = getContext<RadioGroupContext>("radio-group");
 
 	let checked = false;
 	ctx.store.subscribe((v) => (checked = v === value));
@@ -23,7 +23,7 @@
 		disabled:cursor-not-allowed disabled:opacity-50
 		flex items-center justify-center shrink-0"
 	on:click={() => !disabled && ctx.store.set(value)}
-	on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && !disabled && ctx.store.set(value)}
+	on:keydown={(e) => (e.key === "Enter" || e.key === " ") && !disabled && ctx.store.set(value)}
 >
 	{#if checked}
 		<span class="h-2 w-2 rounded-full bg-primary block"></span>

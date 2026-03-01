@@ -1,10 +1,10 @@
 <script lang="ts">
-	import LoginButton from '$lib/components/LoginButton.svelte';
-	import approx from '$lib/approx-num';
-	import getAvatarURL from '$lib/get-avatar-url';
-	import { goto, invalidateAll } from '$app/navigation';
-	import LogoNavbar from '$lib/components/LogoNavbar.svelte';
-	import { Bot, Home, LayoutDashboard, Trophy, Sparkles, LayoutGrid } from '@lucide/svelte';
+	import LoginButton from "$lib/components/LoginButton.svelte";
+	import approx from "$lib/approx-num";
+	import getAvatarURL from "$lib/get-avatar-url";
+	import { goto, invalidateAll } from "$app/navigation";
+	import LogoNavbar from "$lib/components/LogoNavbar.svelte";
+	import { Bot, Home, LayoutDashboard, Trophy, Sparkles, LayoutGrid } from "@lucide/svelte";
 	export let user: {
 		id: string;
 		username: string;
@@ -20,15 +20,15 @@
 	// Initialise from localStorage / system on the client; SSR gets 'light'
 	// as a safe default (the <script is:inline> equivalent in app.html should
 	// apply the class before paint to avoid flash).
-	let theme: 'light' | 'dark' = 'light';
+	let theme: "light" | "dark" = "light";
 
 	function initTheme() {
 		try {
-			const stored = localStorage.getItem('theme');
-			if (stored === 'dark' || stored === 'light') {
+			const stored = localStorage.getItem("theme");
+			if (stored === "dark" || stored === "light") {
 				theme = stored;
 			} else {
-				theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+				theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 			}
 			applyTheme(theme);
 		} catch {
@@ -36,11 +36,11 @@
 		}
 	}
 
-	function applyTheme(t: 'light' | 'dark') {
+	function applyTheme(t: "light" | "dark") {
 		try {
-			if (t === 'dark') document.documentElement.classList.add('dark');
-			else document.documentElement.classList.remove('dark');
-			localStorage.setItem('theme', t);
+			if (t === "dark") document.documentElement.classList.add("dark");
+			else document.documentElement.classList.remove("dark");
+			localStorage.setItem("theme", t);
 		} catch {
 			// no-op in SSR
 		}
@@ -54,21 +54,21 @@
 	}
 
 	function toggleTheme() {
-		theme = theme === 'dark' ? 'light' : 'dark';
+		theme = theme === "dark" ? "light" : "dark";
 		applyTheme(theme);
 	}
 
 	async function logout() {
-		await fetch('/logout', { method: 'POST' });
+		await fetch("/logout", { method: "POST" });
 		await invalidateAll();
-		await goto('/');
+		await goto("/");
 	}
 
 	$: avatarSrc = user?.avatar
 		? getAvatarURL(user.id, user.avatar, 64)
-		: '/assets/img/bot/logo-144.png';
+		: "/assets/img/bot/logo-144.png";
 
-	import { onMount } from 'svelte';
+	import { onMount } from "svelte";
 	onMount(initTheme);
 </script>
 
@@ -150,7 +150,7 @@
 			class="p-2 rounded-md hover:bg-accent transition-colors"
 			on:click={toggleTheme}
 		>
-			{#if theme === 'dark'}
+			{#if theme === "dark"}
 				<!-- Sun -->
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

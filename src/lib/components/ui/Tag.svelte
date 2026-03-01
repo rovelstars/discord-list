@@ -17,9 +17,9 @@
 	 * The component emits no events and is purely presentational.
 	 */
 
-	export let firstClass: string = '';
-	export let secondClass: string = '';
-	export let className: string = '';
+	export let firstClass: string = "";
+	export let secondClass: string = "";
+	export let className: string = "";
 
 	// Convenience string props if consumer prefers to pass plain text instead of slots
 	export let firstText: string | number | null = null;

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import BotCard from '$lib/components/BotCard.svelte';
-	import Input from '$lib/components/ui/Input.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
-	import Textarea from '$lib/components/ui/textarea/Textarea.svelte';
-	import getAvatarURL from '$lib/get-avatar-url';
-	import SEO from '$lib/components/SEO.svelte';
+	import BotCard from "$lib/components/BotCard.svelte";
+	import Input from "$lib/components/ui/Input.svelte";
+	import Label from "$lib/components/ui/Label.svelte";
+	import Textarea from "$lib/components/ui/textarea/Textarea.svelte";
+	import getAvatarURL from "$lib/get-avatar-url";
+	import SEO from "$lib/components/SEO.svelte";
 
 	export let data: {
 		user: {
@@ -54,8 +54,8 @@
 	const { user, discordUser, bots = [], recentVotes, totalVotesCast, expiredCount } = data;
 
 	// ── Active section ────────────────────────────────────────────────────────
-	type Section = 'bots' | 'profile' | 'account' | 'votes' | 'danger';
-	let activeSection: Section = 'bots';
+	type Section = "bots" | "profile" | "account" | "votes" | "danger";
+	let activeSection: Section = "bots";
 
 	// ── Modals ────────────────────────────────────────────────────────────────
 	let showLogoutConfirm = false;
@@ -63,60 +63,60 @@
 	// ── Avatar ────────────────────────────────────────────────────────────────
 	$: avatarSrc = discordUser.avatar
 		? getAvatarURL(discordUser.id, discordUser.avatar, 128)
-		: '/assets/img/bot/logo-144.png';
+		: "/assets/img/bot/logo-144.png";
 
 	// ── Display name / handle ─────────────────────────────────────────────────
 	$: displayName = discordUser.global_name ?? discordUser.username;
 	$: handle =
-		discordUser.discriminator && discordUser.discriminator !== '0'
+		discordUser.discriminator && discordUser.discriminator !== "0"
 			? `${discordUser.username}#${discordUser.discriminator}`
 			: `@${discordUser.username}`;
 
 	// ── Member since ──────────────────────────────────────────────────────────
 	$: memberSince = (() => {
-		if (!user.added_at) return 'Unknown';
+		if (!user.added_at) return "Unknown";
 		const d = new Date(user.added_at);
-		if (isNaN(d.getTime())) return 'Unknown';
-		return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+		if (isNaN(d.getTime())) return "Unknown";
+		return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 	})();
 
 	// ── Profile form ──────────────────────────────────────────────────────────
-	let bio = user.bio === "The user doesn't have bio set!" ? '' : (user.bio ?? '');
-	let banner = user.banner ?? '';
+	let bio = user.bio === "The user doesn't have bio set!" ? "" : (user.bio ?? "");
+	let banner = user.banner ?? "";
 	let saving = false;
 	let saveSuccess = false;
-	let saveError = '';
+	let saveError = "";
 
 	$: bioOver = bio.length > 200;
 	$: bioPercent = Math.min((bio.length / 200) * 100, 100);
 
 	async function saveProfile() {
-		saveError = '';
+		saveError = "";
 		saveSuccess = false;
 		saving = true;
 		try {
-			const res = await fetch('/api/users/me', {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
+			const res = await fetch("/api/users/me", {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ bio: bio.trim() || null, banner: banner.trim() || null })
 			});
 			const resData = await res.json();
 			if (!res.ok || resData.err) {
 				const errMap: Record<string, string> = {
-					not_logged_in: 'You must be logged in.',
-					invalid_key: 'Your session has expired. Please log in again.',
-					bio_too_long: 'Bio must be 200 characters or fewer.',
-					invalid_banner: 'Banner must be a valid http/https URL.',
-					user_not_found: 'User not found. Please log in again.',
-					db_update_failed: 'Database error — please try again.'
+					not_logged_in: "You must be logged in.",
+					invalid_key: "Your session has expired. Please log in again.",
+					bio_too_long: "Bio must be 200 characters or fewer.",
+					invalid_banner: "Banner must be a valid http/https URL.",
+					user_not_found: "User not found. Please log in again.",
+					db_update_failed: "Database error — please try again."
 				};
-				saveError = errMap[resData.err] ?? resData.err ?? 'An error occurred.';
+				saveError = errMap[resData.err] ?? resData.err ?? "An error occurred.";
 			} else {
 				saveSuccess = true;
 				setTimeout(() => (saveSuccess = false), 3500);
 			}
 		} catch {
-			saveError = 'Network error — please try again.';
+			saveError = "Network error — please try again.";
 		} finally {
 			saving = false;
 		}
@@ -124,7 +124,7 @@
 
 	// ── Logout ────────────────────────────────────────────────────────────────
 	function logout() {
-		window.location.href = '/logout';
+		window.location.href = "/logout";
 	}
 
 	// ── Relative time ─────────────────────────────────────────────────────────
@@ -133,24 +133,24 @@
 		const mins = Math.floor(diff / 60000);
 		const hours = Math.floor(diff / 3600000);
 		const days = Math.floor(diff / 86400000);
-		if (mins < 1) return 'just now';
+		if (mins < 1) return "just now";
 		if (mins < 60) return `${mins}m ago`;
 		if (hours < 24) return `${hours}h ago`;
 		if (days < 30) return `${days}d ago`;
-		return new Date(ts).toLocaleDateString('en-US', {
-			month: 'short',
-			day: 'numeric',
-			year: 'numeric'
+		return new Date(ts).toLocaleDateString("en-US", {
+			month: "short",
+			day: "numeric",
+			year: "numeric"
 		});
 	}
 
 	// ── Nav items ─────────────────────────────────────────────────────────────
 	const navItems: Array<{ id: Section; label: string; icon: string }> = [
-		{ id: 'bots', label: 'My Bots', icon: 'bot' },
-		{ id: 'profile', label: 'Profile', icon: 'user' },
-		{ id: 'account', label: 'Account', icon: 'shield' },
-		{ id: 'votes', label: 'Vote History', icon: 'votes' },
-		{ id: 'danger', label: 'Danger Zone', icon: 'danger' }
+		{ id: "bots", label: "My Bots", icon: "bot" },
+		{ id: "profile", label: "Profile", icon: "user" },
+		{ id: "account", label: "Account", icon: "shield" },
+		{ id: "votes", label: "Vote History", icon: "votes" },
+		{ id: "danger", label: "Danger Zone", icon: "danger" }
 	];
 </script>
 
@@ -356,7 +356,7 @@
 												? 'bg-primary/15'
 												: 'bg-muted/50'}"
 									>
-										{#if item.icon === 'bot'}
+										{#if item.icon === "bot"}
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												class="w-3.5 h-3.5"
@@ -378,7 +378,7 @@
 													y2="16"
 												/>
 											</svg>
-										{:else if item.icon === 'user'}
+										{:else if item.icon === "user"}
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												class="w-3.5 h-3.5"
@@ -391,7 +391,7 @@
 											>
 												<circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
 											</svg>
-										{:else if item.icon === 'shield'}
+										{:else if item.icon === "shield"}
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												class="w-3.5 h-3.5"
@@ -404,7 +404,7 @@
 											>
 												<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
 											</svg>
-										{:else if item.icon === 'votes'}
+										{:else if item.icon === "votes"}
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												class="w-3.5 h-3.5"
@@ -417,7 +417,7 @@
 											>
 												<polyline points="18 15 12 9 6 15" />
 											</svg>
-										{:else if item.icon === 'danger'}
+										{:else if item.icon === "danger"}
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												class="w-3.5 h-3.5"
@@ -452,7 +452,7 @@
 									{/if}
 
 									<!-- Bot count badge -->
-									{#if item.id === 'bots' && bots.length > 0}
+									{#if item.id === "bots" && bots.length > 0}
 										<span
 											class="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary {activeSection ===
 											'bots'
@@ -484,7 +484,7 @@
 				<!-- ════════════════════════════════════════════════════════════ -->
 				<!-- MY BOTS                                                      -->
 				<!-- ════════════════════════════════════════════════════════════ -->
-				{#if activeSection === 'bots'}
+				{#if activeSection === "bots"}
 					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
 						<!-- Header -->
 						<div class="px-6 py-4 border-b border-border flex items-center justify-between gap-4">
@@ -516,8 +516,8 @@
 									<h2 class="text-base font-bold font-heading leading-none">My Bots</h2>
 									<p class="text-xs text-muted-foreground mt-0.5">
 										{bots.length === 0
-											? 'No bots listed yet'
-											: `${bots.length} bot${bots.length !== 1 ? 's' : ''} listed`}
+											? "No bots listed yet"
+											: `${bots.length} bot${bots.length !== 1 ? "s" : ""} listed`}
 									</p>
 								</div>
 							</div>
@@ -581,14 +581,14 @@
 												id: bot.id,
 												slug: bot.slug ?? bot.id,
 												username: bot.username,
-												discriminator: bot.discriminator ?? '0000',
-												avatar: bot.avatar ?? '0',
-												short: bot.short ?? '',
+												discriminator: bot.discriminator ?? "0000",
+												avatar: bot.avatar ?? "0",
+												short: bot.short ?? "",
 												votes: bot.votes ?? 0,
 												servers: bot.servers ?? 0,
-												invite: bot.invite ?? '',
+												invite: bot.invite ?? "",
 												bg: bot.bg ?? null,
-												status: (bot.status as any) ?? 'online'
+												status: (bot.status as any) ?? "online"
 											}}
 											edit={true}
 										/>
@@ -601,7 +601,7 @@
 					<!-- ════════════════════════════════════════════════════════════ -->
 					<!-- PROFILE                                                      -->
 					<!-- ════════════════════════════════════════════════════════════ -->
-				{:else if activeSection === 'profile'}
+				{:else if activeSection === "profile"}
 					<!-- Banner preview -->
 					{#if banner}
 						<div
@@ -612,7 +612,7 @@
 								alt="Profile banner preview"
 								class="w-full h-full object-cover"
 								on:error={(e) => {
-									(e.currentTarget as HTMLImageElement).closest('div')?.classList.add('hidden');
+									(e.currentTarget as HTMLImageElement).closest("div")?.classList.add("hidden");
 								}}
 							/>
 							<div
@@ -825,7 +825,7 @@
 					<!-- ════════════════════════════════════════════════════════════ -->
 					<!-- ACCOUNT                                                      -->
 					<!-- ════════════════════════════════════════════════════════════ -->
-				{:else if activeSection === 'account'}
+				{:else if activeSection === "account"}
 					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
 						<div class="px-6 py-4 border-b border-border flex items-center gap-2">
 							<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -1025,7 +1025,7 @@
 					<!-- ════════════════════════════════════════════════════════════ -->
 					<!-- VOTE HISTORY                                                 -->
 					<!-- ════════════════════════════════════════════════════════════ -->
-				{:else if activeSection === 'votes'}
+				{:else if activeSection === "votes"}
 					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
 						<div class="px-6 py-4 border-b border-border flex items-center justify-between gap-4">
 							<div class="flex items-center gap-2">
@@ -1113,7 +1113,7 @@
 											<img
 												src={vote.botAvatar
 													? getAvatarURL(vote.botId, vote.botAvatar, 40)
-													: getAvatarURL(vote.botId, '0')}
+													: getAvatarURL(vote.botId, "0")}
 												alt="{vote.botName} avatar"
 												class="w-9 h-9 rounded-xl object-cover border border-border shrink-0 shadow-sm"
 											/>
@@ -1168,7 +1168,7 @@
 								<p class="text-xs text-muted-foreground">
 									Votes older than 30 days are not shown.{#if expiredCount > 0}&nbsp;<span
 											class="text-muted-foreground/70"
-											>{expiredCount} expired {expiredCount === 1 ? 'entry was' : 'entries were'} removed
+											>{expiredCount} expired {expiredCount === 1 ? "entry was" : "entries were"} removed
 											this session.</span
 										>{/if}
 								</p>
@@ -1192,7 +1192,7 @@
 					<!-- ════════════════════════════════════════════════════════════ -->
 					<!-- DANGER ZONE                                                  -->
 					<!-- ════════════════════════════════════════════════════════════ -->
-				{:else if activeSection === 'danger'}
+				{:else if activeSection === "danger"}
 					<!-- Warning banner -->
 					<div
 						class="flex items-start gap-3 p-4 rounded-2xl bg-destructive/8 border border-destructive/25 text-sm text-destructive"

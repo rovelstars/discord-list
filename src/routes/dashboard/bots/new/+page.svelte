@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import Input from '$lib/components/ui/Input.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
-	import Textarea from '$lib/components/ui/textarea/Textarea.svelte';
-	import getAvatarURL from '$lib/get-avatar-url';
-	import SEO from '$lib/components/SEO.svelte';
+	import { goto } from "$app/navigation";
+	import Input from "$lib/components/ui/Input.svelte";
+	import Label from "$lib/components/ui/Label.svelte";
+	import Textarea from "$lib/components/ui/textarea/Textarea.svelte";
+	import getAvatarURL from "$lib/get-avatar-url";
+	import SEO from "$lib/components/SEO.svelte";
 
 	export let data: {
 		user: {
@@ -23,27 +23,27 @@
 	};
 
 	// ── Form state ─────────────────────────────────────────────────────────────
-	let botId = data.botId ?? '';
-	let lib = '';
+	let botId = data.botId ?? "";
+	let lib = "";
 	let owners = data.user.id;
-	let prefix = '';
-	let short = '';
-	let desc = '';
-	let support = '';
-	let source_repo = '';
-	let website = '';
-	let webhook = '';
-	let bg = '';
-	let donate = '';
-	let invite = '';
-	let slug = '';
+	let prefix = "";
+	let short = "";
+	let desc = "";
+	let support = "";
+	let source_repo = "";
+	let website = "";
+	let webhook = "";
+	let bg = "";
+	let donate = "";
+	let invite = "";
+	let slug = "";
 	let opted_coins = false;
 
 	// ── UI state ───────────────────────────────────────────────────────────────
-	let activeTab: 'edit' | 'preview' = 'edit';
+	let activeTab: "edit" | "preview" = "edit";
 	let submitting = false;
-	let successMsg = '';
-	let errorMsg = '';
+	let successMsg = "";
+	let errorMsg = "";
 
 	// ── Bot ID lookup state ────────────────────────────────────────────────────
 	let resolvedBot: {
@@ -52,7 +52,7 @@
 		discriminator: string;
 		avatar: string | null;
 	} | null = data.botInfo ?? null;
-	let botIdLookupError = '';
+	let botIdLookupError = "";
 	let botIdLooking = false;
 
 	// Debounce timer handle
@@ -65,37 +65,37 @@
 		const trimmed = botId.trim();
 		if (!trimmed || !/^\d{17,20}$/.test(trimmed)) {
 			resolvedBot = null;
-			botIdLookupError = trimmed && trimmed.length > 0 ? 'Enter a valid Discord snowflake ID.' : '';
+			botIdLookupError = trimmed && trimmed.length > 0 ? "Enter a valid Discord snowflake ID." : "";
 			botIdLooking = false;
 		} else {
 			botIdLooking = true;
-			botIdLookupError = '';
+			botIdLookupError = "";
 			lookupTimer = setTimeout(async () => {
 				try {
 					const res = await fetch(`/api/discord/user/${encodeURIComponent(trimmed)}`);
 					const json = await res.json();
 					if (json.err) {
 						const lookupErrMap: Record<string, string> = {
-							not_found: 'No bot found with that ID.',
-							not_a_bot: 'That ID belongs to a user account, not a bot.',
-							discord_error: 'Discord returned an error. Check the ID and try again.',
-							missing_token: 'Server is not configured. Contact the admin.',
-							server_error: 'An unexpected server error occurred.'
+							not_found: "No bot found with that ID.",
+							not_a_bot: "That ID belongs to a user account, not a bot.",
+							discord_error: "Discord returned an error. Check the ID and try again.",
+							missing_token: "Server is not configured. Contact the admin.",
+							server_error: "An unexpected server error occurred."
 						};
 						botIdLookupError = lookupErrMap[json.err] ?? json.err;
 						resolvedBot = null;
 						// Pre-fill invite when we have a valid bot
-						invite = '';
+						invite = "";
 					} else {
 						resolvedBot = json;
-						botIdLookupError = '';
+						botIdLookupError = "";
 						// Auto-populate invite URL using the resolved bot id
 						if (!invite) {
 							invite = `https://discord.com/oauth2/authorize?client_id=${json.id}&scope=bot&permissions=0`;
 						}
 					}
 				} catch {
-					botIdLookupError = 'Network error while looking up bot.';
+					botIdLookupError = "Network error while looking up bot.";
 					resolvedBot = null;
 				} finally {
 					botIdLooking = false;
@@ -109,8 +109,8 @@
 	let fieldErrors: FieldErrors = {};
 
 	function clearErrors() {
-		errorMsg = '';
-		successMsg = '';
+		errorMsg = "";
+		successMsg = "";
 		fieldErrors = {};
 	}
 
@@ -118,28 +118,28 @@
 	function validate(): boolean {
 		const errs: FieldErrors = {};
 
-		if (!botId.trim()) errs.botId = 'Bot ID is required.';
+		if (!botId.trim()) errs.botId = "Bot ID is required.";
 
-		if (lib && lib.length > 20) errs.lib = 'Library must be at most 20 characters.';
+		if (lib && lib.length > 20) errs.lib = "Library must be at most 20 characters.";
 
 		const ownerList = owners
-			.split(',')
+			.split(",")
 			.map((o) => o.trim())
 			.filter(Boolean);
-		if (ownerList.length === 0) errs.owners = 'At least one owner is required.';
-		if (ownerList.length > 10) errs.owners = 'At most 10 owners are allowed.';
-		if (ownerList[0] !== data.user.id) errs.owners = 'You must be the first (main) owner.';
+		if (ownerList.length === 0) errs.owners = "At least one owner is required.";
+		if (ownerList.length > 10) errs.owners = "At most 10 owners are allowed.";
+		if (ownerList[0] !== data.user.id) errs.owners = "You must be the first (main) owner.";
 
-		if (prefix && prefix.length > 20) errs.prefix = 'Prefix must be at most 20 characters.';
+		if (prefix && prefix.length > 20) errs.prefix = "Prefix must be at most 20 characters.";
 
 		if (!short || short.length < 11)
-			errs.short = 'Short description must be at least 11 characters.';
-		if (short.length > 150) errs.short = 'Short description must be at most 150 characters.';
+			errs.short = "Short description must be at least 11 characters.";
+		if (short.length > 150) errs.short = "Short description must be at most 150 characters.";
 
-		if (!desc || desc.length < 100) errs.desc = 'Description must be at least 100 characters.';
-		if (desc.length > 10000) errs.desc = 'Description must be at most 10,000 characters.';
+		if (!desc || desc.length < 100) errs.desc = "Description must be at least 100 characters.";
+		if (desc.length > 10000) errs.desc = "Description must be at most 10,000 characters.";
 
-		if (!invite.trim()) errs.invite = 'Invite URL is required.';
+		if (!invite.trim()) errs.invite = "Invite URL is required.";
 
 		fieldErrors = errs;
 		return Object.keys(errs).length === 0;
@@ -153,7 +153,7 @@
 		submitting = true;
 
 		const ownerList = owners
-			.split(',')
+			.split(",")
 			.map((o) => o.trim())
 			.filter(Boolean);
 
@@ -176,8 +176,8 @@
 
 		try {
 			const res = await fetch(`/api/bots/${encodeURIComponent(botId.trim())}/new`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(body)
 			});
 
@@ -185,29 +185,29 @@
 
 			if (data.err) {
 				const errMap: Record<string, string> = {
-					slug_taken: 'Vanity URL name is already taken. Please choose another one.',
-					main_owner_cant_be_changed: 'You must be the first (main) owner.',
-					owners_not_array: 'Owners must be a list of IDs.',
-					invalid_webhook: 'Webhook URL is invalid.',
-					invalid_source_repo: 'Source repository URL is invalid.',
-					invalid_website: 'Website URL is invalid.',
-					invalid_donate: 'Donate URL is invalid.',
-					invalid_bg: 'Background image URL is invalid.',
-					invalid_invite: 'Invite URL is invalid.',
-					invalid_support: 'Support server invite is invalid.',
-					expired_support: 'Support server invite has expired.',
-					invalid_bot: 'That Discord application is not a valid bot.',
-					bot_is_user: 'That ID belongs to a user, not a bot.',
-					not_logged_in: 'You must be logged in.',
-					invalid_key: 'Your session is invalid. Please log in again.'
+					slug_taken: "Vanity URL name is already taken. Please choose another one.",
+					main_owner_cant_be_changed: "You must be the first (main) owner.",
+					owners_not_array: "Owners must be a list of IDs.",
+					invalid_webhook: "Webhook URL is invalid.",
+					invalid_source_repo: "Source repository URL is invalid.",
+					invalid_website: "Website URL is invalid.",
+					invalid_donate: "Donate URL is invalid.",
+					invalid_bg: "Background image URL is invalid.",
+					invalid_invite: "Invite URL is invalid.",
+					invalid_support: "Support server invite is invalid.",
+					expired_support: "Support server invite has expired.",
+					invalid_bot: "That Discord application is not a valid bot.",
+					bot_is_user: "That ID belongs to a user, not a bot.",
+					not_logged_in: "You must be logged in.",
+					invalid_key: "Your session is invalid. Please log in again."
 				};
 				errorMsg = errMap[data.err] ?? data.err;
 			} else {
-				successMsg = 'Bot submitted successfully!';
+				successMsg = "Bot submitted successfully!";
 				setTimeout(() => goto(`/bots/${botId.trim()}`), 1200);
 			}
 		} catch (e) {
-			errorMsg = 'Network error — please try again.';
+			errorMsg = "Network error — please try again.";
 		} finally {
 			submitting = false;
 		}
@@ -217,8 +217,8 @@
 	// Use resolvedBot (which is kept in sync reactively) as the canonical source
 	$: headerBot = resolvedBot;
 	$: avatarSrc = headerBot
-		? getAvatarURL(headerBot.id, headerBot.avatar ?? '0', 256)
-		: '/assets/img/bot/logo-144.png';
+		? getAvatarURL(headerBot.id, headerBot.avatar ?? "0", 256)
+		: "/assets/img/bot/logo-144.png";
 </script>
 
 <SEO
@@ -243,7 +243,7 @@
 			<button
 				class="tab-btn flex-1 py-5 text-2xl font-bold font-heading relative z-10
 					{activeTab === 'edit' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}"
-				on:click={() => (activeTab = 'edit')}
+				on:click={() => (activeTab = "edit")}
 			>
 				{#if botIdLooking}
 					<span class="inline-flex items-center gap-2">
@@ -269,7 +269,7 @@
 			<button
 				class="tab-btn flex-1 py-5 text-2xl font-bold font-heading relative z-10
 					{activeTab === 'preview' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}"
-				on:click={() => (activeTab = 'preview')}
+				on:click={() => (activeTab = "preview")}
 			>
 				Preview
 			</button>
@@ -277,7 +277,7 @@
 	</div>
 
 	<!-- ── Edit tab ──────────────────────────────────────────────────────────── -->
-	{#if activeTab === 'edit'}
+	{#if activeTab === "edit"}
 		<div class="bg-card p-6 rounded-xl space-y-8">
 			<!-- Avatar -->
 			<div class="flex flex-col items-center gap-2">
@@ -546,8 +546,8 @@
 						class="w-16 h-16 rounded-full object-cover border-4 border-border"
 					/>
 					<div>
-						<p class="font-bold text-lg">{headerBot?.username ?? botId ?? '—'}</p>
-						<p class="text-muted-foreground">#{headerBot?.discriminator ?? '0000'}</p>
+						<p class="font-bold text-lg">{headerBot?.username ?? botId ?? "—"}</p>
+						<p class="text-muted-foreground">#{headerBot?.discriminator ?? "0000"}</p>
 					</div>
 				</div>
 				{#if short}
@@ -585,7 +585,7 @@
 		transition: color 0.2s ease;
 	}
 
-	input[type='radio'].radio {
+	input[type="radio"].radio {
 		appearance: none;
 		width: 1rem;
 		height: 1rem;
@@ -599,13 +599,13 @@
 		flex-shrink: 0;
 	}
 
-	input[type='radio'].radio:checked {
+	input[type="radio"].radio:checked {
 		border-color: hsl(var(--primary));
 		background-color: hsl(var(--primary));
 		box-shadow: inset 0 0 0 3px hsl(var(--background));
 	}
 
-	input[type='radio'].radio:focus-visible {
+	input[type="radio"].radio:focus-visible {
 		outline: 2px solid hsl(var(--ring));
 		outline-offset: 2px;
 	}

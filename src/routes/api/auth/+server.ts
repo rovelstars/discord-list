@@ -1,22 +1,22 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import { redirect } from '@sveltejs/kit';
-import DiscordOauth2 from 'discord-oauth2';
-import { env } from '$env/dynamic/private';
-import { getDb } from '$lib/db';
-import { Users } from '$lib/schema';
-import { eq } from 'drizzle-orm';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
+import DiscordOauth2 from "discord-oauth2";
+import { env } from "$env/dynamic/private";
+import { getDb } from "$lib/db";
+import { Users } from "$lib/schema";
+import { eq } from "drizzle-orm";
 // SendLog is copied into src/bot/log.ts previously
-import SendLog from '@/bot/log';
-import joinServer from '$lib/functions/join-server';
-import { assignUserRole } from '$lib/assign-guild-role';
+import SendLog from "@/bot/log";
+import joinServer from "$lib/functions/join-server";
+import { assignUserRole } from "$lib/assign-guild-role";
 
 export const GET: RequestHandler = async (event) => {
 	const { request, cookies } = event;
 	try {
 		// Read requested scopes from cookie (fallback to ["identify"])
-		let scopes: string[] = ['identify'];
-		const scopesCookie = cookies.get('scopes');
+		let scopes: string[] = ["identify"];
+		const scopesCookie = cookies.get("scopes");
 		if (scopesCookie) {
 			try {
 				const parsed = JSON.parse(scopesCookie);
@@ -27,10 +27,10 @@ export const GET: RequestHandler = async (event) => {
 		}
 
 		const url = new URL(request.url);
-		const code = url.searchParams.get('code');
+		const code = url.searchParams.get("code");
 		if (!code) {
 			// No code -> redirect to homepage or return an informative JSON
-			return json({ err: 'missing_code' }, { status: 400 });
+			return json({ err: "missing_code" }, { status: 400 });
 		}
 
 		const {
@@ -48,14 +48,14 @@ export const GET: RequestHandler = async (event) => {
 		const oauth = new DiscordOauth2({
 			clientId: DISCORD_BOT_ID!,
 			clientSecret: DISCORD_SECRET!,
-			redirectUri: (DOMAIN ? DOMAIN : 'http://localhost:5173') + '/api/auth'
+			redirectUri: (DOMAIN ? DOMAIN : "http://localhost:5173") + "/api/auth"
 		});
 
 		// Exchange code for tokens
 		const tokenData = (await oauth.tokenRequest({
-			scope: scopes.join(' '),
+			scope: scopes.join(" "),
 			code,
-			grantType: 'authorization_code'
+			grantType: "authorization_code"
 		})) as any;
 
 		// Add expireTimestamp like the old app did (slightly before actual expiry)
@@ -80,7 +80,7 @@ export const GET: RequestHandler = async (event) => {
 		// Helper to normalize keys array
 		function normalizeKeys(k: any): any[] {
 			if (!k) return [];
-			if (typeof k === 'string') {
+			if (typeof k === "string") {
 				try {
 					const parsed = JSON.parse(k);
 					return Array.isArray(parsed) ? parsed : [];
@@ -117,7 +117,7 @@ export const GET: RequestHandler = async (event) => {
 			if (
 				!keys.length ||
 				keys.some(
-					(k: any) => (k.scope || '').split(' ').length < (currentKey.scope || '').split(' ').length
+					(k: any) => (k.scope || "").split(" ").length < (currentKey.scope || "").split(" ").length
 				)
 			) {
 				keys.push(currentKey);
@@ -144,7 +144,7 @@ export const GET: RequestHandler = async (event) => {
 				banner: (userData as any).banner ?? null,
 				badges: JSON.stringify([]),
 				votes: JSON.stringify([]),
-				lang: (userData as any).locale ?? 'en-US',
+				lang: (userData as any).locale ?? "en-US",
 				last_login: new Date().toISOString(),
 				nitro: (userData as any).premium_type ?? 0
 			};
@@ -153,22 +153,22 @@ export const GET: RequestHandler = async (event) => {
 			try {
 				await SendLog({
 					env: {
-						DOMAIN: DOMAIN ?? '',
-						FAILED_DMS_LOGS_CHANNEL_ID: FAILED_DMS_LOGS_CHANNEL_ID ?? '',
-						LOGS_CHANNEL_ID: LOGS_CHANNEL_ID ?? '',
-						DISCORD_TOKEN: DISCORD_TOKEN ?? ''
+						DOMAIN: DOMAIN ?? "",
+						FAILED_DMS_LOGS_CHANNEL_ID: FAILED_DMS_LOGS_CHANNEL_ID ?? "",
+						LOGS_CHANNEL_ID: LOGS_CHANNEL_ID ?? "",
+						DISCORD_TOKEN: DISCORD_TOKEN ?? ""
 					},
 					body: {
 						title: `${userData.username} account created!`,
 						desc: `Hey new user **${(userData as any).global_name ?? userData.username}**\nWelcome to Rovel Discord List!`,
 						owners: userData.id,
 						img: `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}?size=128`,
-						url: `${DOMAIN ?? ''}/users/${userData.id}`
+						url: `${DOMAIN ?? ""}/users/${userData.id}`
 					}
 				});
 			} catch (e) {
 				// don't fail the whole flow if logging fails
-				console.warn('SendLog failed for new user:', e);
+				console.warn("SendLog failed for new user:", e);
 			}
 		}
 
@@ -188,10 +188,10 @@ export const GET: RequestHandler = async (event) => {
 				oauth,
 				token: tokenData.access_token,
 				env: {
-					DISCORD_GUILD_ID: DISCORD_GUILD_ID || '',
-					DISCORD_BOT_ID: DISCORD_BOT_ID || '',
-					DISCORD_TOKEN: DISCORD_TOKEN || '',
-					DISCORD_USER_ROLE: DISCORD_USER_ROLE || ''
+					DISCORD_GUILD_ID: DISCORD_GUILD_ID || "",
+					DISCORD_BOT_ID: DISCORD_BOT_ID || "",
+					DISCORD_TOKEN: DISCORD_TOKEN || "",
+					DISCORD_USER_ROLE: DISCORD_USER_ROLE || ""
 				}
 			});
 		} catch (e) {
@@ -199,10 +199,10 @@ export const GET: RequestHandler = async (event) => {
 			try {
 				await SendLog({
 					env: {
-						DOMAIN: DOMAIN ?? '',
-						FAILED_DMS_LOGS_CHANNEL_ID: FAILED_DMS_LOGS_CHANNEL_ID ?? '',
-						LOGS_CHANNEL_ID: LOGS_CHANNEL_ID ?? '',
-						DISCORD_TOKEN: DISCORD_TOKEN ?? ''
+						DOMAIN: DOMAIN ?? "",
+						FAILED_DMS_LOGS_CHANNEL_ID: FAILED_DMS_LOGS_CHANNEL_ID ?? "",
+						LOGS_CHANNEL_ID: LOGS_CHANNEL_ID ?? "",
+						DISCORD_TOKEN: DISCORD_TOKEN ?? ""
 					},
 					body: {
 						title: `Failed to auto-join guild for ${userData.username}`,
@@ -216,24 +216,24 @@ export const GET: RequestHandler = async (event) => {
 		// and is a member of the guild. Non-fatal: 404 = not in server yet (fine),
 		// any other error is logged inside assignUserRole and swallowed.
 		await assignUserRole(userData.id, {
-			DISCORD_TOKEN: DISCORD_TOKEN ?? '',
-			DISCORD_GUILD_ID: DISCORD_GUILD_ID ?? '',
-			DISCORD_USER_ROLE: DISCORD_USER_ROLE ?? ''
+			DISCORD_TOKEN: DISCORD_TOKEN ?? "",
+			DISCORD_GUILD_ID: DISCORD_GUILD_ID ?? "",
+			DISCORD_USER_ROLE: DISCORD_USER_ROLE ?? ""
 		});
 
 		// Send login log (best-effort)
 		try {
 			await SendLog({
 				env: {
-					DOMAIN: DOMAIN ?? '',
-					FAILED_DMS_LOGS_CHANNEL_ID: FAILED_DMS_LOGS_CHANNEL_ID ?? '',
-					LOGS_CHANNEL_ID: LOGS_CHANNEL_ID ?? '',
-					DISCORD_TOKEN: DISCORD_TOKEN ?? ''
+					DOMAIN: DOMAIN ?? "",
+					FAILED_DMS_LOGS_CHANNEL_ID: FAILED_DMS_LOGS_CHANNEL_ID ?? "",
+					LOGS_CHANNEL_ID: LOGS_CHANNEL_ID ?? "",
+					DISCORD_TOKEN: DISCORD_TOKEN ?? ""
 				},
 				body: {
 					title: `${userData.username} logged in!`,
 					desc: `Hello ${(userData as any).global_name ?? userData.username}!`,
-					color: '#57F287',
+					color: "#57F287",
 					img: `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}?size=128`
 				}
 			});
@@ -242,19 +242,19 @@ export const GET: RequestHandler = async (event) => {
 		}
 
 		// Set cookie with access token
-		cookies.set('key', tokenData.access_token, {
-			path: '/',
+		cookies.set("key", tokenData.access_token, {
+			path: "/",
 			maxAge: Number(tokenData.expires_in) || 3600
 		});
 
 		// Handle redirect cookie if present (mirror old behavior)
-		const redirectCookie = cookies.get('redirect');
+		const redirectCookie = cookies.get("redirect");
 		if (redirectCookie) {
-			cookies.delete('redirect', { path: '/' });
+			cookies.delete("redirect", { path: "/" });
 			try {
 				// Keep only the path+search+hash so SvelteKit's redirect() accepts it
-				const parsed = new URL(redirectCookie, 'http://localhost');
-				parsed.searchParams.set('auth', '1');
+				const parsed = new URL(redirectCookie, "http://localhost");
+				parsed.searchParams.set("auth", "1");
 				throw redirect(302, parsed.pathname + parsed.search + parsed.hash);
 			} catch (e: any) {
 				if (e?.status === 302) throw e;
@@ -263,13 +263,13 @@ export const GET: RequestHandler = async (event) => {
 		}
 
 		// Default redirect to domain root
-		throw redirect(302, '/?auth=1');
+		throw redirect(302, "/?auth=1");
 	} catch (err: any) {
 		// Re-throw SvelteKit redirects — they are not errors
 		if (err?.status && err.status >= 300 && err.status < 400) throw err;
-		console.error('/api/auth error:', err);
+		console.error("/api/auth error:", err);
 		return json(
-			{ err: 'server_error', message: err instanceof Error ? err.message : String(err) },
+			{ err: "server_error", message: err instanceof Error ? err.message : String(err) },
 			{ status: 500 }
 		);
 	}

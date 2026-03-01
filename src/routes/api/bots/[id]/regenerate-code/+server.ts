@@ -1,12 +1,12 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import DiscordOauth2 from 'discord-oauth2';
-import { getDb } from '$lib/db';
-import { Bots } from '$lib/db/schema';
-import { eq, or } from 'drizzle-orm';
-import SendLog from '@/bot/log';
-import getAvatarURL from '@/lib/get-avatar-url';
-import { env } from '$env/dynamic/private';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import DiscordOauth2 from "discord-oauth2";
+import { getDb } from "$lib/db";
+import { Bots } from "$lib/db/schema";
+import { eq, or } from "drizzle-orm";
+import SendLog from "@/bot/log";
+import getAvatarURL from "@/lib/get-avatar-url";
+import { env } from "$env/dynamic/private";
 
 /**
  * POST /api/bots/[id]/regenerate-code
@@ -39,18 +39,18 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		// Auth: resolve access token from all the usual places
 		// ------------------------------------------------------------------
 		const url = new URL(request.url);
-		const paramKey = url.searchParams.get('key');
-		const headerAuth = request.headers.get('authorization') ?? request.headers.get('RDL-key');
-		const cookieKey = cookies.get('key');
+		const paramKey = url.searchParams.get("key");
+		const headerAuth = request.headers.get("authorization") ?? request.headers.get("RDL-key");
+		const cookieKey = cookies.get("key");
 
 		const key = paramKey ?? headerAuth ?? cookieKey;
 		if (!key) {
-			return json({ err: 'not_logged_in' }, { status: 400 });
+			return json({ err: "not_logged_in" }, { status: 400 });
 		}
 
 		const botId = params.id?.trim();
 		if (!botId) {
-			return json({ err: 'missing_bot_id' }, { status: 400 });
+			return json({ err: "missing_bot_id" }, { status: 400 });
 		}
 
 		// ------------------------------------------------------------------
@@ -59,19 +59,23 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		const oauth2 = new DiscordOauth2({
 			clientId: env.DISCORD_BOT_ID,
 			clientSecret: env.DISCORD_SECRET,
-			redirectUri: (env.DOMAIN ?? 'http://localhost:5173') + '/api/auth'
+			redirectUri: (env.DOMAIN ?? "http://localhost:5173") + "/api/auth"
 		});
 
 		let userData: any;
 		try {
 			userData = await oauth2.getUser(String(key));
 		} catch {
-			try { cookies.delete('key', { path: '/' }); } catch { /* noop */ }
-			return json({ err: 'invalid_key' }, { status: 400 });
+			try {
+				cookies.delete("key", { path: "/" });
+			} catch {
+				/* noop */
+			}
+			return json({ err: "invalid_key" }, { status: 400 });
 		}
 
 		if (!userData?.id) {
-			return json({ err: 'invalid_key' }, { status: 400 });
+			return json({ err: "invalid_key" }, { status: 400 });
 		}
 
 		// ------------------------------------------------------------------
@@ -92,7 +96,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 			.limit(1);
 
 		if (!rows || rows.length === 0) {
-			return json({ err: 'no_bot_found' }, { status: 404 });
+			return json({ err: "no_bot_found" }, { status: 404 });
 		}
 
 		const bot = rows[0];
@@ -102,14 +106,14 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		// ------------------------------------------------------------------
 		let owners: string[] = [];
 		try {
-			const parsed = JSON.parse((bot.owners as string) ?? '[]');
+			const parsed = JSON.parse((bot.owners as string) ?? "[]");
 			owners = Array.isArray(parsed) ? parsed : [];
 		} catch {
 			owners = [];
 		}
 
 		if (!owners.includes(userData.id)) {
-			return json({ err: 'not_owner' }, { status: 403 });
+			return json({ err: "not_owner" }, { status: 403 });
 		}
 
 		// ------------------------------------------------------------------
@@ -122,8 +126,8 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		try {
 			await db.update(Bots).set({ code: newCode }).where(eq(Bots.id, bot.id));
 		} catch (err) {
-			console.error('[regenerate-code] DB update failed for bot', bot.id, err);
-			return json({ err: 'db_update_failed' }, { status: 500 });
+			console.error("[regenerate-code] DB update failed for bot", bot.id, err);
+			return json({ err: "db_update_failed" }, { status: 500 });
 		}
 
 		// ------------------------------------------------------------------
@@ -132,27 +136,27 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		try {
 			await SendLog({
 				env: {
-					DOMAIN: env.DOMAIN ?? '',
-					FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? '',
-					LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? '',
-					DISCORD_TOKEN: env.DISCORD_TOKEN ?? ''
+					DOMAIN: env.DOMAIN ?? "",
+					FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? "",
+					LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? "",
+					DISCORD_TOKEN: env.DISCORD_TOKEN ?? ""
 				},
 				body: {
 					title: `Bot ${bot.username}#${bot.discriminator} — API token regenerated`,
 					desc: [
 						`The API token (bot code) for **${bot.username}** (\`${bot.id}\`) was regenerated by <@!${userData.id}>.`,
-						'',
-						'The previous token has been **immediately invalidated**. Any integrations using the old token (webhooks, server count updates) must be updated.'
-					].join('\n'),
-					color: '#FEE75C',
-					img: getAvatarURL(bot.id, bot.avatar ?? '0'),
-					url: `${env.DOMAIN ?? ''}/bots/${bot.id}`,
+						"",
+						"The previous token has been **immediately invalidated**. Any integrations using the old token (webhooks, server count updates) must be updated."
+					].join("\n"),
+					color: "#FEE75C",
+					img: getAvatarURL(bot.id, bot.avatar ?? "0"),
+					url: `${env.DOMAIN ?? ""}/bots/${bot.id}`,
 					owners
 				}
 			});
 		} catch (logErr) {
 			// Non-fatal — the DB write already succeeded.
-			console.warn('[regenerate-code] SendLog failed (non-fatal):', logErr);
+			console.warn("[regenerate-code] SendLog failed (non-fatal):", logErr);
 		}
 
 		console.log(`[regenerate-code] New code issued for bot ${bot.id} by user ${userData.id}`);
@@ -161,9 +165,9 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		// subsequent reads of the edit page will show it blurred as usual.
 		return json({ success: true, code: newCode }, { status: 200 });
 	} catch (err) {
-		console.error('[regenerate-code] Unexpected error:', err);
+		console.error("[regenerate-code] Unexpected error:", err);
 		return json(
-			{ err: 'server_error', message: err instanceof Error ? err.message : String(err) },
+			{ err: "server_error", message: err instanceof Error ? err.message : String(err) },
 			{ status: 500 }
 		);
 	}

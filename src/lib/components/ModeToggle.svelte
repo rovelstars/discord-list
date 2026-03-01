@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy } from "svelte";
 
 	// Theme can be 'light' | 'dark' | 'system'
-	let theme: 'light' | 'dark' | 'system' = 'system';
+	let theme: "light" | "dark" | "system" = "system";
 	let open = false;
 
 	// Media query for system preference
@@ -10,7 +10,7 @@
 
 	function prefersDark() {
 		try {
-			return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
 		} catch {
 			return false;
 		}
@@ -18,18 +18,18 @@
 
 	// Apply the theme to document.documentElement
 	function applyTheme(t: typeof theme) {
-		const isDark = t === 'dark' || (t === 'system' && prefersDark());
+		const isDark = t === "dark" || (t === "system" && prefersDark());
 		if (isDark) {
-			document.documentElement.classList.add('dark');
+			document.documentElement.classList.add("dark");
 		} else {
-			document.documentElement.classList.remove('dark');
+			document.documentElement.classList.remove("dark");
 		}
 	}
 
 	// Persist selection
 	function persistTheme(t: typeof theme) {
 		try {
-			localStorage.setItem('theme', t);
+			localStorage.setItem("theme", t);
 		} catch {}
 		// Also write to a cookie so the server can read it on SSR
 		try {
@@ -50,47 +50,47 @@
 	// Initialize theme from localStorage or system
 	onMount(() => {
 		try {
-			const stored = localStorage.getItem('theme');
-			if (stored === 'light' || stored === 'dark' || stored === 'system') {
+			const stored = localStorage.getItem("theme");
+			if (stored === "light" || stored === "dark" || stored === "system") {
 				theme = stored;
 			} else {
 				// default to system to be non-intrusive
-				theme = 'system';
+				theme = "system";
 			}
 		} catch {
-			theme = 'system';
+			theme = "system";
 		}
 
 		applyTheme(theme);
 
 		// Listen to system changes when using 'system' theme
 		try {
-			mql = window.matchMedia('(prefers-color-scheme: dark)');
+			mql = window.matchMedia("(prefers-color-scheme: dark)");
 			const handler = () => {
-				if (theme === 'system') applyTheme('system');
+				if (theme === "system") applyTheme("system");
 			};
-			mql.addEventListener ? mql.addEventListener('change', handler) : mql.addListener(handler);
+			mql.addEventListener ? mql.addEventListener("change", handler) : mql.addListener(handler);
 
 			// Close menu on outside click
 			const onDocClick = (e: MouseEvent) => {
 				const el = e.target as HTMLElement;
 				// If the click isn't inside our component area (we'll mark the root by id),
 				// then close the menu. We rely on bubbling to document.
-				const toggle = document.getElementById('mode-toggle-root');
+				const toggle = document.getElementById("mode-toggle-root");
 				if (!toggle) return;
 				if (!toggle.contains(el)) {
 					open = false;
 				}
 			};
-			document.addEventListener('click', onDocClick);
+			document.addEventListener("click", onDocClick);
 
 			onDestroy(() => {
 				if (mql) {
 					mql.removeEventListener
-						? mql.removeEventListener('change', handler)
+						? mql.removeEventListener("change", handler)
 						: mql.removeListener(handler);
 				}
-				document.removeEventListener('click', onDocClick);
+				document.removeEventListener("click", onDocClick);
 			});
 		} catch {
 			// ignore
@@ -99,9 +99,9 @@
 
 	// helpers for aria / labels
 	const labelMap = {
-		light: 'Light',
-		dark: 'Dark',
-		system: 'System'
+		light: "Light",
+		dark: "Dark",
+		system: "System"
 	} as const;
 </script>
 
@@ -169,21 +169,21 @@
 				<button
 					class="block w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
 					role="menuitem"
-					on:click={() => setTheme('light')}
+					on:click={() => setTheme("light")}
 				>
 					Light
 				</button>
 				<button
 					class="block w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
 					role="menuitem"
-					on:click={() => setTheme('dark')}
+					on:click={() => setTheme("dark")}
 				>
 					Dark
 				</button>
 				<button
 					class="block w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
 					role="menuitem"
-					on:click={() => setTheme('system')}
+					on:click={() => setTheme("system")}
 				>
 					System
 				</button>

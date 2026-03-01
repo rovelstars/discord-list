@@ -1,6 +1,6 @@
 <script lang="ts">
-	import BotCard from '$lib/components/BotCard.svelte';
-	import SEO from '$lib/components/SEO.svelte';
+	import BotCard from "$lib/components/BotCard.svelte";
+	import SEO from "$lib/components/SEO.svelte";
 
 	export let data: {
 		bots: Array<any>;
@@ -22,14 +22,14 @@
 	function buildHref(overrides: Record<string, string | number | boolean | null>) {
 		const params = new URLSearchParams();
 		const base = { q, limit, offset, new: newFlag, trending, lucky, ...overrides };
-		if (base.q) params.set('q', String(base.q));
-		if (Number(base.limit) !== 20) params.set('limit', String(base.limit));
-		if (Number(base.offset) > 0) params.set('offset', String(base.offset));
-		if (base.new) params.set('new', '');
-		if (base.trending) params.set('trending', '');
-		if (base.lucky) params.set('lucky', '');
+		if (base.q) params.set("q", String(base.q));
+		if (Number(base.limit) !== 20) params.set("limit", String(base.limit));
+		if (Number(base.offset) > 0) params.set("offset", String(base.offset));
+		if (base.new) params.set("new", "");
+		if (base.trending) params.set("trending", "");
+		if (base.lucky) params.set("lucky", "");
 		const qs = params.toString();
-		return '/bots' + (qs ? '?' + qs : '');
+		return "/bots" + (qs ? "?" + qs : "");
 	}
 </script>
 
@@ -162,7 +162,7 @@
 				type="text"
 				name="q"
 				placeholder="Search for bots..."
-				value={q ?? ''}
+				value={q ?? ""}
 				class="border border-neutral-400 dark:border-neutral-700 rounded-md p-2 w-full md:w-1/2 bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-primary"
 			/>
 			<button

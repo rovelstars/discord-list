@@ -1,22 +1,22 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { Marked } from 'marked';
-	import { markedHighlight } from 'marked-highlight';
-	import hljs from 'highlight.js';
-	import Input from '$lib/components/ui/Input.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
-	import Textarea from '$lib/components/ui/textarea/Textarea.svelte';
-	import getAvatarURL from '$lib/get-avatar-url';
-	import SEO from '$lib/components/SEO.svelte';
+	import { goto } from "$app/navigation";
+	import { Marked } from "marked";
+	import { markedHighlight } from "marked-highlight";
+	import hljs from "highlight.js";
+	import Input from "$lib/components/ui/Input.svelte";
+	import Label from "$lib/components/ui/Label.svelte";
+	import Textarea from "$lib/components/ui/textarea/Textarea.svelte";
+	import getAvatarURL from "$lib/get-avatar-url";
+	import SEO from "$lib/components/SEO.svelte";
 
 	// ── Markdown renderer (mirrors +page.server.ts on the real bot page) ───────
 	// Instantiated once; shared across all reactive calls.
 	const marked = new Marked(
 		markedHighlight({
-			emptyLangClass: 'hljs',
-			langPrefix: 'hljs language-',
+			emptyLangClass: "hljs",
+			langPrefix: "hljs language-",
 			highlight(code, lang) {
-				const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+				const language = hljs.getLanguage(lang) ? lang : "plaintext";
 				return hljs.highlight(code, { language }).value;
 			}
 		})
@@ -29,16 +29,16 @@
 	 * Returns an empty string on error so the preview degrades gracefully.
 	 */
 	function renderMarkdown(raw: string): string {
-		if (!raw) return '';
+		if (!raw) return "";
 		try {
 			// marked.parse() returns string | Promise<string> depending on the
 			// version; in marked v5+ with no async extensions it is always sync.
-			const result = marked.parse(raw.replace(/&gt;+/g, '>'));
+			const result = marked.parse(raw.replace(/&gt;+/g, ">"));
 			// Guard: if somehow a Promise slips through, return empty string.
-			if (typeof result !== 'string') return '';
+			if (typeof result !== "string") return "";
 			return result;
 		} catch {
-			return '';
+			return "";
 		}
 	}
 
@@ -76,7 +76,7 @@
 
 	// ── Form state (pre-filled from server data) ───────────────────────────────
 	let lib = bot.lib;
-	let owners = bot.owners.join(', ');
+	let owners = bot.owners.join(", ");
 	let prefix = bot.prefix;
 	let short = bot.short;
 	let desc = bot.desc;
@@ -87,14 +87,14 @@
 	let bg = bot.bg;
 	let donate = bot.donate;
 	let invite = bot.invite;
-	let slug = bot.slug !== bot.id ? bot.slug : '';
+	let slug = bot.slug !== bot.id ? bot.slug : "";
 	let opted_coins = bot.opted_coins;
 
 	// ── UI state ───────────────────────────────────────────────────────────────
-	let activeTab: 'edit' | 'preview' = 'edit';
+	let activeTab: "edit" | "preview" = "edit";
 	let submitting = false;
-	let successMsg = '';
-	let errorMsg = '';
+	let successMsg = "";
+	let errorMsg = "";
 
 	// ── Bot code reveal / copy state ──────────────────────────────────────────
 	let codeRevealed = false;
@@ -115,7 +115,7 @@
 			setTimeout(() => (codeCopied = false), 2000);
 		} catch {
 			// fallback: select the text
-			const el = document.getElementById('bot-code-text') as HTMLElement | null;
+			const el = document.getElementById("bot-code-text") as HTMLElement | null;
 			if (el) {
 				const range = document.createRange();
 				range.selectNodeContents(el);
@@ -130,43 +130,43 @@
 	// 'confirm'   — inline confirmation prompt is visible
 	// 'loading'   — API call in flight
 	// 'done'      — regeneration succeeded, new code is shown unblurred with a warning
-	type RegenState = 'idle' | 'confirm' | 'loading' | 'done';
-	let regenState: RegenState = 'idle';
-	let regenError = '';
+	type RegenState = "idle" | "confirm" | "loading" | "done";
+	let regenState: RegenState = "idle";
+	let regenError = "";
 
 	function requestRegenConfirm() {
-		regenState = 'confirm';
-		regenError = '';
+		regenState = "confirm";
+		regenError = "";
 	}
 
 	function cancelRegen() {
-		regenState = 'idle';
-		regenError = '';
+		regenState = "idle";
+		regenError = "";
 	}
 
 	async function confirmRegen() {
-		regenState = 'loading';
-		regenError = '';
+		regenState = "loading";
+		regenError = "";
 
 		try {
 			const res = await fetch(`/api/bots/${encodeURIComponent(bot.id)}/regenerate-code`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' }
+				method: "POST",
+				headers: { "Content-Type": "application/json" }
 			});
 
 			const data = await res.json();
 
 			if (!res.ok || data.err) {
 				const errMap: Record<string, string> = {
-					not_logged_in: 'You must be logged in.',
-					invalid_key: 'Your session is invalid. Please log in again.',
-					not_owner: 'You are not an owner of this bot.',
-					no_bot_found: 'Bot not found.',
-					db_update_failed: 'Database error — please try again.',
-					server_error: 'An unexpected server error occurred.'
+					not_logged_in: "You must be logged in.",
+					invalid_key: "Your session is invalid. Please log in again.",
+					not_owner: "You are not an owner of this bot.",
+					no_bot_found: "Bot not found.",
+					db_update_failed: "Database error — please try again.",
+					server_error: "An unexpected server error occurred."
 				};
-				regenError = errMap[data.err] ?? data.err ?? 'Unknown error.';
-				regenState = 'idle';
+				regenError = errMap[data.err] ?? data.err ?? "Unknown error.";
+				regenState = "idle";
 				return;
 			}
 
@@ -174,10 +174,10 @@
 			// user can immediately see and copy it.
 			currentCode = data.code;
 			codeRevealed = true;
-			regenState = 'done';
+			regenState = "done";
 		} catch {
-			regenError = 'Network error — please try again.';
-			regenState = 'idle';
+			regenError = "Network error — please try again.";
+			regenState = "idle";
 		}
 	}
 
@@ -186,8 +186,8 @@
 	let fieldErrors: FieldErrors = {};
 
 	function clearErrors() {
-		errorMsg = '';
-		successMsg = '';
+		errorMsg = "";
+		successMsg = "";
 		fieldErrors = {};
 	}
 
@@ -195,36 +195,36 @@
 	function validate(): boolean {
 		const errs: FieldErrors = {};
 
-		if (lib && lib.length > 20) errs.lib = 'Library must be at most 20 characters.';
+		if (lib && lib.length > 20) errs.lib = "Library must be at most 20 characters.";
 
 		const ownerList = owners
-			.split(',')
+			.split(",")
 			.map((o) => o.trim())
 			.filter(Boolean);
-		if (ownerList.length === 0) errs.owners = 'At least one owner is required.';
-		if (ownerList.length > 10) errs.owners = 'At most 10 owners are allowed.';
+		if (ownerList.length === 0) errs.owners = "At least one owner is required.";
+		if (ownerList.length > 10) errs.owners = "At most 10 owners are allowed.";
 
 		// Only the main owner (index 0) can change the owners list.
 		// If owners changed and current user is not bot.owners[0], show a warning
 		// (the server will enforce this too, but give early feedback).
-		const ownersChanged = ownerList.join(',') !== bot.owners.join(',');
+		const ownersChanged = ownerList.join(",") !== bot.owners.join(",");
 		if (ownersChanged && bot.owners[0] !== user.id) {
-			errs.owners = 'Only the main owner can modify the owners list.';
+			errs.owners = "Only the main owner can modify the owners list.";
 		}
 		if (ownersChanged && ownerList[0] !== user.id) {
-			errs.owners = 'You must remain the first (main) owner.';
+			errs.owners = "You must remain the first (main) owner.";
 		}
 
-		if (prefix && prefix.length > 20) errs.prefix = 'Prefix must be at most 20 characters.';
+		if (prefix && prefix.length > 20) errs.prefix = "Prefix must be at most 20 characters.";
 
 		if (!short || short.length < 11)
-			errs.short = 'Short description must be at least 11 characters.';
-		if (short.length > 150) errs.short = 'Short description must be at most 150 characters.';
+			errs.short = "Short description must be at least 11 characters.";
+		if (short.length > 150) errs.short = "Short description must be at most 150 characters.";
 
-		if (!desc || desc.length < 100) errs.desc = 'Description must be at least 100 characters.';
-		if (desc.length > 10000) errs.desc = 'Description must be at most 10,000 characters.';
+		if (!desc || desc.length < 100) errs.desc = "Description must be at least 100 characters.";
+		if (desc.length > 10000) errs.desc = "Description must be at most 10,000 characters.";
 
-		if (!invite.trim()) errs.invite = 'Invite URL is required.';
+		if (!invite.trim()) errs.invite = "Invite URL is required.";
 
 		fieldErrors = errs;
 		return Object.keys(errs).length === 0;
@@ -238,7 +238,7 @@
 		submitting = true;
 
 		const ownerList = owners
-			.split(',')
+			.split(",")
 			.map((o) => o.trim())
 			.filter(Boolean);
 
@@ -261,8 +261,8 @@
 
 		try {
 			const res = await fetch(`/api/bots/${encodeURIComponent(bot.id)}/edit`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(body)
 			});
 
@@ -270,33 +270,33 @@
 
 			if (responseData.err) {
 				const errMap: Record<string, string> = {
-					slug_taken: 'Vanity URL name is already taken. Please choose another one.',
-					main_owner_cant_be_changed: 'You cannot change who the main owner is.',
-					not_main_owner: 'Only the main owner can modify the owners list.',
-					owners_not_array: 'Owners must be a list of IDs.',
-					invalid_webhook: 'Webhook URL is invalid.',
-					invalid_source_repo: 'Source repository URL is invalid.',
-					invalid_website: 'Website URL is invalid.',
-					invalid_donate: 'Donate URL is invalid.',
-					invalid_bg: 'Background image URL is invalid.',
-					invalid_invite: 'Invite URL is invalid.',
-					invalid_support: 'Support server invite is invalid.',
-					expired_support: 'Support server invite has expired or is unknown.',
-					lib_too_long: 'Library name must be 20 characters or fewer.',
-					not_logged_in: 'You must be logged in.',
-					invalid_key: 'Your session is invalid. Please log in again.',
-					not_owner: 'You are not an owner of this bot.',
-					no_bot_found: 'Bot not found.',
-					db_update_failed: 'Database error — please try again.'
+					slug_taken: "Vanity URL name is already taken. Please choose another one.",
+					main_owner_cant_be_changed: "You cannot change who the main owner is.",
+					not_main_owner: "Only the main owner can modify the owners list.",
+					owners_not_array: "Owners must be a list of IDs.",
+					invalid_webhook: "Webhook URL is invalid.",
+					invalid_source_repo: "Source repository URL is invalid.",
+					invalid_website: "Website URL is invalid.",
+					invalid_donate: "Donate URL is invalid.",
+					invalid_bg: "Background image URL is invalid.",
+					invalid_invite: "Invite URL is invalid.",
+					invalid_support: "Support server invite is invalid.",
+					expired_support: "Support server invite has expired or is unknown.",
+					lib_too_long: "Library name must be 20 characters or fewer.",
+					not_logged_in: "You must be logged in.",
+					invalid_key: "Your session is invalid. Please log in again.",
+					not_owner: "You are not an owner of this bot.",
+					no_bot_found: "Bot not found.",
+					db_update_failed: "Database error — please try again."
 				};
 				errorMsg = errMap[responseData.err] ?? responseData.err;
 			} else {
-				successMsg = 'Bot updated successfully!';
+				successMsg = "Bot updated successfully!";
 				// Redirect to bot page after a short delay so the user sees the success message.
 				setTimeout(() => goto(`/bots/${slug || bot.id}`), 1200);
 			}
 		} catch {
-			errorMsg = 'Network error — please try again.';
+			errorMsg = "Network error — please try again.";
 		} finally {
 			submitting = false;
 		}
@@ -304,8 +304,8 @@
 
 	// ── Avatar ─────────────────────────────────────────────────────────────────
 	$: avatarSrc = bot.avatar
-		? getAvatarURL(bot.id, bot.avatar, 256).replace('.png', '.webp')
-		: getAvatarURL(bot.id, '0');
+		? getAvatarURL(bot.id, bot.avatar, 256).replace(".png", ".webp")
+		: getAvatarURL(bot.id, "0");
 
 	// ── Live preview: re-render markdown whenever desc changes ─────────────────
 	$: descHtml = renderMarkdown(desc);
@@ -343,14 +343,14 @@
 			<button
 				class="tab-btn flex-1 py-5 text-2xl font-bold font-heading relative z-10
 					{activeTab === 'edit' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}"
-				on:click={() => (activeTab = 'edit')}
+				on:click={() => (activeTab = "edit")}
 			>
 				Editing {bot.username}#{bot.discriminator}
 			</button>
 			<button
 				class="tab-btn flex-1 py-5 text-2xl font-bold font-heading relative z-10
 					{activeTab === 'preview' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}"
-				on:click={() => (activeTab = 'preview')}
+				on:click={() => (activeTab = "preview")}
 			>
 				Preview
 			</button>
@@ -358,7 +358,7 @@
 	</div>
 
 	<!-- ── Edit tab ──────────────────────────────────────────────────────────── -->
-	{#if activeTab === 'edit'}
+	{#if activeTab === "edit"}
 		<div class="bg-card p-6 rounded-xl space-y-8">
 			<!-- Bot identity header -->
 			<div class="flex flex-col items-center gap-2">
@@ -568,13 +568,13 @@
 									class="font-mono text-sm px-3 py-2 rounded-md border border-input bg-background break-all transition-all duration-200 select-none
 										{codeRevealed ? '' : 'blur-sm'}"
 								>
-									{currentCode || '(not set)'}
+									{currentCode || "(not set)"}
 								</p>
 								<!-- Reveal toggle -->
 								<button
 									type="button"
 									on:click={toggleCodeReveal}
-									aria-label={codeRevealed ? 'Hide bot code' : 'Show bot code'}
+									aria-label={codeRevealed ? "Hide bot code" : "Show bot code"}
 									class="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
 								>
 									{#if codeRevealed}
@@ -663,7 +663,7 @@
 					</div>
 
 					<!-- Regenerate section -->
-					{#if regenState === 'done'}
+					{#if regenState === "done"}
 						<div
 							class="rounded-md bg-yellow-500/10 border border-yellow-500/40 px-4 py-3 space-y-1"
 						>
@@ -681,7 +681,7 @@
 						<p class="text-sm text-destructive">{regenError}</p>
 					{/if}
 
-					{#if regenState === 'confirm'}
+					{#if regenState === "confirm"}
 						<!-- Inline confirmation prompt -->
 						<div
 							class="rounded-md border border-destructive/50 bg-destructive/5 px-4 py-3 space-y-3"
@@ -712,10 +712,10 @@
 						<button
 							type="button"
 							on:click={requestRegenConfirm}
-							disabled={regenState === 'loading'}
+							disabled={regenState === "loading"}
 							class="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-destructive/60 text-destructive text-sm font-medium hover:bg-destructive/10 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
 						>
-							{#if regenState === 'loading'}
+							{#if regenState === "loading"}
 								<svg class="w-4 h-4 animate-spin shrink-0" viewBox="0 0 24 24" fill="none">
 									<circle
 										class="opacity-25"
@@ -836,7 +836,7 @@
 						alt="Background preview"
 						class="w-full h-full object-cover"
 						on:error={(e) => {
-							(e.target as HTMLImageElement).style.display = 'none';
+							(e.target as HTMLImageElement).style.display = "none";
 						}}
 					/>
 				</div>
@@ -918,7 +918,7 @@
 		transition: color 150ms ease;
 	}
 
-	input[type='radio'].radio {
+	input[type="radio"].radio {
 		appearance: none;
 		-webkit-appearance: none;
 		width: 1.1rem;
@@ -934,13 +934,13 @@
 			background-color 150ms ease;
 	}
 
-	input[type='radio'].radio:checked {
+	input[type="radio"].radio:checked {
 		border-color: hsl(var(--primary));
 		background-color: hsl(var(--primary));
 		box-shadow: inset 0 0 0 3px hsl(var(--card));
 	}
 
-	input[type='radio'].radio:focus-visible {
+	input[type="radio"].radio:focus-visible {
 		outline: 2px solid hsl(var(--ring));
 		outline-offset: 2px;
 	}

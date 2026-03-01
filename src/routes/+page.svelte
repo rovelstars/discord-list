@@ -1,6 +1,6 @@
 <script>
-	import BotCard from '$lib/components/BotCard.svelte';
-	import SEO from '$lib/components/SEO.svelte';
+	import BotCard from "$lib/components/BotCard.svelte";
+	import SEO from "$lib/components/SEO.svelte";
 
 	export let data;
 

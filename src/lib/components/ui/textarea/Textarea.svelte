@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from "svelte";
 
 	/**
 	 * Textarea.svelte
@@ -21,8 +21,8 @@
 	 *  <Textarea bind:value rows={6} placeholder="Write..." autoGrow />
 	 */
 
-	export let value: string = '';
-	export let placeholder: string = '';
+	export let value: string = "";
+	export let placeholder: string = "";
 	export let rows: number = 4;
 	export let id: string | undefined = undefined;
 	export let name: string | undefined = undefined;
@@ -31,7 +31,7 @@
 	export let maxlength: number | undefined = undefined;
 	export let minlength: number | undefined = undefined;
 	export let autoGrow: boolean = false;
-	export let classId: string = '';
+	export let classId: string = "";
 
 	const dispatch = createEventDispatcher();
 
@@ -41,21 +41,21 @@
 		const t = e.currentTarget as HTMLTextAreaElement;
 		value = t.value;
 		if (autoGrow) adjustHeight();
-		dispatch('input', { value });
+		dispatch("input", { value });
 	}
 
 	function onChange(e: Event) {
 		const t = e.currentTarget as HTMLTextAreaElement;
-		dispatch('change', { value: t.value });
+		dispatch("change", { value: t.value });
 	}
 
 	function adjustHeight() {
 		if (!textareaEl) return;
 		// reset height to measure scrollHeight correctly
-		textareaEl.style.height = 'auto';
+		textareaEl.style.height = "auto";
 		const scroll = textareaEl.scrollHeight;
 		// optional small padding to avoid scrollbar appearing
-		textareaEl.style.height = Math.max(scroll, 40) + 'px';
+		textareaEl.style.height = Math.max(scroll, 40) + "px";
 	}
 
 	onMount(() => {

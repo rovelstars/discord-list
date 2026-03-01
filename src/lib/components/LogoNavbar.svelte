@@ -1,8 +1,8 @@
 <script lang="ts">
 	// Simple Svelte port of the old LogoNavbar component.
 	// Shows a static SVG by default and swaps to an animated GIF on hover/focus.
-	let logo = '/assets/img/bot/logo.svg';
-	let pet = '/assets/img/bot/pet.gif';
+	let logo = "/assets/img/bot/logo.svg";
+	let pet = "/assets/img/bot/pet.gif";
 	let src = logo;
 
 	function handleMouseEnter() {

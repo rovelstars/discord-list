@@ -1,8 +1,8 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import DiscordOauth2 from 'discord-oauth2';
-import { env } from '$env/dynamic/private';
-import { getCommentById, updateComment, deleteComment } from '$lib/db/queries';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import DiscordOauth2 from "discord-oauth2";
+import { env } from "$env/dynamic/private";
+import { getCommentById, updateComment, deleteComment } from "$lib/db/queries";
 
 /**
  * Resolve the caller's Discord access token from the request.
@@ -13,10 +13,10 @@ function resolveKey(
 ): string | null {
 	const url = new URL(request.url);
 	return (
-		url.searchParams.get('key') ??
-		request.headers.get('authorization') ??
-		request.headers.get('RDL-key') ??
-		cookies.get('key') ??
+		url.searchParams.get("key") ??
+		request.headers.get("authorization") ??
+		request.headers.get("RDL-key") ??
+		cookies.get("key") ??
 		null
 	);
 }
@@ -28,7 +28,7 @@ async function getDiscordUser(key: string): Promise<{ id: string; username: stri
 	const oauth = new DiscordOauth2({
 		clientId: env.DISCORD_BOT_ID,
 		clientSecret: env.DISCORD_SECRET,
-		redirectUri: (env.DOMAIN ?? 'http://localhost:5173') + '/api/auth'
+		redirectUri: (env.DOMAIN ?? "http://localhost:5173") + "/api/auth"
 	});
 	try {
 		return await oauth.getUser(key);
@@ -50,28 +50,28 @@ async function getDiscordUser(key: string): Promise<{ id: string; username: stri
 export const PATCH: RequestHandler = async ({ request, params, cookies }) => {
 	const { id: botId, commentId } = params;
 	if (!botId || !commentId) {
-		return json({ err: 'missing_params' }, { status: 400 });
+		return json({ err: "missing_params" }, { status: 400 });
 	}
 
 	// ── Auth ──────────────────────────────────────────────────────────────────
 	const key = resolveKey(request, cookies);
-	if (!key) return json({ err: 'not_logged_in' }, { status: 401 });
+	if (!key) return json({ err: "not_logged_in" }, { status: 401 });
 
 	const discordUser = await getDiscordUser(key);
-	if (!discordUser) return json({ err: 'invalid_key' }, { status: 401 });
+	if (!discordUser) return json({ err: "invalid_key" }, { status: 401 });
 
 	// ── Fetch comment ─────────────────────────────────────────────────────────
 	const comment = await getCommentById(commentId);
-	if (!comment) return json({ err: 'not_found' }, { status: 404 });
+	if (!comment) return json({ err: "not_found" }, { status: 404 });
 
 	// Confirm the comment belongs to this bot
 	if (comment.bot_id !== botId) {
-		return json({ err: 'not_found' }, { status: 404 });
+		return json({ err: "not_found" }, { status: 404 });
 	}
 
 	// Only the author may edit
 	if (comment.user_id !== discordUser.id) {
-		return json({ err: 'forbidden' }, { status: 403 });
+		return json({ err: "forbidden" }, { status: 403 });
 	}
 
 	// ── Parse body ────────────────────────────────────────────────────────────
@@ -79,16 +79,16 @@ export const PATCH: RequestHandler = async ({ request, params, cookies }) => {
 	try {
 		body = await request.json();
 	} catch {
-		return json({ err: 'invalid_json' }, { status: 400 });
+		return json({ err: "invalid_json" }, { status: 400 });
 	}
 
 	const patch: { ratingRaw?: number | null; text?: string | null } = {};
 
 	// Rating can only be changed on top-level comments (parent_id === null)
-	if ('rating' in body) {
+	if ("rating" in body) {
 		if (comment.parent_id !== null) {
 			return json(
-				{ err: 'rating_on_reply', message: 'Replies cannot carry a rating.' },
+				{ err: "rating_on_reply", message: "Replies cannot carry a rating." },
 				{ status: 400 }
 			);
 		}
@@ -96,15 +96,15 @@ export const PATCH: RequestHandler = async ({ request, params, cookies }) => {
 		if (ratingRaw != null) {
 			if (!isFinite(ratingRaw) || ratingRaw < 0.5 || ratingRaw > 5) {
 				return json(
-					{ err: 'invalid_rating', message: 'Rating must be between 0.5 and 5.0.' },
+					{ err: "invalid_rating", message: "Rating must be between 0.5 and 5.0." },
 					{ status: 400 }
 				);
 			}
 			if (Math.round(ratingRaw * 10) !== ratingRaw * 10) {
 				return json(
 					{
-						err: 'invalid_rating',
-						message: 'Rating may have at most one decimal place (e.g. 4.3).'
+						err: "invalid_rating",
+						message: "Rating may have at most one decimal place (e.g. 4.3)."
 					},
 					{ status: 400 }
 				);
@@ -112,34 +112,36 @@ export const PATCH: RequestHandler = async ({ request, params, cookies }) => {
 		} else {
 			// Clearing the rating on a top-level comment is not allowed
 			return json(
-				{ err: 'rating_required', message: 'Top-level reviews must have a rating.' },
+				{ err: "rating_required", message: "Top-level reviews must have a rating." },
 				{ status: 400 }
 			);
 		}
 		patch.ratingRaw = ratingRaw;
 	}
 
-	if ('text' in body) {
+	if ("text" in body) {
 		const raw = body.text;
-		patch.text =
-			typeof raw === 'string' ? (raw.trim().slice(0, 2000) || null) : null;
+		patch.text = typeof raw === "string" ? raw.trim().slice(0, 2000) || null : null;
 
 		// Replies must keep non-empty text
 		if (comment.parent_id !== null && !patch.text) {
 			return json(
-				{ err: 'text_required', message: 'Reply text cannot be empty.' },
+				{ err: "text_required", message: "Reply text cannot be empty." },
 				{ status: 400 }
 			);
 		}
 	}
 
 	if (Object.keys(patch).length === 0) {
-		return json({ err: 'no_changes', message: 'No fields to update were provided.' }, { status: 400 });
+		return json(
+			{ err: "no_changes", message: "No fields to update were provided." },
+			{ status: 400 }
+		);
 	}
 
 	// ── Update ────────────────────────────────────────────────────────────────
 	const updated = await updateComment({ id: commentId, ...patch });
-	if (!updated) return json({ err: 'update_failed' }, { status: 500 });
+	if (!updated) return json({ err: "update_failed" }, { status: 500 });
 
 	return json({ comment: updated }, { status: 200 });
 };
@@ -154,26 +156,26 @@ export const PATCH: RequestHandler = async ({ request, params, cookies }) => {
 export const DELETE: RequestHandler = async ({ request, params, cookies }) => {
 	const { id: botId, commentId } = params;
 	if (!botId || !commentId) {
-		return json({ err: 'missing_params' }, { status: 400 });
+		return json({ err: "missing_params" }, { status: 400 });
 	}
 
 	// ── Auth ──────────────────────────────────────────────────────────────────
 	const key = resolveKey(request, cookies);
-	if (!key) return json({ err: 'not_logged_in' }, { status: 401 });
+	if (!key) return json({ err: "not_logged_in" }, { status: 401 });
 
 	const discordUser = await getDiscordUser(key);
-	if (!discordUser) return json({ err: 'invalid_key' }, { status: 401 });
+	if (!discordUser) return json({ err: "invalid_key" }, { status: 401 });
 
 	// ── Fetch comment ─────────────────────────────────────────────────────────
 	const comment = await getCommentById(commentId);
-	if (!comment) return json({ err: 'not_found' }, { status: 404 });
+	if (!comment) return json({ err: "not_found" }, { status: 404 });
 
 	if (comment.bot_id !== botId) {
-		return json({ err: 'not_found' }, { status: 404 });
+		return json({ err: "not_found" }, { status: 404 });
 	}
 
 	if (comment.user_id !== discordUser.id) {
-		return json({ err: 'forbidden' }, { status: 403 });
+		return json({ err: "forbidden" }, { status: 403 });
 	}
 
 	// ── Delete ────────────────────────────────────────────────────────────────

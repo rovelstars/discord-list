@@ -11,15 +11,15 @@
 	  noSuffix     – when true, title is used verbatim (home page already has full title)
 -->
 <script lang="ts">
-	const SITE_NAME = 'Rovel Discord List';
-	const SITE_URL = 'https://discord.rovelstars.com';
-	const DEFAULT_IMAGE = '/assets/img/bot/logo-512.png';
-	const TWITTER_HANDLE = '@rovelstars';
-	const THEME_COLOR = '#5865F2';
+	const SITE_NAME = "Rovel Discord List";
+	const SITE_URL = "https://discord.rovelstars.com";
+	const DEFAULT_IMAGE = "/assets/img/bot/logo-512.png";
+	const TWITTER_HANDLE = "@rovelstars";
+	const THEME_COLOR = "#5865F2";
 
 	export let title: string = SITE_NAME;
 	export let description: string =
-		'Imagine a place — where you find everything about Discord! Bots, Servers, Emojis, Templates and more. We got you covered!';
+		"Imagine a place — where you find everything about Discord! Bots, Servers, Emojis, Templates and more. We got you covered!";
 	export let image: string | null = null;
 	export let imageSmall: string | null = null;
 	export let canonical: string | null = null;
@@ -31,13 +31,13 @@
 	// the small square image, then the default logo.
 	$: ogImage = image || imageSmall || DEFAULT_IMAGE;
 	$: isLargeImage = !!image;
-	$: imageType = ogImage.endsWith('.gif')
-		? 'image/gif'
-		: ogImage.endsWith('.png')
-			? 'image/png'
-			: ogImage.endsWith('.svg')
-				? 'image/svg+xml'
-				: 'image/jpeg';
+	$: imageType = ogImage.endsWith(".gif")
+		? "image/gif"
+		: ogImage.endsWith(".png")
+			? "image/png"
+			: ogImage.endsWith(".svg")
+				? "image/svg+xml"
+				: "image/jpeg";
 </script>
 
 <svelte:head>
@@ -78,7 +78,7 @@
 	{/if}
 
 	<!-- Twitter Card (also used by some Discord clients) -->
-	<meta name="twitter:card" content={isLargeImage ? 'summary_large_image' : 'summary'} />
+	<meta name="twitter:card" content={isLargeImage ? "summary_large_image" : "summary"} />
 	<meta name="twitter:site" content={TWITTER_HANDLE} />
 	<meta name="twitter:creator" content={TWITTER_HANDLE} />
 	<meta name="twitter:title" content={fullTitle} />

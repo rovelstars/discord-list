@@ -1,10 +1,10 @@
-import type { PageServerLoad } from './$types';
-import { redirect } from '@sveltejs/kit';
-import DiscordOauth2 from 'discord-oauth2';
-import { env } from '$env/dynamic/private';
+import type { PageServerLoad } from "./$types";
+import { redirect } from "@sveltejs/kit";
+import DiscordOauth2 from "discord-oauth2";
+import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
-	const key = cookies.get('key');
+	const key = cookies.get("key");
 	if (!key) {
 		throw redirect(302, `/login?redirect=${encodeURIComponent(url.pathname + url.search)}`);
 	}
@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 	const oauth = new DiscordOauth2({
 		clientId: env.DISCORD_BOT_ID!,
 		clientSecret: env.DISCORD_SECRET!,
-		redirectUri: (env.DOMAIN ?? 'http://localhost:5173') + '/api/auth'
+		redirectUri: (env.DOMAIN ?? "http://localhost:5173") + "/api/auth"
 	});
 
 	let user: any = null;
@@ -23,8 +23,13 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 	}
 
 	// If ?id is provided, fetch basic bot info from Discord so we can pre-fill the form header
-	const botId = url.searchParams.get('id') ?? null;
-	let botInfo: { id: string; username: string; discriminator: string; avatar: string | null } | null = null;
+	const botId = url.searchParams.get("id") ?? null;
+	let botInfo: {
+		id: string;
+		username: string;
+		discriminator: string;
+		avatar: string | null;
+	} | null = null;
 
 	if (botId) {
 		try {
@@ -36,7 +41,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 				botInfo = {
 					id: data.id,
 					username: data.username,
-					discriminator: data.discriminator ?? '0',
+					discriminator: data.discriminator ?? "0",
 					avatar: data.avatar ?? null
 				};
 			}
@@ -49,7 +54,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 		user: {
 			id: user.id as string,
 			username: (user.global_name ?? user.username) as string,
-			discriminator: (user.discriminator ?? '0') as string,
+			discriminator: (user.discriminator ?? "0") as string,
 			avatar: (user.avatar ?? null) as string | null
 		},
 		botId,

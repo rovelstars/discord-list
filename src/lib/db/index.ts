@@ -12,9 +12,9 @@
  * - Keep this module server-only. Don't import it from client/browser code.
  */
 
-import { createClient } from '@libsql/client';
-import { drizzle } from 'drizzle-orm/libsql';
-import { env } from '$env/dynamic/private';
+import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
+import { env } from "$env/dynamic/private";
 
 type LibSQLClient = ReturnType<typeof createClient>;
 export type DrizzleDb = ReturnType<typeof drizzle>;
@@ -57,15 +57,15 @@ function isConnectionError(err: unknown): boolean {
 	if (!(err instanceof Error)) return false;
 	const msg = err.message.toLowerCase();
 	return (
-		msg.includes('websocket') ||
-		msg.includes('closed') ||
-		msg.includes('connection') ||
-		msg.includes('network') ||
-		msg.includes('stream') ||
-		msg.includes('econnreset') ||
-		msg.includes('socket hang up') ||
-		msg.includes('failed to fetch') ||
-		msg.includes('transport')
+		msg.includes("websocket") ||
+		msg.includes("closed") ||
+		msg.includes("connection") ||
+		msg.includes("network") ||
+		msg.includes("stream") ||
+		msg.includes("econnreset") ||
+		msg.includes("socket hang up") ||
+		msg.includes("failed to fetch") ||
+		msg.includes("transport")
 	);
 }
 
@@ -79,7 +79,7 @@ export function getClient(): LibSQLClient {
 	const { url, token } = readEnv();
 	if (!url) {
 		throw new Error(
-			'Missing database URL. Set ASTRO_DB_REMOTE_URL or DATABASE_URL in server environment.'
+			"Missing database URL. Set ASTRO_DB_REMOTE_URL or DATABASE_URL in server environment."
 		);
 	}
 
@@ -115,13 +115,13 @@ export async function withDb<T>(fn: (db: DrizzleDb) => Promise<T>): Promise<T> {
 		if (!isConnectionError(firstErr)) throw firstErr;
 
 		// Stale connection — reset and retry once with a fresh client
-		console.warn('[db] Connection error detected, reconnecting…', (firstErr as Error).message);
+		console.warn("[db] Connection error detected, reconnecting…", (firstErr as Error).message);
 		resetSingletons();
 
 		try {
 			return await fn(getDb());
 		} catch (secondErr) {
-			console.error('[db] Retry also failed:', secondErr);
+			console.error("[db] Retry also failed:", secondErr);
 			throw secondErr;
 		}
 	}
@@ -133,7 +133,7 @@ export async function withDb<T>(fn: (db: DrizzleDb) => Promise<T>): Promise<T> {
  */
 export async function ping(): Promise<boolean> {
 	try {
-		await withDb((db) => (db as any).run?.('SELECT 1') ?? Promise.resolve());
+		await withDb((db) => (db as any).run?.("SELECT 1") ?? Promise.resolve());
 		return true;
 	} catch {
 		return false;

@@ -1,5 +1,5 @@
-import type OAuth2 from 'discord-oauth2';
-import { assignUserRole } from '$lib/assign-guild-role';
+import type OAuth2 from "discord-oauth2";
+import { assignUserRole } from "$lib/assign-guild-role";
 
 export default async function joinServer({
 	oauth,

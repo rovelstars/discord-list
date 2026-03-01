@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import SEO from '$lib/components/SEO.svelte';
-	import { Bot, Home } from '@lucide/svelte';
+	import { page } from "$app/stores";
+	import SEO from "$lib/components/SEO.svelte";
+	import { Bot, Home } from "@lucide/svelte";
 	$: status = $page.status;
 	$: is404 = status === 404;
 
-	$: title = is404 ? 'Page Not Found' : `Error ${status}`;
+	$: title = is404 ? "Page Not Found" : `Error ${status}`;
 	$: description = is404
 		? "The page you're looking for doesn't exist or has been moved."
-		: 'Something went wrong on our end. Please try again later.';
-	$: icon = is404 ? '/assets/img/bot/404.svg' : '/assets/img/bot/err.svg';
-	$: iconAlt = is404 ? '404 Not Found' : 'Error';
+		: "Something went wrong on our end. Please try again later.";
+	$: icon = is404 ? "/assets/img/bot/404.svg" : "/assets/img/bot/err.svg";
+	$: iconAlt = is404 ? "404 Not Found" : "Error";
 </script>
 
 <SEO {title} {description} imageSmall="/assets/img/bot/logo-512.png" />

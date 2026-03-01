@@ -1,16 +1,16 @@
 // discord-list/src/routes/api/bots/[id]/edit/+server.ts
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import DiscordOauth2 from 'discord-oauth2';
-import { getDb } from '$lib/db';
-import { Bots, Users } from '$lib/db/schema';
-import { eq, or } from 'drizzle-orm';
-import SendLog from '@/bot/log';
-import { formSchema as BotFormSchema } from '$lib/components/bot-form-schema';
-import isValidHttpUrl from '$lib/functions/valid-url';
-import UserAccountFetch from '$lib/functions/user-bot';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import DiscordOauth2 from "discord-oauth2";
+import { getDb } from "$lib/db";
+import { Bots, Users } from "$lib/db/schema";
+import { eq, or } from "drizzle-orm";
+import SendLog from "@/bot/log";
+import { formSchema as BotFormSchema } from "$lib/components/bot-form-schema";
+import isValidHttpUrl from "$lib/functions/valid-url";
+import UserAccountFetch from "$lib/functions/user-bot";
 
-import { env } from '$env/dynamic/private';
+import { env } from "$env/dynamic/private";
 
 /**
  * POST /api/bots/[id]/edit
@@ -35,25 +35,25 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 
 	try {
 		const url = new URL(request.url);
-		const paramKey = url.searchParams.get('key');
-		const headerAuth = request.headers.get('authorization') ?? request.headers.get('RDL-key');
-		const cookieKey = cookies.get('key');
+		const paramKey = url.searchParams.get("key");
+		const headerAuth = request.headers.get("authorization") ?? request.headers.get("RDL-key");
+		const cookieKey = cookies.get("key");
 
 		const key = paramKey ?? headerAuth ?? cookieKey;
 		if (!key) {
-			return json({ err: 'not_logged_in' }, { status: 400 });
+			return json({ err: "not_logged_in" }, { status: 400 });
 		}
 
 		const id = params.id;
 		if (!id) {
-			return json({ err: 'missing_bot_id' }, { status: 400 });
+			return json({ err: "missing_bot_id" }, { status: 400 });
 		}
 
 		// Validate token via Discord OAuth
 		const oauth2 = new DiscordOauth2({
 			clientId: env.DISCORD_BOT_ID,
 			clientSecret: env.DISCORD_SECRET,
-			redirectUri: (env.DOMAIN ?? 'http://localhost:5173') + '/api/auth'
+			redirectUri: (env.DOMAIN ?? "http://localhost:5173") + "/api/auth"
 		});
 
 		let userData: any;
@@ -61,9 +61,9 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 			userData = await oauth2.getUser(String(key));
 		} catch (e) {
 			try {
-				cookies.delete('key', { path: '/' });
+				cookies.delete("key", { path: "/" });
 			} catch {}
-			return json({ err: 'invalid_key' }, { status: 400 });
+			return json({ err: "invalid_key" }, { status: 400 });
 		}
 
 		// Ensure user exists in Users table (basic parity with old behavior)
@@ -74,7 +74,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 			.limit(1);
 
 		if (!userRows || userRows.length === 0) {
-			return json({ err: 'invalid_key' }, { status: 400 });
+			return json({ err: "invalid_key" }, { status: 400 });
 		}
 
 		// Fetch current bot snapshot
@@ -104,18 +104,18 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 
 		const bot = botRows && botRows.length > 0 ? (botRows[0] as any) : null;
 		if (!bot) {
-			return json({ err: 'no_bot_found' }, { status: 404 });
+			return json({ err: "no_bot_found" }, { status: 404 });
 		}
 
 		// Ensure requestor is an owner
 		if (!Array.isArray(bot.owners) || !bot.owners.includes(userData.id)) {
-			return json({ err: 'not_owner' }, { status: 403 });
+			return json({ err: "not_owner" }, { status: 403 });
 		}
 
 		// Parse and validate body
 		const body = await request.json().catch(() => null);
 		if (!body) {
-			return json({ err: 'invalid_body' }, { status: 400 });
+			return json({ err: "invalid_body" }, { status: 400 });
 		}
 
 		// Validate shape with the legacy schema validator (best-effort)
@@ -130,7 +130,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 					validation.error.errors[0] &&
 					validation.error.errors[0].message
 						? validation.error.errors[0].message
-						: 'validation_failed';
+						: "validation_failed";
 				return json({ err: errMsg }, { status: 400 });
 			}
 		} catch {
@@ -145,7 +145,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 				.where(eq(Bots.slug, body.slug))
 				.limit(1);
 			if (existing && existing.length > 0) {
-				return json({ err: 'slug_taken' }, { status: 400 });
+				return json({ err: "slug_taken" }, { status: 400 });
 			}
 		}
 
@@ -153,14 +153,14 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		// - owners must be array
 		// - only main owner (owners[0]) can change owners
 		if (body.owners && JSON.stringify(body.owners) !== JSON.stringify(bot.owners)) {
-			if (!Array.isArray(body.owners)) return json({ err: 'owners_not_array' }, { status: 400 });
-			if (bot.owners[0] !== userData.id) return json({ err: 'not_main_owner' }, { status: 403 });
+			if (!Array.isArray(body.owners)) return json({ err: "owners_not_array" }, { status: 400 });
+			if (bot.owners[0] !== userData.id) return json({ err: "not_main_owner" }, { status: 403 });
 			if (body.owners[0] !== userData.id)
-				return json({ err: 'main_owner_cant_be_changed' }, { status: 403 });
+				return json({ err: "main_owner_cant_be_changed" }, { status: 403 });
 		}
 
 		// Validate URLs if present
-		const urlFields = ['webhook', 'source_repo', 'website', 'donate', 'bg', 'invite'];
+		const urlFields = ["webhook", "source_repo", "website", "donate", "bg", "invite"];
 		for (const f of urlFields) {
 			if (body[f] && body[f] !== bot[f]) {
 				if (!isValidHttpUrl(body[f])) {
@@ -174,19 +174,19 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 			if (isValidHttpUrl(body.support)) {
 				try {
 					const u = new URL(body.support);
-					if (u.hostname === 'discord.gg') body.support = u.pathname.slice(1);
-					else if (u.hostname === 'discord.com') body.support = u.pathname.split('/')[2];
-					else return json({ err: 'invalid_support' }, { status: 400 });
+					if (u.hostname === "discord.gg") body.support = u.pathname.slice(1);
+					else if (u.hostname === "discord.com") body.support = u.pathname.split("/")[2];
+					else return json({ err: "invalid_support" }, { status: 400 });
 				} catch {
-					return json({ err: 'invalid_support' }, { status: 400 });
+					return json({ err: "invalid_support" }, { status: 400 });
 				}
 			}
 			// Validate invite exists via Discord API
 			try {
 				const inviteResp = await fetch(`https://discord.com/api/invites/${body.support}`);
 				const inviteJson = await inviteResp.json();
-				if (inviteJson && inviteJson.message === 'Unknown Invite') {
-					return json({ err: 'expired_support' }, { status: 400 });
+				if (inviteJson && inviteJson.message === "Unknown Invite") {
+					return json({ err: "expired_support" }, { status: 400 });
 				}
 			} catch {
 				// If Discord API fails, best-effort — don't block the update for temporary Discord API failures.
@@ -195,7 +195,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 
 		// Validate lib length if provided
 		if (body.lib && body.lib !== bot.lib) {
-			if (String(body.lib).length > 20) return json({ err: 'lib_too_long' }, { status: 400 });
+			if (String(body.lib).length > 20) return json({ err: "lib_too_long" }, { status: 400 });
 		}
 
 		// All validations passed — perform the DB update
@@ -215,14 +215,14 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 			invite: body.invite ?? bot.invite,
 			slug: body.slug ? String(body.slug).toLowerCase() : bot.slug,
 			opted_coins:
-				typeof body.opted_coins === 'boolean' ? body.opted_coins : Boolean(bot.opted_coins)
+				typeof body.opted_coins === "boolean" ? body.opted_coins : Boolean(bot.opted_coins)
 		};
 
 		try {
 			await db.update(Bots).set(updateValues).where(eq(Bots.id, bot.id));
 		} catch (e) {
-			console.error('DB update error in /api/bots/[id]/edit:', e);
-			return json({ err: 'db_update_failed' }, { status: 500 });
+			console.error("DB update error in /api/bots/[id]/edit:", e);
+			return json({ err: "db_update_failed" }, { status: 500 });
 		}
 
 		// Best-effort: trigger legacy internal update flow if available.
@@ -230,7 +230,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		// but if it doesn't exist or fails we don't treat it as fatal.
 		try {
 			const internalUrl =
-				(env.DOMAIN ?? '') + `/api/internals/update/bot/${bot.id}?modified=${userData.id}`;
+				(env.DOMAIN ?? "") + `/api/internals/update/bot/${bot.id}?modified=${userData.id}`;
 			// If DOMAIN isn't configured, call local relative path (works in dev)
 			const target = env.DOMAIN
 				? internalUrl
@@ -245,19 +245,19 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		try {
 			await SendLog({
 				env: {
-					DOMAIN: env.DOMAIN ?? '',
-					FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? '',
-					LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? '',
-					DISCORD_TOKEN: env.DISCORD_TOKEN ?? ''
+					DOMAIN: env.DOMAIN ?? "",
+					FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? "",
+					LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? "",
+					DISCORD_TOKEN: env.DISCORD_TOKEN ?? ""
 				},
 				body: {
 					title: `Bot ${bot.username} updated!`,
 					desc: `Bot ${bot.username}#${bot.discriminator} updated by ${(userData as any).global_name || (userData as any).username}`,
-					color: '#57F287',
+					color: "#57F287",
 					img: bot.avatar
 						? `https://cdn.discordapp.com/avatars/${bot.id}/${bot.avatar}?size=128`
 						: undefined,
-					url: `${env.DOMAIN ?? ''}/bots/${bot.id}`,
+					url: `${env.DOMAIN ?? ""}/bots/${bot.id}`,
 					owners: bot.owners ?? []
 				}
 			});
@@ -267,9 +267,9 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 
 		return json({ success: true }, { status: 200 });
 	} catch (err) {
-		console.error('/api/bots/[id]/edit error:', err);
+		console.error("/api/bots/[id]/edit error:", err);
 		return json(
-			{ err: 'server_error', message: err instanceof Error ? err.message : String(err) },
+			{ err: "server_error", message: err instanceof Error ? err.message : String(err) },
 			{ status: 500 }
 		);
 	}

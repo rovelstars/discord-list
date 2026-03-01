@@ -15,15 +15,15 @@
 	};
 
 	export type ReactionEmoji =
-		| 'funny'
-		| 'useful'
-		| 'informative'
-		| 'like'
-		| 'dislike'
-		| 'love'
-		| 'angry'
-		| 'sad'
-		| 'skull';
+		| "funny"
+		| "useful"
+		| "informative"
+		| "like"
+		| "dislike"
+		| "love"
+		| "angry"
+		| "sad"
+		| "skull";
 
 	export type Comment = {
 		id: string;
@@ -44,63 +44,63 @@
 </script>
 
 <script lang="ts">
-	import getAvatarURL from '$lib/get-avatar-url';
+	import getAvatarURL from "$lib/get-avatar-url";
 
 	// ── Reaction emoji display map ────────────────────────────────────────────
 
 	const REACTION_EMOJIS: ReactionEmoji[] = [
-		'funny',
-		'useful',
-		'informative',
-		'like',
-		'dislike',
-		'love',
-		'angry',
-		'sad',
-		'skull'
+		"funny",
+		"useful",
+		"informative",
+		"like",
+		"dislike",
+		"love",
+		"angry",
+		"sad",
+		"skull"
 	];
 
 	const EMOJI_GLYPH: Record<ReactionEmoji, string> = {
-		funny: '😂',
-		useful: '👍',
-		informative: '💡',
-		like: '❤️',
-		dislike: '👎',
-		love: '😍',
-		angry: '😡',
-		sad: '😢',
-		skull: '💀'
+		funny: "😂",
+		useful: "👍",
+		informative: "💡",
+		like: "❤️",
+		dislike: "👎",
+		love: "😍",
+		angry: "😡",
+		sad: "😢",
+		skull: "💀"
 	};
 
 	const EMOJI_LABEL: Record<ReactionEmoji, string> = {
-		funny: 'Funny',
-		useful: 'Useful',
-		informative: 'Informative',
-		like: 'Like',
-		dislike: 'Dislike',
-		love: 'Love',
-		angry: 'Angry',
-		sad: 'Sad',
-		skull: '💀'
+		funny: "Funny",
+		useful: "Useful",
+		informative: "Informative",
+		like: "Like",
+		dislike: "Dislike",
+		love: "Love",
+		angry: "Angry",
+		sad: "Sad",
+		skull: "💀"
 	};
 
 	/** Sentence fragment used in "X people found it ___" tooltip / aria-label. */
 	const EMOJI_SENTENCE: Record<ReactionEmoji, string> = {
-		funny: 'Funny',
-		useful: 'Useful',
-		informative: 'Informative',
-		like: 'Liked this',
-		dislike: 'Disliked this',
-		love: 'Loved this',
-		angry: 'Angry',
-		sad: 'Sad',
-		skull: '💀'
+		funny: "Funny",
+		useful: "Useful",
+		informative: "Informative",
+		like: "Liked this",
+		dislike: "Disliked this",
+		love: "Loved this",
+		angry: "Angry",
+		sad: "Sad",
+		skull: "💀"
 	};
 
 	/** Build the human-readable alt/title text for a reaction pill. */
 	function reactionAltText(emoji: ReactionEmoji, count: number, reacted: boolean): string {
 		const n = count;
-		const people = n === 1 ? '1 person found it' : `${n} people found it`;
+		const people = n === 1 ? "1 person found it" : `${n} people found it`;
 		const base = n === 0 ? EMOJI_LABEL[emoji] : `${people} ${EMOJI_SENTENCE[emoji]}`;
 		return reacted ? `${base} · You reacted` : base;
 	}
@@ -132,24 +132,24 @@
 	// New top-level review form
 	let newRating = 0; // 0 = not yet chosen; will be set in 0.5 increments
 	let newHoverRating = 0;
-	let newText = '';
+	let newText = "";
 	let submitting = false;
-	let submitError = '';
+	let submitError = "";
 	let submitSuccess = false;
 
 	// Which comment's reply box is open (by comment id)
 	let replyOpenFor: string | null = null;
-	let replyText = '';
+	let replyText = "";
 	let replySubmitting = false;
-	let replyError = '';
+	let replyError = "";
 
 	// Edit state
 	let editingId: string | null = null;
-	let editText = '';
+	let editText = "";
 	let editRating = 0;
 	let editHoverRating = 0;
 	let editSubmitting = false;
-	let editError = '';
+	let editError = "";
 
 	// Delete confirmation
 	let deletingId: string | null = null;
@@ -213,10 +213,10 @@
 
 	function formatDate(iso: string): string {
 		try {
-			return new Date(iso).toLocaleDateString('en-US', {
-				year: 'numeric',
-				month: 'short',
-				day: 'numeric'
+			return new Date(iso).toLocaleDateString("en-US", {
+				year: "numeric",
+				month: "short",
+				day: "numeric"
 			});
 		} catch {
 			return iso;
@@ -227,7 +227,7 @@
 		try {
 			const diff = Date.now() - new Date(iso).getTime();
 			const secs = Math.floor(diff / 1000);
-			if (secs < 60) return 'just now';
+			if (secs < 60) return "just now";
 			const mins = Math.floor(secs / 60);
 			if (mins < 60) return `${mins}m ago`;
 			const hrs = Math.floor(mins / 60);
@@ -265,10 +265,10 @@
 	// ── Star rendering helpers ────────────────────────────────────────────────
 
 	/** Render star fill for a given position (1-5) given a 0–5 rating value. */
-	function starFill(pos: number, rating: number): 'full' | 'half' | 'empty' {
-		if (rating >= pos) return 'full';
-		if (rating >= pos - 0.5) return 'half';
-		return 'empty';
+	function starFill(pos: number, rating: number): "full" | "half" | "empty" {
+		if (rating >= pos) return "full";
+		if (rating >= pos - 0.5) return "half";
+		return "empty";
 	}
 
 	/** For hover-based rating input: compute rating from mouse X within the star element. */
@@ -283,15 +283,15 @@
 	async function submitReview() {
 		if (!user) return;
 		if (newRating === 0) {
-			submitError = 'Please choose a star rating before submitting.';
+			submitError = "Please choose a star rating before submitting.";
 			return;
 		}
 		submitting = true;
-		submitError = '';
+		submitError = "";
 		try {
 			const res = await fetch(`/api/bots/${botId}/comments`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					rating: newRating,
 					text: newText.trim() || null,
@@ -300,17 +300,17 @@
 			});
 			const data = await res.json();
 			if (!res.ok) {
-				submitError = data.message ?? data.err ?? 'Something went wrong.';
+				submitError = data.message ?? data.err ?? "Something went wrong.";
 				return;
 			}
 			tree = [data.comment, ...tree];
 			newRating = 0;
 			newHoverRating = 0;
-			newText = '';
+			newText = "";
 			submitSuccess = true;
 			setTimeout(() => (submitSuccess = false), 3500);
 		} catch {
-			submitError = 'Network error — please try again.';
+			submitError = "Network error — please try again.";
 		} finally {
 			submitting = false;
 		}
@@ -320,20 +320,20 @@
 		if (!user) return;
 		const text = replyText.trim();
 		if (!text) {
-			replyError = 'Reply cannot be empty.';
+			replyError = "Reply cannot be empty.";
 			return;
 		}
 		replySubmitting = true;
-		replyError = '';
+		replyError = "";
 		try {
 			const res = await fetch(`/api/bots/${botId}/comments`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ text, parent_id: parentId })
 			});
 			const data = await res.json();
 			if (!res.ok) {
-				replyError = data.message ?? data.err ?? 'Something went wrong.';
+				replyError = data.message ?? data.err ?? "Something went wrong.";
 				return;
 			}
 			// Attach reply to the right parent in the tree
@@ -343,10 +343,10 @@
 				}
 				return c;
 			});
-			replyText = '';
+			replyText = "";
 			replyOpenFor = null;
 		} catch {
-			replyError = 'Network error — please try again.';
+			replyError = "Network error — please try again.";
 		} finally {
 			replySubmitting = false;
 		}
@@ -354,38 +354,38 @@
 
 	function startEdit(c: Comment) {
 		editingId = c.id;
-		editText = c.text ?? '';
+		editText = c.text ?? "";
 		editRating = c.parent_id === null ? ratingFromInt(c.rating) : 0;
 		editHoverRating = editRating;
-		editError = '';
+		editError = "";
 	}
 
 	function cancelEdit() {
 		editingId = null;
-		editError = '';
+		editError = "";
 	}
 
 	async function submitEdit(commentId: string, isReply: boolean) {
 		editSubmitting = true;
-		editError = '';
+		editError = "";
 		try {
 			const body: Record<string, any> = { text: editText.trim() || null };
 			if (!isReply) {
 				if (editRating === 0) {
-					editError = 'Please choose a star rating.';
+					editError = "Please choose a star rating.";
 					editSubmitting = false;
 					return;
 				}
 				body.rating = editRating;
 			}
 			const res = await fetch(`/api/bots/${botId}/comments/${commentId}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(body)
 			});
 			const data = await res.json();
 			if (!res.ok) {
-				editError = data.message ?? data.err ?? 'Something went wrong.';
+				editError = data.message ?? data.err ?? "Something went wrong.";
 				return;
 			}
 			// Update comment in tree
@@ -398,7 +398,7 @@
 			tree = patchTree(tree);
 			editingId = null;
 		} catch {
-			editError = 'Network error — please try again.';
+			editError = "Network error — please try again.";
 		} finally {
 			editSubmitting = false;
 		}
@@ -408,7 +408,7 @@
 		deleteSubmitting = true;
 		try {
 			const res = await fetch(`/api/bots/${botId}/comments/${commentId}`, {
-				method: 'DELETE'
+				method: "DELETE"
 			});
 			if (res.ok) {
 				tree = removeComment(commentId);
@@ -426,9 +426,9 @@
 	function goLogin() {
 		try {
 			document.cookie = `redirect=${encodeURIComponent(window.location.pathname)}; path=/;`;
-			window.location.href = '/login';
+			window.location.href = "/login";
 		} catch {
-			window.location.href = '/login';
+			window.location.href = "/login";
 		}
 	}
 
@@ -483,8 +483,8 @@
 		// ── Server call ───────────────────────────────────────────────────────
 		try {
 			const res = await fetch(`/api/bots/${botId}/comments/${commentId}/react`, {
-				method: 'PUT',
-				headers: { 'Content-Type': 'application/json' },
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ emoji })
 			});
 			const data = await res.json();
@@ -528,12 +528,12 @@
 								viewBox="0 0 24 24"
 								aria-hidden="true"
 							>
-								{#if starFill(pos, Number(avgRating ?? 0)) === 'full'}
+								{#if starFill(pos, Number(avgRating ?? 0)) === "full"}
 									<path
 										d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
 										fill="currentColor"
 									/>
-								{:else if starFill(pos, Number(avgRating ?? 0)) === 'half'}
+								{:else if starFill(pos, Number(avgRating ?? 0)) === "half"}
 									<defs>
 										<linearGradient id="half-avg-{pos}">
 											<stop offset="50%" stop-color="currentColor" />
@@ -560,7 +560,7 @@
 					<span class="text-sm font-bold text-foreground">{avgRating}</span>
 					<span class="text-sm text-muted-foreground">
 						({totalReviews}
-						{totalReviews === 1 ? 'review' : 'reviews'})
+						{totalReviews === 1 ? "review" : "reviews"})
 					</span>
 				</div>
 			{/if}
@@ -645,12 +645,12 @@
 							viewBox="0 0 24 24"
 							aria-hidden="true"
 						>
-							{#if starFill(pos, newHoverRating || newRating) === 'full'}
+							{#if starFill(pos, newHoverRating || newRating) === "full"}
 								<path
 									d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
 									fill="currentColor"
 								/>
-							{:else if starFill(pos, newHoverRating || newRating) === 'half'}
+							{:else if starFill(pos, newHoverRating || newRating) === "half"}
 								<defs>
 									<linearGradient id="half-new-{pos}" x1="0" x2="1" y1="0" y2="0">
 										<stop offset="50%" stop-color="currentColor" />
@@ -793,7 +793,7 @@
 								aria-label="{comment.author_username}'s profile"
 							>
 								<img
-									src={getAvatarURL(comment.user_id, comment.author_avatar ?? '0', 40)}
+									src={getAvatarURL(comment.user_id, comment.author_avatar ?? "0", 40)}
 									alt="{comment.author_username}'s avatar"
 									width="40"
 									height="40"
@@ -801,7 +801,7 @@
 									class="w-10 h-10 rounded-full border border-border bg-muted object-cover"
 									on:error={(e) => {
 										(e.currentTarget as HTMLImageElement).src =
-											'https://cdn.discordapp.com/embed/avatars/0.png';
+											"https://cdn.discordapp.com/embed/avatars/0.png";
 									}}
 								/>
 							</a>
@@ -845,12 +845,12 @@
 													viewBox="0 0 24 24"
 													aria-hidden="true"
 												>
-													{#if starFill(pos, ratingFromInt(comment.rating)) === 'full'}
+													{#if starFill(pos, ratingFromInt(comment.rating)) === "full"}
 														<path
 															d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
 															fill="currentColor"
 														/>
-													{:else if starFill(pos, ratingFromInt(comment.rating)) === 'half'}
+													{:else if starFill(pos, ratingFromInt(comment.rating)) === "half"}
 														<defs>
 															<linearGradient
 																id="half-c-{comment.id}-{pos}"
@@ -973,12 +973,12 @@
 												viewBox="0 0 24 24"
 												aria-hidden="true"
 											>
-												{#if starFill(pos, editHoverRating || editRating) === 'full'}
+												{#if starFill(pos, editHoverRating || editRating) === "full"}
 													<path
 														d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
 														fill="currentColor"
 													/>
-												{:else if starFill(pos, editHoverRating || editRating) === 'half'}
+												{:else if starFill(pos, editHoverRating || editRating) === "half"}
 													<defs>
 														<linearGradient id="half-edit-{pos}" x1="0" x2="1" y1="0" y2="0">
 															<stop offset="50%" stop-color="currentColor" />
@@ -1036,7 +1036,7 @@
 											disabled={editSubmitting}
 											class="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
 										>
-											{editSubmitting ? 'Saving…' : 'Save'}
+											{editSubmitting ? "Saving…" : "Save"}
 										</button>
 									</div>
 								</div>
@@ -1158,7 +1158,7 @@
 										disabled={deleteSubmitting}
 										class="rounded-lg bg-destructive px-3 py-1.5 text-xs font-semibold text-destructive-foreground hover:bg-destructive/90 transition-colors disabled:opacity-50"
 									>
-										{deleteSubmitting ? 'Deleting…' : 'Delete'}
+										{deleteSubmitting ? "Deleting…" : "Delete"}
 									</button>
 								</div>
 							</div>
@@ -1182,7 +1182,7 @@
 													aria-label="{reply.author_username}'s profile"
 												>
 													<img
-														src={getAvatarURL(reply.user_id, reply.author_avatar ?? '0', 32)}
+														src={getAvatarURL(reply.user_id, reply.author_avatar ?? "0", 32)}
 														alt="{reply.author_username}'s avatar"
 														width="32"
 														height="32"
@@ -1190,7 +1190,7 @@
 														class="w-8 h-8 rounded-full border border-border bg-muted object-cover"
 														on:error={(e) => {
 															(e.currentTarget as HTMLImageElement).src =
-																'https://cdn.discordapp.com/embed/avatars/0.png';
+																"https://cdn.discordapp.com/embed/avatars/0.png";
 														}}
 													/>
 												</a>
@@ -1258,7 +1258,7 @@
 																	disabled={editSubmitting}
 																	class="rounded-lg bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
 																>
-																	{editSubmitting ? 'Saving…' : 'Save'}
+																	{editSubmitting ? "Saving…" : "Save"}
 																</button>
 															</div>
 														</div>
@@ -1266,7 +1266,7 @@
 														<p
 															class="text-xs text-foreground/90 leading-relaxed mt-0.5 whitespace-pre-wrap break-words"
 														>
-															{reply.text ?? ''}
+															{reply.text ?? ""}
 														</p>
 													{/if}
 
@@ -1441,7 +1441,7 @@
 																on:click={() => confirmDelete(reply.id)}
 																disabled={deleteSubmitting}
 																class="rounded px-2.5 py-1 text-xs bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors disabled:opacity-50"
-																>{deleteSubmitting ? 'Deleting…' : 'Delete'}</button
+																>{deleteSubmitting ? "Deleting…" : "Delete"}</button
 															>
 														</div>
 													</div>
@@ -1457,7 +1457,7 @@
 										<div class="px-4 py-3 bg-muted/10">
 											<div class="flex items-start gap-2">
 												<img
-													src={getAvatarURL(user.id, user.avatar ?? '0', 28)}
+													src={getAvatarURL(user.id, user.avatar ?? "0", 28)}
 													alt="Your avatar"
 													width="28"
 													height="28"
@@ -1480,8 +1480,8 @@
 														<button
 															on:click={() => {
 																replyOpenFor = null;
-																replyText = '';
-																replyError = '';
+																replyText = "";
+																replyError = "";
 															}}
 															disabled={replySubmitting}
 															class="rounded-lg border border-border px-2.5 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors"
@@ -1493,7 +1493,7 @@
 															disabled={replySubmitting || !replyText.trim()}
 															class="rounded-lg bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 														>
-															{replySubmitting ? 'Posting…' : 'Reply'}
+															{replySubmitting ? "Posting…" : "Reply"}
 														</button>
 													</div>
 												</div>
@@ -1504,8 +1504,8 @@
 											<button
 												on:click={() => {
 													replyOpenFor = comment.id;
-													replyText = '';
-													replyError = '';
+													replyText = "";
+													replyError = "";
 												}}
 												class="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
 											>
@@ -1555,7 +1555,7 @@
 								{#if replyOpenFor === comment.id}
 									<div class="flex items-start gap-2 mt-1">
 										<img
-											src={getAvatarURL(user.id, user.avatar ?? '0', 28)}
+											src={getAvatarURL(user.id, user.avatar ?? "0", 28)}
 											alt="Your avatar"
 											width="28"
 											height="28"
@@ -1578,8 +1578,8 @@
 												<button
 													on:click={() => {
 														replyOpenFor = null;
-														replyText = '';
-														replyError = '';
+														replyText = "";
+														replyError = "";
 													}}
 													disabled={replySubmitting}
 													class="rounded-lg border border-border px-2.5 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors"
@@ -1591,7 +1591,7 @@
 													disabled={replySubmitting || !replyText.trim()}
 													class="rounded-lg bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 												>
-													{replySubmitting ? 'Posting…' : 'Reply'}
+													{replySubmitting ? "Posting…" : "Reply"}
 												</button>
 											</div>
 										</div>
@@ -1600,8 +1600,8 @@
 									<button
 										on:click={() => {
 											replyOpenFor = comment.id;
-											replyText = '';
-											replyError = '';
+											replyText = "";
+											replyError = "";
 										}}
 										class="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
 									>

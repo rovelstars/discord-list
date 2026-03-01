@@ -39,13 +39,13 @@
  *   }
  */
 
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
-import { withDb, type DrizzleDb } from '$lib/db';
-import { Bots } from '$lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { fetchDiscordBotUser } from '$lib/bot-refresh';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
+import { withDb, type DrizzleDb } from "$lib/db";
+import { Bots } from "$lib/db/schema";
+import { eq } from "drizzle-orm";
+import { fetchDiscordBotUser } from "$lib/bot-refresh";
 
 // ---------------------------------------------------------------------------
 // Tuning constants
@@ -93,9 +93,7 @@ async function fetchAllBots(): Promise<BotRow[]> {
 
 /** Write a new bg hash/URL to a single bot row. */
 async function updateBotBg(botId: string, newBg: string): Promise<void> {
-	await withDb((db: DrizzleDb) =>
-		db.update(Bots).set({ bg: newBg }).where(eq(Bots.id, botId))
-	);
+	await withDb((db: DrizzleDb) => db.update(Bots).set({ bg: newBg }).where(eq(Bots.id, botId)));
 }
 
 // ---------------------------------------------------------------------------
@@ -153,10 +151,10 @@ async function runBannerSync(discordToken: string): Promise<SyncBannersResult> {
 					result.updated++;
 
 					console.log(
-						`[sync-banners] Updated bg for bot ${bot.id}: "${bot.bg ?? 'null'}" → "${discordUser.banner}"`
+						`[sync-banners] Updated bg for bot ${bot.id}: "${bot.bg ?? "null"}" → "${discordUser.banner}"`
 					);
 				} catch (err: any) {
-					const status = err?.status ?? '?';
+					const status = err?.status ?? "?";
 					const message = err instanceof Error ? err.message : String(err);
 					result.errors.push(`bot ${bot.id}: HTTP ${status} — ${message}`);
 				}
@@ -181,35 +179,35 @@ export const GET: RequestHandler = async ({ request, url }) => {
 	// ------------------------------------------------------------------
 	// Auth (mirrors all other /api/internals/* routes)
 	// ------------------------------------------------------------------
-	const internalSecret = (env.INTERNAL_SECRET ?? '').trim();
+	const internalSecret = (env.INTERNAL_SECRET ?? "").trim();
 
 	if (!internalSecret) {
-		console.error('[sync-banners] INTERNAL_SECRET env var is not set.');
+		console.error("[sync-banners] INTERNAL_SECRET env var is not set.");
 		return json(
-			{ success: false, error: 'Server misconfiguration: INTERNAL_SECRET not set.' },
+			{ success: false, error: "Server misconfiguration: INTERNAL_SECRET not set." },
 			{ status: 500 }
 		);
 	}
 
 	const suppliedSecret = (
-		request.headers.get('X-Internal-Secret') ??
-		url.searchParams.get('secret') ??
-		''
+		request.headers.get("X-Internal-Secret") ??
+		url.searchParams.get("secret") ??
+		""
 	).trim();
 
 	if (!suppliedSecret || suppliedSecret !== internalSecret) {
-		return json({ success: false, error: 'Unauthorized.' }, { status: 401 });
+		return json({ success: false, error: "Unauthorized." }, { status: 401 });
 	}
 
 	// ------------------------------------------------------------------
 	// Required env vars
 	// ------------------------------------------------------------------
-	const discordToken = (env.DISCORD_TOKEN ?? '').trim();
+	const discordToken = (env.DISCORD_TOKEN ?? "").trim();
 
 	if (!discordToken) {
-		console.error('[sync-banners] DISCORD_TOKEN env var is not set.');
+		console.error("[sync-banners] DISCORD_TOKEN env var is not set.");
 		return json(
-			{ success: false, error: 'Server misconfiguration: DISCORD_TOKEN not set.' },
+			{ success: false, error: "Server misconfiguration: DISCORD_TOKEN not set." },
 			{ status: 500 }
 		);
 	}
@@ -218,7 +216,7 @@ export const GET: RequestHandler = async ({ request, url }) => {
 	// Run
 	// ------------------------------------------------------------------
 	const startedAt = Date.now();
-	console.log('[sync-banners] Starting banner sync…');
+	console.log("[sync-banners] Starting banner sync…");
 
 	try {
 		const result = await runBannerSync(discordToken);
@@ -235,14 +233,14 @@ export const GET: RequestHandler = async ({ request, url }) => {
 		);
 
 		if (result.errors.length > 0) {
-			console.warn('[sync-banners] Non-fatal errors:', result.errors);
+			console.warn("[sync-banners] Non-fatal errors:", result.errors);
 		}
 
 		return json({ success: true, durationMs, ...result }, { status: 200 });
 	} catch (err) {
 		const durationMs = Date.now() - startedAt;
 		const message = err instanceof Error ? err.message : String(err);
-		console.error('[sync-banners] Unexpected error after', durationMs, 'ms:', err);
+		console.error("[sync-banners] Unexpected error after", durationMs, "ms:", err);
 		return json({ success: false, error: message, durationMs }, { status: 500 });
 	}
 };

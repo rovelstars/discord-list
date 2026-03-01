@@ -37,14 +37,14 @@
  *   }
  */
 
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
-import { Routes } from 'discord-api-types/v10';
-import RestClient from '@/bot/util';
-import { withDb } from '$lib/db';
-import { Users, Bots } from '$lib/db/schema';
-import type { DrizzleDb } from '$lib/db';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
+import { Routes } from "discord-api-types/v10";
+import RestClient from "@/bot/util";
+import { withDb } from "$lib/db";
+import { Users, Bots } from "$lib/db/schema";
+import type { DrizzleDb } from "$lib/db";
 
 // ---------------------------------------------------------------------------
 // Tuning constants
@@ -152,7 +152,7 @@ async function fetchBotOwnerIds(): Promise<Set<string>> {
 			const parsed = JSON.parse(row.owners);
 			if (Array.isArray(parsed)) {
 				for (const id of parsed) {
-					if (typeof id === 'string' && id) ownerSet.add(id);
+					if (typeof id === "string" && id) ownerSet.add(id);
 				}
 			}
 		} catch {
@@ -219,7 +219,7 @@ async function runRoleSync(
 							await putGuildMemberRole(rest, guildId, userId, userRoleId);
 							result.userRoleAssigned++;
 						} catch (err: any) {
-							const status = err?.status ?? '?';
+							const status = err?.status ?? "?";
 							result.errors.push(
 								`user-role for ${userId}: HTTP ${status} — ${err instanceof Error ? err.message : String(err)}`
 							);
@@ -232,7 +232,7 @@ async function runRoleSync(
 							await putGuildMemberRole(rest, guildId, userId, botdevRoleId);
 							result.botdevRoleAssigned++;
 						} catch (err: any) {
-							const status = err?.status ?? '?';
+							const status = err?.status ?? "?";
 							result.errors.push(
 								`botdev-role for ${userId}: HTTP ${status} — ${err instanceof Error ? err.message : String(err)}`
 							);
@@ -240,7 +240,7 @@ async function runRoleSync(
 					}
 				} catch (err: any) {
 					// Unexpected error during membership check or role assignment.
-					const status = err?.status ?? '?';
+					const status = err?.status ?? "?";
 					result.errors.push(
 						`user ${userId}: HTTP ${status} — ${err instanceof Error ? err.message : String(err)}`
 					);
@@ -266,57 +266,57 @@ export const GET: RequestHandler = async ({ request, url }) => {
 	// ------------------------------------------------------------------
 	// Auth (mirrors /api/internals/refresh-cdn-bgs)
 	// ------------------------------------------------------------------
-	const internalSecret = (env.INTERNAL_SECRET ?? '').trim();
+	const internalSecret = (env.INTERNAL_SECRET ?? "").trim();
 
 	if (!internalSecret) {
-		console.error('[sync-roles] INTERNAL_SECRET env var is not set.');
+		console.error("[sync-roles] INTERNAL_SECRET env var is not set.");
 		return json(
-			{ success: false, error: 'Server misconfiguration: INTERNAL_SECRET not set.' },
+			{ success: false, error: "Server misconfiguration: INTERNAL_SECRET not set." },
 			{ status: 500 }
 		);
 	}
 
 	const suppliedSecret = (
-		request.headers.get('X-Internal-Secret') ??
-		url.searchParams.get('secret') ??
-		''
+		request.headers.get("X-Internal-Secret") ??
+		url.searchParams.get("secret") ??
+		""
 	).trim();
 
 	if (!suppliedSecret || suppliedSecret !== internalSecret) {
-		return json({ success: false, error: 'Unauthorized.' }, { status: 401 });
+		return json({ success: false, error: "Unauthorized." }, { status: 401 });
 	}
 
 	// ------------------------------------------------------------------
 	// Required env vars
 	// ------------------------------------------------------------------
-	const discordToken = (env.DISCORD_TOKEN ?? '').trim();
+	const discordToken = (env.DISCORD_TOKEN ?? "").trim();
 	if (!discordToken) {
-		console.error('[sync-roles] DISCORD_TOKEN env var is not set.');
+		console.error("[sync-roles] DISCORD_TOKEN env var is not set.");
 		return json(
-			{ success: false, error: 'Server misconfiguration: DISCORD_TOKEN not set.' },
+			{ success: false, error: "Server misconfiguration: DISCORD_TOKEN not set." },
 			{ status: 500 }
 		);
 	}
 
-	const guildId = (env.DISCORD_GUILD_ID ?? '').trim();
+	const guildId = (env.DISCORD_GUILD_ID ?? "").trim();
 	if (!guildId) {
-		console.error('[sync-roles] DISCORD_GUILD_ID env var is not set.');
+		console.error("[sync-roles] DISCORD_GUILD_ID env var is not set.");
 		return json(
-			{ success: false, error: 'Server misconfiguration: DISCORD_GUILD_ID not set.' },
+			{ success: false, error: "Server misconfiguration: DISCORD_GUILD_ID not set." },
 			{ status: 500 }
 		);
 	}
 
 	// Roles are optional — if not set, that role simply won't be assigned and
 	// the sync still runs for whichever role IS configured.
-	const userRoleId = (env.DISCORD_USER_ROLE ?? '').trim();
-	const botdevRoleId = (env.DISCORD_BOTDEV_ROLE ?? '').trim();
+	const userRoleId = (env.DISCORD_USER_ROLE ?? "").trim();
+	const botdevRoleId = (env.DISCORD_BOTDEV_ROLE ?? "").trim();
 
 	if (!userRoleId && !botdevRoleId) {
 		return json(
 			{
 				success: false,
-				error: 'Server misconfiguration: neither DISCORD_USER_ROLE nor DISCORD_BOTDEV_ROLE is set.'
+				error: "Server misconfiguration: neither DISCORD_USER_ROLE nor DISCORD_BOTDEV_ROLE is set."
 			},
 			{ status: 500 }
 		);
@@ -326,7 +326,7 @@ export const GET: RequestHandler = async ({ request, url }) => {
 	// Run
 	// ------------------------------------------------------------------
 	const startedAt = Date.now();
-	console.log('[sync-roles] Starting role sync…');
+	console.log("[sync-roles] Starting role sync…");
 
 	try {
 		const result = await runRoleSync(discordToken, guildId, userRoleId, botdevRoleId);
@@ -343,14 +343,14 @@ export const GET: RequestHandler = async ({ request, url }) => {
 		);
 
 		if (result.errors.length > 0) {
-			console.warn('[sync-roles] Non-fatal errors:', result.errors);
+			console.warn("[sync-roles] Non-fatal errors:", result.errors);
 		}
 
 		return json({ success: true, durationMs, ...result }, { status: 200 });
 	} catch (err) {
 		const durationMs = Date.now() - startedAt;
 		const message = err instanceof Error ? err.message : String(err);
-		console.error('[sync-roles] Unexpected error after', durationMs, 'ms:', err);
+		console.error("[sync-roles] Unexpected error after", durationMs, "ms:", err);
 		return json({ success: false, error: message, durationMs }, { status: 500 });
 	}
 };

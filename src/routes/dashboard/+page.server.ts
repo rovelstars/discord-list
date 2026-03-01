@@ -1,13 +1,13 @@
-import type { PageServerLoad, Actions } from './$types';
-import { redirect } from '@sveltejs/kit';
-import DiscordOauth2 from 'discord-oauth2';
-import { env } from '$env/dynamic/private';
-import { getDb } from '$lib/db';
-import { Users, Bots } from '$lib/db/schema';
-import { eq, inArray, like } from 'drizzle-orm';
+import type { PageServerLoad, Actions } from "./$types";
+import { redirect } from "@sveltejs/kit";
+import DiscordOauth2 from "discord-oauth2";
+import { env } from "$env/dynamic/private";
+import { getDb } from "$lib/db";
+import { Users, Bots } from "$lib/db/schema";
+import { eq, inArray, like } from "drizzle-orm";
 
 export const load: PageServerLoad = async ({ cookies, url }) => {
-	const key = cookies.get('key');
+	const key = cookies.get("key");
 	if (!key) {
 		throw redirect(302, `/login?redirect=${encodeURIComponent(url.pathname)}`);
 	}
@@ -15,20 +15,20 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	const oauth = new DiscordOauth2({
 		clientId: env.DISCORD_BOT_ID!,
 		clientSecret: env.DISCORD_SECRET!,
-		redirectUri: (env.DOMAIN ?? 'http://localhost:5173') + '/api/auth'
+		redirectUri: (env.DOMAIN ?? "http://localhost:5173") + "/api/auth"
 	});
 
 	let discordUser: any;
 	try {
 		discordUser = await oauth.getUser(key);
 	} catch {
-		cookies.delete('key', { path: '/' });
+		cookies.delete("key", { path: "/" });
 		throw redirect(302, `/login?redirect=${encodeURIComponent(url.pathname)}`);
 	}
 
 	if (!discordUser?.id) {
-		cookies.delete('key', { path: '/' });
-		throw redirect(302, '/login');
+		cookies.delete("key", { path: "/" });
+		throw redirect(302, "/login");
 	}
 
 	const db = getDb();
@@ -54,8 +54,8 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		.limit(1);
 
 	if (!userRows || userRows.length === 0) {
-		cookies.delete('key', { path: '/' });
-		throw redirect(302, '/login');
+		cookies.delete("key", { path: "/" });
+		throw redirect(302, "/login");
 	}
 
 	const dbUser = userRows[0];
@@ -96,15 +96,15 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		ownedBots = botRows.map((b) => ({
 			id: String(b.id),
 			slug: String(b.slug ?? b.id),
-			username: String(b.username ?? ''),
-			discriminator: String(b.discriminator ?? '0000'),
+			username: String(b.username ?? ""),
+			discriminator: String(b.discriminator ?? "0000"),
 			avatar: b.avatar ?? null,
-			short: String(b.short ?? ''),
-			votes: typeof b.votes === 'number' ? b.votes : Number(b.votes) || 0,
-			servers: typeof b.servers === 'number' ? b.servers : Number(b.servers) || 0,
+			short: String(b.short ?? ""),
+			votes: typeof b.votes === "number" ? b.votes : Number(b.votes) || 0,
+			servers: typeof b.servers === "number" ? b.servers : Number(b.servers) || 0,
 			invite: b.invite ?? null,
 			bg: b.bg ?? null,
-			status: 'online'
+			status: "online"
 		}));
 	} catch {
 		// non-fatal — show empty bot list
@@ -115,15 +115,15 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	let expiredCount = 0;
 
 	try {
-		const parsed = JSON.parse((dbUser.votes as string) ?? '[]');
+		const parsed = JSON.parse((dbUser.votes as string) ?? "[]");
 		const raw: { bot: string; at: unknown }[] = Array.isArray(parsed) ? parsed : [];
 		// Normalise `at` to a numeric ms timestamp.
 		// Old AstroDB rows stored `at` as ISO strings (e.g. "2022-07-16T00:00:00.000Z"),
 		// while new votes written by the app use Date.now() (a number).
 		// Mixing the two makes the numeric sort produce NaN, so we coerce here.
 		const normalised = raw.map((v) => ({
-			bot: String(v.bot ?? ''),
-			at: typeof v.at === 'number' ? v.at : new Date(v.at as string).getTime() || 0
+			bot: String(v.bot ?? ""),
+			at: typeof v.at === "number" ? v.at : new Date(v.at as string).getTime() || 0
 		}));
 
 		// Drop votes older than 30 days
@@ -177,9 +177,9 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			username: dbUser.username,
 			discriminator: dbUser.discriminator,
 			avatar: dbUser.avatar,
-			bio: dbUser.bio ?? '',
-			banner: dbUser.banner ?? '',
-			bal: typeof dbUser.bal === 'number' ? dbUser.bal : Number(dbUser.bal) || 0,
+			bio: dbUser.bio ?? "",
+			banner: dbUser.banner ?? "",
+			bal: typeof dbUser.bal === "number" ? dbUser.bal : Number(dbUser.bal) || 0,
 			added_at: dbUser.added_at != null ? String(dbUser.added_at) : null,
 			nitro: Boolean(dbUser.nitro),
 			globalname: dbUser.globalname ?? null
@@ -189,7 +189,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			id: discordUser.id as string,
 			username: discordUser.username as string,
 			global_name: (discordUser.global_name ?? null) as string | null,
-			discriminator: (discordUser.discriminator ?? '0') as string,
+			discriminator: (discordUser.discriminator ?? "0") as string,
 			avatar: (discordUser.avatar ?? null) as string | null,
 			email: (discordUser.email ?? null) as string | null
 		},

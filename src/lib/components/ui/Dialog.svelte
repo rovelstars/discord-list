@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount, onDestroy, createEventDispatcher, tick } from 'svelte';
-	import { browser } from '$app/environment';
+	import { onMount, onDestroy, createEventDispatcher, tick } from "svelte";
+	import { browser } from "$app/environment";
 
 	const FOCUSABLE_SELECTORS =
 		'a[href], area[href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex]:not([tabindex="-1"]), [contenteditable]';
@@ -9,7 +9,7 @@
 	export let closeOnEsc: boolean = true;
 	export let closeOnOutsideClick: boolean = true;
 	export let ariaLabel: string | undefined = undefined;
-	export let maxWidthClass: string = 'max-w-lg';
+	export let maxWidthClass: string = "max-w-lg";
 
 	const dispatch = createEventDispatcher();
 
@@ -31,7 +31,7 @@
 	function openDialog() {
 		previouslyFocused = document.activeElement;
 		open = true;
-		dispatch('open');
+		dispatch("open");
 		tick().then(() => {
 			if (dialogEl) {
 				const first = dialogEl.querySelector(FOCUSABLE_SELECTORS) as HTMLElement;
@@ -42,7 +42,7 @@
 
 	function closeDialog() {
 		open = false;
-		dispatch('close');
+		dispatch("close");
 		if (previouslyFocused instanceof HTMLElement) {
 			previouslyFocused.focus();
 		}
@@ -62,12 +62,12 @@
 
 	function onKeyDown(e: KeyboardEvent) {
 		if (!open) return;
-		if (e.key === 'Escape' && closeOnEsc) {
+		if (e.key === "Escape" && closeOnEsc) {
 			e.stopPropagation();
 			closeDialog();
 			return;
 		}
-		if (e.key === 'Tab') {
+		if (e.key === "Tab") {
 			if (!dialogEl) return;
 			const focusable = Array.from(dialogEl.querySelectorAll(FOCUSABLE_SELECTORS)) as HTMLElement[];
 			if (focusable.length === 0) {
@@ -99,12 +99,12 @@
 		if (open) {
 			previouslyFocused = document.activeElement;
 		}
-		window.addEventListener('keydown', handleWindowKey, true);
+		window.addEventListener("keydown", handleWindowKey, true);
 	});
 
 	onDestroy(() => {
 		if (browser) {
-			window.removeEventListener('keydown', handleWindowKey, true);
+			window.removeEventListener("keydown", handleWindowKey, true);
 		}
 	});
 </script>
@@ -113,7 +113,7 @@
 <div
 	on:click|stopPropagation={toggleDialog}
 	on:keydown={(e) => {
-		if (e.key === 'Enter' || e.key === ' ') {
+		if (e.key === "Enter" || e.key === " ") {
 			e.preventDefault();
 			toggleDialog();
 		}

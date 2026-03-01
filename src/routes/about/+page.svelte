@@ -1,46 +1,46 @@
 <script lang="ts">
-	import SEO from '$lib/components/SEO.svelte';
+	import SEO from "$lib/components/SEO.svelte";
 
 	const stats = [
-		{ label: 'Bots Listed', value: '500+' },
-		{ label: 'Discord Servers', value: '10+' },
-		{ label: 'Discord Users', value: '5k+' },
-		{ label: 'Years Running', value: '4+' }
+		{ label: "Bots Listed", value: "500+" },
+		{ label: "Discord Servers", value: "10+" },
+		{ label: "Discord Users", value: "5k+" },
+		{ label: "Years Running", value: "4+" }
 	];
 
 	const values = [
 		{
-			icon: 'shield',
-			title: 'Trustworthy',
+			icon: "shield",
+			title: "Trustworthy",
 			description:
-				'Every bot on our list is reviewed before being approved. We take quality seriously so your community stays safe.'
+				"Every bot on our list is reviewed before being approved. We take quality seriously so your community stays safe."
 		},
 		{
-			icon: 'zap',
-			title: 'Fast & Open',
+			icon: "zap",
+			title: "Fast & Open",
 			description:
-				'No paywalls, no locked listings. Finding the right bot for your server should be effortless and free.'
+				"No paywalls, no locked listings. Finding the right bot for your server should be effortless and free."
 		},
 		{
-			icon: 'users',
-			title: 'Community First',
+			icon: "users",
+			title: "Community First",
 			description:
-				'Built by Discord enthusiasts, for Discord enthusiasts. Your feedback shapes what we build next.'
+				"Built by Discord enthusiasts, for Discord enthusiasts. Your feedback shapes what we build next."
 		},
 		{
-			icon: 'code',
-			title: 'Developer Friendly',
+			icon: "code",
+			title: "Developer Friendly",
 			description:
-				'Webhook vote notifications, a clean REST API, and a simple bot submission flow — we make it easy to grow.'
+				"Webhook vote notifications, a clean REST API, and a simple bot submission flow — we make it easy to grow."
 		}
 	];
 
 	const team = [
 		{
-			name: 'Ren Hiyama',
-			role: 'Founder & Lead Developer',
-			avatar: 'https://github.com/renhiyama.png',
-			github: 'https://github.com/renhiyama'
+			name: "Ren Hiyama",
+			role: "Founder & Lead Developer",
+			avatar: "https://github.com/renhiyama.png",
+			github: "https://github.com/renhiyama"
 		}
 	];
 </script>
@@ -137,7 +137,7 @@
 				</div>
 			</div>
 			<div class="space-y-2 text-sm">
-				{#each ['Bot discovery, simplified', 'Vetted & reviewed listings', 'Free for developers & users', 'Vote rewards for your community'] as item}
+				{#each ["Bot discovery, simplified", "Vetted & reviewed listings", "Free for developers & users", "Vote rewards for your community"] as item}
 					<div class="flex items-center gap-2 text-muted-foreground">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -174,7 +174,7 @@
 					<div
 						class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/15 transition-colors"
 					>
-						{#if v.icon === 'shield'}
+						{#if v.icon === "shield"}
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								class="w-5 h-5 text-primary"
@@ -187,7 +187,7 @@
 							>
 								<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
 							</svg>
-						{:else if v.icon === 'zap'}
+						{:else if v.icon === "zap"}
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								class="w-5 h-5 text-primary"
@@ -200,7 +200,7 @@
 							>
 								<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
 							</svg>
-						{:else if v.icon === 'users'}
+						{:else if v.icon === "users"}
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								class="w-5 h-5 text-primary"
@@ -217,7 +217,7 @@
 									r="4"
 								/><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
 							</svg>
-						{:else if v.icon === 'code'}
+						{:else if v.icon === "code"}
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								class="w-5 h-5 text-primary"

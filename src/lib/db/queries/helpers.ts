@@ -1,6 +1,6 @@
-import { withDb, type DrizzleDb } from '$lib/db';
-import { Bots, Users } from '$lib/db/schema';
-import { eq, or, desc, like, and, sql } from 'drizzle-orm';
+import { withDb, type DrizzleDb } from "$lib/db";
+import { Bots, Users } from "$lib/db/schema";
+import { eq, or, desc, like, and, sql } from "drizzle-orm";
 
 type RawRow = Record<string, any>;
 
@@ -51,7 +51,7 @@ export type User = {
 function parseJson<T = any>(value: unknown, defaultValue: T): T {
 	try {
 		if (value == null) return defaultValue;
-		if (typeof value === 'string') {
+		if (typeof value === "string") {
 			return JSON.parse(value) as T;
 		}
 		// if already object/array
@@ -87,11 +87,11 @@ function mapBotSummary(row: RawRow): BotSummary {
 		id: String(row.id),
 		slug: String(row.slug ?? row.id),
 		avatar: row.avatar ?? null,
-		username: String(row.username ?? ''),
-		discriminator: String(row.discriminator ?? ''),
-		short: String(row.short ?? ''),
-		votes: typeof row.votes === 'number' ? row.votes : Number(row.votes) || 0,
-		servers: typeof row.servers === 'number' ? row.servers : Number(row.servers) || 0,
+		username: String(row.username ?? ""),
+		discriminator: String(row.discriminator ?? ""),
+		short: String(row.short ?? ""),
+		votes: typeof row.votes === "number" ? row.votes : Number(row.votes) || 0,
+		servers: typeof row.servers === "number" ? row.servers : Number(row.servers) || 0,
 		invite: row.invite ?? null,
 		bg: row.bg ?? null
 	};
@@ -120,13 +120,13 @@ function mapBotDetail(row: RawRow): BotDetail {
 function mapUser(row: RawRow): User {
 	return {
 		id: String(row.id),
-		username: String(row.username ?? ''),
+		username: String(row.username ?? ""),
 		avatar: row.avatar ?? null,
 		email: row.email ?? null,
-		bal: typeof row.bal === 'number' ? row.bal : Number(row.bal) || 0,
+		bal: typeof row.bal === "number" ? row.bal : Number(row.bal) || 0,
 		bio: row.bio ?? null,
 		banner: row.banner ?? null,
-		added_at: typeof row.added_at === 'number' ? row.added_at : Number(row.added_at) || null,
+		added_at: typeof row.added_at === "number" ? row.added_at : Number(row.added_at) || null,
 		keys: parseJson(row.keys, null),
 		votes: parseJson(row.votes, [])
 	};
@@ -152,11 +152,11 @@ export async function getMusicBots(limit = 10): Promise<BotSummary[]> {
 				and(
 					or(like(Bots.username, `%music%`), like(Bots.short, `%music%`)),
 					and(
-						Bots.avatar !== '0',
-						Bots.avatar !== '1',
-						Bots.avatar !== '2',
-						Bots.avatar !== '3',
-						Bots.avatar !== '4'
+						Bots.avatar !== "0",
+						Bots.avatar !== "1",
+						Bots.avatar !== "2",
+						Bots.avatar !== "3",
+						Bots.avatar !== "4"
 					)
 				)
 			)
@@ -183,11 +183,11 @@ export async function getGameBots(limit = 10): Promise<BotSummary[]> {
 						like(Bots.short, `%gaming%`)
 					),
 					and(
-						Bots.avatar !== '0',
-						Bots.avatar !== '1',
-						Bots.avatar !== '2',
-						Bots.avatar !== '3',
-						Bots.avatar !== '4'
+						Bots.avatar !== "0",
+						Bots.avatar !== "1",
+						Bots.avatar !== "2",
+						Bots.avatar !== "3",
+						Bots.avatar !== "4"
 					)
 				)
 			)
@@ -207,11 +207,11 @@ export async function getModBots(limit = 10): Promise<BotSummary[]> {
 				and(
 					or(like(Bots.username, `%moder%`), like(Bots.short, `%moder%`)),
 					and(
-						Bots.avatar !== '0',
-						Bots.avatar !== '1',
-						Bots.avatar !== '2',
-						Bots.avatar !== '3',
-						Bots.avatar !== '4'
+						Bots.avatar !== "0",
+						Bots.avatar !== "1",
+						Bots.avatar !== "2",
+						Bots.avatar !== "3",
+						Bots.avatar !== "4"
 					)
 				)
 			)

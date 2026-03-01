@@ -1,12 +1,12 @@
-import type { LayoutServerLoad } from './$types';
-import DiscordOauth2 from 'discord-oauth2';
-import { env } from '$env/dynamic/private';
-import { withDb, type DrizzleDb } from '$lib/db';
-import { Users } from '$lib/schema';
-import { eq, like } from 'drizzle-orm';
+import type { LayoutServerLoad } from "./$types";
+import DiscordOauth2 from "discord-oauth2";
+import { env } from "$env/dynamic/private";
+import { withDb, type DrizzleDb } from "$lib/db";
+import { Users } from "$lib/schema";
+import { eq, like } from "drizzle-orm";
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
-	const key = cookies.get('key');
+	const key = cookies.get("key");
 
 	if (!key) {
 		return { user: null };
@@ -15,7 +15,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 	const oauth = new DiscordOauth2({
 		clientId: env.DISCORD_BOT_ID!,
 		clientSecret: env.DISCORD_SECRET!,
-		redirectUri: (env.DOMAIN ?? 'http://localhost:5173') + '/api/auth'
+		redirectUri: (env.DOMAIN ?? "http://localhost:5173") + "/api/auth"
 	});
 
 	let userData: any = null;
@@ -36,7 +36,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 
 			if (!result || result.length === 0) {
 				// No matching user record at all — clear bad cookie
-				cookies.delete('key', { path: '/' });
+				cookies.delete("key", { path: "/" });
 				return { user: null };
 			}
 
@@ -44,7 +44,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 			let keys: any[] = [];
 			try {
 				const raw = (result[0] as any).keys;
-				if (typeof raw === 'string') keys = JSON.parse(raw);
+				if (typeof raw === "string") keys = JSON.parse(raw);
 				else if (Array.isArray(raw)) keys = raw;
 			} catch {
 				keys = [];
@@ -54,7 +54,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 			keys = keys.filter((k: any) => k && Number(k.expireTimestamp) > Date.now());
 
 			if (keys.length === 0) {
-				cookies.delete('key', { path: '/' });
+				cookies.delete("key", { path: "/" });
 				return { user: null };
 			}
 
@@ -62,17 +62,17 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 			const keyData = keys[0];
 			try {
 				const tokenData: any = await oauth.tokenRequest({
-					grantType: 'refresh_token',
+					grantType: "refresh_token",
 					refreshToken: keyData.refresh_token,
-					scope: keyData.scope ?? 'identify'
+					scope: keyData.scope ?? "identify"
 				});
 
 				tokenData.expireTimestamp =
 					Date.now() + (Number(tokenData.expires_in) || 0) * 1000 - 10_000;
 
 				// Persist new token
-				cookies.set('key', tokenData.access_token, {
-					path: '/',
+				cookies.set("key", tokenData.access_token, {
+					path: "/",
 					maxAge: Number(tokenData.expires_in) || 3600
 				});
 
@@ -94,11 +94,11 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 				}
 			} catch {
 				// Refresh also failed — clear cookie
-				cookies.delete('key', { path: '/' });
+				cookies.delete("key", { path: "/" });
 				return { user: null };
 			}
 		} catch {
-			cookies.delete('key', { path: '/' });
+			cookies.delete("key", { path: "/" });
 			return { user: null };
 		}
 	}
@@ -123,7 +123,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 			id: userData.id as string,
 			username: (userData.global_name ?? userData.username) as string,
 			tag: userData.username as string,
-			discriminator: (userData.discriminator ?? '0') as string,
+			discriminator: (userData.discriminator ?? "0") as string,
 			avatar: (userData.avatar ?? null) as string | null,
 			bal
 		}

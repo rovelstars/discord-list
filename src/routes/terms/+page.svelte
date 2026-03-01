@@ -1,10 +1,10 @@
 <script lang="ts">
-	import SEO from '$lib/components/SEO.svelte';
+	import SEO from "$lib/components/SEO.svelte";
 
-	const lastUpdated = 'March 1, 2026';
-	const email = 'support@rovelstars.com';
-	const siteName = 'Rovel Discord List';
-	const siteUrl = 'https://discord.rovelstars.com';
+	const lastUpdated = "March 1, 2026";
+	const email = "support@rovelstars.com";
+	const siteName = "Rovel Discord List";
+	const siteUrl = "https://discord.rovelstars.com";
 </script>
 
 <SEO
@@ -133,7 +133,7 @@
 					</p>
 				</div>
 				<nav class="p-2">
-					{#each [['#acceptance', 'Acceptance'], ['#eligibility', 'Eligibility'], ['#your-account', 'Your Account'], ['#acceptable-use', 'Acceptable Use'], ['#bot-listings', 'Bot Listings'], ['#voting', 'Voting & Rewards'], ['#intellectual-prop', 'Intellectual Property'], ['#third-party', 'Third-Party Services'], ['#disclaimers', 'Disclaimers'], ['#limitation', 'Limitation of Liability'], ['#termination', 'Termination'], ['#changes', 'Changes to Terms'], ['#contact', 'Contact Us']] as [href, label]}
+					{#each [["#acceptance", "Acceptance"], ["#eligibility", "Eligibility"], ["#your-account", "Your Account"], ["#acceptable-use", "Acceptable Use"], ["#bot-listings", "Bot Listings"], ["#voting", "Voting & Rewards"], ["#intellectual-prop", "Intellectual Property"], ["#third-party", "Third-Party Services"], ["#disclaimers", "Disclaimers"], ["#limitation", "Limitation of Liability"], ["#termination", "Termination"], ["#changes", "Changes to Terms"], ["#contact", "Contact Us"]] as [href, label]}
 						<a
 							{href}
 							class="block px-3 py-2 rounded-xl text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
@@ -209,7 +209,7 @@
 				<div class="text-muted-foreground leading-relaxed space-y-3 text-sm">
 					<p>To use this Service you must:</p>
 					<ul class="space-y-2">
-						{#each ["Be at least 13 years of age (the minimum age required by Discord's Terms of Service).", 'Have a valid Discord account in good standing.', 'Not have been previously banned or suspended from our platform.', 'Comply with all applicable laws and regulations in your jurisdiction.'] as item}
+						{#each ["Be at least 13 years of age (the minimum age required by Discord's Terms of Service).", "Have a valid Discord account in good standing.", "Not have been previously banned or suspended from our platform.", "Comply with all applicable laws and regulations in your jurisdiction."] as item}
 							<li class="flex items-start gap-2">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -263,7 +263,7 @@
 					</p>
 					<p>You agree not to:</p>
 					<ul class="space-y-2">
-						{#each ['Share your session or allow others to use your account.', 'Use automated tools, scripts, or bots to interact with the Service on your behalf.', "Attempt to access another user's account or data without authorisation.", 'Impersonate another person or organisation.'] as item}
+						{#each ["Share your session or allow others to use your account.", "Use automated tools, scripts, or bots to interact with the Service on your behalf.", "Attempt to access another user's account or data without authorisation.", "Impersonate another person or organisation."] as item}
 							<li class="flex items-start gap-2">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -322,7 +322,7 @@
 							</p>
 						</div>
 						<ul class="divide-y divide-border">
-							{#each ['Posting content that is illegal, harmful, threatening, abusive, harassing, defamatory, or otherwise objectionable.', 'Distributing malware, viruses, or any code designed to disrupt, damage, or gain unauthorised access to systems.', 'Scraping, crawling, or indexing the Service without our prior written consent.', 'Attempting to overload, attack, or interfere with the availability of the Service (DDoS, etc.).', 'Circumventing any rate limits, access controls, or security measures.', 'Using the Service for commercial spam or unsolicited bulk messaging.', 'Posting content that infringes any third-party intellectual property rights.'] as item}
+							{#each ["Posting content that is illegal, harmful, threatening, abusive, harassing, defamatory, or otherwise objectionable.", "Distributing malware, viruses, or any code designed to disrupt, damage, or gain unauthorised access to systems.", "Scraping, crawling, or indexing the Service without our prior written consent.", "Attempting to overload, attack, or interfere with the availability of the Service (DDoS, etc.).", "Circumventing any rate limits, access controls, or security measures.", "Using the Service for commercial spam or unsolicited bulk messaging.", "Posting content that infringes any third-party intellectual property rights."] as item}
 								<li class="px-5 py-3 flex items-start gap-2.5 text-xs">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -392,7 +392,7 @@
 							</p>
 						</div>
 						<ul class="divide-y divide-border">
-							{#each [['Ownership', 'You must be a verified owner or co-owner of the bot you are submitting.'], ['Functionality', 'The bot must be online and functional at the time of submission and kept maintained thereafter.'], ['Description accuracy', 'All descriptions, tags, and links must accurately represent the bot. Misleading listings will be removed.'], ['Discord ToS compliance', "The bot must fully comply with Discord's Developer Terms of Service and Developer Policy."], ['No NSFW on main listing', 'NSFW content must not be present in any public-facing listing field (name, short description, tags, or avatar).'], ['Valid invite link', 'A working bot invite link with the minimum required permissions must be provided.']] as [field, desc]}
+							{#each [["Ownership", "You must be a verified owner or co-owner of the bot you are submitting."], ["Functionality", "The bot must be online and functional at the time of submission and kept maintained thereafter."], ["Description accuracy", "All descriptions, tags, and links must accurately represent the bot. Misleading listings will be removed."], ["Discord ToS compliance", "The bot must fully comply with Discord's Developer Terms of Service and Developer Policy."], ["No NSFW on main listing", "NSFW content must not be present in any public-facing listing field (name, short description, tags, or avatar)."], ["Valid invite link", "A working bot invite link with the minimum required permissions must be provided."]] as [field, desc]}
 								<li class="px-5 py-3 flex items-start gap-3 text-xs">
 									<span class="font-semibold text-foreground shrink-0 w-36">{field}</span>
 									<span>{desc}</span>
@@ -441,7 +441,7 @@
 					</p>
 					<p>The following vote-related conduct is strictly prohibited:</p>
 					<ul class="space-y-2">
-						{#each ['Voting using automated scripts, bots, or any non-human method.', 'Creating multiple accounts to inflate vote counts.', 'Paying, incentivising, or coercing other users to vote for your bot outside of Discord server vote-reward systems.', 'Attempting to manipulate the leaderboard rankings through any means other than legitimate organic votes.'] as item}
+						{#each ["Voting using automated scripts, bots, or any non-human method.", "Creating multiple accounts to inflate vote counts.", "Paying, incentivising, or coercing other users to vote for your bot outside of Discord server vote-reward systems.", "Attempting to manipulate the leaderboard rankings through any means other than legitimate organic votes."] as item}
 							<li class="flex items-start gap-2">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -600,7 +600,7 @@
 						either express or implied.
 					</p>
 					<div class="space-y-2">
-						{#each ['We do not warrant that the Service will be uninterrupted, error-free, or free of viruses or other harmful components.', 'We do not guarantee the accuracy, completeness, or usefulness of any information provided by third-party bot listings.', 'Rovel Stars™ is not affiliated with, endorsed by, or in any way officially connected with Discord Inc.', 'All bot listings are provided by their respective developers. We are not responsible for any actions taken by listed bots in your Discord servers.'] as item}
+						{#each ["We do not warrant that the Service will be uninterrupted, error-free, or free of viruses or other harmful components.", "We do not guarantee the accuracy, completeness, or usefulness of any information provided by third-party bot listings.", "Rovel Stars™ is not affiliated with, endorsed by, or in any way officially connected with Discord Inc.", "All bot listings are provided by their respective developers. We are not responsible for any actions taken by listed bots in your Discord servers."] as item}
 							<div
 								class="bg-card border border-border rounded-xl px-4 py-3 flex items-start gap-2.5 text-xs"
 							>

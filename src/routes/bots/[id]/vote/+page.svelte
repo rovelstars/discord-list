@@ -1,7 +1,7 @@
 <script lang="ts">
-	import getAvatarURL from '$lib/get-avatar-url';
-	import { buttonVariants } from '$lib/components/ui/button.js';
-	import SEO from '$lib/components/SEO.svelte';
+	import getAvatarURL from "$lib/get-avatar-url";
+	import { buttonVariants } from "$lib/components/ui/button.js";
+	import SEO from "$lib/components/SEO.svelte";
 
 	export let data: {
 		bot: {
@@ -27,7 +27,7 @@
 
 	$: avatarSrc = bot.avatar
 		? getAvatarURL(bot.id, bot.avatar, 128)
-		: '/assets/img/bot/logo-144.png';
+		: "/assets/img/bot/logo-144.png";
 
 	// Coin input (only relevant when bot.opted_coins)
 	let coins: number = 0;
@@ -44,8 +44,8 @@
 		successMsg = null;
 
 		try {
-			const qs = coins ? `?coins=${encodeURIComponent(coins)}` : '';
-			const res = await fetch(`/api/bots/${bot.id}/vote${qs}`, { method: 'POST' });
+			const qs = coins ? `?coins=${encodeURIComponent(coins)}` : "";
+			const res = await fetch(`/api/bots/${bot.id}/vote${qs}`, { method: "POST" });
 			const data = await res.json();
 
 			if (!res.ok || !data.success) {
@@ -53,19 +53,19 @@
 					errorMsg = `You already voted! You can vote again in ${data.try_after}.`;
 				} else {
 					// Humanise snake_case error keys
-					errorMsg = (data.err ?? data.error ?? 'Something went wrong.').replace(/_/g, ' ');
+					errorMsg = (data.err ?? data.error ?? "Something went wrong.").replace(/_/g, " ");
 				}
 				return;
 			}
 
-			successMsg = 'Voted successfully!';
+			successMsg = "Voted successfully!";
 			// Redirect back to bot page after a short delay, same as old site
 			setTimeout(() => {
 				window.location.href = `/bots/${bot.slug}`;
 			}, 1200);
 		} catch (e) {
-			errorMsg = 'A network error occurred. Please try again.';
-			console.error('Vote error:', e);
+			errorMsg = "A network error occurred. Please try again.";
+			console.error("Vote error:", e);
 		} finally {
 			loading = false;
 		}

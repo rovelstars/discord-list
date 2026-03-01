@@ -1,11 +1,16 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import DiscordOauth2 from 'discord-oauth2';
-import { env } from '$env/dynamic/private';
-import { getCommentById, toggleReaction, REACTION_EMOJIS, type ReactionEmoji } from '$lib/db/queries';
-import { withDb, type DrizzleDb } from '$lib/db';
-import { Users } from '$lib/schema';
-import { eq } from 'drizzle-orm';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import DiscordOauth2 from "discord-oauth2";
+import { env } from "$env/dynamic/private";
+import {
+	getCommentById,
+	toggleReaction,
+	REACTION_EMOJIS,
+	type ReactionEmoji
+} from "$lib/db/queries";
+import { withDb, type DrizzleDb } from "$lib/db";
+import { Users } from "$lib/schema";
+import { eq } from "drizzle-orm";
 
 /**
  * Resolve the caller's Discord access token from the request.
@@ -17,10 +22,10 @@ function resolveKey(
 ): string | null {
 	const url = new URL(request.url);
 	return (
-		url.searchParams.get('key') ??
-		request.headers.get('authorization') ??
-		request.headers.get('RDL-key') ??
-		cookies.get('key') ??
+		url.searchParams.get("key") ??
+		request.headers.get("authorization") ??
+		request.headers.get("RDL-key") ??
+		cookies.get("key") ??
 		null
 	);
 }
@@ -33,7 +38,7 @@ async function getDiscordUser(key: string): Promise<{ id: string; username: stri
 	const oauth = new DiscordOauth2({
 		clientId: env.DISCORD_BOT_ID,
 		clientSecret: env.DISCORD_SECRET,
-		redirectUri: (env.DOMAIN ?? 'http://localhost:5173') + '/api/auth'
+		redirectUri: (env.DOMAIN ?? "http://localhost:5173") + "/api/auth"
 	});
 	try {
 		return await oauth.getUser(key);
@@ -65,18 +70,21 @@ export const PUT: RequestHandler = async ({ request, params, cookies }) => {
 	const { id: botId, commentId } = params;
 
 	if (!botId || !commentId) {
-		return json({ err: 'missing_params' }, { status: 400 });
+		return json({ err: "missing_params" }, { status: 400 });
 	}
 
 	// ── Auth ──────────────────────────────────────────────────────────────────
 	const key = resolveKey(request, cookies);
 	if (!key) {
-		return json({ err: 'not_logged_in', message: 'You must be logged in to react.' }, { status: 401 });
+		return json(
+			{ err: "not_logged_in", message: "You must be logged in to react." },
+			{ status: 401 }
+		);
 	}
 
 	const discordUser = await getDiscordUser(key);
 	if (!discordUser) {
-		return json({ err: 'invalid_key', message: 'Invalid or expired session.' }, { status: 401 });
+		return json({ err: "invalid_key", message: "Invalid or expired session." }, { status: 401 });
 	}
 
 	const userId = discordUser.id;
@@ -87,20 +95,23 @@ export const PUT: RequestHandler = async ({ request, params, cookies }) => {
 	)) as any[];
 
 	if (!userRows || userRows.length === 0) {
-		return json({ err: 'user_not_found', message: 'Your account was not found in the database.' }, { status: 403 });
+		return json(
+			{ err: "user_not_found", message: "Your account was not found in the database." },
+			{ status: 403 }
+		);
 	}
 
 	// ── Fetch and validate comment ────────────────────────────────────────────
 	const comment = await getCommentById(commentId);
 
 	if (!comment) {
-		return json({ err: 'not_found', message: 'Comment not found.' }, { status: 404 });
+		return json({ err: "not_found", message: "Comment not found." }, { status: 404 });
 	}
 
 	// Confirm the comment belongs to this bot (prevents cross-bot reaction
 	// injection if someone guesses a comment id from another bot)
 	if (comment.bot_id !== botId) {
-		return json({ err: 'not_found', message: 'Comment not found.' }, { status: 404 });
+		return json({ err: "not_found", message: "Comment not found." }, { status: 404 });
 	}
 
 	// ── Parse and validate body ───────────────────────────────────────────────
@@ -108,16 +119,19 @@ export const PUT: RequestHandler = async ({ request, params, cookies }) => {
 	try {
 		body = await request.json();
 	} catch {
-		return json({ err: 'invalid_json', message: 'Request body must be valid JSON.' }, { status: 400 });
+		return json(
+			{ err: "invalid_json", message: "Request body must be valid JSON." },
+			{ status: 400 }
+		);
 	}
 
 	const emojiRaw = body?.emoji;
 
-	if (typeof emojiRaw !== 'string' || !REACTION_EMOJIS.includes(emojiRaw as ReactionEmoji)) {
+	if (typeof emojiRaw !== "string" || !REACTION_EMOJIS.includes(emojiRaw as ReactionEmoji)) {
 		return json(
 			{
-				err: 'invalid_emoji',
-				message: `emoji must be one of: ${REACTION_EMOJIS.join(', ')}`
+				err: "invalid_emoji",
+				message: `emoji must be one of: ${REACTION_EMOJIS.join(", ")}`
 			},
 			{ status: 400 }
 		);
@@ -130,7 +144,7 @@ export const PUT: RequestHandler = async ({ request, params, cookies }) => {
 		const reactions = await toggleReaction(commentId, userId, emoji);
 		return json({ reactions }, { status: 200 });
 	} catch (err) {
-		console.error('[react PUT] error:', err);
-		return json({ err: 'server_error', message: 'Failed to toggle reaction.' }, { status: 500 });
+		console.error("[react PUT] error:", err);
+		return json({ err: "server_error", message: "Failed to toggle reaction." }, { status: 500 });
 	}
 };

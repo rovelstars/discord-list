@@ -1,19 +1,19 @@
 <script>
 	const year = new Date().getFullYear();
-	const siteOwner = 'Rovel Stars™';
-	const email = 'support@rovelstars.com';
+	const siteOwner = "Rovel Stars™";
+	const email = "support@rovelstars.com";
 
 	const legalLinks = [
-		{ href: '/about', label: 'About' },
-		{ href: '/privacy', label: 'Privacy Policy' },
-		{ href: '/terms', label: 'Terms of Service' }
+		{ href: "/about", label: "About" },
+		{ href: "/privacy", label: "Privacy Policy" },
+		{ href: "/terms", label: "Terms of Service" }
 	];
 
 	const socialLinks = [
 		{ href: `mailto:${email}`, label: email, external: false },
-		{ href: '/server', label: 'Discord', external: false },
-		{ href: 'https://x.com/RovelStars', label: 'Twitter', external: true },
-		{ href: 'https://github.com/rovelstars', label: 'GitHub', external: true }
+		{ href: "/server", label: "Discord", external: false },
+		{ href: "https://x.com/RovelStars", label: "Twitter", external: true },
+		{ href: "https://github.com/rovelstars", label: "GitHub", external: true }
 	];
 </script>
 
@@ -56,7 +56,7 @@
 						Platform
 					</p>
 					<ul class="space-y-2">
-						{#each [{ href: '/bots', label: 'Browse Bots' }, { href: '/top', label: 'Top Bots' }, { href: '/new', label: 'New Bots' }, { href: '/categories', label: 'Categories' }] as link}
+						{#each [{ href: "/bots", label: "Browse Bots" }, { href: "/top", label: "Top Bots" }, { href: "/new", label: "New Bots" }, { href: "/categories", label: "Categories" }] as link}
 							<li>
 								<a
 									href={link.href}
@@ -75,7 +75,7 @@
 						Developers
 					</p>
 					<ul class="space-y-2">
-						{#each [{ href: '/login', label: 'Login' }, { href: '/dashboard', label: 'Dashboard' }, { href: '/dashboard/bots/new', label: 'List a Bot' }] as link}
+						{#each [{ href: "/login", label: "Login" }, { href: "/dashboard", label: "Dashboard" }, { href: "/dashboard/bots/new", label: "List a Bot" }] as link}
 							<li>
 								<a
 									href={link.href}

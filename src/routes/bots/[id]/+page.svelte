@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { browser } from '$app/environment';
-	import getAvatarURL from '$lib/get-avatar-url';
-	import BotCard from '$lib/components/BotCard.svelte';
-	import TwemojiText from '$lib/components/TwemojiText.svelte';
-	import SEO from '$lib/components/SEO.svelte';
-	import BotComments from '$lib/components/BotComments.svelte';
+	import { onMount } from "svelte";
+	import { browser } from "$app/environment";
+	import getAvatarURL from "$lib/get-avatar-url";
+	import BotCard from "$lib/components/BotCard.svelte";
+	import TwemojiText from "$lib/components/TwemojiText.svelte";
+	import SEO from "$lib/components/SEO.svelte";
+	import BotComments from "$lib/components/BotComments.svelte";
 
 	export let data: {
 		bot: {
@@ -49,36 +49,36 @@
 
 	/** Friendly label map for known Discord bot libraries */
 	const LIB_LABELS: Record<string, string> = {
-		'discord.js': 'Discord.js (JavaScript/Node.js)',
-		'discord.py': 'discord.py (Python)',
-		discordgo: 'DiscordGo (Go)',
-		JDA: 'JDA (Java)',
-		discord4j: 'Discord4J (Java/Kotlin)',
-		eris: 'Eris (JavaScript/Node.js)',
-		hikari: 'Hikari (Python)',
-		serenity: 'Serenity (Rust)',
-		nextcord: 'Nextcord (Python)',
-		disnake: 'Disnake (Python)',
-		pycord: 'Pycord (Python)',
-		'interactions.py': 'interactions.py (Python)',
-		discordnet: 'Discord.Net (C#)',
-		DSharpPlus: 'DSharpPlus (C#)',
-		nyxx: 'Nyxx (Dart)',
-		discordrb: 'discordrb (Ruby)'
+		"discord.js": "Discord.js (JavaScript/Node.js)",
+		"discord.py": "discord.py (Python)",
+		discordgo: "DiscordGo (Go)",
+		JDA: "JDA (Java)",
+		discord4j: "Discord4J (Java/Kotlin)",
+		eris: "Eris (JavaScript/Node.js)",
+		hikari: "Hikari (Python)",
+		serenity: "Serenity (Rust)",
+		nextcord: "Nextcord (Python)",
+		disnake: "Disnake (Python)",
+		pycord: "Pycord (Python)",
+		"interactions.py": "interactions.py (Python)",
+		discordnet: "Discord.Net (C#)",
+		DSharpPlus: "DSharpPlus (C#)",
+		nyxx: "Nyxx (Dart)",
+		discordrb: "discordrb (Ruby)"
 	};
 
 	function friendlyLib(lib: string | null | undefined): string {
-		if (!lib) return '';
+		if (!lib) return "";
 		return LIB_LABELS[lib] ?? lib;
 	}
 
 	/** Turn an ISO date string into a human-readable "Month Year" */
 	function formatDate(iso: string | null | undefined): string {
-		if (!iso) return '';
+		if (!iso) return "";
 		try {
-			return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+			return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long" });
 		} catch {
-			return '';
+			return "";
 		}
 	}
 
@@ -88,12 +88,12 @@
 		if (n >= 1_000)
 			return `over ${Math.floor(n / 1_000).toLocaleString()} thousand Discord servers`;
 		if (n > 0) return `${n.toLocaleString()} Discord servers`;
-		return 'many Discord servers';
+		return "many Discord servers";
 	}
 
 	/** Build a natural-language prefix sentence */
 	function prefixSentence(prefix: string | null | undefined): string {
-		if (!prefix || prefix === '/') {
+		if (!prefix || prefix === "/") {
 			return `${bot.username} is a slash-command bot and uses Discord's native <code>/</code> command system, meaning all commands appear in Discord's built-in autocomplete menu — no prefix memorisation needed.`;
 		}
 		return `${bot.username} uses the command prefix <code>${prefix}</code>. Type <code>${prefix}help</code> in any channel the bot has access to for a full list of available commands.`;
@@ -103,11 +103,11 @@
 	function buildTags(): string[] {
 		const t: string[] = [];
 		if (bot.tags && Array.isArray(bot.tags)) t.push(...bot.tags);
-		if (bot.prefix === '/' || !bot.prefix) t.push('Slash Commands');
+		if (bot.prefix === "/" || !bot.prefix) t.push("Slash Commands");
 		if (bot.lib) t.push(bot.lib);
-		if (bot.source_repo) t.push('Open Source');
-		if (bot.support) t.push('Support Server');
-		if (bot.website) t.push('Official Website');
+		if (bot.source_repo) t.push("Open Source");
+		if (bot.support) t.push("Support Server");
+		if (bot.website) t.push("Official Website");
 		// deduplicate case-insensitively
 		return [...new Map(t.map((x) => [x.toLowerCase(), x])).values()];
 	}
@@ -117,24 +117,24 @@
 	$: libFriendly = friendlyLib(bot.lib);
 
 	function approx(n: number | null | undefined): string {
-		if (n == null || isNaN(Number(n))) return '0';
+		if (n == null || isNaN(Number(n))) return "0";
 		const num = Number(n);
-		if (num >= 1_000_000) return (num / 1_000_000).toFixed(num % 1_000_000 === 0 ? 0 : 1) + 'M';
-		if (num >= 1_000) return (num / 1_000).toFixed(num % 1_000 === 0 ? 0 : 1) + 'k';
+		if (num >= 1_000_000) return (num / 1_000_000).toFixed(num % 1_000_000 === 0 ? 0 : 1) + "M";
+		if (num >= 1_000) return (num / 1_000).toFixed(num % 1_000 === 0 ? 0 : 1) + "k";
 		return String(num);
 	}
 
 	function resolveBg(bg: string | null | undefined, id: string): string | null {
 		if (!bg) return null;
-		if (bg.startsWith('http')) return bg;
+		if (bg.startsWith("http")) return bg;
 		return `https://cdn.discordapp.com/banners/${id}/${bg}.webp?size=1024`;
 	}
 
 	$: bgUrl = resolveBg(bot.bg, bot.id);
 
 	$: avatarSrc = (() => {
-		if (!bot.avatar || bot.avatar === '0') return getAvatarURL(bot.id, bot.avatar ?? '0');
-		return getAvatarURL(bot.id, bot.avatar, 128).replace('.png', '.webp');
+		if (!bot.avatar || bot.avatar === "0") return getAvatarURL(bot.id, bot.avatar ?? "0");
+		return getAvatarURL(bot.id, bot.avatar, 128).replace(".png", ".webp");
 	})();
 
 	let bgImgRef: HTMLImageElement | null = null;
@@ -147,7 +147,7 @@
 	async function ensureColorThief() {
 		if (colorThief) return colorThief;
 		try {
-			const { default: CT } = await import('colorthief');
+			const { default: CT } = await import("colorthief");
 			colorThief = new (CT as any)();
 		} catch {
 			// colorthief unavailable (e.g. SSR or bundling issue)
@@ -176,7 +176,7 @@
 			if (node.complete && node.naturalWidth) {
 				extractColor(node);
 			} else {
-				node.addEventListener('load', () => extractColor(node), { once: true });
+				node.addEventListener("load", () => extractColor(node), { once: true });
 			}
 		});
 		return {};
@@ -193,7 +193,7 @@
 				if (node.complete && node.naturalWidth) {
 					extractColor(node);
 				} else {
-					node.addEventListener('load', () => extractColor(node), { once: true });
+					node.addEventListener("load", () => extractColor(node), { once: true });
 				}
 			});
 		}
@@ -213,11 +213,11 @@
 	 */
 	function handleBgError(event: Event) {
 		const target = event.target as HTMLImageElement;
-		const src = target?.src ?? '';
+		const src = target?.src ?? "";
 
 		const isDiscordImage =
-			src.startsWith('https://cdn.discordapp.com/') ||
-			src.startsWith('https://media.discordapp.net/');
+			src.startsWith("https://cdn.discordapp.com/") ||
+			src.startsWith("https://media.discordapp.net/");
 
 		// Only ping the server for actual Discord CDN images (stale hash etc.)
 		if (isDiscordImage) {
@@ -231,7 +231,7 @@
 					if (avatarImgRef.complete && avatarImgRef.naturalWidth) {
 						extractColor(avatarImgRef);
 					} else {
-						avatarImgRef.addEventListener('load', () => extractColor(avatarImgRef!), {
+						avatarImgRef.addEventListener("load", () => extractColor(avatarImgRef!), {
 							once: true
 						});
 					}
@@ -241,16 +241,16 @@
 	}
 
 	$: gc = gradientColor;
-	$: borderStyle = gc ? `border-color: rgba(${gc[0]},${gc[1]},${gc[2]},0.3);` : '';
+	$: borderStyle = gc ? `border-color: rgba(${gc[0]},${gc[1]},${gc[2]},0.3);` : "";
 	// Gradient overlay applied to the content area below the banner, matching old behaviour.
 	// Uses a subtle tinted-to-transparent gradient so the dominant colour bleeds through.
 	$: gradientOverlayStyle = gc
 		? `background: linear-gradient(to bottom, rgba(${gc[0]},${gc[1]},${gc[2]},0.18) 0%, rgba(${gc[0]},${gc[1]},${gc[2]},0.06) 40%, transparent 100%);`
-		: '';
+		: "";
 
 	function supportUrl(support: string | null | undefined): string | null {
 		if (!support) return null;
-		if (support.startsWith('http')) return support;
+		if (support.startsWith("http")) return support;
 		return `https://discord.gg/${support}`;
 	}
 
@@ -274,43 +274,43 @@
 		if (!browser || refreshDispatched) return;
 
 		const target = event.target as HTMLImageElement;
-		const src = target?.src ?? '';
+		const src = target?.src ?? "";
 
 		// Only trigger a refresh for Discord CDN images — external images that
 		// happen to 404 should not cause a bot refresh.
 		const isDiscordImage =
-			src.startsWith('https://cdn.discordapp.com/') ||
-			src.startsWith('https://media.discordapp.net/');
+			src.startsWith("https://cdn.discordapp.com/") ||
+			src.startsWith("https://media.discordapp.net/");
 
 		if (!isDiscordImage) return;
 
 		refreshDispatched = true;
-		console.debug('[bot-page] Discord image load error, queuing refresh for bot', bot.id);
+		console.debug("[bot-page] Discord image load error, queuing refresh for bot", bot.id);
 
 		// POST to the public proxy route — the server adds the INTERNAL_SECRET
 		// before forwarding to /api/internals/refresh-bot/[id], so no secret
 		// is ever exposed in the browser.
 		fetch(`/api/bots/${encodeURIComponent(bot.id)}/refresh`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' }
+			method: "POST",
+			headers: { "Content-Type": "application/json" }
 		})
 			.then(async (res) => {
 				const body = await res.json().catch(() => ({}));
 				if (!res.ok) {
-					console.warn('[bot-page] Refresh request failed:', res.status, body);
+					console.warn("[bot-page] Refresh request failed:", res.status, body);
 				} else {
-					console.debug('[bot-page] Refresh response:', body);
+					console.debug("[bot-page] Refresh response:", body);
 					if (body.updated) {
 						// soft reload the page to fetch new images — this won't cause a full reload if the data hasn't changed.
 						location.reload();
 					} else {
-						console.debug('[bot-page] Bot data is already up to date, no reload needed.');
+						console.debug("[bot-page] Bot data is already up to date, no reload needed.");
 					}
 				}
 			})
 			.catch((err) => {
 				// Network errors are entirely non-fatal — best-effort only.
-				console.debug('[bot-page] Refresh request network error (non-fatal):', err);
+				console.debug("[bot-page] Refresh request network error (non-fatal):", err);
 			});
 	}
 </script>
@@ -355,7 +355,7 @@
 					? `background-image: url('${bgUrl}'); background-size: cover; background-position: center;`
 					: gc
 						? `background-color: rgb(${gc[0]},${gc[1]},${gc[2]});`
-						: 'background: linear-gradient(135deg, hsl(var(--color-primary) / 0.2), hsl(var(--color-muted)));'}
+						: "background: linear-gradient(135deg, hsl(var(--color-primary) / 0.2), hsl(var(--color-muted)));"}
 			>
 				{#if bgUrl}
 					<!--
@@ -432,7 +432,7 @@
 							>
 							on Rovel Discord List.
 							{#if bot.short}
-								{bot.short.replace(/[#*_~`]/g, '')}
+								{bot.short.replace(/[#*_~`]/g, "")}
 							{/if}
 							{#if addedDate}
 								It was listed on Rovel Discord List in <strong class="text-foreground"
@@ -463,7 +463,7 @@
 								class="rounded-xl bg-muted/40 border border-border px-4 py-3 flex flex-col items-center text-center"
 							>
 								<span class="text-2xl font-black text-foreground leading-none truncate max-w-full">
-									{#if bot.prefix === '/' || !bot.prefix}
+									{#if bot.prefix === "/" || !bot.prefix}
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											class="w-6 h-6 mx-auto text-primary/80"
@@ -506,7 +506,7 @@
 								{@html prefixSentence(bot.prefix)}
 								{#if bot.support}
 									For live help, join the <a
-										href={bot.support.startsWith('http')
+										href={bot.support.startsWith("http")
 											? bot.support
 											: `https://discord.gg/${bot.support}`}
 										rel="noopener noreferrer"
@@ -677,7 +677,7 @@
 
 								<div class="rounded-xl bg-muted/30 border border-border px-4 py-3">
 									<dt class="font-semibold text-sm text-foreground mb-1">
-										{#if bot.prefix === '/' || !bot.prefix}
+										{#if bot.prefix === "/" || !bot.prefix}
 											Does {bot.username} support slash commands?
 										{:else}
 											What is {bot.username}'s command prefix?
@@ -697,7 +697,7 @@
 											The developers of {bot.username} maintain an official support server on Discord.
 											You can join via the
 											<a
-												href={bot.support.startsWith('http')
+												href={bot.support.startsWith("http")
 													? bot.support
 													: `https://discord.gg/${bot.support}`}
 												target="_blank"
@@ -802,7 +802,7 @@
 									class="inline-flex items-center justify-center gap-2 w-full rounded-lg text-sm font-semibold bg-primary text-primary-foreground px-4 py-2.5 hover:bg-primary/90 active:scale-[0.98] transition-all shadow-sm cursor-pointer"
 									on:click={() => {
 										const el = document.getElementById(`invite-menu-${bot.id}`);
-										if (el) el.classList.toggle('hidden');
+										if (el) el.classList.toggle("hidden");
 									}}
 								>
 									<svg

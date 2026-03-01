@@ -43,6 +43,7 @@
 		"highlight.js": "^11.11.1",
 		"marked": "^17.0.3",
 		"marked-highlight": "^2.2.3",
+		"prettier-plugin-svelte": "^3.5.0",
 		"skeleton-ui": "^0.0.8",
 		"tailwindcss-animate": "^1.0.7",
 		"twemoji": "^14.0.2"

@@ -1,6 +1,6 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import { ping } from '$lib/db';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import { ping } from "$lib/db";
 
 /**
  * Simple health-check endpoint to validate DB connectivity.
@@ -15,12 +15,12 @@ import { ping } from '$lib/db';
  * raw query against the libSQL/Turso client.
  */
 export const GET: RequestHandler = async () => {
-  try {
-    const ok = await ping();
-    return json({ ok }, { status: 200 });
-  } catch (err) {
-    // Return a sanitized error message; keep sensitive details out of responses.
-    const message = err instanceof Error ? err.message : String(err);
-    return json({ ok: false, error: message }, { status: 500 });
-  }
+	try {
+		const ok = await ping();
+		return json({ ok }, { status: 200 });
+	} catch (err) {
+		// Return a sanitized error message; keep sensitive details out of responses.
+		const message = err instanceof Error ? err.message : String(err);
+		return json({ ok: false, error: message }, { status: 500 });
+	}
 };

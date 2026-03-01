@@ -22,35 +22,35 @@
  *  - Return appropriate error codes for missing token, invalid token, not owner, slug taken, etc.
  */
 
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ params }) => {
-  if (!params.id) {
-    return json({ err: 'missing_bot_id' }, { status: 400 });
-  }
+	if (!params.id) {
+		return json({ err: "missing_bot_id" }, { status: 400 });
+	}
 
-  return json(
-    {
-      err: 'not_implemented',
-      message:
-        'The slug endpoint is a placeholder. To enable slug inspection/assignment implement ownership checks, slug validation, uniqueness checks and DB updates.'
-    },
-    { status: 501 }
-  );
+	return json(
+		{
+			err: "not_implemented",
+			message:
+				"The slug endpoint is a placeholder. To enable slug inspection/assignment implement ownership checks, slug validation, uniqueness checks and DB updates."
+		},
+		{ status: 501 }
+	);
 };
 
 export const POST: RequestHandler = async ({ params }) => {
-  if (!params.id) {
-    return json({ err: 'missing_bot_id' }, { status: 400 });
-  }
+	if (!params.id) {
+		return json({ err: "missing_bot_id" }, { status: 400 });
+	}
 
-  return json(
-    {
-      err: 'not_implemented',
-      message:
-        'The slug endpoint is a placeholder. To enable slug assignment implement ownership checks, slug validation, uniqueness checks and DB updates.'
-    },
-    { status: 501 }
-  );
+	return json(
+		{
+			err: "not_implemented",
+			message:
+				"The slug endpoint is a placeholder. To enable slug assignment implement ownership checks, slug validation, uniqueness checks and DB updates."
+		},
+		{ status: 501 }
+	);
 };

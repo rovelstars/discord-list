@@ -1,7 +1,7 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
-import { refreshBot, NotFoundError } from '$lib/bot-refresh';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
+import { refreshBot, NotFoundError } from "$lib/bot-refresh";
 
 // ---------------------------------------------------------------------------
 // Simple in-memory rate limiter
@@ -62,7 +62,7 @@ export const POST: RequestHandler = async ({ params }) => {
 	// ------------------------------------------------------------------
 	const botId = params.id?.trim();
 	if (!botId) {
-		return json({ success: false, error: 'missing_id' }, { status: 400 });
+		return json({ success: false, error: "missing_id" }, { status: 400 });
 	}
 
 	// ------------------------------------------------------------------
@@ -72,19 +72,19 @@ export const POST: RequestHandler = async ({ params }) => {
 		const last = lastRefreshAt.get(botId)!;
 		const retryAfterMs = RATE_LIMIT_MS - (Date.now() - last);
 		return json(
-			{ success: false, error: 'rate_limited', retryAfterMs },
-			{ status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } }
+			{ success: false, error: "rate_limited", retryAfterMs },
+			{ status: 429, headers: { "Retry-After": String(Math.ceil(retryAfterMs / 1000)) } }
 		);
 	}
 
 	// ------------------------------------------------------------------
 	// Discord token — required; fail fast if not configured.
 	// ------------------------------------------------------------------
-	const discordToken = (env.DISCORD_TOKEN ?? '').trim();
+	const discordToken = (env.DISCORD_TOKEN ?? "").trim();
 	if (!discordToken) {
-		console.error('[refresh-bot/public] DISCORD_TOKEN env var is not set.');
+		console.error("[refresh-bot/public] DISCORD_TOKEN env var is not set.");
 		return json(
-			{ success: false, error: 'Server misconfiguration: DISCORD_TOKEN not set.' },
+			{ success: false, error: "Server misconfiguration: DISCORD_TOKEN not set." },
 			{ status: 500 }
 		);
 	}
@@ -97,11 +97,11 @@ export const POST: RequestHandler = async ({ params }) => {
 	// Delegate to shared refresh logic
 	// ------------------------------------------------------------------
 	try {
-		const result = await refreshBot(botId, discordToken, { triggeredBy: 'frontend-image-error' });
+		const result = await refreshBot(botId, discordToken, { triggeredBy: "frontend-image-error" });
 		return json({ success: true, ...result }, { status: 200 });
 	} catch (err) {
 		if (err instanceof NotFoundError) {
-			return json({ success: false, error: 'bot_not_found' }, { status: 404 });
+			return json({ success: false, error: "bot_not_found" }, { status: 404 });
 		}
 		const msg = err instanceof Error ? err.message : String(err);
 		console.error(`[refresh-bot/public] Unexpected error for bot ${botId}:`, err);

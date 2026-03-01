@@ -1,11 +1,11 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import DiscordOauth2 from 'discord-oauth2';
-import { getDb } from '$lib/db';
-import { Users, Bots } from '$lib/schema';
-import { eq } from 'drizzle-orm';
-import SendLog from '@/bot/log';
-import { env } from '$env/dynamic/private';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import DiscordOauth2 from "discord-oauth2";
+import { getDb } from "$lib/db";
+import { Users, Bots } from "$lib/schema";
+import { eq } from "drizzle-orm";
+import SendLog from "@/bot/log";
+import { env } from "$env/dynamic/private";
 
 /**
  * POST /bots/[id]/vote
@@ -26,26 +26,26 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 
 	try {
 		const url = new URL(request.url);
-		const paramKey = url.searchParams.get('key');
-		const headerAuth = request.headers.get('authorization') ?? request.headers.get('RDL-key');
-		const cookieKey = cookies.get('key');
+		const paramKey = url.searchParams.get("key");
+		const headerAuth = request.headers.get("authorization") ?? request.headers.get("RDL-key");
+		const cookieKey = cookies.get("key");
 
 		const key = paramKey ?? headerAuth ?? cookieKey;
 		if (!key) {
-			return json({ err: 'not_logged_in' }, { status: 400 });
+			return json({ err: "not_logged_in" }, { status: 400 });
 		}
 
 		// Get the bot id from params
 		const id = params.id;
 		if (!id) {
-			return json({ err: 'missing_bot_id' }, { status: 400 });
+			return json({ err: "missing_bot_id" }, { status: 400 });
 		}
 
 		// Use Discord OAuth to fetch user info
 		const oauth = new DiscordOauth2({
 			clientId: env.DISCORD_BOT_ID,
 			clientSecret: env.DISCORD_SECRET,
-			redirectUri: (env.DOMAIN ?? 'http://localhost:5173') + '/api/auth'
+			redirectUri: (env.DOMAIN ?? "http://localhost:5173") + "/api/auth"
 		});
 
 		let userData: any;
@@ -53,8 +53,8 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 			userData = await oauth.getUser(key);
 		} catch (e) {
 			// Token invalid -> clear cookie and return
-			cookies.delete('key');
-			return json({ err: 'invalid_key' }, { status: 400 });
+			cookies.delete("key");
+			return json({ err: "invalid_key" }, { status: 400 });
 		}
 
 		// Fetch user record from DB
@@ -65,7 +65,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 			.limit(1);
 
 		if (!userRows || userRows.length === 0) {
-			return json({ err: 'invalid_key' }, { status: 400 });
+			return json({ err: "invalid_key" }, { status: 400 });
 		}
 
 		let user = userRows[0] as any;
@@ -73,7 +73,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 		let votesArr: { bot: string; at: number }[] = [];
 		try {
 			if (!user.votes) votesArr = [];
-			else if (typeof user.votes === 'string') votesArr = JSON.parse(user.votes as string);
+			else if (typeof user.votes === "string") votesArr = JSON.parse(user.votes as string);
 			else votesArr = Array.isArray(user.votes) ? user.votes : [];
 		} catch {
 			votesArr = [];
@@ -96,32 +96,32 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 			.limit(1);
 
 		if (!botRows || botRows.length === 0) {
-			return json({ err: 'no_bot_found' }, { status: 400 });
+			return json({ err: "no_bot_found" }, { status: 400 });
 		}
 
 		const bot = botRows[0] as any;
 
 		// Parse coins param (if provided)
-		const coinsParam = url.searchParams.get('coins');
+		const coinsParam = url.searchParams.get("coins");
 		let coins: number | null = null;
 		if (coinsParam !== null) {
 			const parsed = parseInt(coinsParam);
 			if (Number.isNaN(parsed)) {
-				return json({ err: 'invalid_coins' }, { status: 400 });
+				return json({ err: "invalid_coins" }, { status: 400 });
 			}
 			coins = parsed;
 		}
 
 		// Determine voting type and validate
 		if (coins !== null && !bot.opted_coins) {
-			return json({ err: 'invalid_voting_type' }, { status: 400 });
+			return json({ err: "invalid_voting_type" }, { status: 400 });
 		}
 
 		if (coins !== null && bot.opted_coins) {
 			// coins must be positive and divisible by 10
-			if (coins < 1) return json({ err: 'invalid_coins' }, { status: 400 });
-			if (coins % 10 !== 0) return json({ err: 'coins_not_divisble_by_10' }, { status: 400 });
-			if ((user.bal ?? 0) < coins) return json({ err: 'insufficient_coins' }, { status: 400 });
+			if (coins < 1) return json({ err: "invalid_coins" }, { status: 400 });
+			if (coins % 10 !== 0) return json({ err: "coins_not_divisble_by_10" }, { status: 400 });
+			if ((user.bal ?? 0) < coins) return json({ err: "insufficient_coins" }, { status: 400 });
 			// Deduct coins locally first
 			user.bal = (user.bal ?? 0) - coins;
 		}
@@ -139,7 +139,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 		}
 
 		if (lastVote && lastVote.at > Date.now() - 86400000 && !bot.opted_coins) {
-			return json({ err: 'cooldown', try_after }, { status: 400 });
+			return json({ err: "cooldown", try_after }, { status: 400 });
 		}
 
 		// Remove any previous vote entries for this bot
@@ -167,8 +167,8 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 				.where(eq(Users.id, userData.id));
 			await db.update(Bots).set({ votes: newBotVotes }).where(eq(Bots.id, id));
 		} catch (e) {
-			console.error('DB update error in vote endpoint:', e);
-			return json({ err: 'db_update_failed' }, { status: 500 });
+			console.error("DB update error in vote endpoint:", e);
+			return json({ err: "db_update_failed" }, { status: 500 });
 		}
 
 		// If bot has a webhook configured, notify it (best-effort)
@@ -187,11 +187,11 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 			};
 
 			try {
-				const webhookUrl = `${bot.webhook}${bot.code ? `?code=${bot.code}` : ''}`;
+				const webhookUrl = `${bot.webhook}${bot.code ? `?code=${bot.code}` : ""}`;
 				const res = await fetch(webhookUrl, {
-					method: 'POST',
+					method: "POST",
 					headers: {
-						'Content-Type': 'application/json',
+						"Content-Type": "application/json",
 						...(bot.code ? { Authorization: bot.code } : {})
 					},
 					body: JSON.stringify(body),
@@ -204,10 +204,10 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 					try {
 						await SendLog({
 							env: {
-								DOMAIN: env.DOMAIN ?? '',
-								FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? '',
-								LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? '',
-								DISCORD_TOKEN: env.DISCORD_TOKEN ?? ''
+								DOMAIN: env.DOMAIN ?? "",
+								FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? "",
+								LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? "",
+								DISCORD_TOKEN: env.DISCORD_TOKEN ?? ""
 							},
 							body: {
 								title: `Failed to send data to ${bot.username} (${id})`,
@@ -217,8 +217,8 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 									: undefined,
 								// bot.owners may be stored as serialized JSON TEXT in DB — parse if necessary
 								owners:
-									typeof bot.owners === 'string'
-										? JSON.parse(bot.owners || '[]')
+									typeof bot.owners === "string"
+										? JSON.parse(bot.owners || "[]")
 										: (bot.owners ?? [])
 							}
 						});
@@ -231,17 +231,17 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 				try {
 					await SendLog({
 						env: {
-							DOMAIN: env.DOMAIN ?? '',
-							FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? '',
-							LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? '',
-							DISCORD_TOKEN: env.DISCORD_TOKEN ?? ''
+							DOMAIN: env.DOMAIN ?? "",
+							FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? "",
+							LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? "",
+							DISCORD_TOKEN: env.DISCORD_TOKEN ?? ""
 						},
 						body: {
 							title: `Failed to send webhook for ${bot.username} (${id})`,
 							desc: String(e),
 							// bot.owners may be stored as serialized JSON TEXT in DB — parse if necessary
 							owners:
-								typeof bot.owners === 'string' ? JSON.parse(bot.owners || '[]') : (bot.owners ?? [])
+								typeof bot.owners === "string" ? JSON.parse(bot.owners || "[]") : (bot.owners ?? [])
 						}
 					});
 				} catch {
@@ -252,9 +252,9 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 
 		return json({ success: true });
 	} catch (err) {
-		console.error('/api/bots/[id]/vote error:', err);
+		console.error("/api/bots/[id]/vote error:", err);
 		return json(
-			{ err: 'server_error', message: err instanceof Error ? err.message : String(err) },
+			{ err: "server_error", message: err instanceof Error ? err.message : String(err) },
 			{ status: 500 }
 		);
 	}

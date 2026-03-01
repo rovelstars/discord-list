@@ -1,6 +1,6 @@
 <script lang="ts">
-	import SEO from '$lib/components/SEO.svelte';
-	import BotCard from '$lib/components/BotCard.svelte';
+	import SEO from "$lib/components/SEO.svelte";
+	import BotCard from "$lib/components/BotCard.svelte";
 
 	export let data: {
 		slug: string;
@@ -30,23 +30,23 @@
 
 	// JSON-LD: FAQPage
 	const faqSchema = {
-		'@context': 'https://schema.org',
-		'@type': 'FAQPage',
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
 		mainEntity: meta.faqs.map((f) => ({
-			'@type': 'Question',
+			"@type": "Question",
 			name: f.q,
-			acceptedAnswer: { '@type': 'Answer', text: f.a }
+			acceptedAnswer: { "@type": "Answer", text: f.a }
 		}))
 	};
 
 	// JSON-LD: ItemList of the bots on this page
 	const listSchema = {
-		'@context': 'https://schema.org',
-		'@type': 'ItemList',
+		"@context": "https://schema.org",
+		"@type": "ItemList",
 		name: `${meta.name} — Rovel Discord List`,
 		description: meta.description,
 		itemListElement: bots.slice(0, 10).map((bot: any, i: number) => ({
-			'@type': 'ListItem',
+			"@type": "ListItem",
 			position: i + 1,
 			name: bot.username,
 			description: bot.short,
@@ -55,8 +55,8 @@
 	};
 
 	function approx(n: number): string {
-		if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
-		if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k';
+		if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+		if (n >= 1_000) return (n / 1_000).toFixed(1) + "k";
 		return String(n);
 	}
 </script>
@@ -74,12 +74,7 @@
 
 <!-- ── Hero ──────────────────────────────────────────────────────────────── -->
 <section class="text-center py-12 px-4">
-	<img
-		src={meta.icon}
-		class="w-20 h-20 mx-auto mb-6"
-		alt={meta.name}
-		loading="eager"
-	/>
+	<img src={meta.icon} class="w-20 h-20 mx-auto mb-6" alt={meta.name} loading="eager" />
 	<div class="flex items-center justify-center gap-3 mb-4">
 		<span class="text-5xl select-none" aria-hidden="true">{meta.emoji}</span>
 		<h1 class="font-heading text-4xl md:text-6xl font-bold">
@@ -94,7 +89,10 @@
 	</p>
 
 	<!-- Breadcrumb -->
-	<nav class="flex items-center justify-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
+	<nav
+		class="flex items-center justify-center gap-2 text-sm text-muted-foreground"
+		aria-label="Breadcrumb"
+	>
 		<a href="/" class="hover:text-primary transition-colors">Home</a>
 		<span aria-hidden="true">›</span>
 		<a href="/categories" class="hover:text-primary transition-colors">Categories</a>
@@ -117,7 +115,9 @@
 			<span class="text-muted-foreground text-2xl font-semibold ml-2">({bots.length})</span>
 		{/if}
 	</h2>
-	<p class="text-gray-600 dark:text-gray-300 text-xl mb-8 md:mx-32 mx-4 md:text-left text-center font-semibold">
+	<p
+		class="text-gray-600 dark:text-gray-300 text-xl mb-8 md:mx-32 mx-4 md:text-left text-center font-semibold"
+	>
 		Ranked by server count — the most widely used {meta.name.toLowerCase()} in the Discord community.
 	</p>
 
@@ -139,7 +139,7 @@
 				No {meta.name.toLowerCase()} found yet.
 			</p>
 			<p class="text-muted-foreground text-sm max-w-md mx-auto mb-6">
-				Be the first to list a {meta.name.toLowerCase().replace(' bots', ' bot')} on Rovel Discord List!
+				Be the first to list a {meta.name.toLowerCase().replace(" bots", " bot")} on Rovel Discord List!
 			</p>
 			<a
 				href="/dashboard/bots/new"
@@ -157,23 +157,29 @@
 		<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 			<div class="bg-card border border-border rounded-xl p-4 text-center">
 				<p class="text-3xl font-bold font-heading text-primary">{bots.length}</p>
-				<p class="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wide">Bots Listed</p>
+				<p class="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wide">
+					Bots Listed
+				</p>
 			</div>
 			<div class="bg-card border border-border rounded-xl p-4 text-center">
 				<p class="text-3xl font-bold font-heading text-green-500">
 					{approx(bots.reduce((s: number, b: any) => s + (b.votes ?? 0), 0))}
 				</p>
-				<p class="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wide">Total Votes</p>
+				<p class="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wide">
+					Total Votes
+				</p>
 			</div>
 			<div class="bg-card border border-border rounded-xl p-4 text-center">
 				<p class="text-3xl font-bold font-heading text-blue-500">
 					{approx(bots.reduce((s: number, b: any) => s + (b.servers ?? 0), 0))}
 				</p>
-				<p class="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wide">Total Servers</p>
+				<p class="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wide">
+					Total Servers
+				</p>
 			</div>
 			<div class="bg-card border border-border rounded-xl p-4 text-center">
 				<p class="text-3xl font-bold font-heading text-orange-500">
-					{bots[0]?.username ?? '—'}
+					{bots[0]?.username ?? "—"}
 				</p>
 				<p class="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wide">#1 Bot</p>
 			</div>
@@ -234,45 +240,46 @@
 <section class="max-w-3xl mx-auto px-4 pb-16 prose prose-base dark:prose-invert">
 	<h2>How to Choose the Right {meta.name}</h2>
 	<p>
-		With so many options available, picking the best {meta.name.toLowerCase().replace(' bots', ' bot')} for
-		your server comes down to a few key questions: How many servers is it in? Is it actively maintained?
-		Does it have a support server where you can get help? The bots listed above are ranked by real-world
-		usage — the ones at the top are there because thousands of server owners trust them enough to keep
-		them installed.
+		With so many options available, picking the best {meta.name
+			.toLowerCase()
+			.replace(" bots", " bot")} for your server comes down to a few key questions: How many servers is
+		it in? Is it actively maintained? Does it have a support server where you can get help? The bots listed
+		above are ranked by real-world usage — the ones at the top are there because thousands of server owners
+		trust them enough to keep them installed.
 	</p>
 
 	<h3>What to Check Before Adding Any Bot</h3>
 	<ul>
 		<li>
-			<strong>Permission scope</strong> — only grant the permissions the bot actually requires.
-			Avoid bots that ask for Administrator unnecessarily.
+			<strong>Permission scope</strong> — only grant the permissions the bot actually requires. Avoid
+			bots that ask for Administrator unnecessarily.
 		</li>
 		<li>
-			<strong>Support &amp; documentation</strong> — a bot with an active support server and clear
-			docs is much easier to configure and troubleshoot.
+			<strong>Support &amp; documentation</strong> — a bot with an active support server and clear docs
+			is much easier to configure and troubleshoot.
 		</li>
 		<li>
-			<strong>Uptime &amp; reliability</strong> — check the bot's server count and vote history.
-			Popular bots tend to invest more in infrastructure.
+			<strong>Uptime &amp; reliability</strong> — check the bot's server count and vote history. Popular
+			bots tend to invest more in infrastructure.
 		</li>
 		<li>
-			<strong>Open source</strong> — if security matters to you, prefer bots with a public
-			repository so the code can be audited.
+			<strong>Open source</strong> — if security matters to you, prefer bots with a public repository
+			so the code can be audited.
 		</li>
 	</ul>
 
 	<h3>Adding a Bot to Your Server</h3>
 	<p>
-		Click any bot above to view its full detail page, then use the <strong>Invite</strong> button to
-		add it to your server. You'll be asked to select which server to add it to and to approve the
-		permissions it needs. Most bots are up and running within seconds of being invited.
+		Click any bot above to view its full detail page, then use the <strong>Invite</strong> button to add
+		it to your server. You'll be asked to select which server to add it to and to approve the permissions
+		it needs. Most bots are up and running within seconds of being invited.
 	</p>
 
-	<h3>Submit Your {meta.name.replace(' Bots', ' Bot')} to This List</h3>
+	<h3>Submit Your {meta.name.replace(" Bots", " Bot")} to This List</h3>
 	<p>
-		Built a {meta.name.replace(' Bots', ' bot').toLowerCase()} and want it featured here?
-		<a href="/dashboard/bots/new">Submit it via your dashboard</a> — once approved it will
-		appear on this page and become discoverable by every server owner browsing Rovel Discord List.
+		Built a {meta.name.replace(" Bots", " bot").toLowerCase()} and want it featured here?
+		<a href="/dashboard/bots/new">Submit it via your dashboard</a> — once approved it will appear on this
+		page and become discoverable by every server owner browsing Rovel Discord List.
 	</p>
 </section>
 

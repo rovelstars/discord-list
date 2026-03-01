@@ -1,10 +1,10 @@
 <script lang="ts">
-	import '../styles/global.css';
-	import Navbar from '$lib/components/Navbar.svelte';
-	import Footer from '$lib/components/Footer.svelte';
-	import { afterNavigate, invalidateAll, replaceState } from '$app/navigation';
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
+	import "../styles/global.css";
+	import Navbar from "$lib/components/Navbar.svelte";
+	import Footer from "$lib/components/Footer.svelte";
+	import { afterNavigate, invalidateAll, replaceState } from "$app/navigation";
+	import { onMount } from "svelte";
+	import { page } from "$app/stores";
 
 	export let data: {
 		user: {
@@ -20,8 +20,8 @@
 	// Re-run layout server load after coming back from logout so the
 	// navbar updates immediately without requiring a manual refresh.
 	afterNavigate(({ from }) => {
-		const prev = from?.url?.pathname ?? '';
-		if (prev.startsWith('/logout') || prev.startsWith('/login')) {
+		const prev = from?.url?.pathname ?? "";
+		if (prev.startsWith("/logout") || prev.startsWith("/login")) {
 			invalidateAll();
 		}
 	});
@@ -30,11 +30,11 @@
 	// Detect it on mount, re-run all load functions, then strip the param
 	// so it doesn't linger in the address bar.
 	onMount(() => {
-		if ($page.url.searchParams.get('auth') === '1') {
+		if ($page.url.searchParams.get("auth") === "1") {
 			invalidateAll().then(() => {
 				const clean = new URL($page.url);
-				clean.searchParams.delete('auth');
-				replaceState(clean.pathname + (clean.search || ''), {});
+				clean.searchParams.delete("auth");
+				replaceState(clean.pathname + (clean.search || ""), {});
 			});
 		}
 	});

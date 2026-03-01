@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import getAvatarURL from '$lib/get-avatar-url';
-	import approx from '$lib/approx-num';
-	import Tag from '$lib/components/ui/Tag.svelte';
-	import TwemojiText from '$lib/components/TwemojiText.svelte';
-	import { buttonVariants } from '$lib/components/ui/button.js';
+	import { onMount } from "svelte";
+	import getAvatarURL from "$lib/get-avatar-url";
+	import approx from "$lib/approx-num";
+	import Tag from "$lib/components/ui/Tag.svelte";
+	import TwemojiText from "$lib/components/TwemojiText.svelte";
+	import { buttonVariants } from "$lib/components/ui/button.js";
 
 	export let bot: any;
 	export let edit: boolean = false;
@@ -12,8 +12,6 @@
 	let hovered = false;
 	let imageRef: HTMLImageElement | null = null;
 	let bgColor: number[] | null = null;
-
-
 
 	// Overrides bot.bg after a successful refresh — keeps the card in sync
 	// without requiring a full page reload or parent re-render.
@@ -23,7 +21,7 @@
 	$: bgUrl = (() => {
 		const raw = bgOverride ?? bot?.bg;
 		if (!raw) return null;
-		if (typeof raw === 'string' && !raw.startsWith('http')) {
+		if (typeof raw === "string" && !raw.startsWith("http")) {
 			return `https://cdn.discordapp.com/banners/${bot.id}/${raw}.webp?size=512`;
 		}
 		return raw as string;
@@ -33,33 +31,33 @@
 		? `background-image: url('${bgUrl}'); background-size: cover; background-position: center;`
 		: bgColor
 			? `background-color: rgb(${bgColor[0]},${bgColor[1]},${bgColor[2]}); background-size: cover; background-position: center;`
-			: '';
+			: "";
 
-	$: isAnimated = bot?.avatar?.startsWith('a_') ?? false;
+	$: isAnimated = bot?.avatar?.startsWith("a_") ?? false;
 
 	$: avatarSrc = (() => {
-		if (!bot) return '/assets/img/bot/logo-144.png';
-		if (bot.avatar === '0') return getAvatarURL(bot.id, bot.avatar);
-		const base = getAvatarURL(bot.id, bot.avatar ?? '0', 96).replace('.png', '.webp');
+		if (!bot) return "/assets/img/bot/logo-144.png";
+		if (bot.avatar === "0") return getAvatarURL(bot.id, bot.avatar);
+		const base = getAvatarURL(bot.id, bot.avatar ?? "0", 96).replace(".png", ".webp");
 		if (isAnimated) {
 			// Always get the webp URL, then swap extension based on hover state
-			const webp = base.replace('.gif', '.webp');
-			return hovered ? webp.replace('.webp', '.gif') : webp;
+			const webp = base.replace(".gif", ".webp");
+			return hovered ? webp.replace(".webp", ".gif") : webp;
 		}
 		return base;
 	})();
 
 	$: statusClass = (() => {
-		if (bot?.status === 'online') return 'bg-green-500';
-		if (bot?.status === 'offline') return 'bg-gray-500';
-		if (bot?.status === 'idle') return 'bg-yellow-400';
-		if (bot?.status === 'dnd') return 'bg-red-500';
-		return 'bg-green-500'; // default/unknown → show online
+		if (bot?.status === "online") return "bg-green-500";
+		if (bot?.status === "offline") return "bg-gray-500";
+		if (bot?.status === "idle") return "bg-yellow-400";
+		if (bot?.status === "dnd") return "bg-red-500";
+		return "bg-green-500"; // default/unknown → show online
 	})();
 
 	onMount(async () => {
 		try {
-			const { default: ColorThief } = await import('colorthief');
+			const { default: ColorThief } = await import("colorthief");
 			const CT = ColorThief as unknown as new () => {
 				getColor: (img: HTMLImageElement) => number[];
 			};
@@ -92,13 +90,13 @@
 	async function handleImageError(event: Event) {
 		if (refreshDispatched) return;
 
-		const src = (event.target as HTMLImageElement)?.src ?? '';
+		const src = (event.target as HTMLImageElement)?.src ?? "";
 
 		// Only trigger for Discord CDN images — unrelated external image 404s
 		// should not cause a bot refresh.
 		const isDiscordImage =
-			src.startsWith('https://cdn.discordapp.com/') ||
-			src.startsWith('https://media.discordapp.net/');
+			src.startsWith("https://cdn.discordapp.com/") ||
+			src.startsWith("https://media.discordapp.net/");
 
 		if (!isDiscordImage) return;
 
@@ -110,8 +108,8 @@
 		try {
 			// POST to the public proxy — DISCORD_TOKEN stays server-side only.
 			const res = await fetch(`/api/bots/${encodeURIComponent(id)}/refresh`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' }
+				method: "POST",
+				headers: { "Content-Type": "application/json" }
 			});
 			if (res.ok) {
 				const data = await res.json().catch(() => null);
@@ -176,9 +174,9 @@
 				</div>
 			{:else}
 				<div class="h-20 overflow-y-auto text-left">
-					<h2 class="font-heading text-2xl font-semibold">{bot?.username ?? ''}</h2>
+					<h2 class="font-heading text-2xl font-semibold">{bot?.username ?? ""}</h2>
 					<span class="relative bottom-1 text-xs text-gray-400">
-						{bot?.username ?? ''}#{bot?.discriminator ?? '0000'}
+						{bot?.username ?? ""}#{bot?.discriminator ?? "0000"}
 					</span>
 					<span
 						class="relative bottom-1 ml-1 bg-primary text-white rounded-md px-1 text-xs font-heading"
@@ -271,7 +269,7 @@
 						</div>
 					</div>
 				{:else}
-					<TwemojiText>{bot?.short ?? ''}</TwemojiText>
+					<TwemojiText>{bot?.short ?? ""}</TwemojiText>
 				{/if}
 			</div>
 
@@ -281,7 +279,7 @@
 					<div class="w-full h-9 bg-muted animate-pulse rounded-md"></div>
 					<div class="w-full h-9 bg-muted animate-pulse rounded-md"></div>
 				{:else}
-					<a href="/bots/{bot?.slug ?? bot?.id}" class={buttonVariants({ variant: 'default' })}>
+					<a href="/bots/{bot?.slug ?? bot?.id}" class={buttonVariants({ variant: "default" })}>
 						<!-- Eye icon (lucide) -->
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -299,10 +297,10 @@
 						View
 					</a>
 					<a
-						href={bot?.invite ?? '#'}
+						href={bot?.invite ?? "#"}
 						target="_blank"
 						rel="noopener noreferrer"
-						class={buttonVariants({ variant: 'outline' })}
+						class={buttonVariants({ variant: "outline" })}
 					>
 						<!-- UserRoundPlus icon (lucide) -->
 						<svg
@@ -325,7 +323,7 @@
 					{#if edit}
 						<a
 							href="/dashboard/bots/edit/{bot?.id}"
-							class={buttonVariants({ variant: 'secondary' })}
+							class={buttonVariants({ variant: "secondary" })}
 						>
 							Edit
 						</a>

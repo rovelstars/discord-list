@@ -1,22 +1,22 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
-import { refreshBot, NotFoundError } from '$lib/bot-refresh';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
+import { refreshBot, NotFoundError } from "$lib/bot-refresh";
 
 // ---------------------------------------------------------------------------
 // Auth helper
 // ---------------------------------------------------------------------------
 
 function validateSecret(request: Request, url: URL): { ok: boolean; misconfigured: boolean } {
-	const internalSecret = (env.INTERNAL_SECRET ?? '').trim();
+	const internalSecret = (env.INTERNAL_SECRET ?? "").trim();
 	if (!internalSecret) {
 		return { ok: false, misconfigured: true };
 	}
 
 	const supplied = (
-		request.headers.get('X-Internal-Secret') ??
-		url.searchParams.get('secret') ??
-		''
+		request.headers.get("X-Internal-Secret") ??
+		url.searchParams.get("secret") ??
+		""
 	).trim();
 
 	return { ok: supplied === internalSecret, misconfigured: false };
@@ -51,15 +51,15 @@ export const POST: RequestHandler = async ({ request, url, params }) => {
 	const { ok, misconfigured } = validateSecret(request, url);
 
 	if (misconfigured) {
-		console.error('[refresh-bot/internal] INTERNAL_SECRET env var is not set.');
+		console.error("[refresh-bot/internal] INTERNAL_SECRET env var is not set.");
 		return json(
-			{ success: false, error: 'Server misconfiguration: INTERNAL_SECRET not set.' },
+			{ success: false, error: "Server misconfiguration: INTERNAL_SECRET not set." },
 			{ status: 500 }
 		);
 	}
 
 	if (!ok) {
-		return json({ success: false, error: 'Unauthorized.' }, { status: 401 });
+		return json({ success: false, error: "Unauthorized." }, { status: 401 });
 	}
 
 	// ------------------------------------------------------------------
@@ -67,17 +67,17 @@ export const POST: RequestHandler = async ({ request, url, params }) => {
 	// ------------------------------------------------------------------
 	const botId = params.id?.trim();
 	if (!botId) {
-		return json({ success: false, error: 'missing_id' }, { status: 400 });
+		return json({ success: false, error: "missing_id" }, { status: 400 });
 	}
 
 	// ------------------------------------------------------------------
 	// Discord token
 	// ------------------------------------------------------------------
-	const discordToken = (env.DISCORD_TOKEN ?? '').trim();
+	const discordToken = (env.DISCORD_TOKEN ?? "").trim();
 	if (!discordToken) {
-		console.error('[refresh-bot/internal] DISCORD_TOKEN env var is not set.');
+		console.error("[refresh-bot/internal] DISCORD_TOKEN env var is not set.");
 		return json(
-			{ success: false, error: 'Server misconfiguration: DISCORD_TOKEN not set.' },
+			{ success: false, error: "Server misconfiguration: DISCORD_TOKEN not set." },
 			{ status: 500 }
 		);
 	}
@@ -86,11 +86,11 @@ export const POST: RequestHandler = async ({ request, url, params }) => {
 	// Delegate to shared refresh logic
 	// ------------------------------------------------------------------
 	try {
-		const result = await refreshBot(botId, discordToken, { triggeredBy: 'internal-api' });
+		const result = await refreshBot(botId, discordToken, { triggeredBy: "internal-api" });
 		return json({ success: true, ...result }, { status: 200 });
 	} catch (err) {
 		if (err instanceof NotFoundError) {
-			return json({ success: false, error: 'bot_not_found_in_db' }, { status: 404 });
+			return json({ success: false, error: "bot_not_found_in_db" }, { status: 404 });
 		}
 		const msg = err instanceof Error ? err.message : String(err);
 		console.error(`[refresh-bot/internal] Unexpected error for bot ${botId}:`, err);

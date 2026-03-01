@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import Dialog from '$lib/components/ui/Dialog.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import { onMount } from "svelte";
+	import Dialog from "$lib/components/ui/Dialog.svelte";
+	import Button from "$lib/components/ui/Button.svelte";
+	import Checkbox from "$lib/components/ui/Checkbox.svelte";
 
 	export let redirect: string | null = null;
-	export let label: string = 'Login';
-	export let className: string = 'cursor-pointer';
+	export let label: string = "Login";
+	export let className: string = "cursor-pointer";
 
 	let open = false;
 	let email = true;
 	let servers = true;
-	let currentPath = '/';
+	let currentPath = "/";
 
 	onMount(() => {
 		try {
@@ -25,11 +25,11 @@
 	function submitLogin() {
 		// Persist redirect (server expects it via cookie) and navigate to login endpoint with scope flags.
 		try {
-			const redirectPath = redirect || currentPath || '/';
+			const redirectPath = redirect || currentPath || "/";
 			document.cookie = `redirect=${encodeURIComponent(redirectPath)}; path=/;`;
-			const url = new URL('/login', window.location.href);
-			url.searchParams.append('servers', String(Boolean(servers)));
-			url.searchParams.append('email', String(Boolean(email)));
+			const url = new URL("/login", window.location.href);
+			url.searchParams.append("servers", String(Boolean(servers)));
+			url.searchParams.append("email", String(Boolean(email)));
 			// navigate to server-side login entrypoint
 			window.location.href = url.toString();
 		} catch (err) {
@@ -100,7 +100,7 @@
 	}
 
 	/* Ensure dialog buttons and inputs look reasonable if tailwind isn't fully active yet */
-	:global(button[variant='outline']) {
+	:global(button[variant="outline"]) {
 		border: 1px solid hsl(var(--input));
 		background: hsl(var(--background));
 	}

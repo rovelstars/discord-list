@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher } from "svelte";
 
 	/**
 	 * Checkbox.svelte
@@ -26,7 +26,7 @@
 	export let name: string | undefined;
 	export let value: string | undefined;
 	export let disabled: boolean = false;
-	export let className: string = '';
+	export let className: string = "";
 	export let label: string | null = null;
 	export let ariaLabel: string | undefined = undefined;
 
@@ -36,8 +36,8 @@
 		const el = e.currentTarget as HTMLInputElement;
 		checked = el.checked;
 		// Emit events similar to native input
-		dispatch('change', { checked });
-		dispatch('input', { checked });
+		dispatch("change", { checked });
+		dispatch("input", { checked });
 	}
 </script>
 
@@ -53,7 +53,7 @@
 -->
 <label
 	class={`inline-flex items-center gap-2 ${className}`}
-	data-state={checked ? 'checked' : 'unchecked'}
+	data-state={checked ? "checked" : "unchecked"}
 >
 	<input
 		{id}
@@ -107,7 +107,7 @@
      Most styling is expected to come from Tailwind utility classes in global.css. */
 
 	/* Ensure the indicator doesn't capture pointer events (input handles clicks) */
-	span[aria-hidden='true'] {
+	span[aria-hidden="true"] {
 		pointer-events: none;
 	}
 

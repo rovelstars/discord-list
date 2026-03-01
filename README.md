@@ -79,40 +79,6 @@ bun run build   # or: npm run build
 
 ---
 
-## Environment Variables
-
-Copy `.env.example` to `.env` and fill in the values. The table below describes every variable.
-
-| Variable | Required | Description |
-|---|---|---|
-| `ASTRO_DB_REMOTE_URL` | Yes | Your Turso database URL (`libsql://...`) |
-| `ASTRO_DB_APP_TOKEN` | Yes | Turso read-write auth token |
-| `DISCORD_BOT_ID` | Yes | Your Discord application/bot client ID |
-| `DISCORD_GUILD_ID` | Yes | Discord server ID used for admin & logging |
-| `DISCORD_PUBLIC_KEY` | Yes | Discord application public key |
-| `DISCORD_SECRET` | Yes | Discord OAuth2 client secret |
-| `DISCORD_TOKEN` | Yes | Discord Bot token |
-| `SELFBOT_TOKEN` | Yes | Legacy token for internal bot-info lookups |
-| `DOMAIN` | Yes | Full origin URL of this deployment (no trailing slash) |
-| `SITE_URL` | Yes | Deployed site origin — used by the Netlify scheduled CDN-refresh function |
-| `HTTPS` | Yes | `true` in production, `false` locally |
-| `MODE` | Yes | `development` or `production` |
-| `INTERNAL_SECRET` | Yes | Shared secret authenticating calls from the scheduled function to internal API routes. Generate with `openssl rand -hex 32` |
-| `SECRET` | Yes | Session / cookie signing secret |
-| `BOT_PREFIX` | No | Admin bot command prefix (default `RDL!`) |
-| `CONSOLE_LOG` | No | Discord webhook URL for console/error logs |
-| `WEBHOOK` | No | Discord webhook URL for bot/server event logs |
-| `LOGS_CHANNEL_ID` | No | Discord channel ID for approval/removal logs |
-| `FAILED_DMS_LOGS_CHANNEL_ID` | No | Discord channel ID for failed DM logs |
-| `WEBLOG_API` | No | Enable API-based web logging (`true`/`false`) |
-| `WEBLOG_CONSOLE` | No | Enable console-based web logging (`true`/`false`) |
-| `MONGO_DB` | No | MongoDB connection string (legacy modules) |
-| `SENTRY` | No | Sentry DSN for error tracking |
-| `TOPTOKEN` | No | Top.gg API token(s) for vote syncing, separated by ` \| ` |
-| `VOIDTOKEN` | No | Void Bot List API token |
-
----
-
 ## Periodic CDN Refresh
 
 Discord CDN attachment URLs (used as bot background images) expire after ~24 hours. This project includes a Netlify Scheduled Function that automatically refreshes them every 12 hours with **zero site downtime**:
@@ -130,8 +96,8 @@ This project is kept open source so we are transparent in our services, and so t
 
 # Stargazers
 
-[![Stargazers repo roster for @rovelstars/discord-list](https://reporoster.com/stars/rovelstars/discord-list)](https://github.com/rovelstars/discord-list/stargazers)
+[![Stargazers repo roster for @rovelstars/discord-list](https://bytecrank.com/nastyox/reporoster/php/stargazersSVG.php?user=rovelstars&repo=discord-list)](https://github.com/rovelstars/discord-list/stargazers)
 
 # Forkers
 
-[![Forkers repo roster for @rovelstars/discord-list](https://reporoster.com/forks/rovelstars/discord-list)](https://github.com/rovelstars/discord-list/network/members)
+[![Forkers repo roster for @rovelstars/discord-list](https://bytecrank.com/nastyox/reporoster/php/forkersSVG.php?user=rovelstars&repo=discord-list)](https://github.com/rovelstars/discord-list/network/members)

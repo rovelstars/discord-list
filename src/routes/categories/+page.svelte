@@ -1,116 +1,116 @@
 <script lang="ts">
-	import SEO from '$lib/components/SEO.svelte';
+	import SEO from "$lib/components/SEO.svelte";
 
 	const currentYear = new Date().getFullYear();
 
 	const categories = [
 		{
-			slug: 'music',
-			name: 'Music Bots',
-			icon: '/assets/img/bot/wink.svg',
-			emoji: '🎵',
+			slug: "music",
+			name: "Music Bots",
+			icon: "/assets/img/bot/wink.svg",
+			emoji: "🎵",
 			description:
-				'Stream music from YouTube, Spotify, SoundCloud and more. Queue management, equalizer, lyrics — everything your listening party needs.',
-			keywords: ['music', 'audio', 'playlist', 'stream', 'radio']
+				"Stream music from YouTube, Spotify, SoundCloud and more. Queue management, equalizer, lyrics — everything your listening party needs.",
+			keywords: ["music", "audio", "playlist", "stream", "radio"]
 		},
 		{
-			slug: 'moderation',
-			name: 'Moderation Bots',
-			icon: '/assets/img/mod.svg',
-			emoji: '🛡️',
+			slug: "moderation",
+			name: "Moderation Bots",
+			icon: "/assets/img/mod.svg",
+			emoji: "🛡️",
 			description:
-				'Keep your community safe and healthy. Auto-mod, anti-spam, logging, mute/ban commands and raid protection all in one place.',
-			keywords: ['mod', 'automod', 'logging', 'anti-raid', 'ban']
+				"Keep your community safe and healthy. Auto-mod, anti-spam, logging, mute/ban commands and raid protection all in one place.",
+			keywords: ["mod", "automod", "logging", "anti-raid", "ban"]
 		},
 		{
-			slug: 'gaming',
-			name: 'Gaming & Esports',
-			icon: '/assets/img/game-controller.svg',
-			emoji: '🎮',
+			slug: "gaming",
+			name: "Gaming & Esports",
+			icon: "/assets/img/game-controller.svg",
+			emoji: "🎮",
 			description:
-				'Organise tournaments, track stats, run in-chat mini-games and keep your competitive community engaged between matches.',
-			keywords: ['game', 'esports', 'gaming', 'tournament', 'stats']
+				"Organise tournaments, track stats, run in-chat mini-games and keep your competitive community engaged between matches.",
+			keywords: ["game", "esports", "gaming", "tournament", "stats"]
 		},
 		{
-			slug: 'economy',
-			name: 'Economy Bots',
-			icon: '/assets/img/bot/moneh.svg',
-			emoji: '💰',
+			slug: "economy",
+			name: "Economy Bots",
+			icon: "/assets/img/bot/moneh.svg",
+			emoji: "💰",
 			description:
-				'Virtual currency, shops, gambling, heist events and rich leaderboards. Give your members something to grind for.',
-			keywords: ['economy', 'currency', 'coins', 'shop', 'bank']
+				"Virtual currency, shops, gambling, heist events and rich leaderboards. Give your members something to grind for.",
+			keywords: ["economy", "currency", "coins", "shop", "bank"]
 		},
 		{
-			slug: 'utility',
-			name: 'Utility Bots',
-			icon: '/assets/img/chip.svg',
-			emoji: '🔧',
+			slug: "utility",
+			name: "Utility Bots",
+			icon: "/assets/img/chip.svg",
+			emoji: "🔧",
 			description:
-				'Server stats, polls, reminders, calculators, weather, translation and the hundreds of other handy tools that make running a server easier.',
-			keywords: ['utility', 'tools', 'poll', 'reminder', 'translate']
+				"Server stats, polls, reminders, calculators, weather, translation and the hundreds of other handy tools that make running a server easier.",
+			keywords: ["utility", "tools", "poll", "reminder", "translate"]
 		},
 		{
-			slug: 'fun',
-			name: 'Fun & Entertainment',
-			icon: '/assets/img/bot/love.svg',
-			emoji: '🎉',
+			slug: "fun",
+			name: "Fun & Entertainment",
+			icon: "/assets/img/bot/love.svg",
+			emoji: "🎉",
 			description:
-				'Memes, trivia, image manipulation, action commands and social games that keep conversations lively and members coming back.',
-			keywords: ['fun', 'meme', 'trivia', 'games', 'entertainment']
+				"Memes, trivia, image manipulation, action commands and social games that keep conversations lively and members coming back.",
+			keywords: ["fun", "meme", "trivia", "games", "entertainment"]
 		},
 		{
-			slug: 'anime',
-			name: 'Anime & Roleplay',
-			icon: '/assets/img/anime.svg',
-			emoji: '⛩️',
+			slug: "anime",
+			name: "Anime & Roleplay",
+			icon: "/assets/img/anime.svg",
+			emoji: "⛩️",
 			description:
-				'Anime search, manga updates, waifu cards, roleplay actions and all the weeb content your server could ever want.',
-			keywords: ['anime', 'manga', 'roleplay', 'waifu', 'otaku']
+				"Anime search, manga updates, waifu cards, roleplay actions and all the weeb content your server could ever want.",
+			keywords: ["anime", "manga", "roleplay", "waifu", "otaku"]
 		},
 		{
-			slug: 'leveling',
-			name: 'Leveling & XP',
-			icon: '/assets/img/medal.svg',
-			emoji: '⭐',
+			slug: "leveling",
+			name: "Leveling & XP",
+			icon: "/assets/img/medal.svg",
+			emoji: "⭐",
 			description:
-				'Reward activity with XP, rank cards and role unlocks. A great leveling system turns lurkers into regulars.',
-			keywords: ['level', 'xp', 'rank', 'leaderboard', 'reward']
+				"Reward activity with XP, rank cards and role unlocks. A great leveling system turns lurkers into regulars.",
+			keywords: ["level", "xp", "rank", "leaderboard", "reward"]
 		},
 		{
-			slug: 'logging',
-			name: 'Logging & Audit',
-			icon: '/assets/img/log-format.svg',
-			emoji: '📋',
+			slug: "logging",
+			name: "Logging & Audit",
+			icon: "/assets/img/log-format.svg",
+			emoji: "📋",
 			description:
-				'Full audit trails, message logs, join/leave events, voice channel tracking and mod action history for complete server visibility.',
-			keywords: ['log', 'audit', 'tracking', 'history', 'monitor']
+				"Full audit trails, message logs, join/leave events, voice channel tracking and mod action history for complete server visibility.",
+			keywords: ["log", "audit", "tracking", "history", "monitor"]
 		},
 		{
-			slug: 'roleplay',
-			name: 'Roleplay & Social',
-			icon: '/assets/img/heart.svg',
-			emoji: '💬',
+			slug: "roleplay",
+			name: "Roleplay & Social",
+			icon: "/assets/img/heart.svg",
+			emoji: "💬",
 			description:
-				'Hug, kiss, pat, slap and hundreds of other social interaction commands that bring warmth and personality to your community.',
-			keywords: ['roleplay', 'social', 'hug', 'kiss', 'actions']
+				"Hug, kiss, pat, slap and hundreds of other social interaction commands that bring warmth and personality to your community.",
+			keywords: ["roleplay", "social", "hug", "kiss", "actions"]
 		},
 		{
-			slug: 'announce',
-			name: 'Announcements & Feeds',
-			icon: '/assets/img/announce.svg',
-			emoji: '📣',
+			slug: "announce",
+			name: "Announcements & Feeds",
+			icon: "/assets/img/announce.svg",
+			emoji: "📣",
 			description:
-				'Auto-post YouTube uploads, Twitch live alerts, Reddit feeds and custom announcements so your community never misses a thing.',
-			keywords: ['announce', 'feed', 'twitch', 'youtube', 'alert']
+				"Auto-post YouTube uploads, Twitch live alerts, Reddit feeds and custom announcements so your community never misses a thing.",
+			keywords: ["announce", "feed", "twitch", "youtube", "alert"]
 		},
 		{
-			slug: 'translate',
-			name: 'Translation & Language',
-			icon: '/assets/img/translate.svg',
-			emoji: '🌐',
+			slug: "translate",
+			name: "Translation & Language",
+			icon: "/assets/img/translate.svg",
+			emoji: "🌐",
 			description:
-				'Break language barriers with real-time message translation, language detection and multilingual server support.',
-			keywords: ['translate', 'language', 'multilingual', 'i18n']
+				"Break language barriers with real-time message translation, language detection and multilingual server support.",
+			keywords: ["translate", "language", "multilingual", "i18n"]
 		}
 	];
 </script>

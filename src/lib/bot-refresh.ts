@@ -24,13 +24,13 @@
  * vice-versa) is still persisted.
  */
 
-import { getDb } from '$lib/db';
-import { Bots } from '$lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { env } from '$env/dynamic/private';
-import SendLog from '@/bot/log';
-import getAvatarURL from '@/lib/get-avatar-url';
-import { classifyCdnUrl, isDiscordCdnAttachment } from '$lib/cdn-refresh';
+import { getDb } from "$lib/db";
+import { Bots } from "$lib/db/schema";
+import { eq } from "drizzle-orm";
+import { env } from "$env/dynamic/private";
+import SendLog from "@/bot/log";
+import getAvatarURL from "@/lib/get-avatar-url";
+import { classifyCdnUrl, isDiscordCdnAttachment } from "$lib/cdn-refresh";
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -112,12 +112,12 @@ export async function fetchDiscordBotUser(id: string, botToken: string): Promise
 	const res = await fetch(`https://discord.com/api/v10/users/${encodeURIComponent(id)}`, {
 		headers: {
 			Authorization: `Bot ${botToken}`,
-			'User-Agent': 'discord-list/infra'
+			"User-Agent": "discord-list/infra"
 		}
 	});
 
 	if (!res.ok) {
-		const text = await res.text().catch(() => '(unreadable)');
+		const text = await res.text().catch(() => "(unreadable)");
 		throw new Error(`Discord GET /users/${id} returned HTTP ${res.status}: ${text}`);
 	}
 
@@ -130,18 +130,18 @@ export async function fetchDiscordBotUser(id: string, botToken: string): Promise
  * URL (no-op) or when the response has no entry for it.
  */
 async function refreshSingleCdnUrl(url: string, botToken: string): Promise<string | null> {
-	const res = await fetch('https://discord.com/api/v9/attachments/refresh-urls', {
-		method: 'POST',
+	const res = await fetch("https://discord.com/api/v9/attachments/refresh-urls", {
+		method: "POST",
 		headers: {
 			Authorization: `Bot ${botToken}`,
-			'Content-Type': 'application/json',
-			'User-Agent': 'discord-list/infra'
+			"Content-Type": "application/json",
+			"User-Agent": "discord-list/infra"
 		},
 		body: JSON.stringify({ attachment_urls: [url] })
 	});
 
 	if (!res.ok) {
-		const text = await res.text().catch(() => '(unreadable)');
+		const text = await res.text().catch(() => "(unreadable)");
 		throw new Error(`Discord refresh-urls returned HTTP ${res.status}: ${text}`);
 	}
 
@@ -172,7 +172,7 @@ export async function refreshBot(
 	discordToken: string,
 	options: BotRefreshOptions = {}
 ): Promise<BotRefreshResult> {
-	const triggeredBy = options.triggeredBy ?? 'unknown';
+	const triggeredBy = options.triggeredBy ?? "unknown";
 	const logPrefix = `[bot-refresh/${triggeredBy}]`;
 
 	const result: BotRefreshResult = {
@@ -227,7 +227,7 @@ export async function refreshBot(
 		const newUsername = discordUser.username ?? dbBot.username;
 		const newDiscriminator = discordUser.discriminator ?? dbBot.discriminator;
 		// Discord returns null avatar for the default avatar; normalise to '0'.
-		const newAvatar = discordUser.avatar ?? '0';
+		const newAvatar = discordUser.avatar ?? "0";
 		const newBg = discordUser.banner ?? dbBot.bg ?? undefined; // Optional: also update bg if the bot has a banner?
 		if (newUsername !== dbBot.username) {
 			updates.username = newUsername;
@@ -251,14 +251,14 @@ export async function refreshBot(
 	// Step 4: Refresh bg CDN URL if expired (non-fatal)
 	// -----------------------------------------------------------------------
 	const currentBg = dbBot.bg;
-	if (currentBg && isDiscordCdnAttachment(currentBg) && classifyCdnUrl(currentBg) === 'invalid') {
+	if (currentBg && isDiscordCdnAttachment(currentBg) && classifyCdnUrl(currentBg) === "invalid") {
 		try {
 			const refreshedBg = await refreshSingleCdnUrl(currentBg, discordToken);
 			if (refreshedBg) {
 				updates.bg = refreshedBg;
 				result.bgRefreshed = true;
 				result.newBg = refreshedBg;
-				result.changes.push('bg: CDN URL refreshed');
+				result.changes.push("bg: CDN URL refreshed");
 			}
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : String(err);
@@ -291,20 +291,20 @@ export async function refreshBot(
 		try {
 			await SendLog({
 				env: {
-					DOMAIN: env.DOMAIN ?? '',
-					FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? '',
-					LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? '',
+					DOMAIN: env.DOMAIN ?? "",
+					FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? "",
+					LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? "",
 					DISCORD_TOKEN: discordToken
 				},
 				body: {
 					title: `Bot ${effectiveUsername}#${effectiveDiscriminator} data refreshed`,
 					desc: [
 						`Bot **${effectiveUsername}** (\`${botId}\`) was automatically refreshed (trigger: \`${triggeredBy}\`).`,
-						'',
-						'**Changes:**',
+						"",
+						"**Changes:**",
 						...result.changes.map((c) => `• ${c}`)
-					].join('\n'),
-					color: '#5865F2',
+					].join("\n"),
+					color: "#5865F2",
 					img: getAvatarURL(botId, effectiveAvatar)
 				}
 			});
@@ -316,7 +316,7 @@ export async function refreshBot(
 
 	console.log(
 		`${logPrefix} id=${botId} updated=${result.updated} bgRefreshed=${result.bgRefreshed}` +
-			(result.changes.length ? ` changes=[${result.changes.join(', ')}]` : '')
+			(result.changes.length ? ` changes=[${result.changes.join(", ")}]` : "")
 	);
 
 	return result;
@@ -330,6 +330,6 @@ export async function refreshBot(
 export class NotFoundError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'NotFoundError';
+		this.name = "NotFoundError";
 	}
 }

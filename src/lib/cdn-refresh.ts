@@ -31,10 +31,10 @@
  *     truly necessary).
  */
 
-import { withDb } from '$lib/db';
-import { Bots } from '$lib/db/schema';
-import { isNotNull, isNull, not, like, or } from 'drizzle-orm';
-import { eq } from 'drizzle-orm';
+import { withDb } from "$lib/db";
+import { Bots } from "$lib/db/schema";
+import { isNotNull, isNull, not, like, or } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -89,7 +89,7 @@ export interface CdnRefreshResult {
 // Constants
 // ---------------------------------------------------------------------------
 
-const DISCORD_CDN_ATTACHMENT_PREFIX = 'https://cdn.discordapp.com/attachments/';
+const DISCORD_CDN_ATTACHMENT_PREFIX = "https://cdn.discordapp.com/attachments/";
 
 /** Discord's hard batch limit for the refresh-urls endpoint. */
 const DISCORD_REFRESH_BATCH_SIZE = 50;
@@ -113,15 +113,19 @@ function isDiscordCdnAttachment(url: string): boolean {
  *
  * Returns null for any param that is absent.
  */
-function parseSignedParams(url: string): { ex: string | null; is: string | null; hm: string | null } {
+function parseSignedParams(url: string): {
+	ex: string | null;
+	is: string | null;
+	hm: string | null;
+} {
 	try {
 		// Use URL constructor — handles relative paths gracefully by ignoring them
 		// (they won't start with https:// so they're already filtered above).
 		const parsed = new URL(url);
 		return {
-			ex: parsed.searchParams.get('ex'),
-			is: parsed.searchParams.get('is'),
-			hm: parsed.searchParams.get('hm')
+			ex: parsed.searchParams.get("ex"),
+			is: parsed.searchParams.get("is"),
+			hm: parsed.searchParams.get("hm")
 		};
 	} catch {
 		// Malformed URL — treat as having no signed params so we skip it.
@@ -138,31 +142,31 @@ function parseSignedParams(url: string): { ex: string | null; is: string | null;
  *  - `'invalid'`    — signed params present and URL is expired (or expiry is
  *                     unreadable), needs a refresh.
  */
-function classifyCdnUrl(url: string): 'permanent' | 'valid' | 'invalid' {
+function classifyCdnUrl(url: string): "permanent" | "valid" | "invalid" {
 	const { ex, is, hm } = parseSignedParams(url);
 
 	// Permanent URL: all three params must be absent.
 	// (Partially-signed URLs with only some params are treated as invalid to
 	//  be safe — Discord requires all three.)
 	if (!ex && !is && !hm) {
-		return 'permanent';
+		return "permanent";
 	}
 
 	// If any of the three required signed params is missing the token is
 	// malformed. Treat as invalid so Discord can issue a proper signed URL.
 	if (!ex || !is || !hm) {
-		return 'invalid';
+		return "invalid";
 	}
 
 	// ex is a lowercase hex string representing a Unix timestamp in seconds.
 	const expirySeconds = parseInt(ex, 16);
 	if (Number.isNaN(expirySeconds)) {
 		// Unreadable expiry — treat as invalid.
-		return 'invalid';
+		return "invalid";
 	}
 
 	const nowSeconds = Math.floor(Date.now() / 1000);
-	return expirySeconds > nowSeconds ? 'valid' : 'invalid';
+	return expirySeconds > nowSeconds ? "valid" : "invalid";
 }
 
 // ---------------------------------------------------------------------------
@@ -209,20 +213,18 @@ async function discordRefreshBatch(
 	urls: string[],
 	botToken: string
 ): Promise<DiscordRefreshedUrl[]> {
-	const response = await fetch('https://discord.com/api/v9/attachments/refresh-urls', {
-		method: 'POST',
+	const response = await fetch("https://discord.com/api/v9/attachments/refresh-urls", {
+		method: "POST",
 		headers: {
 			Authorization: `Bot ${botToken}`,
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({ attachment_urls: urls })
 	});
 
 	if (!response.ok) {
-		const text = await response.text().catch(() => '(unreadable body)');
-		throw new Error(
-			`Discord refresh-urls returned HTTP ${response.status}: ${text}`
-		);
+		const text = await response.text().catch(() => "(unreadable body)");
+		throw new Error(`Discord refresh-urls returned HTTP ${response.status}: ${text}`);
 	}
 
 	const data = (await response.json()) as DiscordRefreshResponse;
@@ -282,9 +284,9 @@ export async function runCdnBgRefresh(botToken: string): Promise<CdnRefreshResul
 
 		const classification = classifyCdnUrl(row.bg);
 
-		if (classification === 'permanent') {
+		if (classification === "permanent") {
 			result.permanentUrls++;
-		} else if (classification === 'valid') {
+		} else if (classification === "valid") {
 			result.validSignedUrls++;
 		} else {
 			// 'invalid' — expired or malformed signed URL

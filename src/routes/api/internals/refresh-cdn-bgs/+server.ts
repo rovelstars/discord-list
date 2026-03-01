@@ -21,49 +21,49 @@
  *   On unexpected error → 500.
  */
 
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
-import { runCdnBgRefresh } from '$lib/cdn-refresh';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
+import { runCdnBgRefresh } from "$lib/cdn-refresh";
 
 export const GET: RequestHandler = async ({ request, url }) => {
 	// ------------------------------------------------------------------
 	// Auth: compare the X-Internal-Secret header against the stored secret.
 	// Both values are trimmed so trailing newlines in env vars don't bite us.
 	// ------------------------------------------------------------------
-	const internalSecret = (env.INTERNAL_SECRET ?? '').trim();
+	const internalSecret = (env.INTERNAL_SECRET ?? "").trim();
 
 	if (!internalSecret) {
 		// Misconfiguration — refuse to run without a secret so the endpoint is
 		// never accidentally left open.
-		console.error('[refresh-cdn-bgs] INTERNAL_SECRET env var is not set.');
+		console.error("[refresh-cdn-bgs] INTERNAL_SECRET env var is not set.");
 		return json(
-			{ success: false, error: 'Server misconfiguration: INTERNAL_SECRET not set.' },
+			{ success: false, error: "Server misconfiguration: INTERNAL_SECRET not set." },
 			{ status: 500 }
 		);
 	}
 
 	// Accept the secret from the header (scheduled function) or query param (manual browser run).
 	const suppliedSecret = (
-		request.headers.get('X-Internal-Secret') ??
-		url.searchParams.get('secret') ??
-		''
+		request.headers.get("X-Internal-Secret") ??
+		url.searchParams.get("secret") ??
+		""
 	).trim();
 
 	if (!suppliedSecret || suppliedSecret !== internalSecret) {
-		return json({ success: false, error: 'Unauthorized.' }, { status: 401 });
+		return json({ success: false, error: "Unauthorized." }, { status: 401 });
 	}
 
 	// ------------------------------------------------------------------
 	// Require a Discord Bot token.
 	// We read DISCORD_TOKEN (the same var used elsewhere in the project).
 	// ------------------------------------------------------------------
-	const discordToken = (env.DISCORD_TOKEN ?? '').trim();
+	const discordToken = (env.DISCORD_TOKEN ?? "").trim();
 
 	if (!discordToken) {
-		console.error('[refresh-cdn-bgs] DISCORD_TOKEN env var is not set.');
+		console.error("[refresh-cdn-bgs] DISCORD_TOKEN env var is not set.");
 		return json(
-			{ success: false, error: 'Server misconfiguration: DISCORD_TOKEN not set.' },
+			{ success: false, error: "Server misconfiguration: DISCORD_TOKEN not set." },
 			{ status: 500 }
 		);
 	}
@@ -72,7 +72,7 @@ export const GET: RequestHandler = async ({ request, url }) => {
 	// Run the refresh cycle.
 	// ------------------------------------------------------------------
 	const startedAt = Date.now();
-	console.log('[refresh-cdn-bgs] Starting CDN bg refresh cycle…');
+	console.log("[refresh-cdn-bgs] Starting CDN bg refresh cycle…");
 
 	try {
 		const result = await runCdnBgRefresh(discordToken);
@@ -91,7 +91,7 @@ export const GET: RequestHandler = async ({ request, url }) => {
 		);
 
 		if (result.errors.length > 0) {
-			console.warn('[refresh-cdn-bgs] Non-fatal errors:', result.errors);
+			console.warn("[refresh-cdn-bgs] Non-fatal errors:", result.errors);
 		}
 
 		return json(
@@ -105,7 +105,7 @@ export const GET: RequestHandler = async ({ request, url }) => {
 	} catch (err) {
 		const durationMs = Date.now() - startedAt;
 		const message = err instanceof Error ? err.message : String(err);
-		console.error('[refresh-cdn-bgs] Unexpected error after', durationMs, 'ms:', err);
+		console.error("[refresh-cdn-bgs] Unexpected error after", durationMs, "ms:", err);
 		return json(
 			{
 				success: false,

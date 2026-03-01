@@ -1,14 +1,14 @@
-import type { PageServerLoad } from './$types';
-import { redirect } from '@sveltejs/kit';
-import { getDb } from '$lib/db';
-import { Bots, Users } from '$lib/schema';
-import { eq, or } from 'drizzle-orm';
-import DiscordOauth2 from 'discord-oauth2';
-import { env } from '$env/dynamic/private';
+import type { PageServerLoad } from "./$types";
+import { redirect } from "@sveltejs/kit";
+import { getDb } from "$lib/db";
+import { Bots, Users } from "$lib/schema";
+import { eq, or } from "drizzle-orm";
+import DiscordOauth2 from "discord-oauth2";
+import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async ({ params, cookies, setHeaders }) => {
 	const idOrSlug = params.id;
-	if (!idOrSlug) throw redirect(302, '/404');
+	if (!idOrSlug) throw redirect(302, "/404");
 
 	const db = getDb();
 
@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ params, cookies, setHeaders }) => {
 		.where(or(eq(Bots.slug, idOrSlug), eq(Bots.id, idOrSlug)))
 		.limit(1);
 
-	if (!rows || rows.length === 0) throw redirect(302, '/404');
+	if (!rows || rows.length === 0) throw redirect(302, "/404");
 
 	const bot = rows[0] as {
 		id: string;
@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ params, cookies, setHeaders }) => {
 	};
 
 	// Resolve user from cookie (same pattern as layout server load)
-	const key = cookies.get('key');
+	const key = cookies.get("key");
 	let user: { id: string; username: string; avatar: string | null; bal: number } | null = null;
 
 	if (key) {
@@ -46,7 +46,7 @@ export const load: PageServerLoad = async ({ params, cookies, setHeaders }) => {
 			const oauth = new DiscordOauth2({
 				clientId: env.DISCORD_BOT_ID!,
 				clientSecret: env.DISCORD_SECRET!,
-				redirectUri: (env.DOMAIN ?? 'http://localhost:5173') + '/api/auth'
+				redirectUri: (env.DOMAIN ?? "http://localhost:5173") + "/api/auth"
 			});
 
 			const userData = await oauth.getUser(key);
@@ -72,8 +72,8 @@ export const load: PageServerLoad = async ({ params, cookies, setHeaders }) => {
 	}
 
 	setHeaders({
-		'cache-control': 'private, max-age=0',
-		'netlify-vary': 'cookie=key|code,header=user-agent'
+		"cache-control": "private, max-age=0",
+		"netlify-vary": "cookie=key|code,header=user-agent"
 	});
 
 	return {

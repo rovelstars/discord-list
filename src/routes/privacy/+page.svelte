@@ -1,10 +1,10 @@
 <script lang="ts">
-	import SEO from '$lib/components/SEO.svelte';
+	import SEO from "$lib/components/SEO.svelte";
 
-	const lastUpdated = 'March 1, 2026';
-	const email = 'support@rovelstars.com';
-	const siteName = 'Rovel Discord List';
-	const siteUrl = 'https://discord.rovelstars.com';
+	const lastUpdated = "March 1, 2026";
+	const email = "support@rovelstars.com";
+	const siteName = "Rovel Discord List";
+	const siteUrl = "https://discord.rovelstars.com";
 </script>
 
 <SEO
@@ -132,7 +132,7 @@
 					</p>
 				</div>
 				<nav class="p-2">
-					{#each [['#who-we-are', 'Who We Are'], ['#data-we-collect', 'Data We Collect'], ['#how-we-use-data', 'How We Use It'], ['#data-sharing', 'Data Sharing'], ['#cookies', 'Cookies'], ['#data-retention', 'Data Retention'], ['#your-rights', 'Your Rights'], ['#childrens-privacy', "Children's Privacy"], ['#changes', 'Policy Changes'], ['#contact', 'Contact Us']] as [href, label]}
+					{#each [["#who-we-are", "Who We Are"], ["#data-we-collect", "Data We Collect"], ["#how-we-use-data", "How We Use It"], ["#data-sharing", "Data Sharing"], ["#cookies", "Cookies"], ["#data-retention", "Data Retention"], ["#your-rights", "Your Rights"], ["#childrens-privacy", "Children's Privacy"], ["#changes", "Policy Changes"], ["#contact", "Contact Us"]] as [href, label]}
 						<a
 							{href}
 							class="block px-3 py-2 rounded-xl text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
@@ -215,7 +215,7 @@
 							</p>
 						</div>
 						<ul class="divide-y divide-border">
-							{#each [['Discord User ID', 'Used as your unique identifier across our platform.'], ['Username & Discriminator', 'Displayed on your public profile and dashboard.'], ['Global Display Name', 'Your chosen display name shown across the site.'], ['Avatar Hash', "Used to load your profile picture from Discord's CDN."], ['Email Address', 'Optionally provided by Discord; used only for account support.'], ['Nitro Status', 'Used to display a Nitro badge on your profile.']] as [field, note]}
+							{#each [["Discord User ID", "Used as your unique identifier across our platform."], ["Username & Discriminator", "Displayed on your public profile and dashboard."], ["Global Display Name", "Your chosen display name shown across the site."], ["Avatar Hash", "Used to load your profile picture from Discord's CDN."], ["Email Address", "Optionally provided by Discord; used only for account support."], ["Nitro Status", "Used to display a Nitro badge on your profile."]] as [field, note]}
 								<li class="px-5 py-3 flex items-start gap-3">
 									<span class="font-semibold text-foreground shrink-0 w-44">{field}</span>
 									<span>{note}</span>
@@ -231,7 +231,7 @@
 							</p>
 						</div>
 						<ul class="divide-y divide-border">
-							{#each [['Profile Bio', 'A short description shown on your public profile page.'], ['Banner URL', 'An image URL used as your profile banner.'], ['Bot Listings', 'All information submitted when listing a bot (name, description, invite link, etc.).']] as [field, note]}
+							{#each [["Profile Bio", "A short description shown on your public profile page."], ["Banner URL", "An image URL used as your profile banner."], ["Bot Listings", "All information submitted when listing a bot (name, description, invite link, etc.)."]] as [field, note]}
 								<li class="px-5 py-3 flex items-start gap-3">
 									<span class="font-semibold text-foreground shrink-0 w-44">{field}</span>
 									<span>{note}</span>
@@ -247,7 +247,7 @@
 							</p>
 						</div>
 						<ul class="divide-y divide-border">
-							{#each [['Vote History', 'Timestamps and bot IDs for votes you cast, used for rewards and leaderboards.'], ['Session Cookie', 'A secure HTTP-only cookie storing your OAuth access token to keep you logged in.'], ['Standard Server Logs', 'IP address, browser type, referring URL, and pages visited. Retained for up to 30 days for security purposes.']] as [field, note]}
+							{#each [["Vote History", "Timestamps and bot IDs for votes you cast, used for rewards and leaderboards."], ["Session Cookie", "A secure HTTP-only cookie storing your OAuth access token to keep you logged in."], ["Standard Server Logs", "IP address, browser type, referring URL, and pages visited. Retained for up to 30 days for security purposes."]] as [field, note]}
 								<li class="px-5 py-3 flex items-start gap-3">
 									<span class="font-semibold text-foreground shrink-0 w-44">{field}</span>
 									<span>{note}</span>
@@ -282,7 +282,7 @@
 				<div class="text-muted-foreground leading-relaxed space-y-3 text-sm">
 					<p>We use the information we collect solely to operate and improve the service:</p>
 					<ul class="space-y-2 mt-2">
-						{#each ['Authenticate you via Discord OAuth2 and maintain your session.', 'Display your public profile, avatar, and listed bots.', 'Track your vote history and calculate your R$ reward balance.', 'Send webhook notifications to bot developers when you vote.', 'Detect and prevent abuse, spam, or fraudulent activity.', 'Respond to support requests sent to our email.', 'Improve site performance and diagnose technical issues.'] as item}
+						{#each ["Authenticate you via Discord OAuth2 and maintain your session.", "Display your public profile, avatar, and listed bots.", "Track your vote history and calculate your R$ reward balance.", "Send webhook notifications to bot developers when you vote.", "Detect and prevent abuse, spam, or fraudulent activity.", "Respond to support requests sent to our email.", "Improve site performance and diagnose technical issues."] as item}
 							<li class="flex items-start gap-2">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -397,7 +397,7 @@
 					<p>We use a minimal number of cookies strictly necessary to operate the site:</p>
 					<div class="bg-card border border-border rounded-2xl overflow-hidden mt-2">
 						<ul class="divide-y divide-border">
-							{#each [['key', 'Session', 'Stores your Discord OAuth access token to keep you logged in. HTTP-only, Secure. Expires when you log out or after 7 days.'], ['theme', 'Preference', 'Stores your light/dark mode preference. No personal data. Expires after 1 year.']] as [name, type, desc]}
+							{#each [["key", "Session", "Stores your Discord OAuth access token to keep you logged in. HTTP-only, Secure. Expires when you log out or after 7 days."], ["theme", "Preference", "Stores your light/dark mode preference. No personal data. Expires after 1 year."]] as [name, type, desc]}
 								<li class="px-5 py-3.5 grid grid-cols-3 gap-3 text-xs">
 									<div>
 										<code
@@ -489,7 +489,7 @@
 						Regardless of where you are located, you have the following rights regarding your data:
 					</p>
 					<ul class="space-y-2 mt-2">
-						{#each [['Access', 'Request a copy of the personal data we hold about you.'], ['Rectification', "Ask us to correct inaccurate data (e.g. if your profile wasn't updated after a username change)."], ['Erasure', 'Request deletion of your account and all personally identifiable information.'], ['Restriction', 'Ask us to stop processing your data in certain ways while a dispute is resolved.'], ['Portability', 'Request your data in a structured, machine-readable format.'], ['Objection', 'Object to our processing of your data for any reason.']] as [right, desc]}
+						{#each [["Access", "Request a copy of the personal data we hold about you."], ["Rectification", "Ask us to correct inaccurate data (e.g. if your profile wasn't updated after a username change)."], ["Erasure", "Request deletion of your account and all personally identifiable information."], ["Restriction", "Ask us to stop processing your data in certain ways while a dispute is resolved."], ["Portability", "Request your data in a structured, machine-readable format."], ["Objection", "Object to our processing of your data for any reason."]] as [right, desc]}
 							<li class="flex items-start gap-2">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"

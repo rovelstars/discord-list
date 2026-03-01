@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-	import { fade, scale } from 'svelte/transition';
+	import { onMount, onDestroy, createEventDispatcher } from "svelte";
+	import { fade, scale } from "svelte/transition";
 
 	// Action to ensure content element is attached to document body coordinates correctly.
 	function contentAttrs(node: HTMLElement) {
@@ -12,8 +12,8 @@
 	}
 
 	export let open: boolean = false;
-	export let side: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
-	export let align: 'start' | 'center' | 'end' = 'center';
+	export let side: "top" | "bottom" | "left" | "right" = "bottom";
+	export let align: "start" | "center" | "end" = "center";
 	export let offset: number = 8; // px space between trigger and content
 	export let closeOnEsc: boolean = true;
 	export let closeOnOutsideClick: boolean = true;
@@ -24,28 +24,28 @@
 	let triggerEl: HTMLElement | null = null;
 	let contentEl: HTMLElement | null = null;
 
-	let contentStyle = '';
+	let contentStyle = "";
 	let resizeObserver: ResizeObserver | null = null;
 
 	function toggle() {
 		open = !open;
-		dispatch(open ? 'open' : 'close');
+		dispatch(open ? "open" : "close");
 	}
 
 	function close() {
 		if (open) {
 			open = false;
-			dispatch('close');
+			dispatch("close");
 		}
 	}
 
 	function onTriggerKeydown(e: KeyboardEvent) {
 		// open popover on Enter/Space for accessibility
-		if (e.key === 'Enter' || e.key === ' ') {
+		if (e.key === "Enter" || e.key === " ") {
 			e.preventDefault();
 			toggle();
 		}
-		if (e.key === 'Escape' && closeOnEsc) {
+		if (e.key === "Escape" && closeOnEsc) {
 			close();
 		}
 	}
@@ -61,7 +61,7 @@
 
 	function onDocumentKeydown(e: KeyboardEvent) {
 		if (!open) return;
-		if (e.key === 'Escape' && closeOnEsc) {
+		if (e.key === "Escape" && closeOnEsc) {
 			close();
 		}
 	}
@@ -81,26 +81,26 @@
 		let top = 0;
 		let left = 0;
 
-		if (side === 'bottom') {
+		if (side === "bottom") {
 			top = trig.bottom + offset;
-			if (align === 'start') left = trig.left;
-			else if (align === 'center') left = trig.left + trig.width / 2 - content.width / 2;
+			if (align === "start") left = trig.left;
+			else if (align === "center") left = trig.left + trig.width / 2 - content.width / 2;
 			else left = trig.right - content.width;
-		} else if (side === 'top') {
+		} else if (side === "top") {
 			top = trig.top - content.height - offset;
-			if (align === 'start') left = trig.left;
-			else if (align === 'center') left = trig.left + trig.width / 2 - content.width / 2;
+			if (align === "start") left = trig.left;
+			else if (align === "center") left = trig.left + trig.width / 2 - content.width / 2;
 			else left = trig.right - content.width;
-		} else if (side === 'left') {
+		} else if (side === "left") {
 			left = trig.left - content.width - offset;
-			if (align === 'start') top = trig.top;
-			else if (align === 'center') top = trig.top + trig.height / 2 - content.height / 2;
+			if (align === "start") top = trig.top;
+			else if (align === "center") top = trig.top + trig.height / 2 - content.height / 2;
 			else top = trig.bottom - content.height;
 		} else {
 			// right
 			left = trig.right + offset;
-			if (align === 'start') top = trig.top;
-			else if (align === 'center') top = trig.top + trig.height / 2 - content.height / 2;
+			if (align === "start") top = trig.top;
+			else if (align === "center") top = trig.top + trig.height / 2 - content.height / 2;
 			else top = trig.bottom - content.height;
 		}
 
@@ -117,10 +117,10 @@
 	}
 
 	onMount(() => {
-		window.addEventListener('click', onDocumentClick, true);
-		window.addEventListener('keydown', onDocumentKeydown, true);
-		window.addEventListener('resize', updatePosition);
-		window.addEventListener('scroll', updatePosition, true);
+		window.addEventListener("click", onDocumentClick, true);
+		window.addEventListener("keydown", onDocumentKeydown, true);
+		window.addEventListener("resize", updatePosition);
+		window.addEventListener("scroll", updatePosition, true);
 
 		// Observe size changes to re-position when content size changes
 		try {
@@ -136,10 +136,10 @@
 	});
 
 	onDestroy(() => {
-		window.removeEventListener('click', onDocumentClick, true);
-		window.removeEventListener('keydown', onDocumentKeydown, true);
-		window.removeEventListener('resize', updatePosition);
-		window.removeEventListener('scroll', updatePosition, true);
+		window.removeEventListener("click", onDocumentClick, true);
+		window.removeEventListener("keydown", onDocumentKeydown, true);
+		window.removeEventListener("resize", updatePosition);
+		window.removeEventListener("scroll", updatePosition, true);
 		if (resizeObserver) resizeObserver.disconnect();
 	});
 
@@ -197,7 +197,7 @@
      The classes used above (bg-popover, border, rounded-md, shadow-lg, etc.) assume Tailwind tokens. */
 
 	/* Ensure the popover content can receive focus for accessibility */
-	[role='dialog'] {
+	[role="dialog"] {
 		outline: none;
 	}
 </style>

@@ -1,6 +1,6 @@
-import RestClient from './util';
-import { Routes } from 'discord-api-types/v10';
-import { EmbedBuilder } from '@discordjs/builders';
+import RestClient from "./util";
+import { Routes } from "discord-api-types/v10";
+import { EmbedBuilder } from "@discordjs/builders";
 
 export default async function SendLog({
 	env,
@@ -19,9 +19,9 @@ export default async function SendLog({
 	const Body = {
 		embeds: [
 			new EmbedBuilder()
-				.setTitle(body.title || 'RDL Logging')
-				.setDescription(body.desc || 'No description provided.\n:/&&')
-				.setColor(hexToDec(body.color || '#5865F2'))
+				.setTitle(body.title || "RDL Logging")
+				.setDescription(body.desc || "No description provided.\n:/&&")
+				.setColor(hexToDec(body.color || "#5865F2"))
 				.setImage(body.attachment)
 				.setURL(body.url || env.DOMAIN)
 				.setThumbnail(body.img || `${env.DOMAIN}/assets/img/bot/logo-512.png`)
@@ -49,11 +49,11 @@ export default async function SendLog({
 						content: `<@!${owner}>`,
 						embeds: [
 							new EmbedBuilder()
-								.setTitle('Failed to send logs!')
+								.setTitle("Failed to send logs!")
 								.setDescription(
 									`Failed to send logs to <@${owner}>. Keep your DMs opened, atleast with me.`
 								)
-								.setColor(hexToDec('#ED4245'))
+								.setColor(hexToDec("#ED4245"))
 								.setTimestamp()
 								.toJSON(),
 							Body.embeds[0]
@@ -69,5 +69,5 @@ export default async function SendLog({
 }
 
 function hexToDec(color: string) {
-	return parseInt(color.replace('#', ''), 16);
+	return parseInt(color.replace("#", ""), 16);
 }

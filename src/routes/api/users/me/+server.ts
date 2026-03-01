@@ -1,10 +1,10 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import DiscordOauth2 from 'discord-oauth2';
-import { getDb } from '$lib/db';
-import { Users } from '$lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { env } from '$env/dynamic/private';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import DiscordOauth2 from "discord-oauth2";
+import { getDb } from "$lib/db";
+import { Users } from "$lib/db/schema";
+import { eq } from "drizzle-orm";
+import { env } from "$env/dynamic/private";
 
 /**
  * PATCH /api/users/me
@@ -34,31 +34,35 @@ export const PATCH: RequestHandler = async ({ request, cookies }) => {
 		// Auth
 		// ------------------------------------------------------------------
 		const url = new URL(request.url);
-		const paramKey = url.searchParams.get('key');
-		const headerAuth = request.headers.get('authorization') ?? request.headers.get('RDL-key');
-		const cookieKey = cookies.get('key');
+		const paramKey = url.searchParams.get("key");
+		const headerAuth = request.headers.get("authorization") ?? request.headers.get("RDL-key");
+		const cookieKey = cookies.get("key");
 
 		const key = paramKey ?? headerAuth ?? cookieKey;
 		if (!key) {
-			return json({ err: 'not_logged_in' }, { status: 400 });
+			return json({ err: "not_logged_in" }, { status: 400 });
 		}
 
 		const oauth2 = new DiscordOauth2({
 			clientId: env.DISCORD_BOT_ID,
 			clientSecret: env.DISCORD_SECRET,
-			redirectUri: (env.DOMAIN ?? 'http://localhost:5173') + '/api/auth'
+			redirectUri: (env.DOMAIN ?? "http://localhost:5173") + "/api/auth"
 		});
 
 		let userData: any;
 		try {
 			userData = await oauth2.getUser(String(key));
 		} catch {
-			try { cookies.delete('key', { path: '/' }); } catch { /* noop */ }
-			return json({ err: 'invalid_key' }, { status: 400 });
+			try {
+				cookies.delete("key", { path: "/" });
+			} catch {
+				/* noop */
+			}
+			return json({ err: "invalid_key" }, { status: 400 });
 		}
 
 		if (!userData?.id) {
-			return json({ err: 'invalid_key' }, { status: 400 });
+			return json({ err: "invalid_key" }, { status: 400 });
 		}
 
 		// ------------------------------------------------------------------
@@ -68,11 +72,11 @@ export const PATCH: RequestHandler = async ({ request, cookies }) => {
 		try {
 			body = await request.json();
 		} catch {
-			return json({ err: 'invalid_body' }, { status: 400 });
+			return json({ err: "invalid_body" }, { status: 400 });
 		}
 
-		if (!body || typeof body !== 'object') {
-			return json({ err: 'invalid_body' }, { status: 400 });
+		if (!body || typeof body !== "object") {
+			return json({ err: "invalid_body" }, { status: 400 });
 		}
 
 		// ------------------------------------------------------------------
@@ -80,25 +84,25 @@ export const PATCH: RequestHandler = async ({ request, cookies }) => {
 		// ------------------------------------------------------------------
 		const updates: { bio?: string; banner?: string | null } = {};
 
-		if ('bio' in body) {
-			const bio = body.bio == null ? '' : String(body.bio).trim();
+		if ("bio" in body) {
+			const bio = body.bio == null ? "" : String(body.bio).trim();
 			if (bio.length > 200) {
-				return json({ err: 'bio_too_long' }, { status: 400 });
+				return json({ err: "bio_too_long" }, { status: 400 });
 			}
 			updates.bio = bio || "The user doesn't have bio set!";
 		}
 
-		if ('banner' in body) {
+		if ("banner" in body) {
 			const banner = body.banner == null ? null : String(body.banner).trim();
 			if (banner) {
 				// Must be a valid http/https URL
 				try {
 					const u = new URL(banner);
-					if (u.protocol !== 'http:' && u.protocol !== 'https:') {
-						return json({ err: 'invalid_banner' }, { status: 400 });
+					if (u.protocol !== "http:" && u.protocol !== "https:") {
+						return json({ err: "invalid_banner" }, { status: 400 });
 					}
 				} catch {
-					return json({ err: 'invalid_banner' }, { status: 400 });
+					return json({ err: "invalid_banner" }, { status: 400 });
 				}
 			}
 			updates.banner = banner || null;
@@ -121,7 +125,7 @@ export const PATCH: RequestHandler = async ({ request, cookies }) => {
 			.limit(1);
 
 		if (!rows || rows.length === 0) {
-			return json({ err: 'user_not_found' }, { status: 404 });
+			return json({ err: "user_not_found" }, { status: 404 });
 		}
 
 		// ------------------------------------------------------------------
@@ -130,15 +134,15 @@ export const PATCH: RequestHandler = async ({ request, cookies }) => {
 		try {
 			await db.update(Users).set(updates).where(eq(Users.id, userData.id));
 		} catch (err) {
-			console.error('[PATCH /api/users/me] DB update failed:', err);
-			return json({ err: 'db_update_failed' }, { status: 500 });
+			console.error("[PATCH /api/users/me] DB update failed:", err);
+			return json({ err: "db_update_failed" }, { status: 500 });
 		}
 
 		return json({ success: true }, { status: 200 });
 	} catch (err) {
-		console.error('[PATCH /api/users/me] Unexpected error:', err);
+		console.error("[PATCH /api/users/me] Unexpected error:", err);
 		return json(
-			{ err: 'server_error', message: err instanceof Error ? err.message : String(err) },
+			{ err: "server_error", message: err instanceof Error ? err.message : String(err) },
 			{ status: 500 }
 		);
 	}

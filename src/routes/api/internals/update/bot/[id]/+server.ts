@@ -1,12 +1,12 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import { getDb } from '$lib/db';
-import SendLog from '@/bot/log';
-import UserAccountFetch from '$lib/functions/user-bot';
-import getAvatarURL from '$lib/get-avatar-url';
-import { Bots } from '$lib/schema';
-import { eq } from 'drizzle-orm';
-import { env } from '$env/dynamic/private';
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import { getDb } from "$lib/db";
+import SendLog from "@/bot/log";
+import UserAccountFetch from "$lib/functions/user-bot";
+import getAvatarURL from "$lib/get-avatar-url";
+import { Bots } from "$lib/schema";
+import { eq } from "drizzle-orm";
+import { env } from "$env/dynamic/private";
 
 /**
  * GET /api/internals/update/bot/[id]
@@ -23,10 +23,10 @@ export const GET: RequestHandler = async ({ params }) => {
 		const db = getDb();
 		const id = params.id;
 		if (!id) {
-			return json({ success: false, error: 'missing_id' }, { status: 400 });
+			return json({ success: false, error: "missing_id" }, { status: 400 });
 		}
 
-		const SELFBOT_TOKEN = env.SELFBOT_TOKEN ?? '';
+		const SELFBOT_TOKEN = env.SELFBOT_TOKEN ?? "";
 
 		// Ask Discord for up-to-date bot info via the legacy helper.
 		// The helper returns a payload similar to the legacy service (data.application, data.bot, data.code, etc).
@@ -61,21 +61,21 @@ export const GET: RequestHandler = async ({ params }) => {
 				try {
 					await SendLog({
 						env: {
-							DOMAIN: env.DOMAIN ?? '',
-							FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? '',
-							LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? '',
-							DISCORD_TOKEN: env.DISCORD_TOKEN ?? ''
+							DOMAIN: env.DOMAIN ?? "",
+							FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? "",
+							LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? "",
+							DISCORD_TOKEN: env.DISCORD_TOKEN ?? ""
 						},
 						body: {
 							owners: (bot as any).owners || null,
 							title: `Bot ${(bot as any).username}#${(bot as any).discriminator} sent for removal`,
-							desc: `Bot (${id}) is being deleted as Discord reports the Bot doesn't exist. (Error Code: \`${data.code}\`)\nIf this is a mistake, please contact the admins!\nThe admins of this bot are: ${((bot as any).owners || []).map((o: string) => `<@!${o}>`).join(', ')}`,
-							color: '#ED4245'
+							desc: `Bot (${id}) is being deleted as Discord reports the Bot doesn't exist. (Error Code: \`${data.code}\`)\nIf this is a mistake, please contact the admins!\nThe admins of this bot are: ${((bot as any).owners || []).map((o: string) => `<@!${o}>`).join(", ")}`,
+							color: "#ED4245"
 						}
 					});
 				} catch (e) {
 					// swallow logging errors
-					console.warn('SendLog failed during removal notification:', e);
+					console.warn("SendLog failed during removal notification:", e);
 				}
 			}
 
@@ -83,10 +83,10 @@ export const GET: RequestHandler = async ({ params }) => {
 			try {
 				await db.delete(Bots).where(eq(Bots.id, id));
 			} catch (e) {
-				console.error('DB delete error in internals update route:', e);
+				console.error("DB delete error in internals update route:", e);
 			}
 
-			return json({ success: false, error: 'Bot not found!' }, { status: 200 });
+			return json({ success: false, error: "Bot not found!" }, { status: 200 });
 		}
 
 		// Fetch current DB row for comparison
@@ -111,7 +111,7 @@ export const GET: RequestHandler = async ({ params }) => {
 		const modifiedBy = (params as any).modified;
 		const botUsernameChanged = botDBData.username !== data.bot.username;
 		const botDiscrChanged = botDBData.discriminator !== data.bot.discriminator;
-		const botAvatarChanged = botDBData.avatar !== (data.bot.avatar || '0');
+		const botAvatarChanged = botDBData.avatar !== (data.bot.avatar || "0");
 
 		if (botUsernameChanged || botDiscrChanged || botAvatarChanged || modifiedBy) {
 			try {
@@ -120,32 +120,32 @@ export const GET: RequestHandler = async ({ params }) => {
 					.set({
 						username: data.bot.username,
 						discriminator: data.bot.discriminator,
-						avatar: data.bot.avatar || '0'
+						avatar: data.bot.avatar || "0"
 					})
 					.where(eq(Bots.id, id));
 			} catch (e) {
-				console.error('DB update error when syncing bot identity:', e);
+				console.error("DB update error when syncing bot identity:", e);
 			}
 
 			// send a notification to logs about the update (best-effort)
 			try {
 				await SendLog({
 					env: {
-						DOMAIN: env.DOMAIN ?? '',
-						FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? '',
-						LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? '',
-						DISCORD_TOKEN: env.DISCORD_TOKEN ?? ''
+						DOMAIN: env.DOMAIN ?? "",
+						FAILED_DMS_LOGS_CHANNEL_ID: env.FAILED_DMS_LOGS_CHANNEL_ID ?? "",
+						LOGS_CHANNEL_ID: env.LOGS_CHANNEL_ID ?? "",
+						DISCORD_TOKEN: env.DISCORD_TOKEN ?? ""
 					},
 					body: {
-						title: `Bot ${data.bot.username}#${data.bot.discriminator} ${modifiedBy ? 'has been modified!' : 'Data updated!'}`,
-						desc: `Bot ${data.bot.username}#${data.bot.discriminator} has been updated${modifiedBy ? ` by <@!${modifiedBy}>` : ''}!`,
-						color: '#FEE75C',
+						title: `Bot ${data.bot.username}#${data.bot.discriminator} ${modifiedBy ? "has been modified!" : "Data updated!"}`,
+						desc: `Bot ${data.bot.username}#${data.bot.discriminator} has been updated${modifiedBy ? ` by <@!${modifiedBy}>` : ""}!`,
+						color: "#FEE75C",
 						img: getAvatarURL(data.bot.id, data.bot.avatar)
 					}
 				});
 			} catch (e) {
 				// logging failures are non-fatal
-				console.warn('SendLog failed after updating bot identity:', e);
+				console.warn("SendLog failed after updating bot identity:", e);
 			}
 		}
 
@@ -157,7 +157,7 @@ export const GET: RequestHandler = async ({ params }) => {
 					.set({ servers: data.bot.approximate_guild_count })
 					.where(eq(Bots.id, id));
 			} catch (e) {
-				console.error('DB update error when syncing servers count:', e);
+				console.error("DB update error when syncing servers count:", e);
 			}
 		}
 
@@ -171,7 +171,7 @@ export const GET: RequestHandler = async ({ params }) => {
 					.set({ tags: JSON.stringify(data.application?.tags || []) })
 					.where(eq(Bots.id, id));
 			} catch (e) {
-				console.error('DB update error when syncing tags:', e);
+				console.error("DB update error when syncing tags:", e);
 			}
 		}
 
@@ -187,7 +187,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
 		return json({ success: true, bot: data.bot }, { status: 200 });
 	} catch (err) {
-		console.error('/api/internals/update/bot/[id] error:', err);
+		console.error("/api/internals/update/bot/[id] error:", err);
 		return json({ success: false }, { status: 500 });
 	}
 };
