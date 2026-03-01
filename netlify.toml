@@ -47,15 +47,14 @@
 # Scheduled function: CDN background-URL refresh
 # ---------------------------------------------------------------------------
 # NOTE: Netlify reads the schedule from the function's exported `config` object
-# (see netlify/functions/scheduled-cdn-refresh.mts).  The [[functions]] block
-# below is kept for documentation / override purposes and to ensure Netlify's
-# build system picks up the function directory even if auto-detection misses it.
+# (see netlify/functions/scheduled-cdn-refresh.mts).  The [functions] block
+# below sets global function options; per-function overrides use the
+# [functions."<name>"] sub-table syntax.
 
-[[functions]]
-  # Match the filename (without extension) of the scheduled function.
-  path = "/scheduled-cdn-refresh"
+[functions]
+  directory = "netlify/functions"
 
-  # How long Netlify allows the function to run before forcibly timing it out.
-  # 15 minutes is the maximum on the free tier; the actual refresh cycle
-  # typically completes in well under a second for reasonable bot counts.
-  timeout = 900   # seconds (15 min — free-tier maximum)
+# How long Netlify allows the scheduled function to run before timing it out.
+# 15 minutes is the maximum on the free tier.
+[functions."scheduled-cdn-refresh"]
+  timeout = 900
