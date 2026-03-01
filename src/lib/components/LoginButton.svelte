@@ -6,7 +6,7 @@
 
 	export let redirect: string | null = null;
 	export let label: string = 'Login';
-	export let className: string = '';
+	export let className: string = 'cursor-pointer';
 
 	let open = false;
 	let email = true;

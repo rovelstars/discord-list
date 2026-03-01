@@ -21,6 +21,7 @@ export type BotSummary = {
 export type BotDetail = BotSummary & {
 	desc?: string | null;
 	badges?: any;
+	tags?: string[] | null;
 	source_repo?: string | null;
 	support?: string | null;
 	website?: string | null;
@@ -28,6 +29,7 @@ export type BotDetail = BotSummary & {
 	donate?: string | null;
 	prefix?: string | null;
 	lib?: string | null;
+	added_at?: string | null;
 };
 
 export type User = {
@@ -102,13 +104,15 @@ function mapBotDetail(row: RawRow): BotDetail {
 		...summary,
 		desc: row.desc ?? null,
 		badges: parseJson<any>(row.badges, null),
+		tags: parseJson<string[] | null>(row.tags, null),
 		source_repo: row.source_repo ?? null,
 		support: row.support ?? null,
 		website: row.website ?? null,
 		owners: parseJson<string[]>(row.owners, []),
 		donate: row.donate ?? null,
 		prefix: row.prefix ?? null,
-		lib: row.lib ?? null
+		lib: row.lib ?? null,
+		added_at: row.added_at ?? null
 	};
 }
 
@@ -278,13 +282,15 @@ export async function getBotByIdOrSlug(idOrSlug: string): Promise<BotDetail | nu
 				bg: Bots.bg,
 				desc: Bots.desc,
 				badges: Bots.badges,
+				tags: Bots.tags,
 				source_repo: Bots.source_repo,
 				support: Bots.support,
 				website: Bots.website,
 				owners: Bots.owners,
 				donate: Bots.donate,
 				prefix: Bots.prefix,
-				lib: Bots.lib
+				lib: Bots.lib,
+				added_at: Bots.added_at
 			})
 			.from(Bots)
 			.where(or(eq(Bots.slug, idOrSlug), eq(Bots.id, idOrSlug)))

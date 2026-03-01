@@ -70,8 +70,20 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 		throw error(404, 'Bot not found');
 	}
 
-	// Parse owners from stored JSON text
-	let owners: string[] = bot.owners as string[];
+	// Parse owners from stored JSON text (the column may arrive as a raw JSON
+	// string from libSQL even though the schema declares mode:'json')
+	let owners: string[] = [];
+	try {
+		const raw = bot.owners;
+		if (Array.isArray(raw)) {
+			owners = raw;
+		} else if (typeof raw === 'string') {
+			const parsed = JSON.parse(raw);
+			owners = Array.isArray(parsed) ? parsed : [];
+		}
+	} catch {
+		owners = [];
+	}
 
 	// Only an owner may access the edit page
 	console.log('Bot owners:', owners, 'Current user ID:', userData.id);

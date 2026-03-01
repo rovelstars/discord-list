@@ -5,6 +5,7 @@
 	import BotCard from '$lib/components/BotCard.svelte';
 	import TwemojiText from '$lib/components/TwemojiText.svelte';
 	import SEO from '$lib/components/SEO.svelte';
+	import BotComments from '$lib/components/BotComments.svelte';
 
 	export let data: {
 		bot: {
@@ -27,13 +28,93 @@
 			lib?: string | null;
 			owners?: any;
 			badges?: any;
+			tags?: string[] | null;
+			added_at?: string | null;
 			status?: string;
 		};
 		descHtml: string | null;
 		randombots: Array<any>;
+		comments: Array<any>;
+		user: {
+			id: string;
+			username: string;
+			avatar: string | null;
+			discriminator?: string;
+		} | null;
 	};
 
-	const { bot, descHtml, randombots } = data;
+	const { bot, descHtml, randombots, comments, user } = data;
+
+	// ── SEO info section helpers ──────────────────────────────────────────────
+
+	/** Friendly label map for known Discord bot libraries */
+	const LIB_LABELS: Record<string, string> = {
+		'discord.js': 'Discord.js (JavaScript/Node.js)',
+		'discord.py': 'discord.py (Python)',
+		discordgo: 'DiscordGo (Go)',
+		JDA: 'JDA (Java)',
+		discord4j: 'Discord4J (Java/Kotlin)',
+		eris: 'Eris (JavaScript/Node.js)',
+		hikari: 'Hikari (Python)',
+		serenity: 'Serenity (Rust)',
+		nextcord: 'Nextcord (Python)',
+		disnake: 'Disnake (Python)',
+		pycord: 'Pycord (Python)',
+		'interactions.py': 'interactions.py (Python)',
+		discordnet: 'Discord.Net (C#)',
+		DSharpPlus: 'DSharpPlus (C#)',
+		nyxx: 'Nyxx (Dart)',
+		discordrb: 'discordrb (Ruby)'
+	};
+
+	function friendlyLib(lib: string | null | undefined): string {
+		if (!lib) return '';
+		return LIB_LABELS[lib] ?? lib;
+	}
+
+	/** Turn an ISO date string into a human-readable "Month Year" */
+	function formatDate(iso: string | null | undefined): string {
+		if (!iso) return '';
+		try {
+			return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+		} catch {
+			return '';
+		}
+	}
+
+	/** Summarise server count in prose form */
+	function serversLabel(n: number): string {
+		if (n >= 1_000_000) return `over ${Math.floor(n / 1_000_000)} million Discord servers`;
+		if (n >= 1_000)
+			return `over ${Math.floor(n / 1_000).toLocaleString()} thousand Discord servers`;
+		if (n > 0) return `${n.toLocaleString()} Discord servers`;
+		return 'many Discord servers';
+	}
+
+	/** Build a natural-language prefix sentence */
+	function prefixSentence(prefix: string | null | undefined): string {
+		if (!prefix || prefix === '/') {
+			return `${bot.username} is a slash-command bot and uses Discord's native <code>/</code> command system, meaning all commands appear in Discord's built-in autocomplete menu — no prefix memorisation needed.`;
+		}
+		return `${bot.username} uses the command prefix <code>${prefix}</code>. Type <code>${prefix}help</code> in any channel the bot has access to for a full list of available commands.`;
+	}
+
+	/** Derive SEO tag chips from available data */
+	function buildTags(): string[] {
+		const t: string[] = [];
+		if (bot.tags && Array.isArray(bot.tags)) t.push(...bot.tags);
+		if (bot.prefix === '/' || !bot.prefix) t.push('Slash Commands');
+		if (bot.lib) t.push(bot.lib);
+		if (bot.source_repo) t.push('Open Source');
+		if (bot.support) t.push('Support Server');
+		if (bot.website) t.push('Official Website');
+		// deduplicate case-insensitively
+		return [...new Map(t.map((x) => [x.toLowerCase(), x])).values()];
+	}
+
+	$: seoTags = buildTags();
+	$: addedDate = formatDate(bot.added_at);
+	$: libFriendly = friendlyLib(bot.lib);
 
 	function approx(n: number | null | undefined): string {
 		if (n == null || isNaN(Number(n))) return '0';
@@ -335,6 +416,335 @@
 							{@html descHtml}
 						</div>
 					{/if}
+
+					<!-- ── Dynamically generated SEO info section ──────────────── -->
+					<div class="mt-8 border-t border-border/50 pt-8" aria-label="Bot details">
+						<h2 class="text-xl font-bold font-heading mb-5 text-foreground">
+							About {bot.username}
+						</h2>
+
+						<!-- Overview paragraph -->
+						<p class="text-muted-foreground text-base leading-relaxed mb-6">
+							<strong class="text-foreground">{bot.username}</strong> is a Discord bot currently
+							active in {serversLabel(bot.servers)}, with
+							<strong class="text-foreground"
+								>{(bot.votes ?? 0).toLocaleString()} community votes</strong
+							>
+							on Rovel Discord List.
+							{#if bot.short}
+								{bot.short.replace(/[#*_~`]/g, '')}
+							{/if}
+							{#if addedDate}
+								It was listed on Rovel Discord List in <strong class="text-foreground"
+									>{addedDate}</strong
+								>.
+							{/if}
+						</p>
+
+						<!-- Stats grid -->
+						<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+							<div
+								class="rounded-xl bg-muted/40 border border-border px-4 py-3 flex flex-col items-center text-center"
+							>
+								<span class="text-2xl font-black text-foreground leading-none"
+									>{approx(bot.servers)}</span
+								>
+								<span class="text-xs text-muted-foreground font-medium mt-1">Servers</span>
+							</div>
+							<div
+								class="rounded-xl bg-muted/40 border border-border px-4 py-3 flex flex-col items-center text-center"
+							>
+								<span class="text-2xl font-black text-foreground leading-none"
+									>{approx(bot.votes)}</span
+								>
+								<span class="text-xs text-muted-foreground font-medium mt-1">Votes</span>
+							</div>
+							<div
+								class="rounded-xl bg-muted/40 border border-border px-4 py-3 flex flex-col items-center text-center"
+							>
+								<span class="text-2xl font-black text-foreground leading-none truncate max-w-full">
+									{#if bot.prefix === '/' || !bot.prefix}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-6 h-6 mx-auto text-primary/80"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											><path d="M7 8l-4 4 4 4" /><path d="M17 8l4 4-4 4" /><path
+												d="M14 4l-4 16"
+											/></svg
+										>
+									{:else}
+										{bot.prefix}
+									{/if}
+								</span>
+								<span class="text-xs text-muted-foreground font-medium mt-1">Prefix</span>
+							</div>
+							<div
+								class="rounded-xl bg-muted/40 border border-border px-4 py-3 flex flex-col items-center text-center"
+							>
+								{#if bot.lib}
+									<span class="text-sm font-bold text-foreground leading-none break-all"
+										>{bot.lib}</span
+									>
+								{:else}
+									<span class="text-sm font-bold text-muted-foreground leading-none">—</span>
+								{/if}
+								<span class="text-xs text-muted-foreground font-medium mt-1">Library</span>
+							</div>
+						</div>
+
+						<!-- Commands / prefix detail -->
+						<div class="mb-6">
+							<h3 class="text-base font-semibold text-foreground mb-2">
+								How to use {bot.username}
+							</h3>
+							<p class="text-muted-foreground text-sm leading-relaxed">
+								{@html prefixSentence(bot.prefix)}
+								{#if bot.support}
+									For live help, join the <a
+										href={bot.support.startsWith('http')
+											? bot.support
+											: `https://discord.gg/${bot.support}`}
+										rel="noopener noreferrer"
+										target="_blank"
+										class="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+										>official support server</a
+									>.
+								{/if}
+							</p>
+						</div>
+
+						<!-- Technical details -->
+						{#if bot.lib || bot.source_repo || bot.website}
+							<div class="mb-6">
+								<h3 class="text-base font-semibold text-foreground mb-2">Technical details</h3>
+								<ul class="text-sm text-muted-foreground space-y-1.5 leading-relaxed list-none">
+									{#if libFriendly}
+										<li class="flex items-start gap-2">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="w-4 h-4 mt-0.5 text-primary/70 shrink-0"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												><polyline points="16 18 22 12 16 6" /><polyline
+													points="8 6 2 12 8 18"
+												/></svg
+											>
+											<span><strong class="text-foreground">Library:</strong> {libFriendly}</span>
+										</li>
+									{/if}
+									{#if bot.source_repo}
+										<li class="flex items-start gap-2">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="w-4 h-4 mt-0.5 text-primary/70 shrink-0"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												><path
+													d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"
+												/><path d="M9 18c-4.51 2-5-2-7-2" /></svg
+											>
+											<span
+												><strong class="text-foreground">Source code:</strong>
+												<a
+													href={bot.source_repo}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+													>{bot.source_repo}</a
+												></span
+											>
+										</li>
+									{/if}
+									{#if bot.website}
+										<li class="flex items-start gap-2">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="w-4 h-4 mt-0.5 text-primary/70 shrink-0"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path
+													d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+												/></svg
+											>
+											<span
+												><strong class="text-foreground">Official website:</strong>
+												<a
+													href={bot.website}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+													>{bot.website}</a
+												></span
+											>
+										</li>
+									{/if}
+									<li class="flex items-start gap-2">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-4 h-4 mt-0.5 text-primary/70 shrink-0"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M8 12h8" /><path
+												d="M12 8v8"
+											/></svg
+										>
+										<span
+											><strong class="text-foreground">Bot ID:</strong>
+											<code class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono text-foreground"
+												>{bot.id}</code
+											></span
+										>
+									</li>
+								</ul>
+							</div>
+						{/if}
+
+						<!-- Tags / categories -->
+						{#if seoTags.length > 0}
+							<div class="mb-6">
+								<h3 class="text-base font-semibold text-foreground mb-2">
+									Categories &amp; features
+								</h3>
+								<div class="flex flex-wrap gap-2" aria-label="Bot tags">
+									{#each seoTags as tag (tag)}
+										<span
+											class="inline-flex items-center px-3 py-1 rounded-full bg-muted/60 border border-border text-xs font-semibold text-foreground/80 hover:bg-muted transition-colors"
+										>
+											{tag}
+										</span>
+									{/each}
+								</div>
+							</div>
+						{/if}
+
+						<!-- FAQ / Q&A block — great for featured snippets -->
+						<div class="mb-2">
+							<h3 class="text-base font-semibold text-foreground mb-3">
+								Frequently asked questions
+							</h3>
+							<dl class="space-y-4">
+								<div class="rounded-xl bg-muted/30 border border-border px-4 py-3">
+									<dt class="font-semibold text-sm text-foreground mb-1">
+										How do I add {bot.username} to my Discord server?
+									</dt>
+									<dd class="text-sm text-muted-foreground leading-relaxed">
+										Click the <strong>Add to Server</strong> button at the top of this page to open
+										Discord's official authorisation flow. Select the server you want to add {bot.username}
+										to, grant the requested permissions, and the bot will join immediately.
+										{#if bot.invite}
+											You can also use its direct invite link: <a
+												href={bot.invite}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+												>invite {bot.username}</a
+											>.
+										{/if}
+									</dd>
+								</div>
+
+								<div class="rounded-xl bg-muted/30 border border-border px-4 py-3">
+									<dt class="font-semibold text-sm text-foreground mb-1">
+										How many Discord servers is {bot.username} in?
+									</dt>
+									<dd class="text-sm text-muted-foreground leading-relaxed">
+										{bot.username} is currently active in {serversLabel(bot.servers)}, making it one
+										of the bots listed on Rovel Discord List. Server counts update periodically as
+										the bot grows.
+									</dd>
+								</div>
+
+								<div class="rounded-xl bg-muted/30 border border-border px-4 py-3">
+									<dt class="font-semibold text-sm text-foreground mb-1">
+										{#if bot.prefix === '/' || !bot.prefix}
+											Does {bot.username} support slash commands?
+										{:else}
+											What is {bot.username}'s command prefix?
+										{/if}
+									</dt>
+									<dd class="text-sm text-muted-foreground leading-relaxed">
+										{@html prefixSentence(bot.prefix)}
+									</dd>
+								</div>
+
+								{#if bot.support}
+									<div class="rounded-xl bg-muted/30 border border-border px-4 py-3">
+										<dt class="font-semibold text-sm text-foreground mb-1">
+											Where can I get support for {bot.username}?
+										</dt>
+										<dd class="text-sm text-muted-foreground leading-relaxed">
+											The developers of {bot.username} maintain an official support server on Discord.
+											You can join via the
+											<a
+												href={bot.support.startsWith('http')
+													? bot.support
+													: `https://discord.gg/${bot.support}`}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+												>support server link</a
+											> to ask questions, report bugs, or suggest features.
+										</dd>
+									</div>
+								{/if}
+
+								<div class="rounded-xl bg-muted/30 border border-border px-4 py-3">
+									<dt class="font-semibold text-sm text-foreground mb-1">
+										How do I vote for {bot.username}?
+									</dt>
+									<dd class="text-sm text-muted-foreground leading-relaxed">
+										Click the <strong>Upvote</strong> button on this page. You can vote once every
+										12 hours. Votes help {bot.username} rank higher on Rovel Discord List, increasing
+										its visibility to other server owners looking for bots. It currently has
+										<strong class="text-foreground"
+											>{(bot.votes ?? 0).toLocaleString()} votes</strong
+										>.
+									</dd>
+								</div>
+
+								{#if bot.source_repo}
+									<div class="rounded-xl bg-muted/30 border border-border px-4 py-3">
+										<dt class="font-semibold text-sm text-foreground mb-1">
+											Is {bot.username} open source?
+										</dt>
+										<dd class="text-sm text-muted-foreground leading-relaxed">
+											Yes — {bot.username} is open source. You can browse, fork, or contribute to its
+											source code on
+											<a
+												href={bot.source_repo}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+												>its repository</a
+											>.
+										</dd>
+									</div>
+								{/if}
+							</dl>
+						</div>
+					</div>
+					<!-- ── End SEO info section ─────────────────────────────────── -->
 				</div>
 
 				<!-- Stats / actions sidebar (spans 1) -->
@@ -389,7 +799,7 @@
 						{#if bot.invite}
 							<div class="relative">
 								<button
-									class="inline-flex items-center justify-center gap-2 w-full rounded-lg text-sm font-semibold bg-primary text-primary-foreground px-4 py-2.5 hover:bg-primary/90 active:scale-[0.98] transition-all shadow-sm"
+									class="inline-flex items-center justify-center gap-2 w-full rounded-lg text-sm font-semibold bg-primary text-primary-foreground px-4 py-2.5 hover:bg-primary/90 active:scale-[0.98] transition-all shadow-sm cursor-pointer"
 									on:click={() => {
 										const el = document.getElementById(`invite-menu-${bot.id}`);
 										if (el) el.classList.toggle('hidden');
@@ -652,6 +1062,11 @@
 					{/if}
 				</div>
 			</div>
+		</div>
+
+		<!-- ── Reviews & Comments ─────────────────────────────────────────────── -->
+		<div class="mt-6 bg-card rounded-lg px-6 py-2 shadow-sm">
+			<BotComments {comments} {user} botId={bot.id} owners={bot.owners ?? []} />
 		</div>
 
 		<!-- You Might Also Like — mobile only (below the card, visible only on < xl) -->

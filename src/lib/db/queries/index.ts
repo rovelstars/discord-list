@@ -15,11 +15,32 @@
  *  - getUserById
  *  - getBotsByOwner
  *  - healthCheck
+ *  - getCommentsByBotId
+ *  - createComment
+ *  - updateComment
+ *  - deleteComment
+ *  - getCommentById
+ *  - getReactionsForComments
+ *  - toggleReaction
  */
 
 import { withDb, type DrizzleDb } from '$lib/db';
-import { Bots, Users } from '$lib/db/schema';
-import { eq, notInArray, or, desc, asc, like, and, isNotNull, not, ne, sql } from 'drizzle-orm';
+import { Bots, Users, Comments, CommentReactions } from '$lib/db/schema';
+import {
+	eq,
+	notInArray,
+	or,
+	desc,
+	asc,
+	like,
+	and,
+	isNotNull,
+	not,
+	ne,
+	sql,
+	isNull,
+	inArray
+} from 'drizzle-orm';
 
 type RawRow = Record<string, any>;
 
@@ -40,6 +61,7 @@ export type BotSummary = {
 export type BotDetail = BotSummary & {
 	desc?: string | null;
 	badges?: any;
+	tags?: string[] | null;
 	source_repo?: string | null;
 	support?: string | null;
 	website?: string | null;
@@ -47,6 +69,55 @@ export type BotDetail = BotSummary & {
 	donate?: string | null;
 	prefix?: string | null;
 	lib?: string | null;
+	added_at?: string | null;
+};
+
+/**
+ * A single comment row, with the author's username + avatar joined in.
+ * `rating` is stored as integer (rating × 10); convert back with / 10.
+ * `replies` is populated client-side / by getCommentsByBotId, not stored in DB.
+ */
+/** Canonical set of reaction emoji slugs, in display order. */
+export const REACTION_EMOJIS = [
+	'funny',
+	'useful',
+	'informative',
+	'like',
+	'dislike',
+	'love',
+	'angry',
+	'sad',
+	'skull'
+] as const;
+
+export type ReactionEmoji = (typeof REACTION_EMOJIS)[number];
+
+/** Per-emoji count + whether the current user reacted. */
+export type ReactionCount = {
+	emoji: ReactionEmoji;
+	count: number;
+	/** true if the currently-authenticated user has this reaction on this comment. */
+	reacted: boolean;
+};
+
+export type Comment = {
+	id: string;
+	bot_id: string;
+	user_id: string;
+	/** rating × 10 integer (e.g. 43 = 4.3). NULL for pure reply comments. */
+	rating: number | null;
+	text: string | null;
+	parent_id: string | null;
+	created_at: string;
+	updated_at: string | null;
+	// joined from Users
+	author_username: string;
+	author_avatar: string | null;
+	author_discriminator: string;
+	// nested replies — populated after the flat query
+	replies?: Comment[];
+	/** Aggregated reactions for this comment (populated by getCommentsByBotId). */
+	reactions: ReactionCount[];
 };
 
 /** Minimal shape used for sitemap generation — only slug + timestamp */
@@ -134,13 +205,15 @@ function mapBotDetail(row: RawRow): BotDetail {
 		...summary,
 		desc: row.desc ?? null,
 		badges: parseJson<any>(row.badges, null),
+		tags: parseJson<string[] | null>(row.tags, null),
 		source_repo: row.source_repo ?? null,
 		support: row.support ?? null,
 		website: row.website ?? null,
 		owners: parseJson<string[]>(row.owners, []),
 		donate: row.donate ?? null,
 		prefix: row.prefix ?? null,
-		lib: row.lib ?? null
+		lib: row.lib ?? null,
+		added_at: row.added_at ?? null
 	};
 }
 
@@ -292,13 +365,15 @@ export async function getBotByIdOrSlug(idOrSlug: string): Promise<BotDetail | nu
 				bg: Bots.bg,
 				desc: Bots.desc,
 				badges: Bots.badges,
+				tags: Bots.tags,
 				source_repo: Bots.source_repo,
 				support: Bots.support,
 				website: Bots.website,
 				owners: Bots.owners,
 				donate: Bots.donate,
 				prefix: Bots.prefix,
-				lib: Bots.lib
+				lib: Bots.lib,
+				added_at: Bots.added_at
 			})
 			.from(Bots)
 			.where(or(eq(Bots.slug, idOrSlug), eq(Bots.id, idOrSlug)))
@@ -399,6 +474,217 @@ export async function getAllBotSlugs(): Promise<BotSlugEntry[]> {
 	}));
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Comment helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Fetch all comments (top-level + replies) for a bot, joined with basic author
+ * info from Users. Returns a tree: top-level comments each carry a `replies`
+ * array of their direct children, sorted oldest-first within each level.
+ *
+ * Strategy: one flat SELECT JOIN, then group in-memory — avoids recursive SQL
+ * which libSQL doesn't support, and is fast enough for the volumes expected.
+ */
+export async function getCommentsByBotId(
+	botId: string,
+	currentUserId?: string
+): Promise<Comment[]> {
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select({
+				id: Comments.id,
+				bot_id: Comments.bot_id,
+				user_id: Comments.user_id,
+				rating: Comments.rating,
+				text: Comments.text,
+				parent_id: Comments.parent_id,
+				created_at: Comments.created_at,
+				updated_at: Comments.updated_at,
+				author_username: Users.username,
+				author_avatar: Users.avatar,
+				author_discriminator: Users.discriminator
+			})
+			.from(Comments)
+			.leftJoin(Users, eq(Comments.user_id, Users.id))
+			.where(eq(Comments.bot_id, botId))
+			.orderBy(asc(Comments.created_at))
+	)) as any[];
+
+	// Map rows to Comment objects
+	const all: Comment[] = rows.map((r) => ({
+		id: String(r.id),
+		bot_id: String(r.bot_id),
+		user_id: String(r.user_id),
+		rating: r.rating != null ? Number(r.rating) : null,
+		text: r.text ?? null,
+		parent_id: r.parent_id ?? null,
+		created_at: String(r.created_at),
+		updated_at: r.updated_at ?? null,
+		author_username: String(r.author_username ?? 'Unknown'),
+		author_avatar: r.author_avatar ?? null,
+		author_discriminator: String(r.author_discriminator ?? '0'),
+		replies: [],
+		reactions: []
+	}));
+
+	// Hydrate reactions for all comments in one query
+	if (all.length > 0) {
+		const commentIds = all.map((c) => c.id);
+		const reactionMap = await getReactionsForComments(commentIds, currentUserId);
+		for (const c of all) {
+			c.reactions = reactionMap.get(c.id) ?? emptyReactions();
+		}
+	}
+
+	// Build tree: index by id, then attach children to parents
+	const byId = new Map<string, Comment>(all.map((c) => [c.id, c]));
+	const roots: Comment[] = [];
+
+	for (const c of all) {
+		if (c.parent_id && byId.has(c.parent_id)) {
+			byId.get(c.parent_id)!.replies!.push(c);
+		} else {
+			roots.push(c);
+		}
+	}
+
+	return roots;
+}
+
+/**
+ * Fetch a single comment by its id (used for ownership checks before mutations).
+ * Reactions are NOT hydrated here — this is intentionally lightweight for auth checks.
+ */
+export async function getCommentById(id: string): Promise<Comment | null> {
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select({
+				id: Comments.id,
+				bot_id: Comments.bot_id,
+				user_id: Comments.user_id,
+				rating: Comments.rating,
+				text: Comments.text,
+				parent_id: Comments.parent_id,
+				created_at: Comments.created_at,
+				updated_at: Comments.updated_at,
+				author_username: Users.username,
+				author_avatar: Users.avatar,
+				author_discriminator: Users.discriminator
+			})
+			.from(Comments)
+			.leftJoin(Users, eq(Comments.user_id, Users.id))
+			.where(eq(Comments.id, id))
+			.limit(1)
+	)) as any[];
+
+	if (!rows || rows.length === 0) return null;
+	const r = rows[0];
+	return {
+		id: String(r.id),
+		bot_id: String(r.bot_id),
+		user_id: String(r.user_id),
+		rating: r.rating != null ? Number(r.rating) : null,
+		text: r.text ?? null,
+		parent_id: r.parent_id ?? null,
+		created_at: String(r.created_at),
+		updated_at: r.updated_at ?? null,
+		author_username: String(r.author_username ?? 'Unknown'),
+		author_avatar: r.author_avatar ?? null,
+		author_discriminator: String(r.author_discriminator ?? '0'),
+		replies: [],
+		reactions: []
+	};
+}
+
+/**
+ * Validate a raw rating value.
+ *
+ * Accepts a number with at most one decimal place, in the range 0.5–5.0.
+ * Returns the integer representation (× 10) on success, or null on failure.
+ */
+export function validateRating(raw: unknown): number | null {
+	const n = Number(raw);
+	if (!isFinite(n)) return null;
+	// Only one decimal place allowed
+	if (Math.round(n * 10) !== n * 10) return null;
+	if (n < 0.5 || n > 5) return null;
+	return Math.round(n * 10);
+}
+
+/**
+ * Insert a new comment or reply.
+ *
+ * `ratingRaw` is the user-facing value (e.g. 4.3). Pass null for replies.
+ * Returns the created Comment or null on failure.
+ */
+export async function createComment(opts: {
+	id: string;
+	botId: string;
+	userId: string;
+	ratingRaw: number | null;
+	text: string | null;
+	parentId: string | null;
+}): Promise<Comment | null> {
+	const { id, botId, userId, ratingRaw, text, parentId } = opts;
+
+	const ratingInt = ratingRaw != null ? validateRating(ratingRaw) : null;
+	// top-level comments require a rating; replies do not
+	if (parentId === null && ratingInt === null) return null;
+
+	const now = new Date().toISOString();
+
+	await withDb((d: DrizzleDb) =>
+		d.insert(Comments).values({
+			id,
+			bot_id: botId,
+			user_id: userId,
+			rating: ratingInt,
+			text: text ? text.slice(0, 2000) : null,
+			parent_id: parentId,
+			created_at: now,
+			updated_at: null
+		})
+	);
+
+	return getCommentById(id);
+}
+
+/**
+ * Update the text and/or rating of an existing comment.
+ * Only the owner of the comment should be allowed to call this (enforced in the API route).
+ */
+export async function updateComment(opts: {
+	id: string;
+	ratingRaw?: number | null;
+	text?: string | null;
+}): Promise<Comment | null> {
+	const { id, ratingRaw, text } = opts;
+	const now = new Date().toISOString();
+
+	const patch: Record<string, any> = { updated_at: now };
+
+	if (ratingRaw !== undefined) {
+		patch.rating = ratingRaw != null ? validateRating(ratingRaw) : null;
+	}
+	if (text !== undefined) {
+		patch.text = text ? text.slice(0, 2000) : null;
+	}
+
+	await withDb((d: DrizzleDb) => d.update(Comments).set(patch).where(eq(Comments.id, id)));
+
+	return getCommentById(id);
+}
+
+/**
+ * Delete a comment by id.
+ * Also deletes all replies that reference it as their parent_id.
+ */
+export async function deleteComment(id: string): Promise<void> {
+	await withDb((d: DrizzleDb) => d.delete(Comments).where(eq(Comments.parent_id, id)));
+	await withDb((d: DrizzleDb) => d.delete(Comments).where(eq(Comments.id, id)));
+}
+
 /**
  * Top bots with rank position, lib, and prefix — used on the /top leaderboard page.
  * Ordered by votes descending.
@@ -437,6 +723,151 @@ export async function getNewestBots(limit = 50, offset = 0): Promise<BotSummary[
 			.offset(offset)
 	)) as any[];
 	return rows.map(mapBotSummary);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Reaction helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Returns a zero-count ReactionCount array for all nine canonical emojis. */
+function emptyReactions(): ReactionCount[] {
+	return REACTION_EMOJIS.map((emoji) => ({ emoji, count: 0, reacted: false }));
+}
+
+/**
+ * Fetch aggregated reaction counts for a batch of comment ids.
+ *
+ * Returns a Map<commentId, ReactionCount[]>.  Every comment id in the input
+ * will have an entry; emojis with zero reactions are included (count = 0).
+ *
+ * @param commentIds  Array of comment ids to aggregate reactions for.
+ * @param currentUserId  Optional — if provided, the `reacted` flag will be set
+ *                       to true for each emoji that this user has reacted with.
+ */
+export async function getReactionsForComments(
+	commentIds: string[],
+	currentUserId?: string
+): Promise<Map<string, ReactionCount[]>> {
+	const result = new Map<string, ReactionCount[]>();
+
+	// Pre-seed every comment with a zeroed entry for all nine emojis
+	for (const id of commentIds) {
+		result.set(id, emptyReactions());
+	}
+
+	if (commentIds.length === 0) return result;
+
+	// ── Aggregate counts: GROUP BY comment_id, emoji ─────────────────────────
+	const countRows = (await withDb((d: DrizzleDb) =>
+		d
+			.select({
+				comment_id: CommentReactions.comment_id,
+				emoji: CommentReactions.emoji,
+				count: sql<number>`COUNT(*)`.as('count')
+			})
+			.from(CommentReactions)
+			.where(inArray(CommentReactions.comment_id, commentIds))
+			.groupBy(CommentReactions.comment_id, CommentReactions.emoji)
+	)) as any[];
+
+	for (const row of countRows) {
+		const cid = String(row.comment_id);
+		const emoji = String(row.emoji) as ReactionEmoji;
+		if (!REACTION_EMOJIS.includes(emoji as any)) continue;
+		const bucket = result.get(cid);
+		if (!bucket) continue;
+		const entry = bucket.find((e) => e.emoji === emoji);
+		if (entry) entry.count = Number(row.count);
+	}
+
+	// ── Current user's reactions ──────────────────────────────────────────────
+	if (currentUserId) {
+		const userRows = (await withDb((d: DrizzleDb) =>
+			d
+				.select({
+					comment_id: CommentReactions.comment_id,
+					emoji: CommentReactions.emoji
+				})
+				.from(CommentReactions)
+				.where(
+					and(
+						inArray(CommentReactions.comment_id, commentIds),
+						eq(CommentReactions.user_id, currentUserId)
+					)
+				)
+		)) as any[];
+
+		for (const row of userRows) {
+			const cid = String(row.comment_id);
+			const emoji = String(row.emoji) as ReactionEmoji;
+			if (!REACTION_EMOJIS.includes(emoji as any)) continue;
+			const bucket = result.get(cid);
+			if (!bucket) continue;
+			const entry = bucket.find((e) => e.emoji === emoji);
+			if (entry) entry.reacted = true;
+		}
+	}
+
+	return result;
+}
+
+/**
+ * Toggle a single reaction for a user on a comment.
+ *
+ * - If the (comment_id, user_id, emoji) row does NOT exist → INSERT it (add reaction).
+ * - If it DOES exist → DELETE it (remove reaction).
+ *
+ * Returns the updated ReactionCount[] for the comment so the caller can respond
+ * with fresh counts in a single round-trip.
+ */
+export async function toggleReaction(
+	commentId: string,
+	userId: string,
+	emoji: ReactionEmoji
+): Promise<ReactionCount[]> {
+	// Check if the reaction already exists
+	const existing = (await withDb((d: DrizzleDb) =>
+		d
+			.select({ comment_id: CommentReactions.comment_id })
+			.from(CommentReactions)
+			.where(
+				and(
+					eq(CommentReactions.comment_id, commentId),
+					eq(CommentReactions.user_id, userId),
+					eq(CommentReactions.emoji, emoji)
+				)
+			)
+			.limit(1)
+	)) as any[];
+
+	if (existing && existing.length > 0) {
+		// Reaction exists → remove it
+		await withDb((d: DrizzleDb) =>
+			d
+				.delete(CommentReactions)
+				.where(
+					and(
+						eq(CommentReactions.comment_id, commentId),
+						eq(CommentReactions.user_id, userId),
+						eq(CommentReactions.emoji, emoji)
+					)
+				)
+		);
+	} else {
+		// Reaction does not exist → add it
+		await withDb((d: DrizzleDb) =>
+			d.insert(CommentReactions).values({
+				comment_id: commentId,
+				user_id: userId,
+				emoji,
+				created_at: new Date().toISOString()
+			})
+		);
+	}
+
+	// Return fresh counts for this comment (with this user's perspective)
+	const map = await getReactionsForComments([commentId], userId);
+	return map.get(commentId) ?? emptyReactions();
 }
 
 /**

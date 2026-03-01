@@ -214,7 +214,7 @@
 				<!-- Logout -->
 				<button
 					on:click={logout}
-					class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-bold bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors"
+					class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-bold bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors cursor-pointer"
 				>
 					Logout
 				</button>
@@ -432,7 +432,7 @@
 
 				<button
 					on:click={logout}
-					class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-md font-bold bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors"
+					class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-md font-bold bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors cursor-pointer"
 				>
 					Logout
 				</button>
