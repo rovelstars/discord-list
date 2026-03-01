@@ -112,6 +112,8 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 
 	// ── Vote history ─────────────────────────────────────────────────────────
 	let voteHistory: { bot: string; at: number }[] = [];
+	let expiredCount = 0;
+
 	try {
 		const parsed = JSON.parse((dbUser.votes as string) ?? '[]');
 		const raw: { bot: string; at: unknown }[] = Array.isArray(parsed) ? parsed : [];
@@ -119,10 +121,27 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		// Old AstroDB rows stored `at` as ISO strings (e.g. "2022-07-16T00:00:00.000Z"),
 		// while new votes written by the app use Date.now() (a number).
 		// Mixing the two makes the numeric sort produce NaN, so we coerce here.
-		voteHistory = raw.map((v) => ({
+		const normalised = raw.map((v) => ({
 			bot: String(v.bot ?? ''),
 			at: typeof v.at === 'number' ? v.at : new Date(v.at as string).getTime() || 0
 		}));
+
+		// Drop votes older than 30 days
+		const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+		voteHistory = normalised.filter((v) => v.at >= cutoff);
+		expiredCount = normalised.length - voteHistory.length;
+
+		// Persist the pruned list back to the DB if anything was removed
+		if (expiredCount > 0) {
+			try {
+				await db
+					.update(Users)
+					.set({ votes: JSON.stringify(voteHistory) as any })
+					.where(eq(Users.id, discordUser.id));
+			} catch {
+				// non-fatal — stale votes will just be pruned again next load
+			}
+		}
 	} catch {
 		voteHistory = [];
 	}
@@ -184,6 +203,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			botSlug: votedBotNames[v.bot]?.slug ?? v.bot,
 			botAvatar: votedBotNames[v.bot]?.avatar ?? null
 		})),
-		totalVotesCast: voteHistory.length
+		totalVotesCast: voteHistory.length,
+		expiredCount
 	};
 };

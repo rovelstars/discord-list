@@ -48,9 +48,10 @@
 			botAvatar: string | null;
 		}>;
 		totalVotesCast: number;
+		expiredCount: number;
 	};
 
-	const { user, discordUser, bots = [], recentVotes, totalVotesCast } = data;
+	const { user, discordUser, bots = [], recentVotes, totalVotesCast, expiredCount } = data;
 
 	// ── Active section ────────────────────────────────────────────────────────
 	type Section = 'bots' | 'profile' | 'account' | 'votes' | 'danger';
@@ -1044,7 +1045,9 @@
 								</div>
 								<div>
 									<h2 class="text-base font-bold font-heading leading-none">Vote History</h2>
-									<p class="text-xs text-muted-foreground mt-0.5">Your 10 most recent bot votes</p>
+									<p class="text-xs text-muted-foreground mt-0.5">
+										Your 10 most recent votes · last 30 days
+									</p>
 								</div>
 							</div>
 							<span
@@ -1144,32 +1147,42 @@
 								{/each}
 							</ul>
 
+							<!-- 30-day policy note -->
+							<div
+								class="px-5 py-2.5 border-t border-border bg-background/40 flex items-center gap-2"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="w-3.5 h-3.5 text-muted-foreground/70 shrink-0"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<circle cx="12" cy="12" r="10" />
+									<line x1="12" y1="8" x2="12" y2="12" />
+									<line x1="12" y1="16" x2="12.01" y2="16" />
+								</svg>
+								<p class="text-xs text-muted-foreground">
+									Votes older than 30 days are not shown.{#if expiredCount > 0}&nbsp;<span
+											class="text-muted-foreground/70"
+											>{expiredCount} expired {expiredCount === 1 ? 'entry was' : 'entries were'} removed
+											this session.</span
+										>{/if}
+								</p>
+							</div>
+
 							{#if totalVotesCast > 10}
 								<div
-									class="px-6 py-3 border-t border-border bg-background/40 flex items-center justify-center gap-2"
+									class="px-5 py-2.5 border-t border-border bg-background/40 flex items-center justify-center gap-2"
 								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										class="w-3.5 h-3.5 text-muted-foreground"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line
-											x1="12"
-											y1="16"
-											x2="12.01"
-											y2="16"
-										/>
-									</svg>
 									<p class="text-xs text-muted-foreground">
 										Showing <span class="font-semibold text-foreground">10</span> of
 										<span class="font-semibold text-foreground"
 											>{totalVotesCast.toLocaleString()}</span
-										> total votes
+										> recent votes
 									</p>
 								</div>
 							{/if}

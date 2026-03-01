@@ -84,6 +84,27 @@
 		skull: '💀'
 	};
 
+	/** Sentence fragment used in "X people found it ___" tooltip / aria-label. */
+	const EMOJI_SENTENCE: Record<ReactionEmoji, string> = {
+		funny: 'Funny',
+		useful: 'Useful',
+		informative: 'Informative',
+		like: 'Liked this',
+		dislike: 'Disliked this',
+		love: 'Loved this',
+		angry: 'Angry',
+		sad: 'Sad',
+		skull: '💀'
+	};
+
+	/** Build the human-readable alt/title text for a reaction pill. */
+	function reactionAltText(emoji: ReactionEmoji, count: number, reacted: boolean): string {
+		const n = count;
+		const people = n === 1 ? '1 person found it' : `${n} people found it`;
+		const base = n === 0 ? EMOJI_LABEL[emoji] : `${people} ${EMOJI_SENTENCE[emoji]}`;
+		return reacted ? `${base} · You reacted` : base;
+	}
+
 	// ── Props ─────────────────────────────────────────────────────────────────
 
 	/** Initial comments tree passed from the server load. */
@@ -1041,10 +1062,8 @@
 										type="button"
 										on:click={() => toggleReaction(comment.id, reaction.emoji)}
 										disabled={pending}
-										title={EMOJI_LABEL[reaction.emoji]}
-										aria-label="{EMOJI_LABEL[reaction.emoji]} · {reaction.count}{reaction.reacted
-											? ' (reacted)'
-											: ''}"
+										title={reactionAltText(reaction.emoji, reaction.count, reaction.reacted)}
+										aria-label={reactionAltText(reaction.emoji, reaction.count, reaction.reacted)}
 										aria-pressed={reaction.reacted}
 										class="inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-xs font-medium transition-all select-none
 											{reaction.reacted
@@ -1104,7 +1123,7 @@
 													}}
 													disabled={pending}
 													title={EMOJI_LABEL[emoji]}
-													aria-label="{EMOJI_LABEL[emoji]}{reacted ? ' (remove)' : ''}"
+													aria-label="{EMOJI_LABEL[emoji]}{reacted ? ' · Remove reaction' : ''}"
 													class="flex items-center justify-center w-8 h-8 rounded-lg text-base transition-all hover:bg-muted/80 hover:scale-125
 														{reacted ? 'bg-primary/10 ring-1 ring-primary/40' : ''}
 														{pending ? 'opacity-50 cursor-wait' : 'cursor-pointer'}"
@@ -1268,10 +1287,16 @@
 																	type="button"
 																	on:click={() => toggleReaction(reply.id, reaction.emoji)}
 																	disabled={pending}
-																	title={EMOJI_LABEL[reaction.emoji]}
-																	aria-label="{EMOJI_LABEL[
-																		reaction.emoji
-																	]} · {reaction.count}{reaction.reacted ? ' (reacted)' : ''}"
+																	title={reactionAltText(
+																		reaction.emoji,
+																		reaction.count,
+																		reaction.reacted
+																	)}
+																	aria-label={reactionAltText(
+																		reaction.emoji,
+																		reaction.count,
+																		reaction.reacted
+																	)}
 																	aria-pressed={reaction.reacted}
 																	class="inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-xs font-medium transition-all select-none
 																		{reaction.reacted
@@ -1333,7 +1358,7 @@
 																				disabled={pending}
 																				title={EMOJI_LABEL[emoji]}
 																				aria-label="{EMOJI_LABEL[emoji]}{reacted
-																					? ' (remove)'
+																					? ' · Remove reaction'
 																					: ''}"
 																				class="flex items-center justify-center w-8 h-8 rounded-lg text-base transition-all hover:bg-muted/80 hover:scale-125
 																					{reacted ? 'bg-primary/10 ring-1 ring-primary/40' : ''}
