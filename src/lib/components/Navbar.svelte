@@ -1,10 +1,12 @@
 <script lang="ts">
 	import LoginButton from "$lib/components/LoginButton.svelte";
+	import ThemeSelector from "$lib/components/ThemeSelector.svelte";
 	import approx from "$lib/approx-num";
 	import getAvatarURL from "$lib/get-avatar-url";
 	import { goto, invalidateAll } from "$app/navigation";
 	import LogoNavbar from "$lib/components/LogoNavbar.svelte";
 	import { Bot, Home, LayoutDashboard, Trophy, Sparkles, LayoutGrid } from "@lucide/svelte";
+
 	export let user: {
 		id: string;
 		username: string;
@@ -16,48 +18,6 @@
 
 	let mobileOpen = false;
 
-	// ── Theme ──────────────────────────────────────────────────────────
-	// Initialise from localStorage / system on the client; SSR gets 'light'
-	// as a safe default (the <script is:inline> equivalent in app.html should
-	// apply the class before paint to avoid flash).
-	let theme: "light" | "dark" = "light";
-
-	function initTheme() {
-		try {
-			const stored = localStorage.getItem("theme");
-			if (stored === "dark" || stored === "light") {
-				theme = stored;
-			} else {
-				theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-			}
-			applyTheme(theme);
-		} catch {
-			// SSR or restricted environment — no-op
-		}
-	}
-
-	function applyTheme(t: "light" | "dark") {
-		try {
-			if (t === "dark") document.documentElement.classList.add("dark");
-			else document.documentElement.classList.remove("dark");
-			localStorage.setItem("theme", t);
-		} catch {
-			// no-op in SSR
-		}
-		// Also persist to cookie so the server can apply the correct class on SSR
-		try {
-			const maxAge = 60 * 60 * 24 * 365; // 1 year
-			document.cookie = `theme=${t};path=/;max-age=${maxAge};SameSite=Lax`;
-		} catch {
-			// no-op
-		}
-	}
-
-	function toggleTheme() {
-		theme = theme === "dark" ? "light" : "dark";
-		applyTheme(theme);
-	}
-
 	async function logout() {
 		await fetch("/logout", { method: "POST" });
 		await invalidateAll();
@@ -67,9 +27,6 @@
 	$: avatarSrc = user?.avatar
 		? getAvatarURL(user.id, user.avatar, 64)
 		: "/assets/img/bot/logo-144.png";
-
-	import { onMount } from "svelte";
-	onMount(initTheme);
 </script>
 
 <nav
@@ -113,7 +70,7 @@
 
 		<!-- New -->
 		<a
-			href="/new"
+			href="/bots?new"
 			class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
 		>
 			<Sparkles size={24} class="mt-0.5" />
@@ -141,52 +98,14 @@
 		{/if}
 	</div>
 
-	<!-- Right side: theme toggle + user / login -->
+	<!-- Right side: theme selector + user / login -->
 	<div class="flex items-center gap-2 pr-3 shrink-0">
-		<!-- Theme toggle -->
-		<button
-			aria-label="Toggle theme"
-			title="Toggle theme"
-			class="p-2 rounded-md hover:bg-accent transition-colors"
-			on:click={toggleTheme}
-		>
-			{#if theme === "dark"}
-				<!-- Sun -->
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="w-5 h-5"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<circle cx="12" cy="12" r="4" />
-					<path
-						d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
-					/>
-				</svg>
-			{:else}
-				<!-- Moon -->
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="w-5 h-5"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" />
-				</svg>
-			{/if}
-		</button>
+		<!-- Theme selector (mode + accent) -->
+		<ThemeSelector />
 
 		{#if user}
 			<!-- Avatar + username + coins + logout -->
-			<div class="flex items-center gap-2">
+			<div class="flex items-center gap-2 mx-4">
 				<!-- Coins badge (hidden on xs) -->
 				<span class="hidden sm:flex items-center gap-1 text-sm font-semibold text-foreground">
 					<img src="/assets/img/bot/moneh.svg" alt="coins" class="w-5 h-5" />
@@ -206,7 +125,7 @@
 				<!-- Username (hidden on small) -->
 				<a
 					href="/dashboard"
-					class="hidden md:inline text-sm font-semibold text-foreground hover:underline whitespace-nowrap"
+					class="hidden md:inline text-sm font-semibold text-foreground hover:underline whitespace-nowrap mr-4"
 				>
 					{user.username}
 				</a>
@@ -334,7 +253,7 @@
 			</a>
 
 			<a
-				href="/new"
+				href="/bots?new"
 				class="flex items-center gap-2 py-2 text-lg font-bold text-primary"
 				on:click={() => (mobileOpen = false)}
 			>
@@ -441,6 +360,12 @@
 					<LoginButton />
 				</div>
 			{/if}
+
+			<!-- Theme selector in mobile menu too -->
+			<div class="py-1 border-t border-border pt-3">
+				<p class="text-xs text-muted-foreground font-semibold mb-2">Appearance</p>
+				<ThemeSelector />
+			</div>
 		</div>
 	</div>
 {/if}

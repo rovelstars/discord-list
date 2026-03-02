@@ -3,8 +3,105 @@
 	import Navbar from "$lib/components/Navbar.svelte";
 	import Footer from "$lib/components/Footer.svelte";
 	import { afterNavigate, invalidateAll, replaceState } from "$app/navigation";
+	import { navigating } from "$app/stores";
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
+
+	// Progress bar — starts instantly on mousedown/touchstart so the user gets
+	// immediate feedback, then completes once $navigating clears.
+	let progress = 0;
+	let visible = false;
+	let fillTimer: ReturnType<typeof setInterval> | null = null;
+	let completeTimer: ReturnType<typeof setTimeout> | null = null;
+
+	function clearTimers() {
+		if (fillTimer) {
+			clearInterval(fillTimer);
+			fillTimer = null;
+		}
+		if (completeTimer) {
+			clearTimeout(completeTimer);
+			completeTimer = null;
+		}
+	}
+
+	function startBar() {
+		clearTimers();
+		visible = true;
+		progress = 0;
+		// Asymptotic fill toward 85% — fast at first, then slows naturally.
+		fillTimer = setInterval(() => {
+			progress += (85 - progress) * 0.06;
+		}, 30);
+	}
+
+	function finishBar() {
+		clearTimers();
+		progress = 100;
+		completeTimer = setTimeout(() => {
+			visible = false;
+			progress = 0;
+		}, 300);
+	}
+
+	// Fired by $navigating only as a fallback for programmatic navigations
+	// (goto(), form submissions, etc.) that aren't triggered by a click.
+	let pointerStarted = false;
+
+	$: if ($navigating) {
+		if (!pointerStarted) startBar();
+		pointerStarted = false;
+	} else if (visible) {
+		finishBar();
+	}
+
+	// Resolve the closest <a> ancestor (or the element itself).
+	function closestAnchor(el: EventTarget | null): HTMLAnchorElement | null {
+		let node = el as HTMLElement | null;
+		while (node) {
+			if (node.tagName === "A") return node as HTMLAnchorElement;
+			node = node.parentElement;
+		}
+		return null;
+	}
+
+	// Returns true if the href is an internal same-origin link that SvelteKit
+	// will handle with client-side routing (not a download, hash-only, etc.).
+	function isInternalLink(anchor: HTMLAnchorElement): boolean {
+		if (!anchor.href) return false;
+		if (anchor.target === "_blank" || anchor.target === "_top") return false;
+		if (anchor.hasAttribute("download")) return false;
+		try {
+			const url = new URL(anchor.href);
+			if (url.origin !== location.origin) return false;
+			// Hash-only navigation on the same page — no load, skip.
+			if (url.pathname === location.pathname && url.search === location.search) return false;
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	onMount(() => {
+		function onPointerDown(e: MouseEvent | TouchEvent) {
+			const target = e instanceof MouseEvent ? e.target : e.touches[0]?.target;
+			const anchor = closestAnchor(target ?? null);
+			if (anchor && isInternalLink(anchor)) {
+				pointerStarted = true;
+				startBar();
+			}
+		}
+
+		document.addEventListener("mousedown", onPointerDown);
+		document.addEventListener("touchstart", onPointerDown, { passive: true });
+
+		return () => {
+			document.removeEventListener("mousedown", onPointerDown);
+			document.removeEventListener("touchstart", onPointerDown);
+		};
+	});
+
+	$: isHomepage = $page.url.pathname === "/";
 
 	export let data: {
 		user: {
@@ -46,6 +143,20 @@
 	<link rel="alternate icon" href="/favicon.png" type="image/png" sizes="48x48" />
 	<link rel="apple-touch-icon" href="/assets/img/bot/logo-144.png" sizes="144x144" />
 </svelte:head>
+<!-- Navigation progress bar -->
+{#if visible}
+	<div class="fixed top-0 left-0 right-0 z-9999 h-0.75 pointer-events-none" aria-hidden="true">
+		<div
+			class="h-full bg-primary transition-all duration-100 ease-out"
+			style="width: {progress}%; opacity: {progress === 100
+				? 0
+				: 1}; transition: width 100ms ease-out, opacity 250ms ease-in {progress === 100
+				? '50ms'
+				: '0ms'};"
+		></div>
+	</div>
+{/if}
+
 <Navbar user={data.user} />
-<main class="mt-24"><slot></slot></main>
+<main class={isHomepage ? "" : "mt-24"}><slot></slot></main>
 <Footer />

@@ -43,7 +43,9 @@
 		} | null;
 	};
 
-	const { bot, descHtml, randombots, comments, user } = data;
+	// Reactive destructuring — re-runs whenever SvelteKit replaces `data` after
+	// a client-side navigation to a different bot ID.
+	$: ({ bot, descHtml, randombots, comments, user } = data);
 
 	// ── SEO info section helpers ──────────────────────────────────────────────
 
@@ -112,7 +114,7 @@
 		return [...new Map(t.map((x) => [x.toLowerCase(), x])).values()];
 	}
 
-	$: seoTags = buildTags();
+	$: seoTags = bot && buildTags();
 	$: addedDate = formatDate(bot.added_at);
 	$: libFriendly = friendlyLib(bot.lib);
 
@@ -140,6 +142,14 @@
 	let bgImgRef: HTMLImageElement | null = null;
 	let avatarImgRef: HTMLImageElement | null = null;
 	let gradientColor: [number, number, number] | null = null;
+
+	// Reset per-bot transient state whenever the bot changes so a navigation to
+	// a different bot doesn't show the previous bot's accent colour or skip the
+	// image-refresh guard.
+	$: if (bot) {
+		gradientColor = null;
+		refreshDispatched = false;
+	}
 
 	// Lazily-loaded ColorThief instance — created once, reused.
 	let colorThief: { getColor: (img: HTMLImageElement) => [number, number, number] } | null = null;
@@ -267,7 +277,7 @@
 	 * We only dispatch once per page view to avoid hammering the endpoint when
 	 * multiple images fail simultaneously (e.g. both avatar and banner are stale).
 	 */
-	let refreshDispatched = false;
+	let refreshDispatched = false; // reset reactively above when bot changes
 
 	function handleImageError(event: Event) {
 		// Only run client-side, only once per page view.

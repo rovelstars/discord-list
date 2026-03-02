@@ -1,157 +1,80 @@
 <script lang="ts">
-	import { onMount, onDestroy } from "svelte";
+	import { onMount } from "svelte";
+	import { themeStore, themeActions, initThemeStore } from "$lib/theme-store";
 
-	// Theme can be 'light' | 'dark' | 'system'
-	let theme: "light" | "dark" | "system" = "system";
-	let open = false;
-
-	// Media query for system preference
-	let mql: MediaQueryList | null = null;
-
-	function prefersDark() {
-		try {
-			return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-		} catch {
-			return false;
-		}
-	}
-
-	// Apply the theme to document.documentElement
-	function applyTheme(t: typeof theme) {
-		const isDark = t === "dark" || (t === "system" && prefersDark());
-		if (isDark) {
-			document.documentElement.classList.add("dark");
-		} else {
-			document.documentElement.classList.remove("dark");
-		}
-	}
-
-	// Persist selection
-	function persistTheme(t: typeof theme) {
-		try {
-			localStorage.setItem("theme", t);
-		} catch {}
-		// Also write to a cookie so the server can read it on SSR
-		try {
-			const maxAge = 60 * 60 * 24 * 365; // 1 year
-			document.cookie = `theme=${t};path=/;max-age=${maxAge};SameSite=Lax`;
-		} catch {}
-	}
-
-	// Called when user selects an item
-	function setTheme(t: typeof theme) {
-		theme = t;
-		applyTheme(theme);
-		persistTheme(theme);
-		// close the menu after selection
-		open = false;
-	}
-
-	// Initialize theme from localStorage or system
 	onMount(() => {
-		try {
-			const stored = localStorage.getItem("theme");
-			if (stored === "light" || stored === "dark" || stored === "system") {
-				theme = stored;
-			} else {
-				// default to system to be non-intrusive
-				theme = "system";
-			}
-		} catch {
-			theme = "system";
-		}
-
-		applyTheme(theme);
-
-		// Listen to system changes when using 'system' theme
-		try {
-			mql = window.matchMedia("(prefers-color-scheme: dark)");
-			const handler = () => {
-				if (theme === "system") applyTheme("system");
-			};
-			mql.addEventListener ? mql.addEventListener("change", handler) : mql.addListener(handler);
-
-			// Close menu on outside click
-			const onDocClick = (e: MouseEvent) => {
-				const el = e.target as HTMLElement;
-				// If the click isn't inside our component area (we'll mark the root by id),
-				// then close the menu. We rely on bubbling to document.
-				const toggle = document.getElementById("mode-toggle-root");
-				if (!toggle) return;
-				if (!toggle.contains(el)) {
-					open = false;
-				}
-			};
-			document.addEventListener("click", onDocClick);
-
-			onDestroy(() => {
-				if (mql) {
-					mql.removeEventListener
-						? mql.removeEventListener("change", handler)
-						: mql.removeListener(handler);
-				}
-				document.removeEventListener("click", onDocClick);
-			});
-		} catch {
-			// ignore
-		}
+		initThemeStore();
 	});
 
-	// helpers for aria / labels
-	const labelMap = {
-		light: "Light",
-		dark: "Dark",
-		system: "System"
-	} as const;
+	$: isDark = $themeStore.resolvedPolarity === "dark";
+	$: mode = $themeStore.mode;
+
+	function setMode(m: "light" | "dark" | "system") {
+		themeActions.setMode(m);
+	}
+
+	let open = false;
+	let rootEl: HTMLDivElement;
+
+	function handleDocClick(e: MouseEvent) {
+		if (rootEl && !rootEl.contains(e.target as Node)) {
+			open = false;
+		}
+	}
+
+	onMount(() => {
+		document.addEventListener("click", handleDocClick);
+		return () => document.removeEventListener("click", handleDocClick);
+	});
 </script>
 
-<!-- Root wrapper with an id used by the outside-click handler -->
-<div id="mode-toggle-root" class="relative inline-block text-left">
+<div bind:this={rootEl} id="mode-toggle-root" class="relative inline-block text-left">
 	<!-- Trigger button -->
 	<button
 		type="button"
-		class="inline-flex items-center justify-center gap-0 h-10 w-10 rounded-md border border-input bg-background px-2 py-2 relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+		class="inline-flex items-center justify-center gap-0 h-10 w-10 rounded-md border border-border bg-background text-foreground px-2 py-2 relative overflow-hidden hover:bg-accent hover:text-accent-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-colors"
 		aria-haspopup="true"
 		aria-expanded={open}
-		on:click={() => (open = !open)}
+		on:click|stopPropagation={() => (open = !open)}
 		aria-label="Toggle theme"
 	>
-		<!-- Sun icon -->
+		<!-- Sun icon (shown in light mode) -->
 		<svg
-			class="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
+			class="h-5 w-5 transition-all duration-200 {isDark
+				? 'rotate-90 scale-0 absolute'
+				: 'rotate-0 scale-100'}"
 			viewBox="0 0 24 24"
 			fill="none"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
 			focusable="false"
 		>
+			<circle cx="12" cy="12" r="4" />
 			<path
-				d="M12 3v2M12 19v2M5.22 5.22l1.42 1.42M17.36 17.36l1.42 1.42M3 12h2M19 12h2M5.22 18.78l1.42-1.42M17.36 6.64l1.42-1.42"
-				stroke="currentColor"
-				stroke-width="1.5"
-				stroke-linecap="round"
-				stroke-linejoin="round"
+				d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
 			/>
-			<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" />
 		</svg>
 
-		<!-- Moon icon overlapping -->
+		<!-- Moon icon (shown in dark mode) -->
 		<svg
-			class="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
+			class="h-5 w-5 transition-all duration-200 {isDark
+				? 'rotate-0 scale-100'
+				: '-rotate-90 scale-0 absolute'}"
 			viewBox="0 0 24 24"
-			fill="none"
+			fill="currentColor"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
 			focusable="false"
 		>
-			<path
-				d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
-				stroke="currentColor"
-				stroke-width="1.5"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				fill="currentColor"
-			/>
+			<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
 		</svg>
 
 		<span class="sr-only">Toggle theme</span>
@@ -159,43 +82,84 @@
 
 	<!-- Dropdown menu -->
 	{#if open}
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div
-			class="absolute right-0 mt-2 w-36 origin-top-right rounded-md bg-popover border shadow-lg ring-1 ring-black/5 focus:outline-none z-50"
+			on:click|stopPropagation
+			class="absolute right-0 mt-2 w-36 origin-top-right rounded-md bg-popover border border-border shadow-lg ring-1 ring-black/5 dark:ring-white/5 focus:outline-none z-50"
 			role="menu"
 			aria-orientation="vertical"
-			aria-label="Theme options"
+			aria-label="Theme mode options"
+			tabindex="-1"
 		>
 			<div class="py-1">
-				<button
-					class="block w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
-					role="menuitem"
-					on:click={() => setTheme("light")}
-				>
-					Light
-				</button>
-				<button
-					class="block w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
-					role="menuitem"
-					on:click={() => setTheme("dark")}
-				>
-					Dark
-				</button>
-				<button
-					class="block w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
-					role="menuitem"
-					on:click={() => setTheme("system")}
-				>
-					System
-				</button>
+				{#each [{ id: "light", label: "Light" }, { id: "dark", label: "Dark" }, { id: "system", label: "System" }] as item}
+					<button
+						class="flex items-center gap-2 w-full text-left px-3 py-2 text-sm transition-colors
+							{mode === item.id
+							? 'bg-primary text-primary-foreground font-semibold'
+							: 'text-popover-foreground hover:bg-accent hover:text-accent-foreground'}"
+						role="menuitem"
+						on:click={() => {
+							setMode(item.id as "light" | "dark" | "system");
+							open = false;
+						}}
+					>
+						{#if item.id === "light"}
+							<svg
+								class="h-4 w-4 shrink-0"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.75"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<circle cx="12" cy="12" r="4" />
+								<path
+									d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+								/>
+							</svg>
+						{:else if item.id === "dark"}
+							<svg
+								class="h-4 w-4 shrink-0"
+								viewBox="0 0 24 24"
+								fill="currentColor"
+								stroke="currentColor"
+								stroke-width="1.75"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+							</svg>
+						{:else}
+							<svg
+								class="h-4 w-4 shrink-0"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.75"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<rect x="2" y="3" width="20" height="14" rx="2" />
+								<path d="M8 21h8M12 17v4" />
+							</svg>
+						{/if}
+						{item.label}
+					</button>
+				{/each}
 			</div>
 		</div>
 	{/if}
 </div>
 
 <style>
-	/* Minimal CSS: most styling comes from Tailwind utility classes in global.css */
 	.sr-only {
-		position: absolute !important;
+		position: absolute;
 		width: 1px;
 		height: 1px;
 		padding: 0;
@@ -203,6 +167,6 @@
 		overflow: hidden;
 		clip: rect(0, 0, 0, 0);
 		white-space: nowrap;
-		border: 0;
+		border-width: 0;
 	}
 </style>

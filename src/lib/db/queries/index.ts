@@ -320,15 +320,42 @@ export async function listBots(
 		limit?: number;
 		newFlag?: boolean;
 		trending?: boolean;
+		/** Category keyword — searches username, short description, and tags */
+		category?: string | null;
 	} = {}
 ): Promise<BotSummary[]> {
-	const { q = null, offset = 0, limit = 10, newFlag = false, trending = false } = options;
+	const {
+		q = null,
+		offset = 0,
+		limit = 10,
+		newFlag = false,
+		trending = false,
+		category = null
+	} = options;
 
 	const rows = (await withDb((d: DrizzleDb) => {
 		let builder: any = d.select(BOT_SUMMARY_SELECTION).from(Bots);
 
+		const conditions: any[] = [];
+
 		if (q) {
-			builder = builder.where(or(like(Bots.username, `%${q}%`), like(Bots.short, `%${q}%`)));
+			conditions.push(or(like(Bots.username, `%${q}%`), like(Bots.short, `%${q}%`)));
+		}
+
+		if (category) {
+			conditions.push(
+				or(
+					like(Bots.username, `%${category}%`),
+					like(Bots.short, `%${category}%`),
+					like(Bots.tags, `%${category}%`)
+				)
+			);
+		}
+
+		if (conditions.length === 1) {
+			builder = builder.where(conditions[0]);
+		} else if (conditions.length > 1) {
+			builder = builder.where(and(...conditions));
 		}
 
 		if (newFlag && trending) {
@@ -337,6 +364,9 @@ export async function listBots(
 			builder = builder.orderBy(desc(Bots.added_at));
 		} else if (trending) {
 			builder = builder.orderBy(desc(Bots.votes));
+		} else if (category) {
+			// For category browsing default to most-servers ranking
+			builder = builder.orderBy(desc(Bots.servers));
 		}
 
 		return builder.limit(limit).offset(offset);

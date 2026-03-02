@@ -216,7 +216,7 @@
 
 <div class="min-h-screen bg-background">
 	<!-- ── Hero header ──────────────────────────────────────────────────────── -->
-	<div class="relative overflow-hidden border-b border-border bg-card">
+	<div class="relative overflow-hidden border-b border-border bg-card pt-32 -mt-28">
 		<div
 			class="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary/10 blur-3xl"
 		></div>

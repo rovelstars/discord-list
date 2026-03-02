@@ -5,6 +5,64 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="alternate icon" href="/favicon.png" type="image/png" sizes="48x48" />
+		<!--
+			Blocking inline script — runs synchronously before any CSS is painted.
+			Reads the persisted theme preferences and applies:
+			  • the `.dark` class on <html> when the resolved polarity is dark
+			  • the `data-theme` attribute on <html> for the accent theme
+			  • writes `theme-system-dark` cookie so the server knows the OS
+			    preference on the *next* request (eliminates SSR flash for
+			    "system" mode users).
+			Kept intentionally tiny — no imports, no dependencies.
+		-->
+		<script>
+			(function () {
+				try {
+					// ── Read preferences ──────────────────────────────────────
+					var ls = window.localStorage;
+					var mode =
+						ls.getItem("theme-mode") || getCookie("theme-mode") || getCookie("theme") || "system";
+					var accent = ls.getItem("theme-accent") || getCookie("theme-accent") || "default";
+
+					// ── Resolve polarity ─────────────────────────────────────
+					var prefersDark =
+						window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+					var isDark = mode === "dark" || (mode === "system" && prefersDark);
+
+					// ── Apply to <html> ───────────────────────────────────────
+					var root = document.documentElement;
+
+					if (isDark) {
+						root.classList.add("dark");
+					} else {
+						root.classList.remove("dark");
+					}
+
+					root.setAttribute("data-theme", accent || "default");
+
+					// ── Persist system-dark hint cookie for SSR ───────────────
+					// Written with a short but non-trivial max-age so the server
+					// knows the OS preference on subsequent requests without JS.
+					var hint = prefersDark ? "1" : "0";
+					var existing = getCookie("theme-system-dark");
+					if (existing !== hint) {
+						document.cookie = "theme-system-dark=" + hint + ";path=/;max-age=86400;SameSite=Lax";
+					}
+				} catch (e) {
+					// Swallow — restricted environments (private browsing without
+					// storage access) should still render without throwing.
+				}
+
+				function getCookie(name) {
+					try {
+						var match = document.cookie.match(new RegExp("(?:^|;\\s*)" + name + "=([^;]*)"));
+						return match ? decodeURIComponent(match[1]) : null;
+					} catch (e) {
+						return null;
+					}
+				}
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
