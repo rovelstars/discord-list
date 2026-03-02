@@ -10,7 +10,9 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
-		"migrate": "node scripts/migrate.mjs"
+		"migrate": "node scripts/migrate.mjs",
+		"register": "node scripts/register-commands.mjs",
+		"unregister": "node scripts/unregister-commands.mjs"
 	},
 	"devDependencies": {
 		"@netlify/functions": "^5.1.2",

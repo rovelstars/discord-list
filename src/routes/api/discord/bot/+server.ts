@@ -104,7 +104,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 				const result = await run(interaction, envPayload);
 
-				// If the handler returned a valid interaction response, forward it.
+				// Every handler must return a valid interaction response object.
 				if (result && typeof result === "object" && "type" in result) {
 					return new Response(JSON.stringify(result), {
 						status: 200,
@@ -112,12 +112,17 @@ export const POST: RequestHandler = async ({ request }) => {
 					});
 				}
 
-				// Otherwise return a simple acknowledgement to avoid hitting Discord timeouts.
-				// This keeps parity with the legacy implementation which often returned early.
+				// Handler returned nothing usable — this is a bug in the command
+				// implementation. Log it and tell Discord something went wrong so
+				// the user sees a message rather than a silent timeout.
+				console.error(`Command handler for "${incomingName}" did not return a response object.`);
 				return new Response(
 					JSON.stringify({
 						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-						data: { content: "Command received." }
+						data: {
+							content: "⚠️ This command didn't return a response. Please report this.",
+							flags: 64
+						}
 					}),
 					{
 						status: 200,
@@ -126,10 +131,18 @@ export const POST: RequestHandler = async ({ request }) => {
 				);
 			} catch (handlerErr) {
 				console.error("Error running command handler:", handlerErr);
-				return new Response(JSON.stringify({ error: "handler_error" }), {
-					status: 500,
-					headers: { "Content-Type": "application/json" }
-				});
+				// Must still return 200 with a valid interaction response so Discord
+				// doesn't retry and the user sees the error instead of a timeout.
+				return new Response(
+					JSON.stringify({
+						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+						data: { content: "⚠️ An error occurred while running this command.", flags: 64 }
+					}),
+					{
+						status: 200,
+						headers: { "Content-Type": "application/json" }
+					}
+				);
 			}
 		}
 

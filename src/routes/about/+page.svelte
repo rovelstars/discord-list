@@ -10,12 +10,6 @@
 
 	const values = [
 		{
-			icon: "shield",
-			title: "Trustworthy",
-			description:
-				"Every bot on our list is reviewed before being approved. We take quality seriously so your community stays safe."
-		},
-		{
 			icon: "zap",
 			title: "Fast & Open",
 			description:
@@ -32,6 +26,12 @@
 			title: "Developer Friendly",
 			description:
 				"Webhook vote notifications, a clean REST API, and a simple bot submission flow — we make it easy to grow."
+		},
+		{
+			icon: "shield",
+			title: "Open Source",
+			description:
+				"Our code is open source on GitHub. We believe in transparency and welcome contributions from the community."
 		}
 	];
 
