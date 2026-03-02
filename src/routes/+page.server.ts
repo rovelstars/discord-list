@@ -1,12 +1,12 @@
 import type { PageServerLoad } from "./$types";
-import { getTopBots } from "$lib/db/queries";
-import { listBots } from "$lib/db/queries";
+import { getTopBots, listBots, getTopServers } from "$lib/db/queries";
 
 export const load: PageServerLoad = async ({ setHeaders }) => {
 	try {
-		const [topBotsVotes, topBotsServers] = await Promise.all([
+		const [topBotsVotes, topBotsServers, topServersData] = await Promise.all([
 			getTopBots(30),
-			listBots({ limit: 30, offset: 0, trending: true })
+			listBots({ limit: 30, offset: 0, trending: true }),
+			getTopServers(6)
 		]);
 
 		// Merge and deduplicate by id, preferring the votes list ordering
@@ -26,7 +26,8 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 
 		return {
 			topbotsdata: topBotsVotes,
-			allBotsForBg: allBots
+			allBotsForBg: allBots,
+			topServersData
 		};
 	} catch {
 		setHeaders({
@@ -34,6 +35,6 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			"netlify-vary": "query=key|slug|code,cookie=key|code,header=user-agent"
 		});
 
-		return { topbotsdata: [], allBotsForBg: [] };
+		return { topbotsdata: [], allBotsForBg: [], topServersData: [] };
 	}
 };

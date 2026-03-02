@@ -46,7 +46,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			signature && timestamp && (await verifyKey(bodyBuffer, signature, timestamp, publicKey));
 
 		if (!valid) {
-			console.warn("Invalid interaction signature");
 			return new Response("Invalid Request Signature", { status: 401 });
 		}
 
@@ -102,7 +101,9 @@ export const POST: RequestHandler = async ({ request }) => {
 					MODE: env.MODE,
 					DISCORD_BOT_ID: env.DISCORD_BOT_ID,
 					DISCORD_GUILD_ID: env.DISCORD_GUILD_ID,
-					DISCORD_TOKEN: env.DISCORD_TOKEN
+					DISCORD_TOKEN: env.DISCORD_TOKEN,
+					DOMAIN: env.DOMAIN ?? "http://localhost:5173",
+					INTERNAL_SECRET: env.INTERNAL_SECRET ?? ""
 				};
 
 				const result = await run(interaction, envPayload);

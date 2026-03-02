@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
 	import BotCard from "$lib/components/BotCard.svelte";
+	import ServerCard from "$lib/components/ServerCard.svelte";
 	import SEO from "$lib/components/SEO.svelte";
 
 	export let data: any;
 
-	const { topbotsdata, allBotsForBg } = data;
+	const { topbotsdata, allBotsForBg, topServersData } = data;
 
 	// ── Animated word cycling ─────────────────────────────────────────────────
 	const words = ["bots", "servers", "stickers", "emojis", "friends"];
@@ -301,6 +302,59 @@
 			</section>
 		{/if}
 
+		<!-- Section: Featured Servers -->
+		{#if topServersData && topServersData.length > 0}
+			<section class="pt-16 px-4">
+				<div class="max-w-7xl mx-auto">
+					<h2 class="font-heading text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-8 h-8 text-green-500"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+							<polyline points="9 22 9 12 15 12 15 22" />
+						</svg>
+						Featured Servers
+					</h2>
+					<p class="text-muted-foreground text-lg mb-8 font-medium">
+						Thriving Discord communities — find your next home.
+					</p>
+					<div class="flex flex-wrap justify-center gap-4">
+						{#each topServersData.slice(0, 6) as server}
+							<ServerCard {server} edit={false} />
+						{/each}
+					</div>
+					<div class="text-center mt-10">
+						<a
+							href="/servers"
+							class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-green-600 text-white font-bold text-base hover:bg-green-700 transition-colors"
+						>
+							Browse All Servers
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-4 h-4"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="m9 18 6-6-6-6" />
+							</svg>
+						</a>
+					</div>
+				</div>
+			</section>
+		{/if}
+
 		<!-- Section: Quick links grid -->
 		<section class="pt-20 px-4">
 			<div class="max-w-5xl mx-auto">
@@ -485,6 +539,37 @@
 						>
 					</a>
 
+					<!-- Servers -->
+					<a
+						href="/servers"
+						class="group flex flex-col gap-3 p-6 rounded-2xl border border-border bg-card hover:border-green-500/60 hover:-translate-y-1 transition-all duration-200 shadow-sm hover:shadow-md"
+					>
+						<div
+							class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500 group-hover:bg-green-500/20 transition-colors"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-6 h-6"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+								<polyline points="9 22 9 12 15 12 15 22" />
+							</svg>
+						</div>
+						<h3 class="font-heading text-xl font-bold">Servers</h3>
+						<p class="text-muted-foreground text-sm leading-relaxed">
+							Discover vibrant communities to join — gaming, art, coding, music and more.
+						</p>
+						<span class="text-green-500 text-sm font-semibold group-hover:underline"
+							>Find communities →</span
+						>
+					</a>
+
 					<!-- Add your bot -->
 					<a
 						href="/dashboard"
@@ -513,6 +598,39 @@
 							Built something amazing? List your bot and reach thousands of Discord communities.
 						</p>
 						<span class="text-primary text-sm font-semibold group-hover:underline"
+							>Get listed →</span
+						>
+					</a>
+
+					<!-- List your server -->
+					<a
+						href="/servers"
+						class="group flex flex-col gap-3 p-6 rounded-2xl border-2 border-dashed border-green-500/40 bg-green-500/5 hover:border-green-500 hover:bg-green-500/10 hover:-translate-y-1 transition-all duration-200"
+					>
+						<div
+							class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500 group-hover:bg-green-500/20 transition-colors"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-6 h-6"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<circle cx="12" cy="12" r="10" />
+								<path d="M12 8v8" />
+								<path d="M8 12h8" />
+							</svg>
+						</div>
+						<h3 class="font-heading text-xl font-bold">List Your Server</h3>
+						<p class="text-muted-foreground text-sm leading-relaxed">
+							Add our bot, run <code class="bg-muted px-1 rounded text-xs font-mono">/register</code
+							> and your server goes live instantly.
+						</p>
+						<span class="text-green-500 text-sm font-semibold group-hover:underline"
 							>Get listed →</span
 						>
 					</a>

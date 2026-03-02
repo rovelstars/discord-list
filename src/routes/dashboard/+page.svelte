@@ -1,5 +1,6 @@
 <script lang="ts">
 	import BotCard from "$lib/components/BotCard.svelte";
+	import ServerCard from "$lib/components/ServerCard.svelte";
 	import Input from "$lib/components/ui/Input.svelte";
 	import Label from "$lib/components/ui/Label.svelte";
 	import Textarea from "$lib/components/ui/textarea/Textarea.svelte";
@@ -40,6 +41,15 @@
 			bg: string | null;
 			status: string;
 		}>;
+		servers: Array<{
+			id: string;
+			name: string;
+			short: string;
+			icon: string | null;
+			votes: number;
+			owner: string;
+			slug: string | null;
+		}>;
 		recentVotes: Array<{
 			botId: string;
 			at: number;
@@ -51,10 +61,18 @@
 		expiredCount: number;
 	};
 
-	const { user, discordUser, bots = [], recentVotes, totalVotesCast, expiredCount } = data;
+	const {
+		user,
+		discordUser,
+		bots = [],
+		servers = [],
+		recentVotes,
+		totalVotesCast,
+		expiredCount
+	} = data;
 
 	// ── Active section ────────────────────────────────────────────────────────
-	type Section = "bots" | "profile" | "account" | "votes" | "danger";
+	type Section = "bots" | "servers" | "profile" | "account" | "votes" | "danger";
 	let activeSection: Section = "bots";
 
 	// ── Modals ────────────────────────────────────────────────────────────────
@@ -147,6 +165,7 @@
 	// ── Nav items ─────────────────────────────────────────────────────────────
 	const navItems: Array<{ id: Section; label: string; icon: string }> = [
 		{ id: "bots", label: "My Bots", icon: "bot" },
+		{ id: "servers", label: "My Servers", icon: "server" },
 		{ id: "profile", label: "Profile", icon: "user" },
 		{ id: "account", label: "Account", icon: "shield" },
 		{ id: "votes", label: "Vote History", icon: "votes" },
@@ -156,7 +175,7 @@
 
 <SEO
 	title="Dashboard"
-	description="Manage your bots and account on Rovel Discord List."
+	description="Manage your bots, servers and account on Rovel Discord List."
 	imageSmall="/assets/img/bot/logo-512.png"
 />
 <svelte:head>
@@ -295,12 +314,18 @@
 			</div>
 
 			<!-- Quick stats strip -->
-			<div class="mt-6 grid grid-cols-3 gap-3">
+			<div class="mt-6 grid grid-cols-4 gap-3">
 				<div
 					class="bg-background/60 backdrop-blur border border-border rounded-xl px-4 py-3 text-center"
 				>
 					<p class="text-xl font-extrabold">{bots.length}</p>
 					<p class="text-xs text-muted-foreground mt-0.5">My Bots</p>
+				</div>
+				<div
+					class="bg-background/60 backdrop-blur border border-border rounded-xl px-4 py-3 text-center"
+				>
+					<p class="text-xl font-extrabold">{servers.length}</p>
+					<p class="text-xs text-muted-foreground mt-0.5">My Servers</p>
 				</div>
 				<div
 					class="bg-background/60 backdrop-blur border border-border rounded-xl px-4 py-3 text-center"
@@ -378,6 +403,20 @@
 													y2="16"
 												/>
 											</svg>
+										{:else if item.icon === "server"}
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="w-3.5 h-3.5"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+												<polyline points="9 22 9 12 15 12 15 22" />
+											</svg>
 										{:else if item.icon === "user"}
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -451,15 +490,18 @@
 										></span>
 									{/if}
 
-									<!-- Bot count badge -->
-									{#if item.id === "bots" && bots.length > 0}
+									<!-- Count badges -->
+									{#if item.id === "bots" && bots.length > 0 && activeSection !== "bots"}
 										<span
-											class="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary {activeSection ===
-											'bots'
-												? ''
-												: 'opacity-70'}"
+											class="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary opacity-70"
 										>
 											{bots.length}
+										</span>
+									{:else if item.id === "servers" && servers.length > 0 && activeSection !== "servers"}
+										<span
+											class="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 opacity-70"
+										>
+											{servers.length}
 										</span>
 									{/if}
 								</button>
@@ -595,6 +637,205 @@
 									{/each}
 								</div>
 							{/if}
+						</div>
+					</div>
+
+					<!-- ════════════════════════════════════════════════════════════ -->
+					<!-- MY SERVERS                                                   -->
+					<!-- ════════════════════════════════════════════════════════════ -->
+				{:else if activeSection === "servers"}
+					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+						<div class="px-6 py-4 border-b border-border flex items-center justify-between gap-4">
+							<div class="flex items-center gap-2">
+								<div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="w-4 h-4 text-green-500"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										aria-hidden="true"
+									>
+										<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+										<polyline points="9 22 9 12 15 12 15 22" />
+									</svg>
+								</div>
+								<div>
+									<h2 class="text-base font-bold font-heading leading-none">My Servers</h2>
+									<p class="text-xs text-muted-foreground mt-0.5">
+										{servers.length === 0
+											? "No servers registered yet"
+											: `${servers.length} server${servers.length !== 1 ? "s" : ""} registered`}
+									</p>
+								</div>
+							</div>
+							<a
+								href="/servers"
+								class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-green-500/40 text-green-600 dark:text-green-400 text-xs font-semibold hover:bg-green-500/10 active:scale-95 transition-all"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="w-3.5 h-3.5"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									aria-hidden="true"
+								>
+									<circle cx="11" cy="11" r="8" />
+									<path d="m21 21-4.3-4.3" />
+								</svg>
+								Browse
+							</a>
+						</div>
+
+						<div class="p-6">
+							{#if servers.length === 0}
+								<div class="flex flex-col items-center justify-center py-16 text-center">
+									<div
+										class="w-20 h-20 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-4"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-10 h-10 text-green-500 opacity-60"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1.75"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											aria-hidden="true"
+										>
+											<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+											<polyline points="9 22 9 12 15 12 15 22" />
+										</svg>
+									</div>
+									<p class="font-bold text-base">No servers registered yet</p>
+									<p class="text-sm text-muted-foreground mt-1.5 max-w-xs leading-relaxed">
+										Add our bot to your server and run
+										<code class="bg-muted px-1 py-0.5 rounded text-xs font-mono">/register</code>
+										inside it to get listed.
+									</p>
+									<a
+										href="/servers"
+										class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-sm font-semibold transition-colors"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-4 h-4"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											aria-hidden="true"
+										>
+											<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+											<polyline points="9 22 9 12 15 12 15 22" />
+										</svg>
+										Browse Server Listings
+									</a>
+								</div>
+							{:else}
+								<div class="flex flex-wrap gap-4">
+									{#each servers as srv}
+										<ServerCard
+											server={{
+												id: srv.id,
+												name: srv.name,
+												short: srv.short,
+												icon: srv.icon,
+												votes: srv.votes ?? 0,
+												owner: srv.owner,
+												slug: srv.slug
+											}}
+											edit={true}
+										/>
+									{/each}
+								</div>
+							{/if}
+						</div>
+					</div>
+
+					<!-- How-to card -->
+					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+						<div class="px-6 py-4 border-b border-border flex items-center gap-2">
+							<div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="w-4 h-4 text-green-500"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									aria-hidden="true"
+								>
+									<circle cx="12" cy="12" r="10" />
+									<path d="M12 16v-4" />
+									<path d="M12 8h.01" />
+								</svg>
+							</div>
+							<h2 class="text-base font-bold font-heading leading-none">
+								How to Register a Server
+							</h2>
+						</div>
+						<div class="p-6 space-y-4">
+							<ol class="space-y-4 text-sm text-muted-foreground">
+								<li class="flex gap-3">
+									<span
+										class="shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center"
+										>1</span
+									>
+									<span>
+										<strong class="text-foreground">Add the bot</strong> to your Discord server. It
+										needs
+										<em>Send Messages</em> and <em>Use Slash Commands</em> permissions at minimum.
+									</span>
+								</li>
+								<li class="flex gap-3">
+									<span
+										class="shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center"
+										>2</span
+									>
+									<span>
+										Make sure you have the
+										<strong class="text-foreground">Manage Server</strong> or
+										<strong class="text-foreground">Administrator</strong> permission in that server.
+									</span>
+								</li>
+								<li class="flex gap-3">
+									<span
+										class="shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center"
+										>3</span
+									>
+									<span>
+										Run
+										<code
+											class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono text-foreground font-semibold"
+											>/register</code
+										>
+										inside your server. The bot will confirm once the listing is live.
+									</span>
+								</li>
+								<li class="flex gap-3">
+									<span
+										class="shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center"
+										>4</span
+									>
+									<span>
+										Come back here to see your server listed above. You can update its description
+										from the server's listing page.
+									</span>
+								</li>
+							</ol>
 						</div>
 					</div>
 
@@ -980,6 +1221,25 @@
 									Bots Listed
 								</dt>
 								<dd class="font-semibold">{bots.length}</dd>
+							</div>
+							<div class="flex items-center justify-between px-6 py-3 text-sm">
+								<dt class="text-muted-foreground font-medium flex items-center gap-2">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="w-3.5 h-3.5 shrink-0"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+										<polyline points="9 22 9 12 15 12 15 22" />
+									</svg>
+									Servers Listed
+								</dt>
+								<dd class="font-semibold">{servers.length}</dd>
 							</div>
 							<div class="flex items-center justify-between px-6 py-3 text-sm">
 								<dt class="text-muted-foreground font-medium flex items-center gap-2">

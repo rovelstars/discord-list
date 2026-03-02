@@ -5,7 +5,7 @@
 	import getAvatarURL from "$lib/get-avatar-url";
 	import { goto, invalidateAll } from "$app/navigation";
 	import LogoNavbar from "$lib/components/LogoNavbar.svelte";
-	import { Bot, Home, LayoutDashboard, Trophy, Sparkles, LayoutGrid } from "@lucide/svelte";
+	import { Bot, Home, LayoutDashboard, Trophy, Sparkles, LayoutGrid, House } from "@lucide/svelte";
 
 	export let user: {
 		id: string;
@@ -77,6 +77,15 @@
 			>
 				<Sparkles size={24} class="mt-0.5" />
 				<span class="ml-1 hidden md:inline">New</span>
+			</a>
+
+			<!-- Servers -->
+			<a
+				href="/servers"
+				class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
+			>
+				<House size={24} class="mt-0.5" />
+				<span class="ml-1 hidden md:inline">Servers</span>
 			</a>
 
 			<!-- Categories -->
@@ -279,6 +288,27 @@
 					<path d="M17 19h4" />
 				</svg>
 				New
+			</a>
+
+			<a
+				href="/servers"
+				class="flex items-center gap-2 py-2 text-lg font-bold text-primary"
+				on:click={() => (mobileOpen = false)}
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="w-5 h-5"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+					<polyline points="9 22 9 12 15 12 15 22" />
+				</svg>
+				Servers
 			</a>
 
 			<a

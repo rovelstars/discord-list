@@ -1,0 +1,104 @@
+import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
+import { withDb, type DrizzleDb } from "$lib/db";
+import { Servers } from "$lib/db/schema";
+import { eq } from "drizzle-orm";
+
+function validateSecret(request: Request): boolean {
+	const internalSecret = (env.INTERNAL_SECRET ?? "").trim();
+	if (!internalSecret) return false;
+	const supplied = (request.headers.get("x-internal-secret") ?? "").trim();
+	return supplied === internalSecret;
+}
+
+/**
+ * POST /api/internals/register-server
+ *
+ * Upserts a Discord server into the Servers table. Called by the /register
+ * slash command after it has verified the user's permissions and confirmed
+ * they have a site account.
+ *
+ * Auth: x-internal-secret header must match INTERNAL_SECRET env var.
+ *
+ * Body (JSON):
+ *   { id: string, name: string, icon: string | null, owner: string }
+ *
+ * Response:
+ *   200 { success: true, created: boolean }
+ *   400 { error: string }
+ *   401 { error: "Unauthorized" }
+ *   500 { error: string }
+ */
+export const POST: RequestHandler = async ({ request }) => {
+	if (!validateSecret(request)) {
+		return json({ error: "Unauthorized" }, { status: 401 });
+	}
+
+	let body: { id?: string; name?: string; icon?: string | null; owner?: string };
+	try {
+		body = await request.json();
+	} catch {
+		return json({ error: "invalid_json" }, { status: 400 });
+	}
+
+	const { id, name, icon, owner } = body ?? {};
+
+	if (!id || typeof id !== "string" || !id.trim()) {
+		return json({ error: "missing_id" }, { status: 400 });
+	}
+	if (!name || typeof name !== "string" || !name.trim()) {
+		return json({ error: "missing_name" }, { status: 400 });
+	}
+	if (!owner || typeof owner !== "string" || !owner.trim()) {
+		return json({ error: "missing_owner" }, { status: 400 });
+	}
+
+	try {
+		// Check if already exists so we can report created vs updated
+		const existing = await withDb((db: DrizzleDb) =>
+			db.select({ id: Servers.id }).from(Servers).where(eq(Servers.id, id.trim())).limit(1)
+		);
+
+		const isNew = !Array.isArray(existing) || existing.length === 0;
+		const now = new Date().toISOString();
+
+		if (isNew) {
+			await withDb((db: DrizzleDb) =>
+				db.insert(Servers).values({
+					id: id.trim(),
+					name: name.trim(),
+					short: "Short description is not Updated.",
+					desc: "Description is not updated.",
+					icon: icon ?? "",
+					owner: owner.trim(),
+					slug: null,
+					added_at: now,
+					votes: 0,
+					promoted: false,
+					badges: []
+				})
+			);
+		} else {
+			// On re-registration only update identity fields; preserve any
+			// customisation (short, desc, slug, badges, votes) the owner set
+			// through the dashboard.
+			await withDb((db: DrizzleDb) =>
+				db
+					.update(Servers)
+					.set({
+						name: name.trim(),
+						icon: icon ?? "",
+						owner: owner.trim()
+					})
+					.where(eq(Servers.id, id.trim()))
+			);
+		}
+
+		return json({ success: true, created: isNew }, { status: 200 });
+	} catch (err) {
+		const msg = err instanceof Error ? err.message : String(err);
+		console.error("[register-server] DB error:", msg);
+		return json({ error: "db_error" }, { status: 500 });
+	}
+};

@@ -34,8 +34,8 @@
 					<span class="font-bold text-sm">Rovel Discord List</span>
 				</div>
 				<p class="text-xs text-muted-foreground leading-relaxed">
-					The best place to discover and list Discord bots. Trusted by thousands of server owners
-					and bot developers since 2020.
+					The best place to discover and list Discord bots and servers. Trusted by thousands of
+					server owners and bot developers since 2020.
 				</p>
 				<p class="text-xs text-muted-foreground">
 					<a
@@ -56,7 +56,7 @@
 						Platform
 					</p>
 					<ul class="space-y-2">
-						{#each [{ href: "/bots", label: "Browse Bots" }, { href: "/top", label: "Top Bots" }, { href: "/new", label: "New Bots" }, { href: "/categories", label: "Categories" }] as link}
+						{#each [{ href: "/bots", label: "Browse Bots" }, { href: "/servers", label: "Browse Servers" }, { href: "/top", label: "Top Bots" }, { href: "/bots?new", label: "New Bots" }, { href: "/categories", label: "Categories" }] as link}
 							<li>
 								<a
 									href={link.href}
@@ -75,7 +75,7 @@
 						Developers
 					</p>
 					<ul class="space-y-2">
-						{#each [{ href: "/login", label: "Login" }, { href: "/dashboard", label: "Dashboard" }, { href: "/dashboard/bots/new", label: "List a Bot" }] as link}
+						{#each [{ href: "/login", label: "Login" }, { href: "/dashboard", label: "Dashboard" }, { href: "/dashboard/bots/new", label: "List a Bot" }, { href: "/servers", label: "List a Server" }] as link}
 							<li>
 								<a
 									href={link.href}

@@ -25,7 +25,7 @@
  */
 
 import { withDb, type DrizzleDb } from "$lib/db";
-import { Bots, Users, Comments, CommentReactions } from "$lib/db/schema";
+import { Bots, Users, Comments, CommentReactions, Servers } from "$lib/db/schema";
 import {
 	eq,
 	notInArray,
@@ -126,8 +126,25 @@ export type BotSlugEntry = {
 	added_at: number | null;
 };
 
+export type ServerSummary = {
+	id: string;
+	name: string;
+	short: string;
+	icon: string | null;
+	votes: number;
+	owner: string;
+	slug: string | null;
+	promoted: boolean;
+	badges: any[];
+	added_at: string | null;
+};
+
+export type ServerDetail = ServerSummary & {
+	desc: string | null;
+};
+
 /** Extended summary that includes rank position and lib, used on the /top page */
-export type BotRanked = BotSummary & {
+type BotRanked = BotSummary & {
 	rank: number;
 	lib?: string | null;
 	prefix?: string | null;
@@ -904,7 +921,216 @@ export async function toggleReaction(
  * Bots filtered by the library they were built with (e.g. "discord.js", "discord.py").
  * Matches case-insensitively using LIKE.
  */
-export async function getBotsByLibrary(lib: string, limit = 50): Promise<BotSummary[]> {
+// ─────────────────────────────────────────────────────────────────────────────
+// Server query helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+function mapServerSummary(row: RawRow): ServerSummary {
+	return {
+		id: String(row.id ?? ""),
+		name: String(row.name ?? ""),
+		short: String(row.short ?? ""),
+		icon: row.icon ?? null,
+		votes: typeof row.votes === "number" ? row.votes : Number(row.votes) || 0,
+		owner: String(row.owner ?? ""),
+		slug: row.slug ?? null,
+		promoted: Boolean(row.promoted),
+		badges: parseJson(row.badges, []),
+		added_at: row.added_at ?? null
+	};
+}
+
+function mapServerDetail(row: RawRow): ServerDetail {
+	return {
+		...mapServerSummary(row),
+		desc: row.desc ?? null
+	};
+}
+
+export async function getTopServers(limit = 10): Promise<ServerSummary[]> {
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select({
+				id: Servers.id,
+				name: Servers.name,
+				short: Servers.short,
+				icon: Servers.icon,
+				votes: Servers.votes,
+				owner: Servers.owner,
+				slug: Servers.slug,
+				promoted: Servers.promoted,
+				badges: Servers.badges,
+				added_at: Servers.added_at
+			})
+			.from(Servers)
+			.orderBy(desc(Servers.votes))
+			.limit(limit)
+	)) as any[];
+	return rows.map(mapServerSummary);
+}
+
+export async function getRandomServers(limit = 10): Promise<ServerSummary[]> {
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select({
+				id: Servers.id,
+				name: Servers.name,
+				short: Servers.short,
+				icon: Servers.icon,
+				votes: Servers.votes,
+				owner: Servers.owner,
+				slug: Servers.slug,
+				promoted: Servers.promoted,
+				badges: Servers.badges,
+				added_at: Servers.added_at
+			})
+			.from(Servers)
+			.orderBy(sql`RANDOM()`)
+			.limit(limit)
+	)) as any[];
+	return rows.map(mapServerSummary);
+}
+
+export async function listServers(opts: {
+	q?: string | null;
+	limit?: number;
+	offset?: number;
+	newFlag?: boolean;
+	trending?: boolean;
+}): Promise<ServerSummary[]> {
+	const { q, limit = 20, offset = 0, newFlag = false, trending = false } = opts;
+
+	const rows = (await withDb((d: DrizzleDb) => {
+		let builder = d
+			.select({
+				id: Servers.id,
+				name: Servers.name,
+				short: Servers.short,
+				icon: Servers.icon,
+				votes: Servers.votes,
+				owner: Servers.owner,
+				slug: Servers.slug,
+				promoted: Servers.promoted,
+				badges: Servers.badges,
+				added_at: Servers.added_at
+			})
+			.from(Servers)
+			.$dynamic();
+
+		if (q) {
+			builder = builder.where(
+				or(like(Servers.name, `%${q}%`), like(Servers.short, `%${q}%`))
+			) as typeof builder;
+		}
+
+		if (newFlag) {
+			builder = builder.orderBy(desc(Servers.added_at)) as typeof builder;
+		} else if (trending) {
+			builder = builder.orderBy(desc(Servers.votes)) as typeof builder;
+		} else {
+			builder = builder.orderBy(desc(Servers.votes)) as typeof builder;
+		}
+
+		return builder.limit(limit).offset(offset);
+	})) as any[];
+
+	return rows.map(mapServerSummary);
+}
+
+export async function getServerByIdOrSlug(idOrSlug: string): Promise<ServerDetail | null> {
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select({
+				id: Servers.id,
+				name: Servers.name,
+				short: Servers.short,
+				desc: Servers.desc,
+				icon: Servers.icon,
+				votes: Servers.votes,
+				owner: Servers.owner,
+				slug: Servers.slug,
+				promoted: Servers.promoted,
+				badges: Servers.badges,
+				added_at: Servers.added_at
+			})
+			.from(Servers)
+			.where(or(eq(Servers.id, idOrSlug), eq(Servers.slug, idOrSlug)))
+			.limit(1)
+	)) as any[];
+
+	if (!rows || rows.length === 0) return null;
+	return mapServerDetail(rows[0]);
+}
+
+export async function getServersByOwner(ownerId: string): Promise<ServerSummary[]> {
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select({
+				id: Servers.id,
+				name: Servers.name,
+				short: Servers.short,
+				icon: Servers.icon,
+				votes: Servers.votes,
+				owner: Servers.owner,
+				slug: Servers.slug,
+				promoted: Servers.promoted,
+				badges: Servers.badges,
+				added_at: Servers.added_at
+			})
+			.from(Servers)
+			.where(eq(Servers.owner, ownerId))
+			.limit(50)
+	)) as any[];
+	return rows.map(mapServerSummary);
+}
+
+export async function upsertServer(data: {
+	id: string;
+	name: string;
+	short?: string;
+	desc?: string;
+	icon?: string | null;
+	owner: string;
+	slug?: string | null;
+}): Promise<void> {
+	await withDb((d: DrizzleDb) =>
+		d
+			.insert(Servers)
+			.values({
+				id: data.id,
+				name: data.name,
+				short: data.short ?? "Short description is not Updated.",
+				desc: data.desc ?? "Description is not updated.",
+				icon: data.icon ?? "",
+				owner: data.owner,
+				slug: data.slug ?? null,
+				added_at: new Date().toISOString()
+			})
+			.onConflictDoUpdate({
+				target: Servers.id,
+				set: {
+					name: data.name,
+					icon: data.icon ?? "",
+					owner: data.owner
+				}
+			})
+	);
+}
+
+export async function getAllServerSlugs(): Promise<
+	{ id: string; slug: string | null; added_at: string | null }[]
+> {
+	const rows = (await withDb((d: DrizzleDb) =>
+		d.select({ id: Servers.id, slug: Servers.slug, added_at: Servers.added_at }).from(Servers)
+	)) as any[];
+	return rows.map((r: any) => ({
+		id: String(r.id),
+		slug: r.slug ?? null,
+		added_at: r.added_at ?? null
+	}));
+}
+
+export async function getBotsByLibrary(lib: string, limit = 10): Promise<BotSummary[]> {
 	const rows = (await withDb((d: DrizzleDb) =>
 		d
 			.select(BOT_SUMMARY_SELECTION)

@@ -5,6 +5,7 @@ import { env } from "$env/dynamic/private";
 import { getDb } from "$lib/db";
 import { Users, Bots } from "$lib/db/schema";
 import { eq, inArray, like } from "drizzle-orm";
+import { getServersByOwner } from "$lib/db/queries";
 
 export const load: PageServerLoad = async ({ cookies, url }) => {
 	const key = cookies.get("key");
@@ -170,6 +171,23 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		}
 	}
 
+	// ── Owned servers ────────────────────────────────────────────────────────
+	let ownedServers: Array<{
+		id: string;
+		name: string;
+		short: string;
+		icon: string | null;
+		votes: number;
+		owner: string;
+		slug: string | null;
+	}> = [];
+
+	try {
+		ownedServers = await getServersByOwner(discordUser.id);
+	} catch {
+		// non-fatal
+	}
+
 	return {
 		// DB user (profile data, balance, etc.)
 		user: {
@@ -195,6 +213,8 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		},
 		// Bots this user owns
 		bots: ownedBots,
+		// Servers this user owns
+		servers: ownedServers,
 		// Vote history
 		recentVotes: recentVotes.map((v) => ({
 			botId: v.bot,
