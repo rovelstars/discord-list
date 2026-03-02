@@ -193,7 +193,7 @@
 				bind:this={gradientImgEl}
 				width="1280"
 				height="720"
-				class="w-auto h-auto opacity-0 -z-10"
+				class="w-auto h-auto opacity-0 -z-10 no-fade"
 				alt="bot background"
 				crossorigin="anonymous"
 			/>

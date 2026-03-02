@@ -7,6 +7,31 @@
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
 
+	// Stamp data-loaded on every <img> once it finishes loading so the global
+	// CSS fade-in in global.css can trigger. A single delegated listener on
+	// document covers every image across the entire app with zero per-component
+	// changes. Already-complete images are stamped synchronously on mount so
+	// cached images appear instantly with no visible animation delay.
+	function stampLoaded(img: HTMLImageElement) {
+		img.setAttribute("data-loaded", "");
+	}
+
+	function initImageFadeIn() {
+		// Stamp any images already in the DOM that have finished loading.
+		document.querySelectorAll<HTMLImageElement>("img").forEach((img) => {
+			if (img.complete) stampLoaded(img);
+		});
+
+		// Delegated listener — catches every future image load in one place.
+		function onLoad(e: Event) {
+			const target = e.target as HTMLElement;
+			if (target.tagName === "IMG") stampLoaded(target as HTMLImageElement);
+		}
+
+		document.addEventListener("load", onLoad, { capture: true });
+		return () => document.removeEventListener("load", onLoad, { capture: true });
+	}
+
 	// Progress bar — starts instantly on mousedown/touchstart so the user gets
 	// immediate feedback, then completes once $navigating clears.
 	let progress = 0;
@@ -127,6 +152,8 @@
 	// Detect it on mount, re-run all load functions, then strip the param
 	// so it doesn't linger in the address bar.
 	onMount(() => {
+		const cleanupFadeIn = initImageFadeIn();
+
 		if ($page.url.searchParams.get("auth") === "1") {
 			invalidateAll().then(() => {
 				const clean = new URL($page.url);
@@ -134,6 +161,8 @@
 				replaceState(clean.pathname + (clean.search || ""), {});
 			});
 		}
+
+		return cleanupFadeIn;
 	});
 </script>
 

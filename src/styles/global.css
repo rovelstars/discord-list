@@ -113,6 +113,38 @@
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 	}
+
+	/*
+	 * Global image fade-in
+	 * --------------------
+	 * All <img> elements start fully transparent. Once the browser has decoded
+	 * and painted the image it receives the [data-loaded] attribute (stamped by
+	 * the delegated load listener in +layout.svelte), which triggers the fade-in
+	 * animation. Already-cached images get the attribute synchronously on mount
+	 * so they appear instantly with no visible transition.
+	 *
+	 * Exemptions:
+	 *   • [data-loaded]        — already loaded, plays the fade-in once
+	 *   • .no-fade             — opt-out class for images that must be visible
+	 *                            immediately (e.g. ColorThief hidden helpers)
+	 *   • [aria-hidden="true"] — decorative images; skip the transition
+	 */
+	img:not([data-loaded]):not(.no-fade) {
+		opacity: 0;
+	}
+
+	img[data-loaded] {
+		animation: img-fade-in 0.25s ease-out forwards;
+	}
+
+	@keyframes img-fade-in {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
 }
 
 /* ── Prose overrides ────────────────────────────────────
