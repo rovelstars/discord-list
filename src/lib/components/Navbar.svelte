@@ -39,63 +39,66 @@
 		</a>
 	</div>
 
-	<!-- Nav links -->
-	<div class="flex items-center gap-5 px-4 flex-1">
-		<!-- Home -->
-		<a
-			href="/"
-			class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
-		>
-			<Home size={24} class="mt-0.5" />
-			<span class="ml-1 hidden md:inline">Home</span>
-		</a>
-
-		<!-- Bots -->
-		<a
-			href="/bots"
-			class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
-		>
-			<Bot size={24} class="mt-0.5" />
-			<span class="ml-1 hidden md:inline">Bots</span>
-		</a>
-
-		<!-- Top -->
-		<a
-			href="/top"
-			class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
-		>
-			<Trophy size={24} class="mt-0.5" />
-			<span class="ml-1 hidden md:inline">Top</span>
-		</a>
-
-		<!-- New -->
-		<a
-			href="/bots?new"
-			class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
-		>
-			<Sparkles size={24} class="mt-0.5" />
-			<span class="ml-1 hidden md:inline">New</span>
-		</a>
-
-		<!-- Categories -->
-		<a
-			href="/categories"
-			class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
-		>
-			<LayoutGrid size={24} class="mt-0.5" />
-			<span class="ml-1 hidden md:inline">Categories</span>
-		</a>
-
-		<!-- Dashboard — only when logged in -->
-		{#if user}
+	<!-- Spacer — always visible to push right-side items to the edge -->
+	<div class="flex-1">
+		<!-- Nav links — hidden on mobile (hamburger menu handles navigation there) -->
+		<div class="hidden md:flex items-center gap-5 px-4">
+			<!-- Home -->
 			<a
-				href="/dashboard"
+				href="/"
 				class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
 			>
-				<LayoutDashboard size={24} class="mt-0.5" />
-				<span class="ml-1 hidden md:inline">Dashboard</span>
+				<Home size={24} class="mt-0.5" />
+				<span class="ml-1 hidden md:inline">Home</span>
 			</a>
-		{/if}
+
+			<!-- Bots -->
+			<a
+				href="/bots"
+				class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
+			>
+				<Bot size={24} class="mt-0.5" />
+				<span class="ml-1 hidden md:inline">Bots</span>
+			</a>
+
+			<!-- Top -->
+			<a
+				href="/top"
+				class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
+			>
+				<Trophy size={24} class="mt-0.5" />
+				<span class="ml-1 hidden md:inline">Top</span>
+			</a>
+
+			<!-- New -->
+			<a
+				href="/bots?new"
+				class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
+			>
+				<Sparkles size={24} class="mt-0.5" />
+				<span class="ml-1 hidden md:inline">New</span>
+			</a>
+
+			<!-- Categories -->
+			<a
+				href="/categories"
+				class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
+			>
+				<LayoutGrid size={24} class="mt-0.5" />
+				<span class="ml-1 hidden md:inline">Categories</span>
+			</a>
+
+			<!-- Dashboard — only when logged in -->
+			{#if user}
+				<a
+					href="/dashboard"
+					class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
+				>
+					<LayoutDashboard size={24} class="mt-0.5" />
+					<span class="ml-1 hidden md:inline">Dashboard</span>
+				</a>
+			{/if}
+		</div>
 	</div>
 
 	<!-- Right side: theme selector + user / login -->
@@ -104,10 +107,10 @@
 		<ThemeSelector />
 
 		{#if user}
-			<!-- Avatar + username + coins + logout -->
-			<div class="flex items-center gap-2 mx-4">
-				<!-- Coins badge (hidden on xs) -->
-				<span class="hidden sm:flex items-center gap-1 text-sm font-semibold text-foreground">
+			<!-- Avatar + username + coins + logout (hidden on small screens) -->
+			<div class="hidden md:flex items-center gap-2 mx-4">
+				<!-- Coins badge -->
+				<span class="flex items-center gap-1 text-sm font-semibold text-foreground">
 					<img src="/assets/img/bot/moneh.svg" alt="coins" class="w-5 h-5" />
 					R$ {approx(user.bal)}
 				</span>
@@ -117,15 +120,15 @@
 					<img
 						src={avatarSrc}
 						alt="{user.username}'s avatar"
-						class="w-8 h-8 rounded-full border-2 border-primary object-cover"
+						class="inline w-8 h-8 rounded-full border-2 border-primary object-cover"
 						loading="lazy"
 					/>
 				</a>
 
-				<!-- Username (hidden on small) -->
+				<!-- Username -->
 				<a
 					href="/dashboard"
-					class="hidden md:inline text-sm font-semibold text-foreground hover:underline whitespace-nowrap mr-4"
+					class="inline text-sm font-semibold text-foreground hover:underline whitespace-nowrap mr-4"
 				>
 					{user.username}
 				</a>

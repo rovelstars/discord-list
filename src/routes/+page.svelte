@@ -124,22 +124,26 @@
 	<!-- ── Hero content ───────────────────────────────────────────────────── -->
 	<div class="relative z-20 flex flex-col items-center justify-center min-h-screen hero-content">
 		<!-- Frosted glass panel around all hero text + CTAs -->
-		<div class="px-24 py-12 rounded-3xl bg-card/50 border border-border backdrop-blur-2xl">
+		<div
+			class="px-5 py-8 sm:px-12 sm:py-10 md:px-24 md:py-12 rounded-2xl sm:rounded-3xl bg-card/50 border border-border backdrop-blur-2xl mx-3 sm:mx-0"
+		>
 			<!-- Logo -->
 			<img
 				src="/assets/img/bot/logo-512.png"
-				class="mx-auto w-20 h-20 mb-8 drop-shadow-2xl"
+				class="mx-auto w-14 h-14 sm:w-20 sm:h-20 mb-5 sm:mb-8 drop-shadow-2xl"
 				alt="Rovel Discord List"
 				loading="eager"
 			/>
 			<!-- Headline -->
-			<h1 class="font-heading text-5xl md:text-7xl font-extrabold text-center leading-tight mb-2">
+			<h1
+				class="font-heading text-3xl sm:text-5xl md:text-7xl font-extrabold text-center leading-tight mb-2"
+			>
 				Find the next
 			</h1>
 
 			<!-- Animated cycling word -->
 			<div
-				class="relative flex items-end justify-center font-heading text-5xl md:text-7xl font-extrabold text-primary mb-4"
+				class="relative flex items-end justify-center font-heading text-3xl sm:text-5xl md:text-7xl font-extrabold text-primary mb-4"
 				style="min-height: 1.25em; min-width: 6ch;"
 				aria-live="polite"
 				aria-label={currentWord}
@@ -157,20 +161,24 @@
 			</div>
 
 			<!-- Subtitle -->
-			<p class="font-heading text-4xl md:text-6xl font-extrabold text-center leading-tight mb-8">
+			<p
+				class="font-heading text-2xl sm:text-4xl md:text-6xl font-extrabold text-center leading-tight mb-6 sm:mb-8"
+			>
 				here.
 			</p>
 
-			<p class="text-foreground/70 text-lg md:text-xl font-semibold text-center max-w-xl mb-12">
+			<p
+				class="text-foreground/70 text-base sm:text-lg md:text-xl font-semibold text-center max-w-xl mb-8 sm:mb-12"
+			>
 				The ultimate Discord discovery platform — bots, servers, stickers, emojis, and communities,
 				all in one place.
 			</p>
 
 			<!-- CTA buttons -->
-			<div class="flex flex-wrap gap-4 justify-center">
+			<div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center">
 				<a
 					href="/bots"
-					class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-primary text-white font-bold text-lg shadow-lg shadow-primary/30 hover:bg-primary/90 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all duration-200"
+					class="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-primary text-white font-bold text-base sm:text-lg shadow-lg shadow-primary/30 hover:bg-primary/90 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all duration-200"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -190,7 +198,7 @@
 				</a>
 				<a
 					href="/bots?trending"
-					class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl border-2 border-primary text-primary font-bold text-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-200"
+					class="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-3 sm:py-3.5 rounded-xl border-2 border-primary text-primary font-bold text-base sm:text-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-200"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -210,7 +218,7 @@
 				</a>
 				<a
 					href="/bots?new"
-					class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl border border-border bg-background/80 backdrop-blur font-bold text-lg hover:bg-accent hover:-translate-y-0.5 transition-all duration-200"
+					class="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-3 sm:py-3.5 rounded-xl border border-border bg-background/80 backdrop-blur font-bold text-base sm:text-lg hover:bg-accent hover:-translate-y-0.5 transition-all duration-200"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"

@@ -21,7 +21,8 @@
 		}>;
 	};
 
-	const { bots } = data;
+	// Reactive — stays fresh after client-side navigations
+	$: ({ bots } = data);
 
 	const currentYear = new Date().getFullYear();
 
@@ -38,11 +39,11 @@
 		return String(rank);
 	}
 
-	// FAQ items for structured data / visible FAQ section
-	const faqs = [
+	// FAQ items — reactive so bots[0] is always defined (avoids SSR crash)
+	$: faqs = [
 		{
 			q: `What are the best Discord bots in ${currentYear}?`,
-			a: `The top Discord bots are ranked by community votes on Rovel Discord List. The current #1 bot is ${bots[0]?.username ?? "updated regularly"}. Rankings update in real time as users cast votes every 12 hours.`
+			a: `The top Discord bots are ranked by community votes on Rovel Discord List. The current #1 bot is ${bots?.[0]?.username ?? "updated regularly"}. Rankings update in real time as users cast votes every 12 hours.`
 		},
 		{
 			q: "How is the leaderboard ranking calculated?",
@@ -58,24 +59,22 @@
 		}
 	];
 
-	// JSON-LD: FAQPage schema
-	const faqSchema = {
+	$: faqSchema = {
 		"@context": "https://schema.org",
 		"@type": "FAQPage",
-		mainEntity: faqs.map((f) => ({
+		mainEntity: (faqs ?? []).map((f) => ({
 			"@type": "Question",
 			name: f.q,
 			acceptedAnswer: { "@type": "Answer", text: f.a }
 		}))
 	};
 
-	// JSON-LD: ItemList schema for the top 10
-	const listSchema = {
+	$: listSchema = {
 		"@context": "https://schema.org",
 		"@type": "ItemList",
 		name: `Top Discord Bots ${currentYear}`,
 		description: `The most voted Discord bots on Rovel Discord List as of ${currentYear}.`,
-		itemListElement: bots.slice(0, 10).map((bot) => ({
+		itemListElement: (bots ?? []).slice(0, 10).map((bot) => ({
 			"@type": "ListItem",
 			position: bot.rank,
 			name: bot.username,
@@ -92,9 +91,7 @@
 />
 
 <svelte:head>
-	<!-- FAQPage structured data -->
 	{@html `<script type="application/ld+json">${JSON.stringify(faqSchema)}</script>`}
-	<!-- ItemList structured data -->
 	{@html `<script type="application/ld+json">${JSON.stringify(listSchema)}</script>`}
 </svelte:head>
 
@@ -122,10 +119,12 @@
 <!-- ── Rank table ────────────────────────────────────────────────────────── -->
 {#if bots.length > 0}
 	<section class="max-w-5xl mx-auto px-4 pb-16">
-		<div class="bg-card border border-border rounded-xl overflow-scroll shadow-sm">
-			<!-- Table header -->
+		<div class="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
+			<!-- ── Desktop header (hidden on mobile) ── -->
 			<div
-				class="grid grid-cols-[3rem_1fr_6rem_6rem_5rem] gap-2 px-4 py-3 bg-muted/60 text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b border-border"
+				class="hidden sm:grid sm:grid-cols-[3rem_1fr_6rem_6rem_5rem] gap-2 px-4 py-3
+				       bg-muted/60 text-xs font-semibold uppercase tracking-wide
+				       text-muted-foreground border-b border-border"
 			>
 				<span class="text-center">#</span>
 				<span>Bot</span>
@@ -134,42 +133,52 @@
 				<span class="text-center">Action</span>
 			</div>
 
-			<!-- Rows -->
+			<!-- ── Rows ── -->
 			{#each bots as bot (bot.id)}
+				<!--
+					Desktop: 5-column grid  (sm+)
+					Mobile:  2-column grid — rank+avatar+name left, stats+action right
+				-->
 				<div
-					class="grid grid-cols-[3rem_1fr_6rem_6rem_5rem] gap-2 items-center px-4 py-3 border-b border-border last:border-0 hover:bg-muted/30 transition-colors group"
+					class="group border-b border-border last:border-0
+					       hover:bg-muted/30 transition-colors
+					       px-3 py-3 sm:px-4
+					       grid grid-cols-[2.25rem_1fr_auto] sm:grid-cols-[3rem_1fr_6rem_6rem_5rem]
+					       gap-x-2 gap-y-1 sm:gap-2 items-center"
 				>
 					<!-- Rank -->
 					<span
-						class="text-center font-bold text-lg {bot.rank <= 3
-							? 'text-2xl'
-							: 'text-muted-foreground'}"
+						class="text-center font-bold row-span-2 sm:row-span-1
+						       {bot.rank <= 3 ? 'text-2xl' : 'text-base text-muted-foreground'}"
 					>
 						{rankMedal(bot.rank)}
 					</span>
 
-					<!-- Avatar + name + short -->
-					<a href="/bots/{bot.slug}" class="flex items-center gap-3 min-w-0">
+					<!-- Avatar + name + short — spans col 2 on both layouts -->
+					<a href="/bots/{bot.slug}" class="flex items-center gap-2.5 min-w-0">
 						<img
 							src={getAvatarURL(bot.id, bot.avatar ?? "0", 48)}
 							alt="{bot.username} avatar"
-							class="w-10 h-10 rounded-full shrink-0 bg-muted"
+							class="w-9 h-9 sm:w-10 sm:h-10 rounded-full shrink-0 bg-muted"
 							loading="lazy"
 						/>
 						<div class="min-w-0">
 							<p
-								class="font-semibold text-sm text-foreground truncate group-hover:text-primary transition-colors"
+								class="font-semibold text-sm text-foreground truncate
+								       group-hover:text-primary transition-colors"
 							>
 								{bot.username}
 								{#if bot.discriminator && bot.discriminator !== "0"}
-									<span class="text-muted-foreground font-normal text-xs">#{bot.discriminator}</span
-									>
+									<span class="text-muted-foreground font-normal text-xs">
+										#{bot.discriminator}
+									</span>
 								{/if}
 							</p>
-							<p class="text-xs text-muted-foreground truncate">{bot.short}</p>
+							<p class="text-xs text-muted-foreground truncate leading-snug">{bot.short}</p>
 							{#if bot.lib}
 								<span
-									class="inline-block mt-0.5 text-[10px] font-medium bg-primary/10 text-primary px-1.5 py-0.5 rounded"
+									class="inline-block mt-0.5 text-[10px] font-medium
+									       bg-primary/10 text-primary px-1.5 py-0.5 rounded"
 								>
 									{bot.lib}
 								</span>
@@ -177,21 +186,85 @@
 						</div>
 					</a>
 
-					<!-- Votes -->
-					<span class="text-right font-semibold text-sm text-green-600 dark:text-green-400">
+					<!--
+						Mobile action button — top-right cell (col 3, row 1)
+						Hidden on sm+ (desktop has its own cell below)
+					-->
+					<div class="flex justify-end items-center sm:hidden">
+						<a
+							href="/bots/{bot.slug}/vote"
+							class="text-xs font-semibold px-3 py-1.5 rounded-md
+							       bg-primary/10 text-primary hover:bg-primary hover:text-white
+							       transition-colors whitespace-nowrap"
+						>
+							Vote
+						</a>
+					</div>
+
+					<!--
+						Mobile stats row — col 2–3, row 2
+						Shows votes + servers inline, hidden on sm+
+					-->
+					<div class="flex items-center gap-3 sm:hidden col-start-2 col-span-2 pb-0.5">
+						<span
+							class="flex items-center gap-1 text-xs font-semibold text-green-600 dark:text-green-400"
+						>
+							<!-- ChevronUp / vote icon -->
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-3 h-3"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2.5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<path d="m18 15-6-6-6 6" />
+							</svg>
+							{approx(bot.votes)}
+						</span>
+						<span class="flex items-center gap-1 text-xs text-muted-foreground font-medium">
+							<!-- Compass icon -->
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-3 h-3"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<circle cx="12" cy="12" r="10" />
+								<polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+							</svg>
+							{approx(bot.servers)} servers
+						</span>
+					</div>
+
+					<!-- Desktop: Votes cell (hidden on mobile) -->
+					<span
+						class="hidden sm:block text-right font-semibold text-sm
+						       text-green-600 dark:text-green-400"
+					>
 						{approx(bot.votes)}
 					</span>
 
-					<!-- Servers -->
-					<span class="text-right text-sm text-muted-foreground font-medium">
+					<!-- Desktop: Servers cell (hidden on mobile) -->
+					<span class="hidden sm:block text-right text-sm text-muted-foreground font-medium">
 						{approx(bot.servers)}
 					</span>
 
-					<!-- Vote CTA -->
-					<div class="flex justify-center">
+					<!-- Desktop: Vote CTA cell (hidden on mobile) -->
+					<div class="hidden sm:flex justify-center">
 						<a
 							href="/bots/{bot.slug}/vote"
-							class="text-xs font-semibold px-3 py-1.5 rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
+							class="text-xs font-semibold px-3 py-1.5 rounded-md
+							       bg-primary/10 text-primary hover:bg-primary hover:text-white
+							       transition-colors whitespace-nowrap"
 						>
 							Vote
 						</a>
