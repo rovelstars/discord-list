@@ -33,8 +33,11 @@ export const POST: RequestHandler = async ({ request }) => {
 			return new Response("No public key found in env", { status: 500 });
 		}
 
-		// Read raw body (ArrayBuffer) for signature verification
+		// Read raw body (ArrayBuffer) for signature verification.
+		// We decode it here too so the stream is only consumed once — calling
+		// request.json() after arrayBuffer() throws "Body has already been read".
 		const bodyBuffer = await request.arrayBuffer();
+		const bodyText = new TextDecoder().decode(bodyBuffer);
 
 		const signature = request.headers.get("x-signature-ed25519") ?? "";
 		const timestamp = request.headers.get("x-signature-timestamp") ?? "";
@@ -47,8 +50,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			return new Response("Invalid Request Signature", { status: 401 });
 		}
 
-		// Safe to parse JSON now that signature passed
-		const interaction = await request.json();
+		// Parse JSON from the already-decoded text instead of re-reading the body.
+		const interaction = JSON.parse(bodyText);
 
 		if (!interaction || typeof interaction !== "object") {
 			return new Response("Invalid interaction payload", { status: 400 });
