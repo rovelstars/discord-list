@@ -1,6 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
-import { getServerByIdOrSlug, getRandomServers } from "$lib/db/queries";
+import { getServerByIdOrSlug, getRandomServers, getBotsByServerId } from "$lib/db/queries";
 import { refreshServer } from "$lib/server-refresh";
 import { env } from "$env/dynamic/private";
 import { Marked } from "marked";
@@ -36,7 +36,10 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 
 	const layoutData = await parent();
 
-	const randomServers = await getRandomServers(6);
+	const [randomServers, relatedBots] = await Promise.all([
+		getRandomServers(6),
+		getBotsByServerId(server.id, 8)
+	]);
 
 	let emojis: Awaited<ReturnType<typeof getEmojisByGuild>> = [];
 	let emojiCount = 0;
@@ -101,6 +104,7 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 		server,
 		descHtml,
 		randomServers,
+		relatedBots,
 		emojis,
 		emojiCount,
 		stickers,

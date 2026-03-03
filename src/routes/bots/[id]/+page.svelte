@@ -3,6 +3,7 @@
 	import { browser } from "$app/environment";
 	import getAvatarURL from "$lib/get-avatar-url";
 	import BotCard from "$lib/components/BotCard.svelte";
+	import ServerCard from "$lib/components/ServerCard.svelte";
 	import TwemojiText from "$lib/components/TwemojiText.svelte";
 	import SEO from "$lib/components/SEO.svelte";
 	import BotComments from "$lib/components/BotComments.svelte";
@@ -35,6 +36,19 @@
 		descHtml: string | null;
 		randombots: Array<any>;
 		comments: Array<any>;
+		relatedServers: Array<{
+			id: string;
+			name: string;
+			short: string;
+			icon: string | null;
+			votes: number;
+			owner: string;
+			slug: string;
+			promoted: boolean;
+			badges: any[];
+			added_at: string | null;
+			member_count?: number | null;
+		}>;
 		user: {
 			id: string;
 			username: string;
@@ -45,7 +59,7 @@
 
 	// Reactive destructuring — re-runs whenever SvelteKit replaces `data` after
 	// a client-side navigation to a different bot ID.
-	$: ({ bot, randombots, comments, user } = data);
+	$: ({ bot, randombots, comments, relatedServers, user } = data);
 
 	// ── iframe sandboxing ─────────────────────────────────────────────────────
 
@@ -1123,6 +1137,43 @@
 		<div class="mt-6 bg-card rounded-lg px-6 py-2 shadow-sm">
 			<BotComments {comments} {user} botId={bot.id} owners={bot.owners ?? []} />
 		</div>
+
+		<!-- ── In These Servers ───────────────────────────────────────────────── -->
+		{#if relatedServers && relatedServers.length > 0}
+			<div class="mt-8 bg-card rounded-lg overflow-hidden border border-border">
+				<div class="px-5 py-4 border-b border-border flex items-center gap-3">
+					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-4 h-4 text-primary"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+							<polyline points="9 22 9 12 15 12 15 22" />
+						</svg>
+					</div>
+					<div>
+						<h2 class="text-base font-bold font-heading leading-none">
+							{bot.username} is in these servers
+						</h2>
+						<p class="text-xs text-muted-foreground mt-0.5">
+							Servers managed by this bot's owners, sorted by member count
+						</p>
+					</div>
+				</div>
+				<div class="p-4 flex flex-wrap justify-center gap-4">
+					{#each relatedServers as s (s.id)}
+						<ServerCard server={s} edit={false} />
+					{/each}
+				</div>
+			</div>
+		{/if}
 
 		<!-- You Might Also Like — mobile only (below the card, visible only on < xl) -->
 		{#if randombots && randombots.length > 0}

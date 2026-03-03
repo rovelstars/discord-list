@@ -7,6 +7,7 @@
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
 	import { browser } from "$app/environment";
+	import { getFingerprint } from "$lib/fingerprint/collect";
 
 	// Stamp data-loaded on every <img> once it finishes loading so the global
 	// CSS fade-in in global.css can trigger. A single delegated listener on
@@ -142,6 +143,65 @@
 		} | null;
 	};
 
+	// ── Fingerprint + visit tracking ──────────────────────────────────────────
+	// Runs once per session (guarded by sessionStorage) after the user is
+	// authenticated. Collects a browser fingerprint and POSTs it to the
+	// record-fingerprint endpoint, which handles:
+	//   1. FIFO device-slot management (max 5 fingerprints per user)
+	//   2. Cross-account fraud detection (shared-device penalty)
+	//   3. Referral soft-flagging (shared fp between referrer + referred)
+	//
+	// A separate visit-ping is fired to record today's site_visit in
+	// UserActivityLog for the retention milestone tracker. Both calls are
+	// completely fire-and-forget — they never block rendering or navigation.
+
+	const FP_SESSION_KEY = "rdl_fp_sent";
+	const VISIT_SESSION_KEY = "rdl_visit_sent";
+
+	async function sendFingerprintIfNeeded(userId: string): Promise<void> {
+		// Guard: only send once per browser session, not on every page navigation.
+		if (sessionStorage.getItem(FP_SESSION_KEY) === userId) return;
+
+		try {
+			const fp = await getFingerprint();
+			if (!fp) return; // SubtleCrypto unavailable (HTTP dev context)
+
+			const res = await fetch("/api/internals/record-fingerprint", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ fingerprint: fp }),
+				// keepalive so the request survives page unloads
+				keepalive: true
+			});
+
+			if (res.ok) {
+				sessionStorage.setItem(FP_SESSION_KEY, userId);
+			}
+		} catch {
+			// Network errors are completely silent — never surface to the user.
+		}
+	}
+
+	async function sendVisitIfNeeded(userId: string): Promise<void> {
+		// One visit ping per calendar day per session tab.
+		const todayKey = `${VISIT_SESSION_KEY}_${new Date().toISOString().slice(0, 10)}`;
+		if (sessionStorage.getItem(todayKey) === userId) return;
+
+		try {
+			const res = await fetch("/api/internals/record-visit", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				keepalive: true
+			});
+
+			if (res.ok) {
+				sessionStorage.setItem(todayKey, userId);
+			}
+		} catch {
+			// Silent — visit tracking is best-effort only.
+		}
+	}
+
 	// Re-run layout server load after coming back from logout so the
 	// navbar updates immediately without requiring a manual refresh.
 	afterNavigate(({ from }) => {
@@ -165,7 +225,27 @@
 			});
 		}
 
+		// Fire fingerprint + visit tracking for authenticated users.
+		// Deferred with setTimeout(0) so it never delays first paint.
+		if (data.user) {
+			const uid = data.user.id;
+			setTimeout(() => {
+				sendFingerprintIfNeeded(uid);
+				sendVisitIfNeeded(uid);
+			}, 0);
+		}
+
 		return cleanupFadeIn;
+	});
+
+	// Re-fire visit tracking whenever the user navigates to a new page within
+	// the same session (SvelteKit client-side routing) and they are logged in.
+	// The session-key guard in sendVisitIfNeeded ensures we only record one
+	// visit per calendar day regardless of how many pages they browse.
+	afterNavigate(() => {
+		if (browser && data.user) {
+			sendVisitIfNeeded(data.user.id);
+		}
 	});
 </script>
 

@@ -10,6 +10,7 @@ import { eq } from "drizzle-orm";
 import SendLog from "@/bot/log";
 import joinServer from "$lib/functions/join-server";
 import { assignUserRole } from "$lib/assign-guild-role";
+import { createReferral, resolveReferralCode } from "$lib/db/queries/referrals";
 
 export const GET: RequestHandler = async (event) => {
 	const { request, cookies } = event;
@@ -149,6 +150,44 @@ export const GET: RequestHandler = async (event) => {
 				nitro: (userData as any).premium_type ?? 0
 			};
 			await db.insert(Users).values(newUser);
+
+			// ── Referral processing (new users only) ─────────────────────────────
+			// The referral code is stored in the "ref" cookie by the login page
+			// when the user clicks a ?ref=<code> invite link. We read it once here
+			// and delete it so it doesn't linger across future logins.
+			const refCode = cookies.get("ref")?.trim();
+			if (refCode) {
+				cookies.delete("ref", { path: "/" });
+				try {
+					const referrerId = await resolveReferralCode(refCode);
+					// Only proceed if the code resolves to a real, different user.
+					if (referrerId && referrerId !== userData.id) {
+						const emailVerified = Boolean((userData as any).verified);
+						const result = await createReferral(
+							referrerId,
+							userData.id,
+							refCode,
+							userData.id, // Discord snowflake == user ID
+							emailVerified
+							// fingerprint not available server-side at this point;
+							// the client will POST it to /api/internals/record-fingerprint
+							// after login which will soft-flag the referral if needed.
+						);
+						if (result) {
+							console.info(
+								`[auth] Referral created: ${referrerId} → ${userData.id} ` +
+									`status=${result.status} ` +
+									`(age=${result.accountOldEnough}, email=${result.emailVerified}, ` +
+									`fpMatch=${result.fingerprintMatch})`
+							);
+						}
+					}
+				} catch (refErr) {
+					// Never let referral logic break the login flow.
+					console.warn("[auth] Referral processing failed (non-fatal):", refErr);
+				}
+			}
+
 			// Send welcome log (best-effort)
 			try {
 				await SendLog({

@@ -53,3 +53,10 @@
 # 15 minutes is the maximum on the free tier.
 [functions."scheduled-cdn-refresh"]
   timeout = 900
+
+# How long Netlify allows the settle-rewards scheduled function to run.
+# The daily reward settlement pass iterates over all active referrals and
+# may perform many sequential DB writes; 15 minutes (900s) is the free-tier
+# maximum and comfortably covers even large referral volumes.
+[functions."settle-rewards"]
+  timeout = 900

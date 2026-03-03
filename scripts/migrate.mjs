@@ -166,7 +166,8 @@ const SCHEMA = [
         "donate"        TEXT,
         "invite"        TEXT,
         "slug"          TEXT,
-        "added_at"      TEXT    NOT NULL DEFAULT ${NOW_EXPR}
+        "added_at"      TEXT    NOT NULL DEFAULT ${NOW_EXPR},
+        "guild_ids"     TEXT             DEFAULT '[]'
       )
     `,
 		columns: [
@@ -195,7 +196,8 @@ const SCHEMA = [
 			{ name: "donate", type: "TEXT" },
 			{ name: "invite", type: "TEXT" },
 			{ name: "slug", type: "TEXT" },
-			{ name: "added_at", type: "TEXT", notNull: true, default: NOW_EXPR }
+			{ name: "added_at", type: "TEXT", notNull: true, default: NOW_EXPR },
+			{ name: "guild_ids", type: "TEXT", default: "'[]'" }
 		]
 	},
 
@@ -260,7 +262,8 @@ const SCHEMA = [
         "badges"   TEXT    NOT NULL DEFAULT '[]',
         "slug"     TEXT,
         "added_at" TEXT    NOT NULL DEFAULT ${NOW_EXPR},
-        "votes"    INTEGER NOT NULL DEFAULT 0
+        "votes"    INTEGER NOT NULL DEFAULT 0,
+        "bot_ids"  TEXT             DEFAULT '[]'
       )
     `,
 		columns: [
@@ -278,7 +281,8 @@ const SCHEMA = [
 			{ name: "badges", type: "TEXT", notNull: true, default: "'[]'" },
 			{ name: "slug", type: "TEXT" },
 			{ name: "added_at", type: "TEXT", notNull: true, default: NOW_EXPR },
-			{ name: "votes", type: "INTEGER", notNull: true, default: "0" }
+			{ name: "votes", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "bot_ids", type: "TEXT", default: "'[]'" }
 		]
 	},
 
@@ -379,6 +383,129 @@ const SCHEMA = [
 			{ name: "dc", type: "INTEGER", notNull: true, default: "0" },
 			{ name: "added_at", type: "TEXT", notNull: true, default: NOW_EXPR },
 			{ name: "guild", type: "TEXT" }
+		]
+	},
+
+	// ── Referrals ─────────────────────────────────────────────────────────────
+	// One row per referral relationship. Tracks who referred whom, the lifecycle
+	// state of the R$100 sign-up reward, and any fraud signals detected at
+	// sign-up time (fingerprint match, account age, email verification).
+	{
+		name: "Referrals",
+		sql: `
+      CREATE TABLE IF NOT EXISTS "Referrals" (
+        "id"                        TEXT    NOT NULL PRIMARY KEY,
+        "referrer_id"               TEXT    NOT NULL,
+        "referred_id"               TEXT    NOT NULL,
+        "code"                      TEXT    NOT NULL,
+        "reward_status"             TEXT    NOT NULL DEFAULT 'pending',
+        "fingerprint_match"         INTEGER NOT NULL DEFAULT 0,
+        "referred_account_age_days" INTEGER,
+        "referred_email_verified"   INTEGER NOT NULL DEFAULT 0,
+        "created_at"                TEXT    NOT NULL DEFAULT ${NOW_EXPR},
+        "settled_at"                TEXT
+      )
+    `,
+		columns: [
+			{ name: "referrer_id", type: "TEXT", notNull: true, default: "''" },
+			{ name: "referred_id", type: "TEXT", notNull: true, default: "''" },
+			{ name: "code", type: "TEXT", notNull: true, default: "''" },
+			{ name: "reward_status", type: "TEXT", notNull: true, default: "'pending'" },
+			{ name: "fingerprint_match", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "referred_account_age_days", type: "INTEGER" },
+			{ name: "referred_email_verified", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "created_at", type: "TEXT", notNull: true, default: NOW_EXPR },
+			{ name: "settled_at", type: "TEXT" }
+		]
+	},
+
+	// ── ReferralMilestones ────────────────────────────────────────────────────
+	// Tracks multi-stage bonus rewards: retention_daily (R$50 × up to 5 days),
+	// vote_20 (R$50 flat), server_bounty (R$500), and self_listing_100/500.
+	// Each row is one milestone instance; the SettleRewards function writes rows
+	// and then calls creditReward() to debit R$ from the system to the user.
+	{
+		name: "ReferralMilestones",
+		sql: `
+      CREATE TABLE IF NOT EXISTS "ReferralMilestones" (
+        "id"             TEXT    NOT NULL PRIMARY KEY,
+        "referral_id"    TEXT,
+        "user_id"        TEXT    NOT NULL,
+        "milestone_type" TEXT    NOT NULL,
+        "reward_amount"  INTEGER NOT NULL,
+        "status"         TEXT    NOT NULL DEFAULT 'pending',
+        "meta"           TEXT             DEFAULT '{}',
+        "created_at"     TEXT    NOT NULL DEFAULT ${NOW_EXPR},
+        "paid_at"        TEXT
+      )
+    `,
+		columns: [
+			{ name: "referral_id", type: "TEXT" },
+			{ name: "user_id", type: "TEXT", notNull: true, default: "''" },
+			{ name: "milestone_type", type: "TEXT", notNull: true, default: "''" },
+			{ name: "reward_amount", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "status", type: "TEXT", notNull: true, default: "'pending'" },
+			{ name: "meta", type: "TEXT", default: "'{}'" },
+			{ name: "created_at", type: "TEXT", notNull: true, default: NOW_EXPR },
+			{ name: "paid_at", type: "TEXT" }
+		]
+	},
+
+	// ── UserFingerprints ──────────────────────────────────────────────────────
+	// Stores browser/device fingerprints for anti-fraud purposes.
+	// Maximum 5 fingerprints per user; FIFO eviction (oldest last_seen dropped)
+	// is enforced at the application layer when a 6th device would be added.
+	// The composite primary key (user_id, fingerprint) enforces uniqueness so
+	// the same physical device never creates duplicate rows for one user.
+	{
+		name: "UserFingerprints",
+		sql: `
+      CREATE TABLE IF NOT EXISTS "UserFingerprints" (
+        "id"          TEXT    NOT NULL PRIMARY KEY,
+        "user_id"     TEXT    NOT NULL,
+        "fingerprint" TEXT    NOT NULL,
+        "first_seen"  TEXT    NOT NULL DEFAULT ${NOW_EXPR},
+        "last_seen"   TEXT    NOT NULL DEFAULT ${NOW_EXPR},
+        "trust_score" INTEGER NOT NULL DEFAULT 50,
+        UNIQUE ("user_id", "fingerprint")
+      )
+    `,
+		columns: [
+			{ name: "user_id", type: "TEXT", notNull: true, default: "''" },
+			{ name: "fingerprint", type: "TEXT", notNull: true, default: "''" },
+			{ name: "first_seen", type: "TEXT", notNull: true, default: NOW_EXPR },
+			{ name: "last_seen", type: "TEXT", notNull: true, default: NOW_EXPR },
+			{ name: "trust_score", type: "INTEGER", notNull: true, default: "50" }
+		]
+	},
+
+	// ── UserActivityLog ───────────────────────────────────────────────────────
+	// Append-only log of "site_visit" and "vote" events used by SettleRewards
+	// to evaluate the retention (5 visit days) and voting (20 unique entities)
+	// milestones within a referred user's first 7 days.
+	// Deduplication is enforced at the application layer:
+	//   site_visit — one row per (user_id, event_day).
+	//   vote       — one row per (user_id, entity_id) across all days.
+	{
+		name: "UserActivityLog",
+		sql: `
+      CREATE TABLE IF NOT EXISTS "UserActivityLog" (
+        "id"          TEXT NOT NULL PRIMARY KEY,
+        "user_id"     TEXT NOT NULL,
+        "event_type"  TEXT NOT NULL,
+        "event_day"   TEXT NOT NULL,
+        "entity_id"   TEXT,
+        "entity_type" TEXT,
+        "created_at"  TEXT NOT NULL DEFAULT ${NOW_EXPR}
+      )
+    `,
+		columns: [
+			{ name: "user_id", type: "TEXT", notNull: true, default: "''" },
+			{ name: "event_type", type: "TEXT", notNull: true, default: "''" },
+			{ name: "event_day", type: "TEXT", notNull: true, default: "''" },
+			{ name: "entity_id", type: "TEXT" },
+			{ name: "entity_type", type: "TEXT" },
+			{ name: "created_at", type: "TEXT", notNull: true, default: NOW_EXPR }
 		]
 	}
 ];
@@ -610,7 +737,68 @@ const INDEXES = [
 
 	// Speed up "animated only" / "static only" format filter
 	`CREATE INDEX IF NOT EXISTS "idx_stickers_format"
-     ON "Stickers" ("format")`
+     ON "Stickers" ("format")`,
+
+	// ── Referrals indexes ─────────────────────────────────────────────────────
+
+	// Look up all referrals sent by a specific referrer (dashboard + SettleRewards).
+	`CREATE INDEX IF NOT EXISTS "idx_referrals_referrer_id"
+     ON "Referrals" ("referrer_id")`,
+
+	// Look up whether a user has already been referred (duplicate-referral guard).
+	`CREATE UNIQUE INDEX IF NOT EXISTS "idx_referrals_referred_id"
+     ON "Referrals" ("referred_id")`,
+
+	// Fetch all "payable" rows for Pass 1 of SettleRewards.
+	`CREATE INDEX IF NOT EXISTS "idx_referrals_reward_status"
+     ON "Referrals" ("reward_status")`,
+
+	// Composite for the active-window query in Pass 2 of SettleRewards:
+	//   WHERE reward_status IN ('payable','paid') AND created_at >= <cutoff>
+	`CREATE INDEX IF NOT EXISTS "idx_referrals_status_created"
+     ON "Referrals" ("reward_status", "created_at" DESC)`,
+
+	// ── ReferralMilestones indexes ────────────────────────────────────────────
+
+	// Primary lookup: all milestones for a given referral (SettleRewards + dashboard).
+	`CREATE INDEX IF NOT EXISTS "idx_milestones_referral_id"
+     ON "ReferralMilestones" ("referral_id")`,
+
+	// Fetch all milestones that need to be paid out (status = 'pending').
+	`CREATE INDEX IF NOT EXISTS "idx_milestones_status"
+     ON "ReferralMilestones" ("status")`,
+
+	// Composite used by milestoneExists() for type-level dedup checks.
+	`CREATE INDEX IF NOT EXISTS "idx_milestones_referral_type"
+     ON "ReferralMilestones" ("referral_id", "milestone_type")`,
+
+	// ── UserFingerprints indexes ──────────────────────────────────────────────
+
+	// getUserFingerprints() — fetch all fingerprints for a user ordered by last_seen.
+	// Also used for FIFO eviction: ORDER BY last_seen ASC, LIMIT 1.
+	`CREATE INDEX IF NOT EXISTS "idx_fingerprints_user_last_seen"
+     ON "UserFingerprints" ("user_id", "last_seen" ASC)`,
+
+	// getUsersWithFingerprint() — find all users sharing a fingerprint (fraud detection).
+	`CREATE INDEX IF NOT EXISTS "idx_fingerprints_fp"
+     ON "UserFingerprints" ("fingerprint")`,
+
+	// ── UserActivityLog indexes ───────────────────────────────────────────────
+
+	// countVisitDaysInWindow() — count distinct visit days within a date range.
+	// Covers: WHERE user_id = ? AND event_type = 'site_visit' AND event_day BETWEEN …
+	`CREATE INDEX IF NOT EXISTS "idx_activity_user_type_day"
+     ON "UserActivityLog" ("user_id", "event_type", "event_day")`,
+
+	// countUniqueVotesInWindow() — count distinct entity votes within a date range.
+	// Covers: WHERE user_id = ? AND event_type = 'vote' AND event_day BETWEEN …
+	`CREATE INDEX IF NOT EXISTS "idx_activity_user_vote_entity"
+     ON "UserActivityLog" ("user_id", "event_type", "entity_id")`,
+
+	// recordSiteVisit() idempotency check: has this user visited today already?
+	`CREATE INDEX IF NOT EXISTS "idx_activity_visit_dedup"
+     ON "UserActivityLog" ("user_id", "event_day")
+     WHERE "event_type" = 'site_visit'`
 ];
 
 async function ensureIndexes(client, dryRun) {

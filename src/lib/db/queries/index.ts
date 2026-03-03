@@ -137,6 +137,7 @@ export type ServerSummary = {
 	promoted: boolean;
 	badges: any[];
 	added_at: string | null;
+	member_count?: number | null;
 };
 
 export type ServerDetail = ServerSummary & {
@@ -1207,6 +1208,133 @@ export async function getBotsByLibrary(lib: string, limit = 10): Promise<BotSumm
  * and the tags JSON column. Used by /categories/[slug].
  * Excludes bots with default avatars (0-4) to surface higher-quality results.
  */
+/**
+ * Given a bot ID, return up to `limit` listed servers where that bot is
+ * confirmed present (ids stored in the bot's `guild_ids` JSON column),
+ * ordered by member_count descending.
+ * Used on bot detail pages to show "this bot is in these servers".
+ */
+export async function getServersByBotId(botId: string, limit = 8): Promise<ServerSummary[]> {
+	// Fetch the bot's guild_ids list first
+	const botRows = (await withDb((d: DrizzleDb) =>
+		d.select({ guild_ids: Bots.guild_ids }).from(Bots).where(eq(Bots.id, botId)).limit(1)
+	)) as any[];
+
+	if (!botRows || botRows.length === 0) return [];
+
+	const raw = botRows[0].guild_ids;
+	const guildIds: string[] = Array.isArray(raw) ? raw : parseJson<string[]>(raw, []);
+	if (guildIds.length === 0) return [];
+
+	// Slice to limit before the DB query to keep the IN clause small
+	const ids = guildIds.slice(0, limit * 4); // over-fetch slightly then sort
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select({
+				id: Servers.id,
+				name: Servers.name,
+				short: Servers.short,
+				icon: Servers.icon,
+				votes: Servers.votes,
+				owner: Servers.owner,
+				slug: Servers.slug,
+				promoted: Servers.promoted,
+				badges: Servers.badges,
+				added_at: Servers.added_at,
+				member_count: Servers.member_count
+			})
+			.from(Servers)
+			.where(inArray(Servers.id, ids))
+			.orderBy(desc(Servers.member_count))
+			.limit(limit)
+	)) as any[];
+
+	return rows.map(
+		(row: any): ServerSummary => ({
+			...mapServerSummary(row),
+			member_count: row.member_count != null ? Number(row.member_count) : null
+		})
+	);
+}
+
+/**
+ * Given a server ID, return up to `limit` bots that are confirmed present in
+ * that server (ids stored in the server's `bot_ids` JSON column), ordered by
+ * servers count descending.
+ * Used on server detail pages to show "this server has these bots".
+ */
+export async function getBotsByServerId(serverId: string, limit = 8): Promise<BotSummary[]> {
+	// Fetch the server's bot_ids list first
+	const serverRows = (await withDb((d: DrizzleDb) =>
+		d.select({ bot_ids: Servers.bot_ids }).from(Servers).where(eq(Servers.id, serverId)).limit(1)
+	)) as any[];
+
+	if (!serverRows || serverRows.length === 0) return [];
+
+	const raw = serverRows[0].bot_ids;
+	const botIds: string[] = Array.isArray(raw) ? raw : parseJson<string[]>(raw, []);
+	if (botIds.length === 0) return [];
+
+	const ids = botIds.slice(0, limit * 4);
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select(BOT_SUMMARY_SELECTION)
+			.from(Bots)
+			.where(inArray(Bots.id, ids))
+			.orderBy(desc(Bots.servers))
+			.limit(limit)
+	)) as any[];
+
+	return rows.map(mapBotSummary);
+}
+
+/**
+ * Persist the set of listed server IDs a bot is confirmed to be in.
+ * Called by the sync-bot-memberships internal endpoint after checking Discord.
+ */
+export async function updateBotGuildIds(botId: string, guildIds: string[]): Promise<void> {
+	await withDb((d: DrizzleDb) =>
+		d
+			.update(Bots)
+			.set({ guild_ids: guildIds as any })
+			.where(eq(Bots.id, botId))
+	);
+}
+
+/**
+ * Persist the set of bot IDs confirmed to be members of a server.
+ * Called by the sync-bot-memberships internal endpoint after checking Discord.
+ */
+export async function updateServerBotIds(serverId: string, botIds: string[]): Promise<void> {
+	await withDb((d: DrizzleDb) =>
+		d
+			.update(Servers)
+			.set({ bot_ids: botIds as any })
+			.where(eq(Servers.id, serverId))
+	);
+}
+
+/**
+ * Return every (serverId, botId) pair needed by sync-bot-memberships.
+ * Fetches all server IDs and all bot IDs in two cheap SELECTs.
+ */
+export async function getAllServerAndBotIds(): Promise<{
+	serverIds: string[];
+	botIds: string[];
+}> {
+	const [serverRows, botRows] = await Promise.all([
+		withDb((d: DrizzleDb) => d.select({ id: Servers.id }).from(Servers)) as Promise<
+			{ id: string }[]
+		>,
+		withDb((d: DrizzleDb) => d.select({ id: Bots.id }).from(Bots)) as Promise<{ id: string }[]>
+	]);
+
+	return {
+		serverIds: serverRows.map((r) => String(r.id)),
+		botIds: botRows.map((r) => String(r.id))
+	};
+}
+
 export async function getBotsByCategory(keyword: string, limit = 48): Promise<BotSummary[]> {
 	const rows = (await withDb((d: DrizzleDb) =>
 		d

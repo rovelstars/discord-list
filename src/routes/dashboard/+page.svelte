@@ -8,6 +8,38 @@
 	import getAvatarURL from "$lib/get-avatar-url";
 	import SEO from "$lib/components/SEO.svelte";
 
+	// ── Referral milestone type helpers ──────────────────────────────────────
+	type MilestoneType =
+		| "retention_daily"
+		| "vote_20"
+		| "signup_welcome"
+		| "engagement_sprint_referred"
+		| "server_bounty"
+		| "server_bounty_referred"
+		| "self_listing_100"
+		| "self_listing_500";
+	type MilestoneStatus = "pending" | "paid" | "flagged";
+	type RewardStatus = "pending" | "payable" | "paid" | "flagged" | "rejected";
+
+	interface Milestone {
+		id: string;
+		milestone_type: MilestoneType;
+		reward_amount: number;
+		status: MilestoneStatus;
+		meta: Record<string, unknown>;
+		created_at: string;
+		paid_at: string | null;
+	}
+
+	interface ReferralRow {
+		id: string;
+		referred_id: string;
+		reward_status: RewardStatus;
+		fingerprint_match: boolean;
+		created_at: string;
+		milestones: Milestone[];
+	}
+
 	export let data: {
 		user: {
 			id: string;
@@ -71,6 +103,29 @@
 			guild: string | null;
 			submitter: string | null;
 		}>;
+		referralLink: string;
+		referralsSent: ReferralRow[];
+		referralStats: {
+			total: number;
+			paid: number;
+			pending: number;
+			flagged: number;
+			rejected: number;
+			totalEarned: number;
+			pendingEarnable: number;
+		};
+		wasReferredBy: { referrer_id: string; created_at: string; reward_status: string } | null;
+		earnedAsReferred: Array<{
+			id: string;
+			referral_id: string | null;
+			milestone_type: MilestoneType;
+			reward_amount: number;
+			status: MilestoneStatus;
+			meta: Record<string, unknown>;
+			created_at: string;
+			paid_at: string | null;
+		}>;
+		totalEarnedAsReferred: number;
 	};
 
 	const {
@@ -81,11 +136,25 @@
 		submittedEmojis = [],
 		recentVotes,
 		totalVotesCast,
-		expiredCount
+		expiredCount,
+		referralLink,
+		referralsSent = [],
+		referralStats,
+		wasReferredBy,
+		earnedAsReferred = [],
+		totalEarnedAsReferred = 0
 	} = data;
 
 	// ── Active section ────────────────────────────────────────────────────────
-	type Section = "bots" | "servers" | "emojis" | "profile" | "account" | "votes" | "danger";
+	type Section =
+		| "bots"
+		| "servers"
+		| "emojis"
+		| "profile"
+		| "account"
+		| "votes"
+		| "referrals"
+		| "danger";
 	let activeSection: Section = "bots";
 
 	// ── Modals ────────────────────────────────────────────────────────────────
@@ -183,8 +252,152 @@
 		{ id: "profile", label: "Profile", icon: "user" },
 		{ id: "account", label: "Account", icon: "shield" },
 		{ id: "votes", label: "Vote History", icon: "votes" },
+		{ id: "referrals", label: "Referrals", icon: "referrals" },
 		{ id: "danger", label: "Danger Zone", icon: "danger" }
 	];
+
+	// ── Referral helpers ──────────────────────────────────────────────────────
+
+	// Copy-link state
+	let linkCopied = false;
+	let linkCopyTimer: ReturnType<typeof setTimeout> | null = null;
+
+	async function copyReferralLink() {
+		try {
+			await navigator.clipboard.writeText(referralLink);
+			linkCopied = true;
+			if (linkCopyTimer) clearTimeout(linkCopyTimer);
+			linkCopyTimer = setTimeout(() => (linkCopied = false), 2500);
+		} catch {
+			// fallback: select the input text
+		}
+	}
+
+	// Which referral row is expanded in the milestone detail drawer
+	let expandedReferralId: string | null = null;
+	function toggleReferral(id: string) {
+		expandedReferralId = expandedReferralId === id ? null : id;
+	}
+
+	// Human-readable milestone label
+	function milestoneLabel(type: MilestoneType, meta: Record<string, unknown>): string {
+		switch (type) {
+			case "retention_daily":
+				if ((meta as any).type === "signup_reward") return "Welcome Handshake";
+				return `Engagement Sprint — Day ${(meta as any).day ?? "?"}`;
+			case "signup_welcome":
+				return "Welcome Bonus";
+			case "engagement_sprint_referred":
+				return `Engagement Sprint — Day ${(meta as any).day ?? "?"} (Your Bonus)`;
+			case "vote_20":
+				return "20-Vote Achievement";
+			case "server_bounty":
+				return "Growth Bounty — Referrer";
+			case "server_bounty_referred":
+				return "Growth Bounty — Your Reward";
+			case "self_listing_100":
+				return "Self-Listing Reward (50+ members)";
+			case "self_listing_500":
+				return "Self-Listing Reward (200+ members)";
+			default:
+				return type;
+		}
+	}
+
+	// Status badge colours
+	function statusColor(s: RewardStatus | MilestoneStatus): string {
+		if (s === "paid")
+			return "bg-green-500/15 text-green-600 dark:text-green-400 border-green-500/25";
+		if (s === "flagged")
+			return "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/25";
+		if (s === "rejected") return "bg-red-500/15 text-red-500 border-red-500/25";
+		if (s === "payable")
+			return "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/25";
+		return "bg-muted text-muted-foreground border-border";
+	}
+
+	function statusLabel(s: string): string {
+		if (s === "payable") return "Queued";
+		return s.charAt(0).toUpperCase() + s.slice(1);
+	}
+
+	// Milestone icon path
+	function milestoneIcon(type: MilestoneType, meta: Record<string, unknown>): string {
+		if (type === "retention_daily" && (meta as any).type === "signup_reward")
+			return "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z";
+		if (type === "signup_welcome")
+			return "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z";
+		if (type === "retention_daily" || type === "engagement_sprint_referred")
+			return "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z";
+		if (type === "vote_20") return "m18 15-6-6-6 6";
+		if (
+			type === "server_bounty" ||
+			type === "server_bounty_referred" ||
+			type === "self_listing_100" ||
+			type === "self_listing_500"
+		)
+			return "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10";
+		return "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z";
+	}
+
+	// Progress bar for 5-day retention window per referral (referrer side)
+	function retentionDaysPaid(r: ReferralRow): number {
+		return r.milestones.filter(
+			(m) =>
+				m.milestone_type === "retention_daily" &&
+				m.status === "paid" &&
+				(m.meta as any).type !== "signup_reward" &&
+				(m.meta as any).day > 0
+		).length;
+	}
+
+	function hasSignupRewardPaid(r: ReferralRow): boolean {
+		return r.milestones.some(
+			(m) =>
+				m.milestone_type === "retention_daily" &&
+				m.status === "paid" &&
+				(m.meta as any).type === "signup_reward"
+		);
+	}
+
+	function hasVote20Paid(r: ReferralRow): boolean {
+		return r.milestones.some((m) => m.milestone_type === "vote_20" && m.status === "paid");
+	}
+
+	function hasServerBountyPaid(r: ReferralRow): boolean {
+		return r.milestones.some((m) => m.milestone_type === "server_bounty" && m.status === "paid");
+	}
+
+	function totalEarnedFromReferral(r: ReferralRow): number {
+		// Only count the referrer-side milestones for the "earned as referrer" display
+		return r.milestones
+			.filter((m) => m.status === "paid" && (m.meta as any).recipient !== "referred")
+			.reduce((s, m) => s + m.reward_amount, 0);
+	}
+
+	// Label for referred-user milestone types shown in their rewards panel
+	function referredMilestoneLabel(type: MilestoneType, meta: Record<string, unknown>): string {
+		switch (type) {
+			case "signup_welcome":
+				return "Welcome Bonus";
+			case "engagement_sprint_referred":
+				return `Engagement Sprint — Day ${(meta as any).day ?? "?"}`;
+			case "server_bounty_referred":
+				return "Growth Bounty (Listed Server)";
+			default:
+				return milestoneLabel(type, meta);
+		}
+	}
+
+	function shortId(id: string): string {
+		return id.length > 10 ? id.slice(0, 6) + "…" + id.slice(-4) : id;
+	}
+
+	function fmtDate(iso: string): string {
+		const d = new Date(iso);
+		if (isNaN(d.getTime())) return iso;
+		return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+	}
 </script>
 
 <SEO
@@ -486,6 +699,22 @@
 												<line x1="9" y1="9" x2="9.01" y2="9" />
 												<line x1="15" y1="9" x2="15.01" y2="9" />
 											</svg>
+										{:else if item.icon === "referrals"}
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="w-3.5 h-3.5"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+												<circle cx="9" cy="7" r="4" />
+												<path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+												<path d="M16 3.13a4 4 0 0 1 0 7.75" />
+											</svg>
 										{:else if item.icon === "danger"}
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -538,6 +767,12 @@
 											class="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 opacity-70"
 										>
 											{submittedEmojis.length}
+										</span>
+									{:else if item.id === "referrals" && referralStats.total > 0 && activeSection !== "referrals"}
+										<span
+											class="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 opacity-70"
+										>
+											{referralStats.total}
 										</span>
 									{/if}
 								</button>
@@ -1648,6 +1883,868 @@
 					<!-- ════════════════════════════════════════════════════════════ -->
 					<!-- DANGER ZONE                                                  -->
 					<!-- ════════════════════════════════════════════════════════════ -->
+				{:else if activeSection === "referrals"}
+					<!-- ══════════════════════════════════════════════════════════════════
+					     REFERRALS SECTION
+					     ══════════════════════════════════════════════════════════════════ -->
+
+					<!-- ── Referral link card ─────────────────────────────────────────── -->
+					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+						<div class="px-6 py-4 border-b border-border flex items-center gap-2">
+							<div
+								class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="w-4 h-4 text-amber-500"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+									<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+								</svg>
+							</div>
+							<div>
+								<h2 class="text-base font-bold font-heading leading-none">Your Referral Link</h2>
+								<p class="text-xs text-muted-foreground mt-0.5">
+									Share this link — earn R$ when friends join and stay active
+								</p>
+							</div>
+						</div>
+						<div class="p-6 space-y-4">
+							<!-- Link display + copy -->
+							<div class="flex items-center gap-2">
+								<div
+									class="flex-1 min-w-0 bg-background border border-border rounded-xl px-3 py-2.5 flex items-center gap-2 overflow-hidden"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="w-3.5 h-3.5 text-muted-foreground shrink-0"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+										<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+									</svg>
+									<code class="text-xs font-mono text-foreground/80 truncate select-all"
+										>{referralLink}</code
+									>
+								</div>
+								<button
+									on:click={copyReferralLink}
+									class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all
+										{linkCopied
+										? 'bg-green-500/15 text-green-600 dark:text-green-400 border border-green-500/25'
+										: 'bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95'}"
+								>
+									{#if linkCopied}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-3.5 h-3.5"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2.5"
+											stroke-linecap="round"
+											stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg
+										>
+										Copied!
+									{:else}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-3.5 h-3.5"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path
+												d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+											/></svg
+										>
+										Copy Link
+									{/if}
+								</button>
+							</div>
+
+							<!-- How it works — double-sided reward table -->
+							<div class="bg-muted/40 rounded-xl p-4 space-y-3">
+								<p class="text-xs font-semibold text-foreground uppercase tracking-wider">
+									How rewards work — both of you earn
+								</p>
+
+								<!-- Header row -->
+								<div
+									class="grid grid-cols-[1fr_auto_auto] gap-x-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70 px-1"
+								>
+									<span>Milestone</span>
+									<span class="text-right">You (referrer)</span>
+									<span class="text-right">Your friend</span>
+								</div>
+
+								<!-- Row 1: Welcome Handshake -->
+								<div class="grid grid-cols-[1fr_auto_auto] gap-x-3 items-start text-xs px-1">
+									<div>
+										<span class="inline-flex items-center gap-1.5">
+											<span
+												class="w-4 h-4 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 font-bold text-[9px]"
+												>1</span
+											>
+											<strong class="text-foreground">Welcome Handshake</strong>
+										</span>
+										<p class="text-muted-foreground mt-0.5 pl-5.5 leading-relaxed">
+											Friend joins with account ≥7 days old &amp; verified email.
+										</p>
+									</div>
+									<span
+										class="text-right font-bold text-green-600 dark:text-green-400 whitespace-nowrap mt-0.5"
+										>R$100</span
+									>
+									<span
+										class="text-right font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap mt-0.5"
+										>R$50</span
+									>
+								</div>
+
+								<div class="border-t border-border/60"></div>
+
+								<!-- Row 2: Engagement Sprint -->
+								<div class="grid grid-cols-[1fr_auto_auto] gap-x-3 items-start text-xs px-1">
+									<div>
+										<span class="inline-flex items-center gap-1.5">
+											<span
+												class="w-4 h-4 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 font-bold text-[9px]"
+												>2</span
+											>
+											<strong class="text-foreground">Engagement Sprint</strong>
+										</span>
+										<p class="text-muted-foreground mt-0.5 pl-5.5 leading-relaxed">
+											Friend visits 5 separate days <em>or</em> casts 20 unique votes in their first
+											week.
+											<span class="block mt-0.5 text-[11px] text-muted-foreground/70"
+												>(R$50/day you · R$40/day friend, 5 days max)</span
+											>
+										</p>
+									</div>
+									<span
+										class="text-right font-bold text-green-600 dark:text-green-400 whitespace-nowrap mt-0.5"
+										>R$250</span
+									>
+									<span
+										class="text-right font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap mt-0.5"
+										>R$200</span
+									>
+								</div>
+
+								<div class="border-t border-border/60"></div>
+
+								<!-- Row 3: Growth Bounty -->
+								<div class="grid grid-cols-[1fr_auto_auto] gap-x-3 items-start text-xs px-1">
+									<div>
+										<span class="inline-flex items-center gap-1.5">
+											<span
+												class="w-4 h-4 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 font-bold text-[9px]"
+												>3</span
+											>
+											<strong class="text-foreground">Growth Bounty</strong>
+										</span>
+										<p class="text-muted-foreground mt-0.5 pl-5.5 leading-relaxed">
+											Friend adds a server with 50+ members to the listing.
+										</p>
+									</div>
+									<span
+										class="text-right font-bold text-green-600 dark:text-green-400 whitespace-nowrap mt-0.5"
+										>R$500</span
+									>
+									<span
+										class="text-right font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap mt-0.5"
+										>R$500</span
+									>
+								</div>
+
+								<div class="border-t border-border/60"></div>
+
+								<!-- Self-service note -->
+								<div class="text-xs text-muted-foreground px-1">
+									<strong class="text-foreground">Self-listing bonus</strong> (no referral needed):
+									list a server with
+									<strong class="text-foreground">50+ members → R$100</strong> or
+									<strong class="text-foreground">200+ members → R$500</strong>.
+								</div>
+
+								<!-- Totals footer -->
+								<div
+									class="bg-background/60 rounded-lg px-3 py-2 flex items-center justify-between text-[11px] border border-border/50"
+								>
+									<span class="text-muted-foreground/70">Max per referral</span>
+									<div class="flex items-center gap-4">
+										<span>
+											<span class="text-muted-foreground/60">You: </span>
+											<strong class="text-foreground">R$850</strong>
+											<span class="text-muted-foreground/50 text-[10px]">(100+250+500)</span>
+										</span>
+										<span>
+											<span class="text-muted-foreground/60">Friend: </span>
+											<strong class="text-foreground">R$750</strong>
+											<span class="text-muted-foreground/50 text-[10px]">(50+200+500)</span>
+										</span>
+									</div>
+								</div>
+								<p class="text-[10px] text-muted-foreground/50 pt-0.5">
+									Rewards settled daily at 02:00 UTC. Account must be ≥7 days old with a verified
+									Discord email.
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<!-- ── Stats strip ────────────────────────────────────────────────── -->
+					<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+						<div class="bg-card border border-border rounded-xl px-4 py-3 text-center">
+							<p class="text-xl font-extrabold">{referralStats.total}</p>
+							<p class="text-xs text-muted-foreground mt-0.5">Total Referred</p>
+						</div>
+						<div class="bg-card border border-border rounded-xl px-4 py-3 text-center">
+							<p class="text-xl font-extrabold text-green-600 dark:text-green-400">
+								{referralStats.paid}
+							</p>
+							<p class="text-xs text-muted-foreground mt-0.5">Converted</p>
+						</div>
+						<div class="bg-card border border-border rounded-xl px-4 py-3 text-center">
+							<p class="text-xl font-extrabold flex items-center justify-center gap-1">
+								<img src="/assets/img/bot/moneh.svg" alt="R$" class="w-4 h-4" />
+								{referralStats.totalEarned.toLocaleString()}
+							</p>
+							<p class="text-xs text-muted-foreground mt-0.5">R$ Earned</p>
+						</div>
+						<div class="bg-card border border-border rounded-xl px-4 py-3 text-center">
+							<p
+								class="text-xl font-extrabold flex items-center justify-center gap-1 text-amber-500"
+							>
+								<img src="/assets/img/bot/moneh.svg" alt="R$" class="w-4 h-4 opacity-70" />
+								{referralStats.pendingEarnable.toLocaleString()}
+							</p>
+							<p class="text-xs text-muted-foreground mt-0.5">R$ Pending</p>
+						</div>
+					</div>
+
+					<!-- ── Was referred notice + referred-user earnings ──────────────── -->
+					{#if wasReferredBy}
+						<div class="bg-card border border-border rounded-2xl overflow-hidden">
+							<!-- Header -->
+							<div class="px-5 py-3.5 border-b border-border flex items-center gap-3">
+								<div
+									class="w-7 h-7 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="w-3.5 h-3.5 text-blue-500"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
+									</svg>
+								</div>
+								<div class="flex-1 min-w-0">
+									<p class="text-sm font-semibold leading-none">You were referred</p>
+									<p class="text-xs text-muted-foreground mt-0.5">
+										By <code class="font-mono bg-muted px-1 py-0.5 rounded text-[11px]"
+											>{shortId(wasReferredBy.referrer_id)}</code
+										>
+										on {fmtDate(wasReferredBy.created_at)} —
+										<span class="inline-flex items-center gap-1 font-medium">
+											<span
+												class="inline-block w-1.5 h-1.5 rounded-full {wasReferredBy.reward_status ===
+												'paid'
+													? 'bg-green-500'
+													: wasReferredBy.reward_status === 'flagged'
+														? 'bg-yellow-500'
+														: 'bg-muted-foreground'}"
+											></span>
+											{statusLabel(wasReferredBy.reward_status)}
+										</span>
+									</p>
+								</div>
+								<!-- Total earned as referred user -->
+								{#if totalEarnedAsReferred > 0}
+									<div class="shrink-0 text-right">
+										<p class="text-xs text-muted-foreground leading-none">You earned</p>
+										<p
+											class="text-base font-extrabold text-blue-600 dark:text-blue-400 flex items-center gap-1 justify-end mt-0.5"
+										>
+											<img src="/assets/img/bot/moneh.svg" alt="R$" class="w-3.5 h-3.5" />
+											{totalEarnedAsReferred.toLocaleString()}
+										</p>
+									</div>
+								{/if}
+							</div>
+
+							<!-- Referred-user reward rows -->
+							{#if earnedAsReferred.length > 0}
+								<ul class="divide-y divide-border">
+									{#each earnedAsReferred as m (m.id)}
+										<li class="flex items-center gap-3 px-5 py-3 text-sm">
+											<!-- Icon -->
+											<div
+												class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0
+													{m.status === 'paid'
+													? 'bg-blue-500/10 text-blue-500'
+													: m.status === 'flagged'
+														? 'bg-yellow-500/10 text-yellow-500'
+														: 'bg-muted text-muted-foreground'}"
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													class="w-3.5 h-3.5"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												>
+													<path d={milestoneIcon(m.milestone_type, m.meta)} />
+												</svg>
+											</div>
+											<!-- Label + date -->
+											<div class="flex-1 min-w-0">
+												<p class="font-medium leading-none text-xs">
+													{referredMilestoneLabel(m.milestone_type, m.meta)}
+												</p>
+												<p class="text-[11px] text-muted-foreground mt-0.5">
+													{m.paid_at
+														? fmtDate(m.paid_at)
+														: m.status === "pending"
+															? "Pending settlement"
+															: fmtDate(m.created_at)}
+												</p>
+											</div>
+											<!-- Amount -->
+											<div
+												class="flex items-center gap-1 font-bold text-sm shrink-0 text-blue-600 dark:text-blue-400"
+											>
+												<img
+													src="/assets/img/bot/moneh.svg"
+													alt="R$"
+													class="w-3.5 h-3.5 opacity-80"
+												/>
+												{m.reward_amount.toLocaleString()}
+											</div>
+											<!-- Status badge -->
+											<span
+												class="text-[10px] font-semibold px-1.5 py-0.5 rounded-md border {statusColor(
+													m.status
+												)}"
+											>
+												{statusLabel(m.status)}
+											</span>
+										</li>
+									{/each}
+								</ul>
+							{:else if wasReferredBy.reward_status === "payable" || wasReferredBy.reward_status === "pending"}
+								<p class="text-xs text-muted-foreground px-5 py-3.5">
+									Your Welcome Bonus of <strong class="text-foreground">R$50</strong> is queued and will
+									be credited at the next daily settlement (02:00 UTC).
+								</p>
+							{:else if wasReferredBy.reward_status === "flagged"}
+								<p class="text-xs text-yellow-600 dark:text-yellow-400 px-5 py-3.5">
+									This referral was flagged for review. Rewards are on hold pending manual
+									verification.
+								</p>
+							{:else}
+								<p class="text-xs text-muted-foreground px-5 py-3.5">
+									Complete activities in your first week to earn more rewards — visit 5 days or cast
+									20 votes, then list a server with 50+ members for <strong class="text-foreground"
+										>R$500</strong
+									>.
+								</p>
+							{/if}
+						</div>
+					{/if}
+
+					<!-- ── Referral history list ──────────────────────────────────────── -->
+					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+						<div class="px-6 py-4 border-b border-border flex items-center justify-between gap-4">
+							<div class="flex items-center gap-2">
+								<div
+									class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="w-4 h-4 text-amber-500"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle
+											cx="9"
+											cy="7"
+											r="4"
+										/>
+										<path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+									</svg>
+								</div>
+								<div>
+									<h2 class="text-base font-bold font-heading leading-none">Referral History</h2>
+									<p class="text-xs text-muted-foreground mt-0.5">
+										{referralsSent.length} referral{referralsSent.length !== 1 ? "s" : ""} sent — click
+										any row to see milestone details
+									</p>
+								</div>
+							</div>
+							{#if referralStats.total > 0}
+								<span
+									class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+								>
+									{referralStats.total} total
+								</span>
+							{/if}
+						</div>
+
+						{#if referralsSent.length === 0}
+							<!-- Empty state -->
+							<div class="flex flex-col items-center justify-center py-16 text-center px-6">
+								<div
+									class="w-14 h-14 rounded-2xl bg-muted/50 flex items-center justify-center mb-4"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="w-7 h-7 text-muted-foreground/50"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="1.5"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle
+											cx="9"
+											cy="7"
+											r="4"
+										/>
+										<path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+									</svg>
+								</div>
+								<p class="font-bold text-base">No referrals yet</p>
+								<p class="text-sm text-muted-foreground mt-1.5 max-w-xs leading-relaxed">
+									Share your referral link above. Every friend who signs up and stays active earns
+									you R$.
+								</p>
+								<button
+									on:click={copyReferralLink}
+									class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 active:scale-95 transition-all"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="w-3.5 h-3.5"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path
+											d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+										/></svg
+									>
+									Copy Referral Link
+								</button>
+							</div>
+						{:else}
+							<ul class="divide-y divide-border">
+								{#each referralsSent as referral (referral.id)}
+									<!-- Row header -->
+									<li>
+										<button
+											class="w-full text-left px-5 py-4 hover:bg-accent/40 transition-colors"
+											on:click={() => toggleReferral(referral.id)}
+										>
+											<div class="flex items-center gap-3">
+												<!-- Status dot -->
+												<span
+													class="shrink-0 w-2 h-2 rounded-full mt-0.5
+													{referral.reward_status === 'paid'
+														? 'bg-green-500'
+														: referral.reward_status === 'flagged'
+															? 'bg-yellow-500'
+															: referral.reward_status === 'rejected'
+																? 'bg-red-500'
+																: referral.reward_status === 'payable'
+																	? 'bg-blue-400'
+																	: 'bg-muted-foreground/40'}"
+												>
+												</span>
+
+												<!-- User ID + date -->
+												<div class="flex-1 min-w-0">
+													<div class="flex items-center gap-2 flex-wrap">
+														<p class="text-sm font-semibold font-mono">
+															{shortId(referral.referred_id)}
+														</p>
+														{#if referral.fingerprint_match}
+															<span
+																class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20"
+															>
+																⚠ Shared device
+															</span>
+														{/if}
+													</div>
+													<p class="text-xs text-muted-foreground mt-0.5">
+														Joined {fmtDate(referral.created_at)}
+													</p>
+												</div>
+
+												<!-- Status badge -->
+												<span
+													class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border {statusColor(
+														referral.reward_status
+													)}"
+												>
+													{statusLabel(referral.reward_status)}
+												</span>
+
+												<!-- Earned amount -->
+												<div class="shrink-0 text-right hidden sm:block">
+													<p class="text-sm font-extrabold flex items-center gap-1 justify-end">
+														<img src="/assets/img/bot/moneh.svg" alt="R$" class="w-3.5 h-3.5" />
+														{totalEarnedFromReferral(referral).toLocaleString()}
+													</p>
+													<p class="text-[10px] text-muted-foreground">earned</p>
+												</div>
+
+												<!-- Progress indicators (mini) -->
+												<div class="shrink-0 flex items-center gap-1.5">
+													<!-- Sign-up tick -->
+													<span
+														title="Sign-up reward"
+														class="w-5 h-5 rounded-full flex items-center justify-center {hasSignupRewardPaid(
+															referral
+														)
+															? 'bg-green-500/15 text-green-500'
+															: 'bg-muted text-muted-foreground/30'}"
+													>
+														<svg
+															class="w-3 h-3"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															stroke-width="2.5"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															><path
+																d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+															/></svg
+														>
+													</span>
+													<!-- Vote-20 tick -->
+													<span
+														title="20-vote milestone"
+														class="w-5 h-5 rounded-full flex items-center justify-center {hasVote20Paid(
+															referral
+														)
+															? 'bg-green-500/15 text-green-500'
+															: 'bg-muted text-muted-foreground/30'}"
+													>
+														<svg
+															class="w-3 h-3"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															stroke-width="2.5"
+															stroke-linecap="round"
+															stroke-linejoin="round"><polyline points="18 15 12 9 6 15" /></svg
+														>
+													</span>
+													<!-- Server bounty tick -->
+													<span
+														title="Server bounty"
+														class="w-5 h-5 rounded-full flex items-center justify-center {hasServerBountyPaid(
+															referral
+														)
+															? 'bg-green-500/15 text-green-500'
+															: 'bg-muted text-muted-foreground/30'}"
+													>
+														<svg
+															class="w-3 h-3"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															stroke-width="2"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline
+																points="9 22 9 12 15 12 15 22"
+															/></svg
+														>
+													</span>
+												</div>
+
+												<!-- Chevron -->
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													class="w-4 h-4 text-muted-foreground/50 shrink-0 transition-transform {expandedReferralId ===
+													referral.id
+														? 'rotate-180'
+														: ''}"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg
+												>
+											</div>
+
+											<!-- Retention day progress bar (always visible) -->
+											{#if referral.reward_status === "paid" || referral.reward_status === "payable" || referral.reward_status === "pending"}
+												{@const daysEarned = retentionDaysPaid(referral)}
+												<div class="mt-3 flex items-center gap-2">
+													<div class="flex gap-1">
+														{#each [1, 2, 3, 4, 5] as day}
+															<div
+																class="w-5 h-1.5 rounded-full {day <= daysEarned
+																	? 'bg-amber-500'
+																	: 'bg-border'}"
+															></div>
+														{/each}
+													</div>
+													<p class="text-[11px] text-muted-foreground">
+														{daysEarned}/5 retention days
+													</p>
+												</div>
+											{/if}
+										</button>
+
+										<!-- Expanded milestone drawer -->
+										{#if expandedReferralId === referral.id}
+											<div class="bg-background/50 border-t border-border px-5 py-4">
+												{#if referral.milestones.length === 0}
+													<p class="text-xs text-muted-foreground text-center py-3">
+														No milestones recorded yet — rewards are processed daily at 02:00 UTC.
+													</p>
+												{:else}
+													<ul class="space-y-2">
+														{#each referral.milestones as m (m.id)}
+															<li class="flex items-center gap-3 text-sm">
+																<!-- Milestone icon -->
+																<div
+																	class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0
+																	{m.status === 'paid'
+																		? 'bg-green-500/10 text-green-500'
+																		: m.status === 'flagged'
+																			? 'bg-yellow-500/10 text-yellow-500'
+																			: 'bg-muted text-muted-foreground'}"
+																>
+																	<svg
+																		class="w-3.5 h-3.5"
+																		viewBox="0 0 24 24"
+																		fill="none"
+																		stroke="currentColor"
+																		stroke-width="2"
+																		stroke-linecap="round"
+																		stroke-linejoin="round"
+																	>
+																		<path d={milestoneIcon(m.milestone_type, m.meta)} />
+																	</svg>
+																</div>
+
+																<!-- Label + date -->
+																<div class="flex-1 min-w-0">
+																	<p class="font-medium leading-none">
+																		{milestoneLabel(m.milestone_type, m.meta)}
+																	</p>
+																	<p class="text-xs text-muted-foreground mt-0.5">
+																		{m.status === "paid" && m.paid_at
+																			? `Paid ${fmtDate(m.paid_at)}`
+																			: `Detected ${fmtDate(m.created_at)}`}
+																	</p>
+																</div>
+
+																<!-- Amount -->
+																<div class="flex items-center gap-1 font-bold text-sm shrink-0">
+																	<img
+																		src="/assets/img/bot/moneh.svg"
+																		alt="R$"
+																		class="w-3.5 h-3.5"
+																	/>
+																	+{m.reward_amount.toLocaleString()}
+																</div>
+
+																<!-- Status badge -->
+																<span
+																	class="shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-full border {statusColor(
+																		m.status
+																	)}"
+																>
+																	{statusLabel(m.status)}
+																</span>
+															</li>
+														{/each}
+													</ul>
+
+													<!-- Referral totals footer -->
+													<div
+														class="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground"
+													>
+														<span
+															>{referral.milestones.filter((m) => m.status === "paid").length} of {referral
+																.milestones.length} milestones paid</span
+														>
+														<span class="font-bold text-foreground flex items-center gap-1">
+															<img src="/assets/img/bot/moneh.svg" alt="R$" class="w-3 h-3" />
+															{totalEarnedFromReferral(referral).toLocaleString()} earned
+														</span>
+													</div>
+												{/if}
+
+												<!-- Fraud note if flagged -->
+												{#if referral.fingerprint_match || referral.reward_status === "flagged"}
+													<div
+														class="mt-3 flex items-start gap-2 bg-yellow-500/5 border border-yellow-500/20 rounded-lg px-3 py-2.5"
+													>
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															class="w-4 h-4 text-yellow-500 shrink-0 mt-0.5"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															stroke-width="2"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															><path
+																d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"
+															/><line x1="12" y1="9" x2="12" y2="13" /><line
+																x1="12"
+																y1="17"
+																x2="12.01"
+																y2="17"
+															/></svg
+														>
+														<p class="text-xs text-yellow-600 dark:text-yellow-400 leading-relaxed">
+															A shared device fingerprint was detected between you and this referred
+															user. This referral has been soft-flagged and its rewards are pending
+															manual review. If you believe this is a mistake, please contact
+															support.
+														</p>
+													</div>
+												{/if}
+											</div>
+										{/if}
+									</li>
+								{/each}
+							</ul>
+
+							<!-- Footer info bar -->
+							<div
+								class="px-5 py-3 border-t border-border bg-muted/20 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground"
+							>
+								<span
+									>Rewards settled daily · <strong class="text-foreground"
+										>{referralStats.flagged}</strong
+									>
+									flagged · <strong class="text-foreground">{referralStats.rejected}</strong> rejected</span
+								>
+								<span class="flex items-center gap-1">
+									<img src="/assets/img/bot/moneh.svg" alt="R$" class="w-3 h-3" />
+									<strong class="text-foreground"
+										>{referralStats.pendingEarnable.toLocaleString()}</strong
+									> R$ pending settlement
+								</span>
+							</div>
+						{/if}
+					</div>
+
+					<!-- ── Self-listing reward notice ────────────────────────────────── -->
+					{#if servers.length > 0}
+						<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+							<div class="px-6 py-4 border-b border-border flex items-center gap-2">
+								<div
+									class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="w-4 h-4 text-green-500"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline
+											points="9 22 9 12 15 12 15 22"
+										/>
+									</svg>
+								</div>
+								<div>
+									<h2 class="text-base font-bold font-heading leading-none">
+										Server Listing Rewards
+									</h2>
+									<p class="text-xs text-muted-foreground mt-0.5">
+										R$100 for 50+ members · R$500 for 200+ members · Awarded once per server at
+										registration
+									</p>
+								</div>
+							</div>
+							<div class="divide-y divide-border">
+								{#each servers as srv}
+									<div class="px-5 py-3.5 flex items-center gap-3">
+										{#if srv.icon}
+											<img
+												src="https://cdn.discordapp.com/icons/{srv.id}/{srv.icon}.webp?size=40"
+												alt={srv.name}
+												class="w-8 h-8 rounded-full border border-border shrink-0 object-cover"
+											/>
+										{:else}
+											<div
+												class="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0"
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													class="w-4 h-4 text-muted-foreground"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline
+														points="9 22 9 12 15 12 15 22"
+													/></svg
+												>
+											</div>
+										{/if}
+										<div class="flex-1 min-w-0">
+											<p class="text-sm font-semibold truncate">{srv.name}</p>
+											<p class="text-xs text-muted-foreground">
+												{srv.votes.toLocaleString()} votes
+											</p>
+										</div>
+										<a
+											href="/servers/{srv.slug ?? srv.id}"
+											class="shrink-0 text-xs font-medium text-primary hover:underline">View →</a
+										>
+									</div>
+								{/each}
+							</div>
+						</div>
+					{/if}
 				{:else if activeSection === "danger"}
 					<!-- Warning banner -->
 					<div

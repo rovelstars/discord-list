@@ -2,6 +2,7 @@
 	import { onMount } from "svelte";
 	import SEO from "$lib/components/SEO.svelte";
 	import ServerCard from "$lib/components/ServerCard.svelte";
+	import BotCard from "$lib/components/BotCard.svelte";
 	import TwemojiText from "$lib/components/TwemojiText.svelte";
 
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
@@ -28,6 +29,18 @@
 		};
 		descHtml: string | null;
 		randomServers: any[];
+		relatedBots: Array<{
+			id: string;
+			slug: string;
+			username: string;
+			discriminator: string;
+			avatar: string | null;
+			short: string;
+			votes: number;
+			servers: number;
+			invite: string | null;
+			bg: string | null;
+		}>;
 		user: any | null;
 		emojis: Array<{
 			id: string;
@@ -53,7 +66,17 @@
 		stickerCount: number;
 	};
 
-	$: ({ server, descHtml, randomServers, user, emojis, emojiCount, stickers, stickerCount } = data);
+	$: ({
+		server,
+		descHtml,
+		randomServers,
+		relatedBots,
+		user,
+		emojis,
+		emojiCount,
+		stickers,
+		stickerCount
+	} = data);
 
 	// Emoji display limit on server page (show first N, link to full list)
 	const EMOJI_PAGE_LIMIT = 32;
@@ -275,7 +298,7 @@
 			<div class="grid grid-cols-1 md:grid-cols-4 gap-6 p-4" style={gradientOverlayStyle}>
 				<!-- ── Left column: icon + details ──────────────────────────── -->
 				<div
-					class="md:col-span-1 flex flex-col items-center md:items-start gap-4 -mt-16 relative z-10"
+					class="md:col-span-3 flex flex-col items-center md:items-start gap-4 -mt-16 relative z-10"
 				>
 					<!-- Server icon -->
 					{#if iconUrl}
@@ -549,7 +572,7 @@
 				<!-- end left column -->
 
 				<!-- ── Right column: actions + channels ──────────────────────── -->
-				<div class="flex flex-col gap-4 mt-4 md:mt-0 md:col-span-3">
+				<div class="flex flex-col gap-4 mt-4 md:mt-0 md:col-span-1">
 					<!-- Stats hero row -->
 					<div class="grid grid-cols-2 gap-2">
 						<!-- Votes -->
@@ -697,7 +720,7 @@
 										>
 											Text channels ({textChannels.length})
 										</p>
-										<ul class="grid grid-cols-1 sm:grid-cols-2 gap-1" aria-label="Text channels">
+										<ul class="grid grid-cols-1 sm:grid-cols-1 gap-1" aria-label="Text channels">
 											{#each visibleTextChannels as ch (ch.id)}
 												<li
 													class="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 rounded-lg px-3 py-1.5 min-w-0"
@@ -977,7 +1000,44 @@
 			</div>
 		{/if}
 
-		<!-- ── Server Stickers Section ─────────────────────────────────────────── -->
+		<!-- ── Bots in this server ───────────────────────────────────────────────── -->
+		{#if relatedBots && relatedBots.length > 0}
+			<div class="mt-8 bg-card rounded-lg overflow-hidden border border-border">
+				<div class="px-5 py-4 border-b border-border flex items-center gap-3">
+					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-4 h-4 text-primary"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<rect width="18" height="18" x="3" y="3" rx="2" />
+							<path d="M8 12h8" />
+							<path d="M12 8v8" />
+						</svg>
+					</div>
+					<div>
+						<h2 class="text-base font-bold font-heading leading-none">
+							Bots in {server.name}
+						</h2>
+						<p class="text-xs text-muted-foreground mt-0.5">
+							Discord bots added by this server's owner, sorted by server count
+						</p>
+					</div>
+				</div>
+				<div class="p-4 flex flex-wrap justify-center gap-4">
+					{#each relatedBots as bot (bot.id)}
+						<BotCard {bot} edit={false} />
+					{/each}
+				</div>
+			</div>
+		{/if}
+
 		{#if stickers && stickers.length > 0}
 			<div class="mt-8 bg-card rounded-lg overflow-hidden border border-border">
 				<div class="px-5 py-4 border-b border-border flex items-center justify-between gap-4">

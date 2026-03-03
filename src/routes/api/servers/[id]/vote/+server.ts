@@ -6,6 +6,7 @@ import { Users, Servers } from "$lib/schema";
 import { eq } from "drizzle-orm";
 import SendLog from "@/bot/log";
 import { env } from "$env/dynamic/private";
+import { recordVote } from "$lib/db/queries/referrals";
 
 /**
  * POST /api/servers/[id]/vote
@@ -121,14 +122,20 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 				.update(Users)
 				.set({ votes: JSON.stringify(votesArr) })
 				.where(eq(Users.id, userData.id));
-			await db
-				.update(Servers)
-				.set({ votes: newServerVotes })
-				.where(eq(Servers.id, id));
+			await db.update(Servers).set({ votes: newServerVotes }).where(eq(Servers.id, id));
 		} catch (e) {
 			console.error("[server-vote] DB update error:", e);
 			return json({ err: "db_update_failed" }, { status: 500 });
 		}
+
+		// Record vote in the activity log for the referral vote-20 milestone.
+		// Fire-and-forget — never let this block or fail the vote response.
+		recordVote(userData.id, id, "server").catch((err) => {
+			console.warn(
+				"[server-vote] recordVote failed (non-fatal):",
+				err instanceof Error ? err.message : String(err)
+			);
+		});
 
 		// Best-effort log
 		try {
@@ -141,7 +148,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 				},
 				body: {
 					title: `${server.name} received a new vote!`,
-					desc: `**${(userData.global_name ?? userData.username)}** voted for **${server.name}**! It now has **${newServerVotes}** votes.`,
+					desc: `**${userData.global_name ?? userData.username}** voted for **${server.name}**! It now has **${newServerVotes}** votes.`,
 					img: server.icon
 						? `https://cdn.discordapp.com/icons/${server.id}/${server.icon}.webp?size=128`
 						: undefined,

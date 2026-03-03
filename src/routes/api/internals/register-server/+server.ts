@@ -6,6 +6,9 @@ import { Servers } from "$lib/db/schema";
 import { eq } from "drizzle-orm";
 import { syncServerEmojis } from "$lib/emoji-sync";
 import { syncServerStickers } from "$lib/sticker-sync";
+import { awardSelfListing, awardServerBounty } from "$lib/db/queries/referrals";
+import type { DoubleCreditResult } from "$lib/db/queries/referrals";
+import { Referrals } from "$lib/db/schema";
 
 function validateSecret(request: Request): boolean {
 	const internalSecret = (env.INTERNAL_SECRET ?? "").trim();
@@ -68,6 +71,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		);
 
 		const isNew = !Array.isArray(existing) || existing.length === 0;
+		const ownerId = owner.trim();
 		const now = new Date().toISOString();
 
 		if (isNew) {
@@ -78,7 +82,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					short: "Short description is not Updated.",
 					desc: "Description is not updated.",
 					icon: icon ?? "",
-					owner: owner.trim(),
+					owner: ownerId,
 					slug: "",
 					added_at: now,
 					votes: 0,
@@ -96,10 +100,91 @@ export const POST: RequestHandler = async ({ request }) => {
 					.set({
 						name: name.trim(),
 						icon: icon ?? "",
-						owner: owner.trim()
+						owner: ownerId
 					})
 					.where(eq(Servers.id, guildId))
 			);
+		}
+
+		// ── Referral rewards (new listing only) ───────────────────────────────
+		// member_count is not available from the /register slash command at this
+		// point (the bot hasn't fetched the full guild object yet). We schedule
+		// both self-listing and server-bounty reward checks as fire-and-forget
+		// tasks that read member_count from the Servers row once the background
+		// server-refresh has populated it. For an immediate reward on first
+		// registration we pass the member_count from the request body if the
+		// caller supplies it (the bot can pass it after calling guild.fetch()).
+		// If member_count is absent we defer; the refresh flow will call
+		// /api/internals/check-server-rewards once it has the real count.
+		if (isNew) {
+			const memberCountFromBody =
+				typeof (body as any).member_count === "number"
+					? ((body as any).member_count as number)
+					: null;
+
+			if (memberCountFromBody !== null) {
+				// ── Self-listing reward ────────────────────────────────────────
+				awardSelfListing(ownerId, guildId, memberCountFromBody)
+					.then((result) => {
+						if (result) {
+							console.info(
+								`[register-server] Self-listing reward: ` +
+									`R$${result.amount} (${result.milestoneType}) → ${ownerId} ` +
+									`for server ${guildId} (${memberCountFromBody} members). ` +
+									`New bal: R$${result.newBalance}`
+							);
+						}
+					})
+					.catch((err) => {
+						console.warn(
+							`[register-server] awardSelfListing failed for ${guildId} (non-fatal):`,
+							err instanceof Error ? err.message : String(err)
+						);
+					});
+
+				// ── Server-bounty reward (≥50 members) ────────────────────────
+				// Check whether the server owner was referred by someone and the
+				// server qualifies for the R$500 bounty (first listing, ≥50 members).
+				if (memberCountFromBody >= 50) {
+					withDb((db: DrizzleDb) =>
+						db
+							.select({
+								id: Referrals.id,
+								referrer_id: Referrals.referrer_id
+							})
+							.from(Referrals)
+							.where(eq(Referrals.referred_id, ownerId))
+							.limit(1)
+					)
+						.then(async (rows) => {
+							if (!Array.isArray(rows) || rows.length === 0) return;
+							const referral = rows[0] as { id: string; referrer_id: string };
+							// Double-sided Growth Bounty: referrer + referred user each get R$500
+							const result = await awardServerBounty(
+								referral.id,
+								referral.referrer_id,
+								ownerId,
+								guildId,
+								memberCountFromBody
+							);
+							if (result !== null) {
+								console.info(
+									`[register-server] Growth Bounty (double-sided): ` +
+										`R$500 → ${referral.referrer_id} (new bal: R$${result.referrerNewBal ?? "?"}) | ` +
+										`R$500 → ${ownerId} (new bal: R$${result.referredNewBal ?? "?"}) ` +
+										`(referred user ${ownerId} listed server ${guildId} ` +
+										`with ${memberCountFromBody} members)`
+								);
+							}
+						})
+						.catch((err) => {
+							console.warn(
+								`[register-server] awardServerBounty check failed for ${guildId} (non-fatal):`,
+								err instanceof Error ? err.message : String(err)
+							);
+						});
+				}
+			}
 		}
 
 		// ── Background emoji + sticker sync ───────────────────────────────────
@@ -150,7 +235,15 @@ export const POST: RequestHandler = async ({ request }) => {
 				});
 		}
 
-		return json({ success: true, created: isNew }, { status: 200 });
+		return json(
+			{
+				success: true,
+				created: isNew,
+				// Expose whether reward checks ran so the bot can log it.
+				rewardsChecked: isNew && typeof (body as any).member_count === "number"
+			},
+			{ status: 200 }
+		);
 	} catch (err) {
 		const msg = err instanceof Error ? err.message : String(err);
 		console.error("[register-server] DB error:", msg);

@@ -6,6 +6,7 @@ import { Users, Bots } from "$lib/schema";
 import { eq } from "drizzle-orm";
 import SendLog from "@/bot/log";
 import { env } from "$env/dynamic/private";
+import { recordVote } from "$lib/db/queries/referrals";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Discord webhook helpers
@@ -299,6 +300,15 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 			console.error("DB update error in vote endpoint:", e);
 			return json({ err: "db_update_failed" }, { status: 500 });
 		}
+
+		// Record vote in the activity log for the referral vote-20 milestone.
+		// Fire-and-forget — never let this block or fail the vote response.
+		recordVote(userData.id, id, "bot").catch((err) => {
+			console.warn(
+				"[bot-vote] recordVote failed (non-fatal):",
+				err instanceof Error ? err.message : String(err)
+			);
+		});
 
 		// If bot has a webhook configured, notify it (best-effort)
 		if (bot.webhook) {

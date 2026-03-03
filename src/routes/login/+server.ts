@@ -16,6 +16,21 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const wantEmail = url.searchParams.get("email") !== "false";
 	const redirectParam = url.searchParams.get("redirect");
 
+	// Capture referral code from ?ref=<code> and persist it as a short-lived
+	// httpOnly cookie. The OAuth2 callback (/api/auth) reads this cookie after
+	// the new user's account is created and passes it to createReferral().
+	// We only set it if a non-empty value is present so we never overwrite a
+	// valid referral code with an empty string on a subsequent plain login.
+	const refCode = url.searchParams.get("ref")?.trim();
+	if (refCode) {
+		cookies.set("ref", refCode, {
+			path: "/",
+			maxAge: 60 * 15, // 15 minutes — enough for the full OAuth round-trip
+			sameSite: "lax",
+			httpOnly: true
+		});
+	}
+
 	// Build the scope list
 	const scopes = ["identify"];
 	if (wantEmail) scopes.push("email");

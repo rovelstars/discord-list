@@ -4,9 +4,19 @@ import DiscordOauth2 from "discord-oauth2";
 import { env } from "$env/dynamic/private";
 import { getDb } from "$lib/db";
 import { Users, Bots } from "$lib/db/schema";
-import { eq, inArray, like } from "drizzle-orm";
+import { eq, and, sql, inArray, like } from "drizzle-orm";
 import { getServersByOwner } from "$lib/db/queries";
 import { listEmojis } from "$lib/db/queries/emojis";
+import {
+	getReferralsByReferrer,
+	getMilestonesForReferral,
+	getMilestonesForUser,
+	type ReferralSummary,
+	type MilestoneType,
+	type MilestoneStatus
+} from "$lib/db/queries/referrals";
+import { Referrals } from "$lib/db/schema";
+import { withDb, type DrizzleDb } from "$lib/db";
 
 export const load: PageServerLoad = async ({ cookies, url }) => {
 	const key = cookies.get("key");
@@ -213,6 +223,135 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		// non-fatal — show empty list
 	}
 
+	// ── Referral data ─────────────────────────────────────────────────────────
+	// 1. All referrals sent by this user (referrer view)
+	let referralsSent: Array<{
+		id: string;
+		referred_id: string;
+		reward_status: string;
+		fingerprint_match: boolean;
+		created_at: string;
+		// milestones for this specific referral, resolved below
+		milestones: Array<{
+			id: string;
+			milestone_type: MilestoneType;
+			reward_amount: number;
+			status: MilestoneStatus;
+			meta: Record<string, unknown>;
+			created_at: string;
+			paid_at: string | null;
+		}>;
+	}> = [];
+
+	// 2. Whether this user was referred by someone (referred view)
+	let wasReferredBy: { referrer_id: string; created_at: string; reward_status: string } | null =
+		null;
+
+	// 3. Aggregate stats
+	let referralStats = {
+		total: 0,
+		paid: 0,
+		pending: 0,
+		flagged: 0,
+		rejected: 0,
+		totalEarned: 0, // sum of paid milestone reward_amount values (referrer side)
+		pendingEarnable: 0 // sum of pending milestone reward_amount values (referrer side)
+	};
+
+	// 4. Rewards earned BY this user as the referred party
+	let earnedAsReferred: Array<{
+		id: string;
+		referral_id: string | null;
+		milestone_type: MilestoneType;
+		reward_amount: number;
+		status: MilestoneStatus;
+		meta: Record<string, unknown>;
+		created_at: string;
+		paid_at: string | null;
+	}> = [];
+	let totalEarnedAsReferred = 0;
+
+	try {
+		// Rewards this user earned as the referred party (welcome bonus, engagement sprint, bounty)
+		const allUserMilestones = await getMilestonesForUser(discordUser.id);
+		// Only surface milestones where this user is the referred recipient
+		earnedAsReferred = allUserMilestones.filter((m) =>
+			["signup_welcome", "engagement_sprint_referred", "server_bounty_referred"].includes(
+				m.milestone_type
+			)
+		);
+		totalEarnedAsReferred = earnedAsReferred
+			.filter((m) => m.status === "paid")
+			.reduce((sum, m) => sum + m.reward_amount, 0);
+	} catch {
+		// non-fatal — show empty section
+	}
+
+	try {
+		// Referrals this user sent
+		const sent = await getReferralsByReferrer(discordUser.id, 50);
+
+		// For each referral, pull its milestone history
+		const withMilestones = await Promise.all(
+			sent.map(async (r) => {
+				let milestones: Awaited<ReturnType<typeof getMilestonesForReferral>> = [];
+				try {
+					milestones = await getMilestonesForReferral(r.id);
+				} catch {
+					// non-fatal
+				}
+				return { ...r, milestones };
+			})
+		);
+
+		referralsSent = withMilestones;
+
+		// Compute aggregate stats
+		referralStats.total = referralsSent.length;
+		for (const r of referralsSent) {
+			if (r.reward_status === "paid") referralStats.paid++;
+			else if (r.reward_status === "pending" || r.reward_status === "payable")
+				referralStats.pending++;
+			else if (r.reward_status === "flagged") referralStats.flagged++;
+			else if (r.reward_status === "rejected") referralStats.rejected++;
+
+			for (const m of r.milestones) {
+				if (m.status === "paid") referralStats.totalEarned += m.reward_amount;
+				else if (m.status === "pending") referralStats.pendingEarnable += m.reward_amount;
+			}
+		}
+	} catch {
+		// non-fatal — show empty referral section
+	}
+
+	try {
+		// Check if this user was referred by someone
+		const referredRows = await withDb((db: DrizzleDb) =>
+			db
+				.select({
+					referrer_id: Referrals.referrer_id,
+					created_at: Referrals.created_at,
+					reward_status: Referrals.reward_status
+				})
+				.from(Referrals)
+				.where(eq(Referrals.referred_id, discordUser.id))
+				.limit(1)
+		);
+		if (Array.isArray(referredRows) && referredRows.length > 0) {
+			wasReferredBy = referredRows[0] as {
+				referrer_id: string;
+				created_at: string;
+				reward_status: string;
+			};
+		}
+	} catch {
+		// non-fatal
+	}
+
+	// Referral link is simply /login?ref=<userId>
+	const domain = (env.DOMAIN ?? "https://discord.rovelstars.com").replace(/\/$/, "");
+	const referralLink = `${domain}/login?ref=${discordUser.id}`;
+
 	return {
 		// DB user (profile data, balance, etc.)
 		user: {
@@ -251,6 +390,14 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			botAvatar: votedBotNames[v.bot]?.avatar ?? null
 		})),
 		totalVotesCast: voteHistory.length,
-		expiredCount
+		expiredCount,
+		// Referral system
+		referralLink,
+		referralsSent,
+		referralStats,
+		wasReferredBy,
+		// Rewards this user earned as the referred user
+		earnedAsReferred,
+		totalEarnedAsReferred
 	};
 };

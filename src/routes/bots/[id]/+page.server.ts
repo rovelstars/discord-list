@@ -1,6 +1,11 @@
 import type { PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
-import { getBotByIdOrSlug, getRandomBots, getCommentsByBotId } from "$lib/db/queries";
+import {
+	getBotByIdOrSlug,
+	getRandomBots,
+	getCommentsByBotId,
+	getServersByBotId
+} from "$lib/db/queries";
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
@@ -30,9 +35,10 @@ export const load: PageServerLoad = async ({ params, setHeaders, locals, parent 
 	const layoutData = await parent();
 	const currentUserId = layoutData.user?.id ?? undefined;
 
-	const [randombots, comments] = await Promise.all([
+	const [randombots, comments, relatedServers] = await Promise.all([
 		getRandomBots(10),
-		getCommentsByBotId(bot.id, currentUserId)
+		getCommentsByBotId(bot.id, currentUserId),
+		getServersByBotId(bot.id, 8)
 	]);
 
 	// Render markdown description to HTML server-side, same as old Astro page.
@@ -57,6 +63,7 @@ export const load: PageServerLoad = async ({ params, setHeaders, locals, parent 
 		descHtml,
 		randombots,
 		comments,
+		relatedServers,
 		user: layoutData.user ?? null
 	};
 };

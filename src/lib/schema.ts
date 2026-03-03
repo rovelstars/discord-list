@@ -9,4 +9,5 @@
  */
 
 export { Bots, Users, Servers, Comments, CommentReactions, Emojis, Stickers } from "./db/schema";
+export { Referrals, ReferralMilestones, UserFingerprints, UserActivityLog } from "./db/schema";
 export type {} from /* re-export schema types if needed */ "./db/schema";
