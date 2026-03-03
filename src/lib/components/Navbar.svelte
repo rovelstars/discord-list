@@ -13,7 +13,8 @@
 		Sparkles,
 		LayoutGrid,
 		House,
-		Smile
+		Smile,
+		Sticker
 	} from "@lucide/svelte";
 
 	export let user: {
@@ -104,6 +105,15 @@
 			>
 				<Smile size={24} class="mt-0.5" />
 				<span class="ml-1 hidden md:inline">Emojis</span>
+			</a>
+
+			<!-- Stickers -->
+			<a
+				href="/stickers"
+				class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
+			>
+				<Sticker size={24} class="mt-0.5" />
+				<span class="ml-1 hidden md:inline">Stickers</span>
 			</a>
 
 			<!-- Categories -->
@@ -350,6 +360,30 @@
 					<line x1="15" y1="9" x2="15.01" y2="9" />
 				</svg>
 				Emojis
+			</a>
+
+			<a
+				href="/stickers"
+				class="flex items-center gap-2 py-2 text-lg font-bold text-primary"
+				on:click={() => (mobileOpen = false)}
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="w-5 h-5"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path
+						d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z"
+					/>
+					<path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5H15" />
+					<path d="M15 2v5h5" />
+				</svg>
+				Stickers
 			</a>
 
 			<a

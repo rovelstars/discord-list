@@ -8,5 +8,5 @@
  * Do not add runtime logic here — this is purely a compile-time/type re-export.
  */
 
-export { Bots, Users, Servers, Comments, CommentReactions, Emojis } from "./db/schema";
+export { Bots, Users, Servers, Comments, CommentReactions, Emojis, Stickers } from "./db/schema";
 export type {} from /* re-export schema types if needed */ "./db/schema";

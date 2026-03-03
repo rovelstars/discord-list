@@ -7,6 +7,7 @@ import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
 import { getEmojisByGuild, countEmojisByGuild } from "$lib/db/queries/emojis";
+import { getStickersByGuild, countStickersByGuild } from "$lib/db/queries/stickers";
 
 const marked = new Marked(
 	markedHighlight({
@@ -50,6 +51,19 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 		console.warn("[server-page] Emoji query failed (non-fatal):", emojiErr);
 	}
 
+	let stickers: Awaited<ReturnType<typeof getStickersByGuild>> = [];
+	let stickerCount = 0;
+	try {
+		[stickers, stickerCount] = await Promise.all([
+			getStickersByGuild(server.id, 32),
+			countStickersByGuild(server.id)
+		]);
+	} catch (stickerErr) {
+		// Non-fatal — page renders without the sticker section if the table
+		// isn't ready yet or a transient DB error occurs.
+		console.warn("[server-page] Sticker query failed (non-fatal):", stickerErr);
+	}
+
 	let descHtml: string | null = null;
 	if (server.desc && server.desc !== "Description is not updated.") {
 		try {
@@ -89,6 +103,8 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 		randomServers,
 		emojis,
 		emojiCount,
+		stickers,
+		stickerCount,
 		user: layoutData.user ?? null
 	};
 };

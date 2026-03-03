@@ -34,9 +34,8 @@ export const POST: RequestHandler = async ({ params }) => {
 			console.warn(`[emoji-download] Failed to increment dc for emoji ${id}:`, err);
 		});
 
-		const ext = emoji.a ? "gif" : "webp";
-		const sizeParam = emoji.a ? "" : "?size=256";
-		const url = `${DISCORD_CDN}/${id}.${ext}${sizeParam}`;
+		const ext = emoji.a ? "gif" : "png";
+		const url = `${DISCORD_CDN}/${id}.${ext}`; // no size suffix = original size (best quality)
 		const filename = `${emoji.code}.${ext}`;
 
 		return json(

@@ -296,6 +296,10 @@ export default {
 						"",
 						`🔗 View your server's page: ${serverUrl}`,
 						"",
+						"😄 Custom emojis and 🪄 stickers are being synced in the background and will appear in the listing shortly.",
+						`• Emojis: ${domain}/emojis?guild=${encodeURIComponent(guildId)}`,
+						`• Stickers: ${domain}/stickers?guild=${encodeURIComponent(guildId)}`,
+						"",
 						"You can update your server's description and details from your dashboard."
 					].join("\n")
 				);

@@ -1,6 +1,7 @@
 import type { PageServerLoad } from "./$types";
 import { getTopBots, listBots, getTopServers } from "$lib/db/queries";
 import { getTopEmojis, getNewestEmojis } from "$lib/db/queries/emojis";
+import { getTopStickers, getNewestStickers } from "$lib/db/queries/stickers";
 
 export const load: PageServerLoad = async ({ setHeaders }) => {
 	try {
@@ -25,9 +26,18 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 		let topEmojis: Awaited<ReturnType<typeof getTopEmojis>> = [];
 		let newestEmojis: Awaited<ReturnType<typeof getNewestEmojis>> = [];
 		try {
-			[topEmojis, newestEmojis] = await Promise.all([getTopEmojis(12), getNewestEmojis(12)]);
+			[topEmojis, newestEmojis] = await Promise.all([getTopEmojis(8), getNewestEmojis(8)]);
 		} catch (emojiErr) {
 			console.warn("[home] Emoji queries failed (non-fatal):", emojiErr);
+		}
+
+		// Sticker queries are also non-fatal for the same reason.
+		let topStickers: Awaited<ReturnType<typeof getTopStickers>> = [];
+		let newestStickers: Awaited<ReturnType<typeof getNewestStickers>> = [];
+		try {
+			[topStickers, newestStickers] = await Promise.all([getTopStickers(8), getNewestStickers(8)]);
+		} catch (stickerErr) {
+			console.warn("[home] Sticker queries failed (non-fatal):", stickerErr);
 		}
 
 		setHeaders({
@@ -40,7 +50,9 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			allBotsForBg: allBots,
 			topServersData,
 			topEmojis,
-			newestEmojis
+			newestEmojis,
+			topStickers,
+			newestStickers
 		};
 	} catch {
 		setHeaders({
@@ -53,7 +65,9 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			allBotsForBg: [],
 			topServersData: [],
 			topEmojis: [],
-			newestEmojis: []
+			newestEmojis: [],
+			topStickers: [],
+			newestStickers: []
 		};
 	}
 };

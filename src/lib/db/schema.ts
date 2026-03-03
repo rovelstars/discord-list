@@ -7,6 +7,7 @@
  *  - Servers
  *  - Comments  ← rating + threaded replies via parent_id
  *  - Emojis    ← Discord custom emojis, synced from registered servers or submitted manually
+ *  - Stickers  ← Discord guild stickers, synced from registered servers
  *
  * Notes:
  * - Some Drizzle sqlite-core builds/export sets may differ between versions.
@@ -255,6 +256,70 @@ export const Emojis = sqliteTable("Emojis", {
 	 * NULL for manually-submitted emojis.
 	 * If a guild sync later finds an emoji that was previously manually
 	 * submitted, `guild` is set and `submitter` is cleared to NULL.
+	 */
+	guild: text("guild")
+});
+
+/**
+ * Stickers table
+ *
+ * Stores Discord guild stickers. They arrive via server auto-sync when the bot
+ * syncs a registered guild's stickers into the database.
+ *
+ * Design notes:
+ *  - `id`          — Discord snowflake for the sticker (unique, primary key).
+ *  - `name`        — Display name of the sticker (e.g. "wave").
+ *  - `description` — Optional description set by the guild owner.
+ *  - `tags`        — The Discord autocomplete/suggestion tags string (comma-separated).
+ *  - `format`      — Sticker format type integer from Discord:
+ *                    1 = PNG, 2 = APNG, 3 = LOTTIE, 4 = GIF.
+ *                    Stored as integer for compact storage and easy filtering.
+ *  - `dc`          — Download counter; incremented each time the download button
+ *                    is used.
+ *  - `added_at`    — ISO 8601 timestamp when this sticker record was created.
+ *  - `guild`       — Discord guild id that owns this sticker (auto-sync path).
+ *                    NULL for stickers not linked to a registered guild.
+ *
+ * Format reference:
+ *  1 = PNG  (static)
+ *  2 = APNG (animated PNG)
+ *  3 = LOTTIE (animated vector — rendered via lottie-web on client)
+ *  4 = GIF  (animated)
+ */
+export const Stickers = sqliteTable("Stickers", {
+	/** Discord snowflake — stable unique identifier for the sticker. */
+	id: text("id").primaryKey(),
+
+	/** Display name of the sticker (e.g. "wave"). */
+	name: text("name").notNull(),
+
+	/** Optional description set by the guild owner. */
+	description: text("description"),
+
+	/**
+	 * Autocomplete/suggestion tags string as returned by Discord.
+	 * Typically a single emoji or a comma-separated list of related terms.
+	 */
+	tags: text("tags"),
+
+	/**
+	 * Discord sticker format type integer.
+	 * 1 = PNG, 2 = APNG, 3 = LOTTIE, 4 = GIF
+	 */
+	format: integer("format").notNull().default(1),
+
+	/**
+	 * Download counter. Incremented atomically each time a user uses
+	 * the dedicated download button.
+	 */
+	dc: integer("dc").default(0),
+
+	/** ISO 8601 timestamp when this sticker record was created. */
+	added_at: text("added_at").default(new Date().toISOString()),
+
+	/**
+	 * Discord guild (server) id that this sticker belongs to.
+	 * Set during auto-sync from a registered server.
 	 */
 	guild: text("guild")
 });

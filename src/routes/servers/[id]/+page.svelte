@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { onMount, afterUpdate } from "svelte";
+	import { onMount } from "svelte";
 	import SEO from "$lib/components/SEO.svelte";
 	import ServerCard from "$lib/components/ServerCard.svelte";
 	import TwemojiText from "$lib/components/TwemojiText.svelte";
 
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
+	import StickerCard from "$lib/components/StickerCard.svelte";
 
 	export let data: {
 		server: {
@@ -40,13 +41,27 @@
 			submitter: string | null;
 		}>;
 		emojiCount: number;
+		stickers: Array<{
+			id: string;
+			name: string;
+			tags: string | null;
+			format: number;
+			dc: number;
+			added_at: string | null;
+			guild: string | null;
+		}>;
+		stickerCount: number;
 	};
 
-	$: ({ server, descHtml, randomServers, user, emojis, emojiCount } = data);
+	$: ({ server, descHtml, randomServers, user, emojis, emojiCount, stickers, stickerCount } = data);
 
 	// Emoji display limit on server page (show first N, link to full list)
 	const EMOJI_PAGE_LIMIT = 32;
 	$: visibleEmojis = emojis.slice(0, EMOJI_PAGE_LIMIT);
+
+	// Sticker display limit on server page
+	const STICKER_PAGE_LIMIT = 32;
+	$: visibleStickers = (stickers ?? []).slice(0, STICKER_PAGE_LIMIT);
 
 	// ── Icon URL ─────────────────────────────────────────────────────────────
 
@@ -159,12 +174,6 @@
 			}
 		};
 	}
-
-	afterUpdate(() => {
-		if (iconImgRef && iconImgRef.complete && iconImgRef.naturalWidth && colorThief) {
-			extractColor(iconImgRef);
-		}
-	});
 
 	$: gc = gradientColor;
 	$: borderStyle = gc ? `border-color: rgba(${gc[0]},${gc[1]},${gc[2]},0.35);` : "";
@@ -961,6 +970,87 @@
 									<line x1="15" y1="9" x2="15.01" y2="9" />
 								</svg>
 								View all {emojiCount.toLocaleString()} emojis from this server
+							</a>
+						</div>
+					{/if}
+				</div>
+			</div>
+		{/if}
+
+		<!-- ── Server Stickers Section ─────────────────────────────────────────── -->
+		{#if stickers && stickers.length > 0}
+			<div class="mt-8 bg-card rounded-lg overflow-hidden border border-border">
+				<div class="px-5 py-4 border-b border-border flex items-center justify-between gap-4">
+					<div class="flex items-center gap-2.5">
+						<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-4 h-4 text-primary"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path
+									d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z"
+								/>
+								<path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5H15" />
+								<path d="M15 2v5h5" />
+							</svg>
+						</div>
+						<div>
+							<h2 class="text-base font-bold font-heading leading-none">Server Stickers</h2>
+							<p class="text-xs text-muted-foreground mt-0.5">
+								{stickerCount.toLocaleString()} custom sticker{stickerCount !== 1 ? "s" : ""} from this
+								server
+							</p>
+						</div>
+					</div>
+
+					{#if stickerCount > STICKER_PAGE_LIMIT}
+						<a
+							href="/stickers?guild={server.id}"
+							class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors shrink-0"
+						>
+							View all {stickerCount.toLocaleString()} →
+						</a>
+					{/if}
+				</div>
+
+				<div class="p-4">
+					<div
+						class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2"
+					>
+						{#each visibleStickers as sticker (sticker.id)}
+							<StickerCard {sticker} />
+						{/each}
+					</div>
+
+					{#if stickerCount > STICKER_PAGE_LIMIT}
+						<div class="mt-4 text-center">
+							<a
+								href="/stickers?guild={server.id}"
+								class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-muted hover:bg-muted/70 text-sm font-semibold text-foreground transition-colors"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="w-4 h-4"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path
+										d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z"
+									/>
+									<path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5H15" />
+									<path d="M15 2v5h5" />
+								</svg>
+								View all {stickerCount.toLocaleString()} stickers from this server
 							</a>
 						</div>
 					{/if}

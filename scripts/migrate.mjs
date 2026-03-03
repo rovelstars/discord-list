@@ -354,6 +354,32 @@ const SCHEMA = [
 			{ name: "submitter", type: "TEXT" },
 			{ name: "guild", type: "TEXT" }
 		]
+	},
+
+	// ── Stickers ──────────────────────────────────────────────────────────────
+	{
+		name: "Stickers",
+		sql: `
+      CREATE TABLE IF NOT EXISTS "Stickers" (
+        "id"          TEXT    NOT NULL PRIMARY KEY,
+        "name"        TEXT    NOT NULL,
+        "description" TEXT,
+        "tags"        TEXT,
+        "format"      INTEGER NOT NULL DEFAULT 1,
+        "dc"          INTEGER NOT NULL DEFAULT 0,
+        "added_at"    TEXT    NOT NULL DEFAULT ${NOW_EXPR},
+        "guild"       TEXT
+      )
+    `,
+		columns: [
+			{ name: "name", type: "TEXT", notNull: true, default: "''" },
+			{ name: "description", type: "TEXT" },
+			{ name: "tags", type: "TEXT" },
+			{ name: "format", type: "INTEGER", notNull: true, default: "1" },
+			{ name: "dc", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "added_at", type: "TEXT", notNull: true, default: NOW_EXPR },
+			{ name: "guild", type: "TEXT" }
+		]
 	}
 ];
 
@@ -560,7 +586,31 @@ const INDEXES = [
 	// The PRIMARY KEY already covers this, but an explicit index makes the
 	// planner's intent clear and helps on some SQLite builds.
 	`CREATE INDEX IF NOT EXISTS "idx_reactions_toggle"
-     ON "CommentReactions" ("comment_id", "user_id", "emoji")`
+     ON "CommentReactions" ("comment_id", "user_id", "emoji")`,
+
+	// ── Stickers indexes ──────────────────────────────────────────────────────
+	// Speed up "get all stickers for a guild" — most common Stickers query
+	`CREATE INDEX IF NOT EXISTS "idx_stickers_guild"
+     ON "Stickers" ("guild")`,
+
+	// Speed up search by name / tags
+	`CREATE INDEX IF NOT EXISTS "idx_stickers_name"
+     ON "Stickers" ("name")`,
+
+	`CREATE INDEX IF NOT EXISTS "idx_stickers_tags"
+     ON "Stickers" ("tags")`,
+
+	// Speed up "top downloaded" sort
+	`CREATE INDEX IF NOT EXISTS "idx_stickers_dc"
+     ON "Stickers" ("dc" DESC)`,
+
+	// Speed up "newest" sort
+	`CREATE INDEX IF NOT EXISTS "idx_stickers_added_at"
+     ON "Stickers" ("added_at" DESC)`,
+
+	// Speed up "animated only" / "static only" format filter
+	`CREATE INDEX IF NOT EXISTS "idx_stickers_format"
+     ON "Stickers" ("format")`
 ];
 
 async function ensureIndexes(client, dryRun) {

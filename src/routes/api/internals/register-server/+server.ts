@@ -5,6 +5,7 @@ import { withDb, type DrizzleDb } from "$lib/db";
 import { Servers } from "$lib/db/schema";
 import { eq } from "drizzle-orm";
 import { syncServerEmojis } from "$lib/emoji-sync";
+import { syncServerStickers } from "$lib/sticker-sync";
 
 function validateSecret(request: Request): boolean {
 	const internalSecret = (env.INTERNAL_SECRET ?? "").trim();
@@ -101,10 +102,11 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 
-		// ── Background emoji sync ──────────────────────────────────────────────
-		// Fire-and-forget: sync the guild's custom emojis immediately after
-		// registration so they appear in the listing without requiring a
-		// separate /sync command. Never blocks or fails the registration response.
+		// ── Background emoji + sticker sync ───────────────────────────────────
+		// Fire-and-forget: sync the guild's custom emojis and stickers
+		// immediately after registration so they appear in the listing without
+		// requiring a separate /sync command. Neither call blocks or fails the
+		// registration response — they run independently of each other.
 		const botToken = (env.DISCORD_TOKEN ?? "").trim();
 		if (botToken) {
 			syncServerEmojis(guildId, botToken)
@@ -121,9 +123,28 @@ export const POST: RequestHandler = async ({ request }) => {
 					}
 				})
 				.catch((err) => {
-					// Absolutely non-fatal — registration already succeeded.
 					console.warn(
 						`[register-server] Background emoji sync threw unexpectedly for guild ${guildId}:`,
+						err
+					);
+				});
+
+			syncServerStickers(guildId, botToken)
+				.then((result) => {
+					if (result.error) {
+						console.warn(
+							`[register-server] Sticker sync for guild ${guildId} encountered an error: ${result.error}`
+						);
+					} else {
+						console.info(
+							`[register-server] Sticker sync complete for guild ${guildId}: ` +
+								`+${result.created} new, ~${result.updated} updated (${result.total} total)`
+						);
+					}
+				})
+				.catch((err) => {
+					console.warn(
+						`[register-server] Background sticker sync threw unexpectedly for guild ${guildId}:`,
 						err
 					);
 				});

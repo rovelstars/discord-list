@@ -236,6 +236,26 @@ export async function getEmojiById(id: string): Promise<EmojiDetail | null> {
 }
 
 /**
+ * Fetch multiple emojis by their Discord snowflake ids in a single query.
+ * Returns a Map keyed by id for O(1) lookup by callers.
+ * Missing ids simply have no entry in the map.
+ */
+export async function getEmojisByIds(ids: string[]): Promise<Map<string, EmojiSummary>> {
+	if (!ids.length) return new Map();
+
+	const rows = (await withDb((db: DrizzleDb) =>
+		db.select(SUMMARY_COLS).from(Emojis).where(inArray(Emojis.id, ids))
+	)) as RawRow[];
+
+	const map = new Map<string, EmojiSummary>();
+	for (const row of rows) {
+		const emoji = mapSummary(row);
+		map.set(emoji.id, emoji);
+	}
+	return map;
+}
+
+/**
  * Get all emojis belonging to a specific guild (server).
  * Returns summaries ordered by name ascending.
  */

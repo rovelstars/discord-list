@@ -3,11 +3,27 @@
 	import BotCard from "$lib/components/BotCard.svelte";
 	import ServerCard from "$lib/components/ServerCard.svelte";
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
+	import StickerCard from "$lib/components/StickerCard.svelte";
 	import SEO from "$lib/components/SEO.svelte";
 
 	export let data: any;
 
-	const { topbotsdata, allBotsForBg, topServersData, topEmojis = [], newestEmojis = [] } = data;
+	const {
+		topbotsdata,
+		allBotsForBg,
+		topServersData,
+		topEmojis = [],
+		newestEmojis = [],
+		topStickers = [],
+		newestStickers = []
+	} = data;
+
+	// Tag each item with its type so the background renderer knows which card to use
+	type BgItem =
+		| { _type: "bot"; [k: string]: any }
+		| { _type: "server"; [k: string]: any }
+		| { _type: "sticker"; [k: string]: any }
+		| { _type: "emoji"; [k: string]: any };
 
 	// ── Animated word cycling ─────────────────────────────────────────────────
 	const words = ["bots", "servers", "stickers", "emojis", "friends"];
@@ -53,20 +69,45 @@
 	}
 
 	// ── Background rows ───────────────────────────────────────────────────────
-	// 4 rows of 10 cards each. Source: allBotsForBg (up to 60 deduped bots).
+	// 6 rows of 10 cards each, cycling bots → servers → stickers → emojis.
 	// Each row is tripled in the DOM so the -33.333% scroll loop is seamless.
-	const NUM_ROWS = 4;
+	const NUM_ROWS = 6;
 	const CARDS_PER_ROW = 10;
 
-	$: backgroundBots = (() => {
-		const src = (allBotsForBg && allBotsForBg.length > 0 ? allBotsForBg : topbotsdata) as any[];
-		const bots =
-			src.length > 0 ? src : Array.from({ length: CARDS_PER_ROW }, () => ({ IS_SKELETON: true }));
-		const rows: any[][] = [];
+	$: backgroundRows = (() => {
+		const botSrc = (allBotsForBg && allBotsForBg.length > 0 ? allBotsForBg : topbotsdata) as any[];
+		const bots: BgItem[] =
+			botSrc.length > 0
+				? botSrc.map((b: any) => ({ ...b, _type: "bot" as const }))
+				: Array.from({ length: CARDS_PER_ROW }, () => ({
+						_type: "bot" as const,
+						IS_SKELETON: true
+					}));
+
+		const servers: BgItem[] = (topServersData as any[]).map((s) => ({
+			...s,
+			_type: "server" as const
+		}));
+		const stickers: BgItem[] = [...topStickers, ...newestStickers].map((s: any) => ({
+			...s,
+			_type: "sticker" as const
+		}));
+		const emojis: BgItem[] = [...topEmojis, ...newestEmojis].map((e: any) => ({
+			...e,
+			_type: "emoji" as const
+		}));
+
+		// Pool per row type — cycle: bot, server, sticker, emoji, bot, server
+		const pools: BgItem[][] = [bots, servers, stickers, emojis, bots, servers];
+
+		const rows: BgItem[][] = [];
 		for (let r = 0; r < NUM_ROWS; r++) {
-			const row: any[] = [];
+			const pool = pools[r];
+			// Fall back to bots if pool is empty
+			const src = pool.length > 0 ? pool : bots;
+			const row: BgItem[] = [];
 			for (let c = 0; c < CARDS_PER_ROW; c++) {
-				row.push(bots[(r * CARDS_PER_ROW + c) % bots.length]);
+				row.push(src[c % src.length]);
 			}
 			rows.push(row);
 		}
@@ -100,14 +141,22 @@
 	-->
 	<div class="bg-stage blur-xs" aria-hidden="true">
 		<div class="bg-tilt">
-			{#each backgroundBots as row, rowIndex}
+			{#each backgroundRows as row, rowIndex}
 				<div
 					class="bg-row {rowIndex % 2 === 0 ? 'row-scroll-left' : 'row-scroll-right'}"
-					style="animation-duration: {50 + rowIndex * 12}s;"
+					style="animation-duration: {50 + rowIndex * 10}s;"
 				>
-					{#each [...row, ...row, ...row] as bot}
+					{#each [...row, ...row, ...row] as item}
 						<div class="bg-transparent">
-							<BotCard {bot} edit={false} />
+							{#if item._type === "server"}
+								<ServerCard server={item} edit={false} />
+							{:else if item._type === "sticker"}
+								<StickerCard sticker={item as any} resolvedTags={item.resolvedTags ?? []} />
+							{:else if item._type === "emoji"}
+								<EmojiCard emoji={item as any} />
+							{:else}
+								<BotCard bot={item} edit={false} />
+							{/if}
 						</div>
 					{/each}
 				</div>
@@ -385,7 +434,7 @@
 						The most-downloaded custom Discord emojis on the listing.
 					</p>
 					<div
-						class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 gap-3"
+						class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3"
 					>
 						{#each topEmojis as emoji (emoji.id)}
 							<EmojiCard {emoji} />
@@ -445,7 +494,7 @@
 						Freshly synced custom emojis — be the first to download them.
 					</p>
 					<div
-						class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 gap-3"
+						class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3"
 					>
 						{#each newestEmojis as emoji (emoji.id)}
 							<EmojiCard {emoji} />
@@ -457,6 +506,126 @@
 							class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold text-base hover:bg-purple-500/20 transition-colors"
 						>
 							See All New Emojis
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-4 h-4"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="m9 18 6-6-6-6" />
+							</svg>
+						</a>
+					</div>
+				</div>
+			</section>
+		{/if}
+
+		<!-- Section: Top Stickers -->
+		{#if topStickers && topStickers.length > 0}
+			<section class="pt-16 px-4">
+				<div class="max-w-7xl mx-auto">
+					<div class="flex items-center justify-between mb-2">
+						<h2 class="font-heading text-3xl md:text-4xl font-bold flex items-center gap-3">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-8 h-8 text-amber-400"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<path
+									d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z"
+								/>
+								<path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5H15" />
+								<path d="M15 2v5h5" />
+							</svg>
+							Top Stickers
+						</h2>
+					</div>
+					<p class="text-muted-foreground text-lg mb-8 font-medium">
+						The most downloaded custom Discord stickers from the community.
+					</p>
+					<div
+						class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3"
+					>
+						{#each topStickers as sticker (sticker.id)}
+							<StickerCard {sticker} />
+						{/each}
+					</div>
+					<div class="text-center mt-10">
+						<a
+							href="/stickers?sort=popular"
+							class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-base hover:bg-amber-500/20 transition-colors"
+						>
+							See All Top Stickers
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-4 h-4"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="m9 18 6-6-6-6" />
+							</svg>
+						</a>
+					</div>
+				</div>
+			</section>
+		{/if}
+
+		<!-- Section: Newest Stickers -->
+		{#if newestStickers && newestStickers.length > 0}
+			<section class="pt-16 px-4">
+				<div class="max-w-7xl mx-auto">
+					<h2 class="font-heading text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-8 h-8 text-teal-400"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path
+								d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"
+							/>
+							<path d="M5 3v4" />
+							<path d="M19 17v4" />
+							<path d="M3 5h4" />
+							<path d="M17 19h4" />
+						</svg>
+						New Stickers
+					</h2>
+					<p class="text-muted-foreground text-lg mb-8 font-medium">
+						Freshly synced custom stickers — be the first to download them.
+					</p>
+					<div
+						class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3"
+					>
+						{#each newestStickers as sticker (sticker.id)}
+							<StickerCard {sticker} />
+						{/each}
+					</div>
+					<div class="text-center mt-10">
+						<a
+							href="/stickers?sort=newest"
+							class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-teal-500/30 bg-teal-500/10 text-teal-600 dark:text-teal-400 font-bold text-base hover:bg-teal-500/20 transition-colors"
+						>
+							See All New Stickers
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								class="w-4 h-4"
@@ -802,7 +971,7 @@
 		 */
 		position: absolute;
 		/* Bleed past all edges */
-		top: -60%;
+		top: -100%;
 		left: -40%;
 		right: -40%;
 		bottom: -20%;

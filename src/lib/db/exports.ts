@@ -26,10 +26,28 @@ export {
 	getEmojisByGuild,
 	searchEmojis,
 	incrementEmojiDownload,
-	upsertEmojiFromSync,
 	getRandomEmojis
 } from "./queries/emojis";
 export type { EmojiSummary, EmojiDetail } from "./queries/emojis";
+
+export {
+	listStickers,
+	countStickers,
+	getStickerById,
+	getStickersByGuild,
+	countStickersByGuild,
+	incrementStickerDownload,
+	syncGuildStickers,
+	getRandomStickers,
+	getTopStickers,
+	getNewestStickers,
+	getStickerUrl,
+	getStickerExtension,
+	getStickerFormatLabel,
+	isStickerAnimated,
+	STICKER_FORMAT
+} from "./queries/stickers";
+export type { StickerSummary, StickerDetail, StickerFormatType } from "./queries/stickers";
 
 // Default export provides the most commonly-used runtime helpers for convenience.
 export default {
