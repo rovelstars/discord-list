@@ -9,6 +9,35 @@
 	// ColorThief is only used on the client; load inside onMount to avoid SSR issues.
 	let ColorThief: any = null;
 
+	// The allowed sandbox tokens for user-supplied iframes.
+	// Notably absent: allow-same-origin, allow-top-navigation, allow-forms, allow-modals.
+	const IFRAME_SANDBOX = "allow-scripts allow-popups";
+
+	/**
+	 * Pre-process user HTML before rendering: ensure every <iframe> has a strict
+	 * sandbox attribute so even if the browser sees it before the DOM-patch below
+	 * the attribute is already present.
+	 */
+	function sanitizeDesc(html: string): string {
+		if (!html) return "";
+		return html.replace(/<iframe(\s[^>]*)?>/gi, (match, attrs = "") => {
+			// Strip any existing sandbox attribute so we control the value entirely.
+			const stripped = attrs.replace(/\s+sandbox\s*=\s*(?:"[^"]*"|'[^']*'|\S+)/gi, "");
+			return `<iframe${stripped} sandbox="${IFRAME_SANDBOX}">`;
+		});
+	}
+
+	/** Reference to the long-description container so we can patch the DOM after render. */
+	let descEl: HTMLDivElement | null = null;
+
+	/** Walk every iframe in the rendered description and enforce our sandbox. */
+	function patchIframes() {
+		if (!descEl) return;
+		descEl.querySelectorAll("iframe").forEach((frame) => {
+			frame.setAttribute("sandbox", IFRAME_SANDBOX);
+		});
+	}
+
 	export let bot: any = {
 		id: "",
 		username: "",
@@ -84,6 +113,7 @@
 	}
 
 	onMount(async () => {
+		patchIframes();
 		// dynamic import to avoid SSR issues; colorthief works in browser
 		try {
 			const mod = await import("colorthief");
@@ -151,6 +181,7 @@
 
 	// when botBg or avatar changes, try to re-run color extraction (afterUpdate ensures DOM updated)
 	afterUpdate(() => {
+		patchIframes();
 		if (gradientImgEl && (gradientImgEl as any).complete && ColorThief) {
 			try {
 				const c = ColorThief.getColor(gradientImgEl);
@@ -236,10 +267,11 @@
 
 			<!-- Long description (supports HTML/markdown-rendered content) -->
 			<div
+				bind:this={descEl}
 				class="mt-8 min-w-full prose md:prose-xl dark:prose-invert prose-code:before:content-[''] prose-code:after:content-[''] prose-code:bg-popover prose-code:px-2 prose-code:py-1 prose-code:rounded-md"
 			>
 				<TwemojiText>
-					{@html bot.desc || ""}
+					{@html sanitizeDesc(bot.desc || "")}
 				</TwemojiText>
 			</div>
 		</div>

@@ -13,6 +13,7 @@
 		newFlag: boolean;
 		trending: boolean;
 		isSearching: boolean;
+		discordBotId: string;
 	};
 
 	$: ({ servers, topServers, q, limit, offset, newFlag, trending, isSearching } = data);
@@ -81,9 +82,7 @@
 	<!-- Decorative blobs -->
 	<div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
 		<div class="absolute -top-24 -left-24 w-175 h-100 rounded-full bg-green-500/10 blur-3xl"></div>
-		<div
-			class="absolute -bottom-16 -right-16 w-120 h-80 rounded-full bg-primary/10 blur-3xl"
-		></div>
+		<div class="absolute -bottom-16 -right-16 w-120 h-80 rounded-full bg-primary/10 blur-3xl"></div>
 	</div>
 
 	<div class="text-center max-w-3xl mx-auto relative z-10">
@@ -235,9 +234,7 @@
 	<div class="px-4 pt-2 pb-4 max-w-5xl mx-auto">
 		<div class="flex items-center justify-between gap-4 flex-wrap">
 			<div>
-				<h2
-					class="font-heading text-2xl md:text-3xl font-bold flex items-center gap-2 flex-wrap"
-				>
+				<h2 class="font-heading text-2xl md:text-3xl font-bold flex items-center gap-2 flex-wrap">
 					{#if newFlag}
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -505,8 +502,7 @@
 						</p>
 						<div class="flex flex-wrap gap-3">
 							<a
-								href="https://discord.com/oauth2/authorize?client_id={import.meta.env
-									.VITE_BOT_ID ?? ''}&permissions=2048&scope=bot%20applications.commands"
+								href="https://discord.com/oauth2/authorize?client_id={data.discordBotId}&permissions=5640910726360128&integration_type=0&scope=bot+applications.commands"
 								target="_blank"
 								rel="noopener noreferrer"
 								class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold transition-colors text-sm"

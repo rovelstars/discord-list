@@ -32,6 +32,8 @@
 		"vite": "^7.3.1"
 	},
 	"dependencies": {
+		"@discordjs/core": "^2.4.0",
+		"@discordjs/rest": "^2.6.0",
 		"@libsql/client": "^0.17.0",
 		"@lucide/svelte": "^0.575.0",
 		"@skeletonlabs/skeleton": "^4.12.1",

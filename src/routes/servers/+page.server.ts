@@ -1,5 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import { listServers, getTopServers } from "$lib/db/queries";
+import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async ({ url, setHeaders }) => {
 	const q = url.searchParams.get("q") ?? null;
@@ -23,8 +24,7 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 		"cache-control": isSearching
 			? "public, max-age=60, stale-while-revalidate=120"
 			: "public, max-age=300, stale-while-revalidate=600",
-		"netlify-vary":
-			"query=q|limit|offset|new|trending,cookie=key|code,header=user-agent"
+		"netlify-vary": "query=q|limit|offset|new|trending,cookie=key|code,header=user-agent"
 	});
 
 	return {
@@ -35,6 +35,7 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 		offset,
 		newFlag,
 		trending,
-		isSearching
+		isSearching,
+		discordBotId: env.DISCORD_BOT_ID ?? ""
 	};
 };

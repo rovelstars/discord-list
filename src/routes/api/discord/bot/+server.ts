@@ -1,159 +1,204 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { env } from "$env/dynamic/private";
 import { InteractionResponseType, InteractionType, verifyKey } from "discord-interactions";
-
-// The bot command registry / handlers used by the legacy implementation.
-// The module path is relative to this file and mirrors the project layout.
 import { commands, runs } from "@/bot/register";
 
-/**
- * GET /api/discord/bot
- * Simple health-ish endpoint that returns the configured bot id (if present).
- */
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Build a valid ephemeral Discord message response — always HTTP 200. */
+function ephemeralReply(content: string) {
+	return new Response(
+		JSON.stringify({
+			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+			data: { content, flags: 64 }
+		}),
+		{ status: 200, headers: { "Content-Type": "application/json" } }
+	);
+}
+
+/** Build a JSON response (non-interaction). */
+function jsonResponse(body: unknown, status = 200) {
+	return new Response(JSON.stringify(body), {
+		status,
+		headers: { "Content-Type": "application/json" }
+	});
+}
+
+// ---------------------------------------------------------------------------
+// GET — health / info
+// ---------------------------------------------------------------------------
+
 export const GET: RequestHandler = async () => {
 	return new Response(`👋 ${env.DISCORD_BOT_ID ?? ""}`, { status: 200 });
 };
 
+// ---------------------------------------------------------------------------
+// POST — Discord interaction webhook
+// ---------------------------------------------------------------------------
+
 /**
- * POST /api/discord/bot
+ * Handles every Discord interaction POST.
  *
- * Discord Interaction endpoint.
- * - Verifies the request using Discord's Ed25519 signature headers.
- * - Responds to PING with PONG as required by Discord.
- * - Dispatches application commands to the registered handlers.
- *
- * Security:
- * - Requires DISCORD_PUBLIC_KEY to be set in server env.
+ * Design goals:
+ *  1. Always return HTTP 200 with a valid interaction response body when the
+ *     interaction type is APPLICATION_COMMAND — Discord marks anything else as
+ *     "application did not respond".
+ *  2. Never let an unhandled exception propagate; wrap everything in a
+ *     guaranteed fallback that returns an ephemeral error message to the user.
+ *  3. Surface meaningful, actionable error text instead of generic warnings.
+ *  4. Reserve non-200 responses only for cases where Discord itself expects
+ *     them: 401 for invalid signature (before the interaction is parsed),
+ *     400 for a malformed PING/unknown type.
  */
 export const POST: RequestHandler = async ({ request }) => {
+	// ── 1. Signature verification ────────────────────────────────────────────
+	// Must happen before any other processing; Discord drops connections that
+	// don't verify correctly.  A failure here is a genuine 401 — the request
+	// didn't come from Discord (or the public key is misconfigured).
+	let bodyBuffer: ArrayBuffer;
+	let bodyText: string;
+
 	try {
-		const publicKey = env.DISCORD_PUBLIC_KEY;
-		if (!publicKey) {
-			console.error("DISCORD_PUBLIC_KEY not configured for interactions.");
-			return new Response("No public key found in env", { status: 500 });
-		}
+		bodyBuffer = await request.arrayBuffer();
+		bodyText = new TextDecoder().decode(bodyBuffer);
+	} catch (readErr) {
+		console.error("[discord/bot] Failed to read request body:", readErr);
+		return new Response("Bad Request", { status: 400 });
+	}
 
-		// Read raw body (ArrayBuffer) for signature verification.
-		// We decode it here too so the stream is only consumed once — calling
-		// request.json() after arrayBuffer() throws "Body has already been read".
-		const bodyBuffer = await request.arrayBuffer();
-		const bodyText = new TextDecoder().decode(bodyBuffer);
+	const publicKey = (env.DISCORD_PUBLIC_KEY ?? "").trim();
+	if (!publicKey) {
+		// Misconfiguration — we can't verify anything.  Log loudly and bail.
+		console.error(
+			"[discord/bot] DISCORD_PUBLIC_KEY is not set. " +
+				"Set it in your environment to enable interaction verification."
+		);
+		return new Response("Server misconfiguration: missing public key.", { status: 500 });
+	}
 
-		const signature = request.headers.get("x-signature-ed25519") ?? "";
-		const timestamp = request.headers.get("x-signature-timestamp") ?? "";
+	const signature = request.headers.get("x-signature-ed25519") ?? "";
+	const timestamp = request.headers.get("x-signature-timestamp") ?? "";
 
-		const valid =
-			signature && timestamp && (await verifyKey(bodyBuffer, signature, timestamp, publicKey));
+	let signatureValid = false;
+	try {
+		signatureValid = !!(
+			signature &&
+			timestamp &&
+			(await verifyKey(bodyBuffer, signature, timestamp, publicKey))
+		);
+	} catch (verifyErr) {
+		console.error("[discord/bot] verifyKey threw:", verifyErr);
+		signatureValid = false;
+	}
 
-		if (!valid) {
-			return new Response("Invalid Request Signature", { status: 401 });
-		}
+	if (!signatureValid) {
+		return new Response("Invalid request signature.", { status: 401 });
+	}
 
-		// Parse JSON from the already-decoded text instead of re-reading the body.
-		const interaction = JSON.parse(bodyText);
+	// ── 2. Parse interaction payload ─────────────────────────────────────────
+	let interaction: Record<string, any>;
+	try {
+		interaction = JSON.parse(bodyText);
+		if (!interaction || typeof interaction !== "object") throw new Error("not an object");
+	} catch {
+		return new Response("Invalid interaction payload.", { status: 400 });
+	}
 
-		if (!interaction || typeof interaction !== "object") {
-			return new Response("Invalid interaction payload", { status: 400 });
-		}
+	// ── 3. PING — required by Discord during endpoint registration ───────────
+	if (interaction.type === InteractionType.PING) {
+		return jsonResponse({ type: InteractionResponseType.PONG });
+	}
 
-		// Handle PING from Discord
-		if (interaction.type === InteractionType.PING) {
-			return new Response(JSON.stringify({ type: InteractionResponseType.PONG }), {
-				status: 200,
-				headers: { "Content-Type": "application/json" }
-			});
-		}
+	// ── 4. APPLICATION_COMMAND ───────────────────────────────────────────────
+	// From this point onward we MUST return HTTP 200 with a valid response
+	// body, otherwise Discord shows "application did not respond" to the user.
+	if (interaction.type === InteractionType.APPLICATION_COMMAND) {
+		try {
+			const incomingName = (interaction.data?.name ?? "").toString().toLowerCase().trim();
 
-		// Handle application command interactions
-		if (interaction.type === InteractionType.APPLICATION_COMMAND) {
-			try {
-				const incomingName = (interaction.data?.name ?? "").toString().toLowerCase();
-				const cmd = commands.find(
-					(c: any) => (c.name ?? "").toString().toLowerCase() === incomingName
-				);
+			// ── 4a. Find the command ─────────────────────────────────────────
+			const cmd = commands.find(
+				(c: any) => (c.name ?? "").toString().toLowerCase().trim() === incomingName
+			);
 
-				if (!cmd) {
-					console.warn("Unknown command received:", incomingName);
-					return new Response(JSON.stringify({ error: "Unknown Command" }), {
-						status: 400,
-						headers: { "Content-Type": "application/json" }
-					});
-				}
-
-				// Find index and matching runner
-				const index = commands.indexOf(cmd);
-				const run = runs[index];
-
-				if (typeof run !== "function") {
-					console.error("No run handler for command:", incomingName);
-					return new Response(JSON.stringify({ error: "Handler not implemented" }), {
-						status: 500,
-						headers: { "Content-Type": "application/json" }
-					});
-				}
-
-				// Execute the command handler. Provide a small environment object so
-				// handlers can access tokens / configuration if they need to.
-				// The handler may return a response to send back to Discord; legacy
-				// handlers typically perform their own reply using the Discord API,
-				// but we'll accept an optional returned payload to echo.
-				const envPayload = {
-					MODE: env.MODE,
-					DISCORD_BOT_ID: env.DISCORD_BOT_ID,
-					DISCORD_GUILD_ID: env.DISCORD_GUILD_ID,
-					DISCORD_TOKEN: env.DISCORD_TOKEN,
-					DOMAIN: env.DOMAIN ?? "http://localhost:5173",
-					INTERNAL_SECRET: env.INTERNAL_SECRET ?? ""
-				};
-
-				const result = await run(interaction, envPayload);
-
-				// Every handler must return a valid interaction response object.
-				if (result && typeof result === "object" && "type" in result) {
-					return new Response(JSON.stringify(result), {
-						status: 200,
-						headers: { "Content-Type": "application/json" }
-					});
-				}
-
-				// Handler returned nothing usable — this is a bug in the command
-				// implementation. Log it and tell Discord something went wrong so
-				// the user sees a message rather than a silent timeout.
-				console.error(`Command handler for "${incomingName}" did not return a response object.`);
-				return new Response(
-					JSON.stringify({
-						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-						data: {
-							content: "⚠️ This command didn't return a response. Please report this.",
-							flags: 64
-						}
-					}),
-					{
-						status: 200,
-						headers: { "Content-Type": "application/json" }
-					}
-				);
-			} catch (handlerErr) {
-				console.error("Error running command handler:", handlerErr);
-				// Must still return 200 with a valid interaction response so Discord
-				// doesn't retry and the user sees the error instead of a timeout.
-				return new Response(
-					JSON.stringify({
-						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-						data: { content: "⚠️ An error occurred while running this command.", flags: 64 }
-					}),
-					{
-						status: 200,
-						headers: { "Content-Type": "application/json" }
-					}
+			if (!cmd) {
+				console.warn("[discord/bot] Unknown command received:", incomingName);
+				return ephemeralReply(
+					`❓ Unknown command \`/${incomingName}\`. ` +
+						"This command may not be registered yet — please contact the server admin."
 				);
 			}
-		}
 
-		// Unknown interaction type
-		return new Response("Unknown Interaction Type", { status: 400 });
-	} catch (err) {
-		console.error("Interaction endpoint error:", err);
-		return new Response("Invalid Request Signature", { status: 401 });
+			const index = commands.indexOf(cmd);
+			const run = runs[index];
+
+			if (typeof run !== "function") {
+				console.error("[discord/bot] No run handler for command:", incomingName);
+				return ephemeralReply(
+					`⚙️ The \`/${incomingName}\` command has no handler implemented yet. ` +
+						"Please report this to the bot developer."
+				);
+			}
+
+			// ── 4b. Build env payload for the handler ────────────────────────
+			const envPayload = {
+				MODE: env.MODE ?? "production",
+				DISCORD_BOT_ID: env.DISCORD_BOT_ID ?? "",
+				DISCORD_GUILD_ID: env.DISCORD_GUILD_ID ?? "",
+				DISCORD_TOKEN: env.DISCORD_TOKEN ?? "",
+				DOMAIN: (env.DOMAIN ?? "http://localhost:5173").replace(/\/$/, ""),
+				INTERNAL_SECRET: env.INTERNAL_SECRET ?? ""
+			};
+
+			// ── 4c. Run the handler ──────────────────────────────────────────
+			let result: any;
+			try {
+				result = await run(interaction, envPayload);
+			} catch (handlerErr) {
+				// The handler itself threw — surface a clear message.
+				const msg = handlerErr instanceof Error ? handlerErr.message : String(handlerErr);
+				console.error(
+					`[discord/bot] Handler for "/${incomingName}" threw an exception:`,
+					handlerErr
+				);
+				return ephemeralReply(
+					`⚠️ An error occurred while running \`/${incomingName}\`:\n\`\`\`\n${msg}\n\`\`\`\n` +
+						"Please try again or report this to the bot developer."
+				);
+			}
+
+			// ── 4d. Validate the returned response object ────────────────────
+			if (result && typeof result === "object" && "type" in result) {
+				return new Response(JSON.stringify(result), {
+					status: 200,
+					headers: { "Content-Type": "application/json" }
+				});
+			}
+
+			// Handler returned something unusable — treat as a bug.
+			console.error(
+				`[discord/bot] Handler for "/${incomingName}" returned an invalid response:`,
+				result
+			);
+			return ephemeralReply(
+				`⚙️ \`/${incomingName}\` completed but returned an invalid response object. ` +
+					"Please report this to the bot developer."
+			);
+		} catch (outerErr) {
+			// Absolute last-resort catch — something went badly wrong outside the
+			// handler itself (e.g. command lookup, env construction, etc.).
+			const msg = outerErr instanceof Error ? outerErr.message : String(outerErr);
+			console.error("[discord/bot] Unexpected error in command dispatch:", outerErr);
+			return ephemeralReply(
+				`💥 An unexpected error occurred while processing your command:\n\`\`\`\n${msg}\n\`\`\`\n` +
+					"Please try again in a moment."
+			);
+		}
 	}
+
+	// ── 5. Unknown interaction type ──────────────────────────────────────────
+	console.warn("[discord/bot] Received unknown interaction type:", interaction.type);
+	return new Response("Unknown interaction type.", { status: 400 });
 };

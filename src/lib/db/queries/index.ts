@@ -1103,8 +1103,11 @@ export async function upsertServer(data: {
 				desc: data.desc ?? "Description is not updated.",
 				icon: data.icon ?? "",
 				owner: data.owner,
-				slug: data.slug ?? null,
-				added_at: new Date().toISOString()
+				slug: data.slug ?? "",
+				added_at: new Date().toISOString(),
+				votes: 0,
+				promoted: false,
+				badges: JSON.stringify([]) as any
 			})
 			.onConflictDoUpdate({
 				target: Servers.id,

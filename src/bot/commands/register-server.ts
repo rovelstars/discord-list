@@ -12,12 +12,16 @@ import { InteractionResponseType } from "discord-interactions";
  *  3. On success the server is upserted into the Servers table with the
  *     invoking user recorded as owner.
  *
- * The command is guild-only (it makes no sense in DMs) so we always read
- * interaction.member instead of interaction.user.
+ * This function NEVER throws — every code path returns a valid Discord
+ * interaction response object so the caller never has to worry about
+ * unhandled rejections causing "application did not respond" errors.
  */
 
 const MANAGE_GUILD = BigInt(0x20);
 const ADMINISTRATOR = BigInt(0x8);
+
+/** Timeout for every outbound fetch (ms). */
+const FETCH_TIMEOUT_MS = 8_000;
 
 function hasRequiredPermission(permissionsString: string | null | undefined): boolean {
 	if (!permissionsString) return false;
@@ -29,6 +33,32 @@ function hasRequiredPermission(permissionsString: string | null | undefined): bo
 	}
 }
 
+/** Ephemeral reply helper — keeps call sites tidy. */
+function reply(content: string) {
+	return {
+		type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+		data: { content, flags: 64 }
+	};
+}
+
+/**
+ * fetch() with an AbortController timeout so a slow/unreachable upstream
+ * never hangs the interaction past Discord's 3-second deadline.
+ */
+async function fetchWithTimeout(
+	url: string,
+	options: RequestInit = {},
+	timeoutMs = FETCH_TIMEOUT_MS
+): Promise<Response> {
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), timeoutMs);
+	try {
+		return await fetch(url, { ...options, signal: controller.signal });
+	} finally {
+		clearTimeout(timer);
+	}
+}
+
 export default {
 	data: new SlashCommandBuilder()
 		.setName("register")
@@ -36,173 +66,187 @@ export default {
 		.setDMPermission(false),
 
 	async run(interaction: Record<string, any>, env?: Record<string, any>) {
-		// ── 1. Guild-only guard ───────────────────────────────────────────────
-		const guildId: string | undefined = interaction.guild_id;
-		if (!guildId) {
-			return {
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					content: "❌ This command can only be used inside a server.",
-					flags: 64 // ephemeral
-				}
-			};
-		}
-
-		// ── 2. Permission check ───────────────────────────────────────────────
-		const member = interaction.member;
-		const memberPermissions: string | null | undefined = member?.permissions;
-
-		if (!hasRequiredPermission(memberPermissions)) {
-			return {
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					content:
-						"❌ You need the **Manage Server** or **Administrator** permission to register this server.",
-					flags: 64
-				}
-			};
-		}
-
-		// ── 3. Resolve the invoking user's Discord id ─────────────────────────
-		const discordUserId: string | undefined =
-			member?.user?.id ?? interaction.user?.id;
-
-		if (!discordUserId) {
-			return {
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					content: "❌ Could not determine your Discord user id. Please try again.",
-					flags: 64
-				}
-			};
-		}
-
-		// ── 4. Verify the user has a site account ────────────────────────────
-		// We call our own internal API endpoint so we don't need to import DB
-		// helpers directly into the command (keeps the command portable).
-		const domain: string = env?.DOMAIN ?? "http://localhost:5173";
-		const internalSecret: string = env?.INTERNAL_SECRET ?? "";
-
-		let userExists = false;
 		try {
-			const res = await fetch(
-				`${domain}/api/internals/user-exists?id=${encodeURIComponent(discordUserId)}`,
-				{
-					headers: {
-						"x-internal-secret": internalSecret
-					}
-				}
-			);
-			if (res.ok) {
-				const body = await res.json().catch(() => null);
-				userExists = body?.exists === true;
+			// ── 1. Guild-only guard ───────────────────────────────────────────
+			const guildId: string | undefined = interaction.guild_id;
+			if (!guildId) {
+				return reply("❌ This command can only be used inside a server.");
 			}
-		} catch {
-			return {
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					content:
-						"⚠️ Could not reach the listing service right now. Please try again in a moment.",
-					flags: 64
-				}
-			};
-		}
 
-		if (!userExists) {
-			const loginUrl = `${domain}/login`;
-			return {
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					content: [
+			// ── 2. Permission check ───────────────────────────────────────────
+			const memberPermissions: string | null | undefined = interaction.member?.permissions;
+			if (!hasRequiredPermission(memberPermissions)) {
+				return reply(
+					"❌ You need the **Manage Server** or **Administrator** permission to register this server."
+				);
+			}
+
+			// ── 3. Resolve invoking user's Discord id ─────────────────────────
+			const discordUserId: string | undefined =
+				interaction.member?.user?.id ?? interaction.user?.id;
+			if (!discordUserId) {
+				return reply("❌ Could not determine your Discord user id. Please try again.");
+			}
+
+			// ── 4. Build env values ───────────────────────────────────────────
+			const domain: string = (env?.DOMAIN ?? "http://localhost:5173").replace(/\/$/, "");
+			const internalSecret: string = env?.INTERNAL_SECRET ?? "";
+			const botToken: string = env?.DISCORD_TOKEN ?? "";
+
+			if (!internalSecret) {
+				console.error("[register] INTERNAL_SECRET is not configured.");
+				return reply(
+					"⚙️ The bot is not configured correctly (missing internal secret). Please contact the server admin."
+				);
+			}
+
+			// ── 5. Verify the user has a site account ─────────────────────────
+			let userExists = false;
+			try {
+				const res = await fetchWithTimeout(
+					`${domain}/api/internals/user-exists?id=${encodeURIComponent(discordUserId)}`,
+					{ headers: { "x-internal-secret": internalSecret } }
+				);
+
+				if (res.ok) {
+					const body = await res.json().catch(() => null);
+					userExists = body?.exists === true;
+				} else {
+					const text = await res.text().catch(() => `HTTP ${res.status}`);
+					console.error(`[register] user-exists check failed (${res.status}):`, text);
+					return reply(
+						`⚠️ Could not verify your account status (HTTP ${res.status}). Please try again in a moment.`
+					);
+				}
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : String(err);
+				const isTimeout = msg.includes("abort") || msg.includes("timed out");
+				console.error("[register] user-exists fetch error:", err);
+				return reply(
+					isTimeout
+						? "⏱️ The listing service timed out while checking your account. Please try again in a moment."
+						: `⚠️ Could not reach the listing service: \`${msg}\`. Please try again later.`
+				);
+			}
+
+			if (!userExists) {
+				const loginUrl = `${domain}/login`;
+				return reply(
+					[
 						"❌ You don't have an account on **Rovel Discord List** yet.",
 						"",
 						`👉 Please [create a free account](${loginUrl}) by logging in with Discord, then run \`/register\` again.`
-					].join("\n"),
-					flags: 64
+					].join("\n")
+				);
+			}
+
+			// ── 6. Fetch guild info from Discord ──────────────────────────────
+			let guildName = guildId;
+			let guildIcon: string | null = null;
+
+			if (botToken) {
+				try {
+					const guildRes = await fetchWithTimeout(
+						`https://discord.com/api/v10/guilds/${encodeURIComponent(guildId)}`,
+						{
+							headers: {
+								Authorization: `Bot ${botToken}`,
+								"User-Agent": "RovelDiscordList/1.0 (+https://rovelstars.com)"
+							}
+						}
+					);
+
+					if (guildRes.ok) {
+						const guildData = await guildRes.json().catch(() => null);
+						if (guildData) {
+							guildName = guildData.name ?? guildId;
+							guildIcon = guildData.icon ?? null;
+						}
+					} else {
+						// Non-fatal: we'll fall back to the guild id as name.
+						console.warn(
+							`[register] Discord guild fetch returned ${guildRes.status} for guild ${guildId}`
+						);
+					}
+				} catch (err) {
+					// Non-fatal: continue with what we have.
+					console.warn("[register] Could not fetch guild info from Discord:", err);
 				}
-			};
-		}
+			}
 
-		// ── 5. Fetch guild info from Discord so we can store icon + name ──────
-		const botToken: string = env?.DISCORD_TOKEN ?? "";
-		let guildName = guildId;
-		let guildIcon: string | null = null;
-
-		try {
-			const guildRes = await fetch(
-				`https://discord.com/api/v10/guilds/${encodeURIComponent(guildId)}`,
-				{
+			// ── 7. Register / update the server via the internal API ──────────
+			try {
+				const regRes = await fetchWithTimeout(`${domain}/api/internals/register-server`, {
+					method: "POST",
 					headers: {
-						Authorization: `Bot ${botToken}`,
-						"User-Agent": "RovelDiscordList/1.0 (+https://rovelstars.com)"
-					}
+						"Content-Type": "application/json",
+						"x-internal-secret": internalSecret
+					},
+					body: JSON.stringify({
+						id: guildId,
+						name: guildName,
+						icon: guildIcon,
+						owner: discordUserId
+					})
+				});
+
+				let resBody: any = null;
+				try {
+					resBody = await regRes.json();
+				} catch {
+					// body may be empty on some error paths
 				}
-			);
-			if (guildRes.ok) {
-				const guildData = await guildRes.json().catch(() => null);
-				if (guildData) {
-					guildName = guildData.name ?? guildId;
-					guildIcon = guildData.icon ?? null;
+
+				if (!regRes.ok) {
+					// Surface the exact error from the API so we can debug it.
+					const errDetail = resBody?.error ?? resBody?.message ?? `HTTP ${regRes.status}`;
+					console.error(
+						`[register] register-server API returned ${regRes.status} for guild ${guildId}:`,
+						resBody
+					);
+					return reply(
+						[
+							`❌ Registration failed (${errDetail}).`,
+							"",
+							"This usually means a database constraint wasn't met. Please contact the bot developer with this error code so they can investigate."
+						].join("\n")
+					);
 				}
-			}
-		} catch {
-			// Non-fatal — we'll register with just the id as name
-		}
 
-		// ── 6. Register / update the server via the internal API ─────────────
-		try {
-			const body = {
-				id: guildId,
-				name: guildName,
-				icon: guildIcon,
-				owner: discordUserId
-			};
+				const isNew: boolean = resBody?.created === true;
+				const serverUrl = `${domain}/servers/${encodeURIComponent(guildId)}`;
 
-			const regRes = await fetch(`${domain}/api/internals/register-server`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"x-internal-secret": internalSecret
-				},
-				body: JSON.stringify(body)
-			});
-
-			if (!regRes.ok) {
-				const errBody = await regRes.json().catch(() => null);
-				const message = errBody?.error ?? `HTTP ${regRes.status}`;
-				return {
-					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-					data: {
-						content: `❌ Registration failed: ${message}`,
-						flags: 64
-					}
-				};
-			}
-
-			const result = await regRes.json().catch(() => null);
-			const isNew: boolean = result?.created === true;
-			const serverUrl = `${domain}/servers/${encodeURIComponent(guildId)}`;
-
-			return {
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					content: [
+				return reply(
+					[
 						isNew
 							? `✅ **${guildName}** has been successfully listed on Rovel Discord List!`
 							: `✅ **${guildName}**'s listing has been updated on Rovel Discord List!`,
 						"",
 						`🔗 View your server's page: ${serverUrl}`,
 						"",
-						"You can update your server's description and tags from your dashboard."
-					].join("\n"),
-					flags: 64
-				}
-			};
-		} catch {
+						"You can update your server's description and details from your dashboard."
+					].join("\n")
+				);
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : String(err);
+				const isTimeout = msg.includes("abort") || msg.includes("timed out");
+				console.error("[register] register-server fetch error:", err);
+				return reply(
+					isTimeout
+						? "⏱️ The registration request timed out. Please try again in a moment."
+						: `⚠️ Could not complete registration: \`${msg}\`. Please try again later.`
+				);
+			}
+		} catch (fatalErr) {
+			// Absolute last-resort — something totally unexpected happened.
+			// Log the full error and return a graceful message instead of letting
+			// the interaction expire with "application did not respond".
+			const msg = fatalErr instanceof Error ? fatalErr.message : String(fatalErr);
+			console.error("[register] Fatal unhandled error:", fatalErr);
 			return {
 				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 				data: {
-					content: "⚠️ Something went wrong while registering. Please try again later.",
+					content: `💥 An unexpected error occurred: \`${msg}\`\nPlease try again or report this to the bot developer.`,
 					flags: 64
 				}
 			};

@@ -1,11 +1,10 @@
 import RestClient from "./util";
 import { Routes } from "discord-api-types/v10";
-import ping from "./commands/ping";
-import registerServer from "./commands/register-server";
-
-const commands = [ping.data, registerServer.data];
-const commandFns = [ping.run, registerServer.run];
-
+import { commandFns, commands } from "./data";
+console.log("%cLoaded commands:", "color: #5865F2");
+commands.forEach((command, index) => {
+	console.log(`%c${index + 1}. ${command.name}`, "color: #57F287");
+});
 export default async function registerCommands(env: {
 	DISCORD_BOT_ID: string;
 	DISCORD_GUILD_ID: string;

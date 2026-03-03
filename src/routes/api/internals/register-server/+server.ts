@@ -72,11 +72,11 @@ export const POST: RequestHandler = async ({ request }) => {
 					desc: "Description is not updated.",
 					icon: icon ?? "",
 					owner: owner.trim(),
-					slug: null,
+					slug: "",
 					added_at: now,
 					votes: 0,
 					promoted: false,
-					badges: []
+					badges: JSON.stringify([])
 				})
 			);
 		} else {
