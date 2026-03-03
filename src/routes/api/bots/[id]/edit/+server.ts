@@ -108,7 +108,21 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		}
 
 		// Ensure requestor is an owner
-		if (!Array.isArray(bot.owners) || !bot.owners.includes(userData.id)) {
+		// owners is stored as serialised JSON text in the DB — parse it before checking.
+		const parsedOwners: string[] = (() => {
+			if (Array.isArray(bot.owners)) return bot.owners;
+			if (typeof bot.owners === "string") {
+				try {
+					return JSON.parse(bot.owners);
+				} catch {
+					return [];
+				}
+			}
+			return [];
+		})();
+		bot.owners = parsedOwners;
+
+		if (!parsedOwners.includes(userData.id)) {
 			return json({ err: "not_owner" }, { status: 403 });
 		}
 

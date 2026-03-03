@@ -187,10 +187,7 @@
 					<div class="w-full h-9 bg-muted animate-pulse rounded-md"></div>
 					<div class="w-full h-9 bg-muted animate-pulse rounded-md"></div>
 				{:else}
-					<a
-						href="/servers/{server?.slug ?? server?.id}"
-						class={buttonVariants({ variant: "default" })}
-					>
+					<a href="/servers/{server?.slug}" class={buttonVariants({ variant: "default" })}>
 						<!-- Eye icon -->
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

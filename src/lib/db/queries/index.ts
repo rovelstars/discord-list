@@ -133,7 +133,7 @@ export type ServerSummary = {
 	icon: string | null;
 	votes: number;
 	owner: string;
-	slug: string | null;
+	slug: string; // always non-null; falls back to id when no slug is set
 	promoted: boolean;
 	badges: any[];
 	added_at: string | null;
@@ -926,14 +926,15 @@ export async function toggleReaction(
 // ─────────────────────────────────────────────────────────────────────────────
 
 function mapServerSummary(row: RawRow): ServerSummary {
+	const id = String(row.id ?? "");
 	return {
-		id: String(row.id ?? ""),
+		id,
 		name: String(row.name ?? ""),
 		short: String(row.short ?? ""),
 		icon: row.icon ?? null,
 		votes: typeof row.votes === "number" ? row.votes : Number(row.votes) || 0,
 		owner: String(row.owner ?? ""),
-		slug: row.slug ?? null,
+		slug: String(row.slug || id),
 		promoted: Boolean(row.promoted),
 		badges: parseJson(row.badges, []),
 		added_at: row.added_at ?? null
@@ -1103,7 +1104,7 @@ export async function upsertServer(data: {
 				desc: data.desc ?? "Description is not updated.",
 				icon: data.icon ?? "",
 				owner: data.owner,
-				slug: data.slug ?? "",
+				slug: data.slug || null,
 				added_at: new Date().toISOString(),
 				votes: 0,
 				promoted: false,
