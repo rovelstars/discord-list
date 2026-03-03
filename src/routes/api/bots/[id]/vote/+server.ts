@@ -7,6 +7,122 @@ import { eq } from "drizzle-orm";
 import SendLog from "@/bot/log";
 import { env } from "$env/dynamic/private";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Discord webhook helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Returns true when the URL points at a Discord-hosted webhook endpoint. */
+function isDiscordWebhook(url: string): boolean {
+	try {
+		const { hostname, pathname } = new URL(url);
+		return (
+			(hostname === "discord.com" || hostname === "discordapp.com") &&
+			pathname.startsWith("/api/webhooks/")
+		);
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Build a Discord webhook embed payload for a vote event.
+ * Discord webhooks expect { content?, embeds?, username?, avatar_url? }.
+ */
+function buildDiscordVotePayload(opts: {
+	voterUsername: string;
+	voterId: string;
+	voterAvatar: string | null;
+	voterBal: number;
+	botName: string;
+	botId: string;
+	botAvatar: string | null;
+	coins: number | null;
+	votesAdded: number;
+	totalVotes: number;
+	domain: string;
+}) {
+	const {
+		voterUsername,
+		voterId,
+		voterAvatar,
+		voterBal,
+		botName,
+		botId,
+		botAvatar,
+		coins,
+		votesAdded,
+		totalVotes,
+		domain
+	} = opts;
+
+	const voterAvatarUrl = voterAvatar
+		? `https://cdn.discordapp.com/avatars/${voterId}/${voterAvatar}.webp?size=128`
+		: `https://cdn.discordapp.com/embed/avatars/0.png`;
+
+	const botAvatarUrl = botAvatar
+		? `https://cdn.discordapp.com/avatars/${botId}/${botAvatar}.webp?size=128`
+		: null;
+
+	const isCoins = coins !== null;
+	const description = isCoins
+		? `**${voterUsername}** spent **${coins} Rcoins** to give **${votesAdded}** vote${votesAdded !== 1 ? "s" : ""}!`
+		: `**${voterUsername}** just voted for your bot!`;
+
+	return {
+		username: "Rovel Discord List",
+		avatar_url: `${domain}/assets/img/bot/logo-512.png`,
+		embeds: [
+			{
+				title: `🎉 New vote for ${botName}!`,
+				description,
+				color: 0x57f287, // Discord green
+				url: `${domain}/bots/${botId}`,
+				thumbnail: botAvatarUrl ? { url: botAvatarUrl } : undefined,
+				fields: [
+					{
+						name: "Voter",
+						value: `[${voterUsername}](https://discord.com/users/${voterId})`,
+						inline: true
+					},
+					{
+						name: isCoins ? "Coins spent" : "Vote type",
+						value: isCoins ? `${coins} Rcoins` : "Time-based (24h cooldown)",
+						inline: true
+					},
+					{
+						name: "Votes added",
+						value: String(votesAdded),
+						inline: true
+					},
+					{
+						name: "Total votes",
+						value: String(totalVotes),
+						inline: true
+					},
+					...(isCoins
+						? [
+								{
+									name: "Voter balance after",
+									value: `${voterBal} Rcoins`,
+									inline: true
+								}
+							]
+						: [])
+				],
+				author: {
+					name: voterUsername,
+					icon_url: voterAvatarUrl
+				},
+				footer: {
+					text: "Rovel Discord List",
+					icon_url: `${domain}/assets/img/bot/logo-512.png`
+				},
+				timestamp: new Date().toISOString()
+			}
+		]
+	};
+}
+
 /**
  * POST /api/bots/[id]/vote
  *
@@ -91,7 +207,8 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 				code: Bots.code,
 				username: Bots.username,
 				avatar: Bots.avatar,
-				owners: Bots.owners
+				owners: Bots.owners,
+				slug: Bots.slug
 			})
 			.from(Bots)
 			.where(eq(Bots.id, id))
@@ -185,30 +302,55 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 
 		// If bot has a webhook configured, notify it (best-effort)
 		if (bot.webhook) {
-			const body = {
-				user: {
-					id: userData.id,
-					username: userData.username,
-					discriminator: userData.discriminator,
-					avatar: userData.avatar,
-					bal: user.bal
-				},
-				coins: coins,
-				votes: bot.opted_coins ? Math.floor((coins ?? 0) / 10) : 1,
-				currentVotes: newBotVotes
-			};
+			const votesAdded = bot.opted_coins ? Math.floor((coins ?? 0) / 10) : 1;
+			const domain = (env.DOMAIN ?? "https://discord.rovelstars.com").replace(/\/$/, "");
+
+			// When the configured URL is a Discord webhook, send a rich embed instead
+			// of the raw vote data payload — Discord only accepts its own schema.
+			const discordWebhook = isDiscordWebhook(bot.webhook);
+
+			const body = discordWebhook
+				? buildDiscordVotePayload({
+						voterUsername: userData.username,
+						voterId: userData.id,
+						voterAvatar: userData.avatar ?? null,
+						voterBal: user.bal ?? 0,
+						botName: bot.username,
+						botId: bot.slug || id,
+						botAvatar: bot.avatar ?? null,
+						coins,
+						votesAdded,
+						totalVotes: newBotVotes,
+						domain
+					})
+				: {
+						user: {
+							id: userData.id,
+							username: userData.username,
+							discriminator: userData.discriminator,
+							avatar: userData.avatar,
+							bal: user.bal
+						},
+						coins,
+						votes: votesAdded,
+						currentVotes: newBotVotes
+					};
 
 			try {
-				const webhookUrl = `${bot.webhook}${bot.code ? `?code=${bot.code}` : ""}`;
+				// Discord webhooks must NOT receive the bot's secret code — they use
+				// their own token embedded in the URL. Only append code for custom webhooks.
+				const webhookUrl = discordWebhook
+					? bot.webhook
+					: `${bot.webhook}${bot.code ? `?code=${bot.code}` : ""}`;
+
 				const res = await fetch(webhookUrl, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						...(bot.code ? { Authorization: bot.code } : {})
+						...(!discordWebhook && bot.code ? { Authorization: bot.code } : {})
 					},
 					body: JSON.stringify(body),
-					// keep it short
-					// @ts-ignore fetch option may be available in runtime
+					// @ts-ignore
 					keepalive: true
 				});
 				if (!res.ok) {

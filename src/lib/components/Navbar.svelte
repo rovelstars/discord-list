@@ -5,7 +5,16 @@
 	import getAvatarURL from "$lib/get-avatar-url";
 	import { goto, invalidateAll } from "$app/navigation";
 	import LogoNavbar from "$lib/components/LogoNavbar.svelte";
-	import { Bot, Home, LayoutDashboard, Trophy, Sparkles, LayoutGrid, House } from "@lucide/svelte";
+	import {
+		Bot,
+		Home,
+		LayoutDashboard,
+		Trophy,
+		Sparkles,
+		LayoutGrid,
+		House,
+		Smile
+	} from "@lucide/svelte";
 
 	export let user: {
 		id: string;
@@ -86,6 +95,15 @@
 			>
 				<House size={24} class="mt-0.5" />
 				<span class="ml-1 hidden md:inline">Servers</span>
+			</a>
+
+			<!-- Emojis -->
+			<a
+				href="/emojis"
+				class="flex items-center text-lg font-bold text-primary hover:opacity-80 transition-opacity"
+			>
+				<Smile size={24} class="mt-0.5" />
+				<span class="ml-1 hidden md:inline">Emojis</span>
 			</a>
 
 			<!-- Categories -->
@@ -309,6 +327,29 @@
 					<polyline points="9 22 9 12 15 12 15 22" />
 				</svg>
 				Servers
+			</a>
+
+			<a
+				href="/emojis"
+				class="flex items-center gap-2 py-2 text-lg font-bold text-primary"
+				on:click={() => (mobileOpen = false)}
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="w-5 h-5"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<circle cx="12" cy="12" r="10" />
+					<path d="M8 14s1.5 2 4 2 4-2 4-2" />
+					<line x1="9" y1="9" x2="9.01" y2="9" />
+					<line x1="15" y1="9" x2="15.01" y2="9" />
+				</svg>
+				Emojis
 			</a>
 
 			<a

@@ -18,6 +18,18 @@ export { getClient, getDb, ping, withDb } from "./index";
 export type { DrizzleDb } from "./index";
 export * from "./schema";
 export * from "./queries/helpers";
+export { updateServerSnapshot } from "./queries/index";
+export type { ServerDetail, ServerSummary } from "./queries/index";
+export {
+	listEmojis,
+	getEmojiById,
+	getEmojisByGuild,
+	searchEmojis,
+	incrementEmojiDownload,
+	upsertEmojiFromSync,
+	getRandomEmojis
+} from "./queries/emojis";
+export type { EmojiSummary, EmojiDetail } from "./queries/emojis";
 
 // Default export provides the most commonly-used runtime helpers for convenience.
 export default {

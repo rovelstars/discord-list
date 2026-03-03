@@ -1,5 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import { getTopBots, listBots, getTopServers } from "$lib/db/queries";
+import { getTopEmojis, getNewestEmojis } from "$lib/db/queries/emojis";
 
 export const load: PageServerLoad = async ({ setHeaders }) => {
 	try {
@@ -19,6 +20,16 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			}
 		}
 
+		// Emoji queries are non-fatal — the table may not exist yet on first
+		// deploy before migration runs, or may be temporarily unavailable.
+		let topEmojis: Awaited<ReturnType<typeof getTopEmojis>> = [];
+		let newestEmojis: Awaited<ReturnType<typeof getNewestEmojis>> = [];
+		try {
+			[topEmojis, newestEmojis] = await Promise.all([getTopEmojis(12), getNewestEmojis(12)]);
+		} catch (emojiErr) {
+			console.warn("[home] Emoji queries failed (non-fatal):", emojiErr);
+		}
+
 		setHeaders({
 			"cache-control": "public, max-age=600, stale-while-revalidate=1200",
 			"netlify-vary": "query=key|slug|code,cookie=key|code,header=user-agent"
@@ -27,7 +38,9 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 		return {
 			topbotsdata: topBotsVotes,
 			allBotsForBg: allBots,
-			topServersData
+			topServersData,
+			topEmojis,
+			newestEmojis
 		};
 	} catch {
 		setHeaders({
@@ -35,6 +48,12 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			"netlify-vary": "query=key|slug|code,cookie=key|code,header=user-agent"
 		});
 
-		return { topbotsdata: [], allBotsForBg: [], topServersData: [] };
+		return {
+			topbotsdata: [],
+			allBotsForBg: [],
+			topServersData: [],
+			topEmojis: [],
+			newestEmojis: []
+		};
 	}
 };

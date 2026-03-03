@@ -4,6 +4,7 @@ import { env } from "$env/dynamic/private";
 import { withDb, type DrizzleDb } from "$lib/db";
 import { Servers } from "$lib/db/schema";
 import { eq } from "drizzle-orm";
+import { syncServerEmojis } from "$lib/emoji-sync";
 
 function validateSecret(request: Request): boolean {
 	const internalSecret = (env.INTERNAL_SECRET ?? "").trim();
@@ -18,6 +19,9 @@ function validateSecret(request: Request): boolean {
  * Upserts a Discord server into the Servers table. Called by the /register
  * slash command after it has verified the user's permissions and confirmed
  * they have a site account.
+ *
+ * After a successful upsert, kicks off a background emoji sync so the
+ * server's custom emojis are immediately available in the listing.
  *
  * Auth: x-internal-secret header must match INTERNAL_SECRET env var.
  *
@@ -54,10 +58,12 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({ error: "missing_owner" }, { status: 400 });
 	}
 
+	const guildId = id.trim();
+
 	try {
 		// Check if already exists so we can report created vs updated
 		const existing = await withDb((db: DrizzleDb) =>
-			db.select({ id: Servers.id }).from(Servers).where(eq(Servers.id, id.trim())).limit(1)
+			db.select({ id: Servers.id }).from(Servers).where(eq(Servers.id, guildId)).limit(1)
 		);
 
 		const isNew = !Array.isArray(existing) || existing.length === 0;
@@ -66,7 +72,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		if (isNew) {
 			await withDb((db: DrizzleDb) =>
 				db.insert(Servers).values({
-					id: id.trim(),
+					id: guildId,
 					name: name.trim(),
 					short: "Short description is not Updated.",
 					desc: "Description is not updated.",
@@ -91,8 +97,36 @@ export const POST: RequestHandler = async ({ request }) => {
 						icon: icon ?? "",
 						owner: owner.trim()
 					})
-					.where(eq(Servers.id, id.trim()))
+					.where(eq(Servers.id, guildId))
 			);
+		}
+
+		// ── Background emoji sync ──────────────────────────────────────────────
+		// Fire-and-forget: sync the guild's custom emojis immediately after
+		// registration so they appear in the listing without requiring a
+		// separate /sync command. Never blocks or fails the registration response.
+		const botToken = (env.DISCORD_TOKEN ?? "").trim();
+		if (botToken) {
+			syncServerEmojis(guildId, botToken)
+				.then((result) => {
+					if (result.error) {
+						console.warn(
+							`[register-server] Emoji sync for guild ${guildId} encountered an error: ${result.error}`
+						);
+					} else {
+						console.info(
+							`[register-server] Emoji sync complete for guild ${guildId}: ` +
+								`+${result.created} new, ~${result.updated} updated (${result.total} total)`
+						);
+					}
+				})
+				.catch((err) => {
+					// Absolutely non-fatal — registration already succeeded.
+					console.warn(
+						`[register-server] Background emoji sync threw unexpectedly for guild ${guildId}:`,
+						err
+					);
+				});
 		}
 
 		return json({ success: true, created: isNew }, { status: 200 });

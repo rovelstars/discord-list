@@ -32,11 +32,11 @@
  * • Exits with code 1 on any unrecoverable error so CI/CD pipelines can catch it.
  */
 
-import { createClient } from '@libsql/client';
-import { readFileSync, existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { exit } from 'node:process';
+import { createClient } from "@libsql/client";
+import { readFileSync, existsSync } from "node:fs";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { exit } from "node:process";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Colour helpers (no deps — pure ANSI)
@@ -58,19 +58,19 @@ function log(msg) {
 	console.log(msg);
 }
 function ok(msg) {
-	console.log(`  ${c.green('✓')} ${msg}`);
+	console.log(`  ${c.green("✓")} ${msg}`);
 }
 function info(msg) {
-	console.log(`  ${c.blue('ℹ')} ${msg}`);
+	console.log(`  ${c.blue("ℹ")} ${msg}`);
 }
 function warn(msg) {
-	console.warn(`  ${c.yellow('⚠')} ${msg}`);
+	console.warn(`  ${c.yellow("⚠")} ${msg}`);
 }
 function fail(msg) {
-	console.error(`  ${c.red('✗')} ${msg}`);
+	console.error(`  ${c.red("✗")} ${msg}`);
 }
 function section(title) {
-	log(`\n${c.bold(c.cyan(`── ${title} ${'─'.repeat(Math.max(0, 50 - title.length))}`))}`);
+	log(`\n${c.bold(c.cyan(`── ${title} ${"─".repeat(Math.max(0, 50 - title.length))}`))}`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -80,20 +80,20 @@ function section(title) {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function loadEnv() {
-	const envPath = resolve(__dirname, '../.env');
+	const envPath = resolve(__dirname, "../.env");
 	if (!existsSync(envPath)) {
-		warn('.env not found — relying entirely on shell environment');
+		warn(".env not found — relying entirely on shell environment");
 		return;
 	}
 
-	const lines = readFileSync(envPath, 'utf8').split('\n');
+	const lines = readFileSync(envPath, "utf8").split("\n");
 	let loaded = 0;
 
 	for (const raw of lines) {
 		const line = raw.trim();
-		if (!line || line.startsWith('#')) continue;
+		if (!line || line.startsWith("#")) continue;
 
-		const eq = line.indexOf('=');
+		const eq = line.indexOf("=");
 		if (eq === -1) continue;
 
 		const key = line.slice(0, eq).trim();
@@ -137,7 +137,7 @@ const NOW_EXPR = `(strftime('%Y-%m-%dT%H:%M:%fZ','now'))`;
 const SCHEMA = [
 	// ── Bots ──────────────────────────────────────────────────────────────────
 	{
-		name: 'Bots',
+		name: "Bots",
 		sql: `
       CREATE TABLE IF NOT EXISTS "Bots" (
         "id"            TEXT    NOT NULL PRIMARY KEY,
@@ -170,38 +170,38 @@ const SCHEMA = [
       )
     `,
 		columns: [
-			{ name: 'card', type: 'TEXT' },
-			{ name: 'owners', type: 'TEXT', notNull: true, default: "'[]'" },
-			{ name: 'tags', type: 'TEXT', notNull: true, default: "'[]'" },
-			{ name: 'badges', type: 'TEXT', notNull: true, default: "'[]'" },
-			{ name: 'approved', type: 'INTEGER', notNull: true, default: '0' },
-			{ name: 'promoted', type: 'INTEGER', notNull: true, default: '0' },
-			{ name: 'opted_coins', type: 'INTEGER', notNull: true, default: '0' },
-			{ name: 'servers', type: 'INTEGER', notNull: true, default: '0' },
-			{ name: 'votes', type: 'INTEGER', notNull: true, default: '0' },
-			{ name: 'username', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'discriminator', type: 'TEXT', notNull: true, default: "'0'" },
-			{ name: 'avatar', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'short', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'desc', type: 'TEXT', default: "''" },
-			{ name: 'prefix', type: 'TEXT', default: "'/'" },
-			{ name: 'lib', type: 'TEXT', default: "''" },
-			{ name: 'code', type: 'TEXT' },
-			{ name: 'webhook', type: 'TEXT' },
-			{ name: 'support', type: 'TEXT' },
-			{ name: 'bg', type: 'TEXT' },
-			{ name: 'source_repo', type: 'TEXT' },
-			{ name: 'website', type: 'TEXT' },
-			{ name: 'donate', type: 'TEXT' },
-			{ name: 'invite', type: 'TEXT' },
-			{ name: 'slug', type: 'TEXT' },
-			{ name: 'added_at', type: 'TEXT', notNull: true, default: NOW_EXPR }
+			{ name: "card", type: "TEXT" },
+			{ name: "owners", type: "TEXT", notNull: true, default: "'[]'" },
+			{ name: "tags", type: "TEXT", notNull: true, default: "'[]'" },
+			{ name: "badges", type: "TEXT", notNull: true, default: "'[]'" },
+			{ name: "approved", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "promoted", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "opted_coins", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "servers", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "votes", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "username", type: "TEXT", notNull: true, default: "''" },
+			{ name: "discriminator", type: "TEXT", notNull: true, default: "'0'" },
+			{ name: "avatar", type: "TEXT", notNull: true, default: "''" },
+			{ name: "short", type: "TEXT", notNull: true, default: "''" },
+			{ name: "desc", type: "TEXT", default: "''" },
+			{ name: "prefix", type: "TEXT", default: "'/'" },
+			{ name: "lib", type: "TEXT", default: "''" },
+			{ name: "code", type: "TEXT" },
+			{ name: "webhook", type: "TEXT" },
+			{ name: "support", type: "TEXT" },
+			{ name: "bg", type: "TEXT" },
+			{ name: "source_repo", type: "TEXT" },
+			{ name: "website", type: "TEXT" },
+			{ name: "donate", type: "TEXT" },
+			{ name: "invite", type: "TEXT" },
+			{ name: "slug", type: "TEXT" },
+			{ name: "added_at", type: "TEXT", notNull: true, default: NOW_EXPR }
 		]
 	},
 
 	// ── Users ─────────────────────────────────────────────────────────────────
 	{
-		name: 'Users',
+		name: "Users",
 		sql: `
       CREATE TABLE IF NOT EXISTS "Users" (
         "id"            TEXT    NOT NULL PRIMARY KEY,
@@ -225,29 +225,29 @@ const SCHEMA = [
       )
     `,
 		columns: [
-			{ name: 'globalname', type: 'TEXT' },
-			{ name: 'accent_color', type: 'TEXT' },
-			{ name: 'username', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'discriminator', type: 'TEXT', notNull: true, default: "'0'" },
-			{ name: 'avatar', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'email', type: 'TEXT' },
-			{ name: 'bal', type: 'INTEGER', notNull: true, default: '50' },
-			{ name: 'bio', type: 'TEXT', default: "'The user doesn''t have bio set!'" },
-			{ name: 'banner', type: 'TEXT' },
-			{ name: 'badges', type: 'TEXT', notNull: true, default: "'[]'" },
-			{ name: 'lang', type: 'TEXT', notNull: true, default: "'en'" },
-			{ name: 'last_login', type: 'TEXT', notNull: true, default: NOW_EXPR },
-			{ name: 'nitro', type: 'INTEGER', notNull: true, default: '0' },
-			{ name: 'old', type: 'INTEGER', notNull: true, default: '1' },
-			{ name: 'votes', type: 'TEXT', notNull: true, default: "'[]'" },
-			{ name: 'added_at', type: 'TEXT', notNull: true, default: NOW_EXPR },
-			{ name: 'keys', type: 'TEXT', notNull: true, default: "'[]'" }
+			{ name: "globalname", type: "TEXT" },
+			{ name: "accent_color", type: "TEXT" },
+			{ name: "username", type: "TEXT", notNull: true, default: "''" },
+			{ name: "discriminator", type: "TEXT", notNull: true, default: "'0'" },
+			{ name: "avatar", type: "TEXT", notNull: true, default: "''" },
+			{ name: "email", type: "TEXT" },
+			{ name: "bal", type: "INTEGER", notNull: true, default: "50" },
+			{ name: "bio", type: "TEXT", default: "'The user doesn''t have bio set!'" },
+			{ name: "banner", type: "TEXT" },
+			{ name: "badges", type: "TEXT", notNull: true, default: "'[]'" },
+			{ name: "lang", type: "TEXT", notNull: true, default: "'en'" },
+			{ name: "last_login", type: "TEXT", notNull: true, default: NOW_EXPR },
+			{ name: "nitro", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "old", type: "INTEGER", notNull: true, default: "1" },
+			{ name: "votes", type: "TEXT", notNull: true, default: "'[]'" },
+			{ name: "added_at", type: "TEXT", notNull: true, default: NOW_EXPR },
+			{ name: "keys", type: "TEXT", notNull: true, default: "'[]'" }
 		]
 	},
 
 	// ── Servers ───────────────────────────────────────────────────────────────
 	{
-		name: 'Servers',
+		name: "Servers",
 		sql: `
       CREATE TABLE IF NOT EXISTS "Servers" (
         "id"       TEXT    NOT NULL PRIMARY KEY,
@@ -265,26 +265,26 @@ const SCHEMA = [
     `,
 		columns: [
 			{
-				name: 'short',
-				type: 'TEXT',
+				name: "short",
+				type: "TEXT",
 				notNull: true,
 				default: "'Short description is not Updated.'"
 			},
-			{ name: 'name', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'desc', type: 'TEXT', default: "'Description is not updated.'" },
-			{ name: 'owner', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'icon', type: 'TEXT', default: "''" },
-			{ name: 'promoted', type: 'INTEGER', notNull: true, default: '0' },
-			{ name: 'badges', type: 'TEXT', notNull: true, default: "'[]'" },
-			{ name: 'slug', type: 'TEXT' },
-			{ name: 'added_at', type: 'TEXT', notNull: true, default: NOW_EXPR },
-			{ name: 'votes', type: 'INTEGER', notNull: true, default: '0' }
+			{ name: "name", type: "TEXT", notNull: true, default: "''" },
+			{ name: "desc", type: "TEXT", default: "'Description is not updated.'" },
+			{ name: "owner", type: "TEXT", notNull: true, default: "''" },
+			{ name: "icon", type: "TEXT", default: "''" },
+			{ name: "promoted", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "badges", type: "TEXT", notNull: true, default: "'[]'" },
+			{ name: "slug", type: "TEXT" },
+			{ name: "added_at", type: "TEXT", notNull: true, default: NOW_EXPR },
+			{ name: "votes", type: "INTEGER", notNull: true, default: "0" }
 		]
 	},
 
 	// ── Comments ──────────────────────────────────────────────────────────────
 	{
-		name: 'Comments',
+		name: "Comments",
 		sql: `
       CREATE TABLE IF NOT EXISTS "Comments" (
         "id"         TEXT NOT NULL PRIMARY KEY,
@@ -298,17 +298,17 @@ const SCHEMA = [
       )
     `,
 		columns: [
-			{ name: 'bot_id', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'user_id', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'rating', type: 'INTEGER' },
-			{ name: 'text', type: 'TEXT' },
-			{ name: 'parent_id', type: 'TEXT' },
-			{ name: 'created_at', type: 'TEXT', notNull: true, default: NOW_EXPR },
-			{ name: 'updated_at', type: 'TEXT' }
+			{ name: "bot_id", type: "TEXT", notNull: true, default: "''" },
+			{ name: "user_id", type: "TEXT", notNull: true, default: "''" },
+			{ name: "rating", type: "INTEGER" },
+			{ name: "text", type: "TEXT" },
+			{ name: "parent_id", type: "TEXT" },
+			{ name: "created_at", type: "TEXT", notNull: true, default: NOW_EXPR },
+			{ name: "updated_at", type: "TEXT" }
 		]
 	},
 	{
-		name: 'CommentReactions',
+		name: "CommentReactions",
 		sql: `
       CREATE TABLE IF NOT EXISTS "CommentReactions" (
         "comment_id" TEXT NOT NULL,
@@ -319,10 +319,40 @@ const SCHEMA = [
       )
     `,
 		columns: [
-			{ name: 'comment_id', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'user_id', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'emoji', type: 'TEXT', notNull: true, default: "''" },
-			{ name: 'created_at', type: 'TEXT', notNull: true, default: NOW_EXPR }
+			{ name: "comment_id", type: "TEXT", notNull: true, default: "''" },
+			{ name: "user_id", type: "TEXT", notNull: true, default: "''" },
+			{ name: "emoji", type: "TEXT", notNull: true, default: "''" },
+			{ name: "created_at", type: "TEXT", notNull: true, default: NOW_EXPR }
+		]
+	},
+
+	// ── Emojis ────────────────────────────────────────────────────────────────
+	{
+		name: "Emojis",
+		sql: `
+      CREATE TABLE IF NOT EXISTS "Emojis" (
+        "id"          TEXT    NOT NULL PRIMARY KEY,
+        "code"        TEXT    NOT NULL,
+        "name"        TEXT    NOT NULL,
+        "alt_names"   TEXT             DEFAULT '[]',
+        "description" TEXT,
+        "a"           INTEGER NOT NULL DEFAULT 0,
+        "dc"          INTEGER NOT NULL DEFAULT 0,
+        "added_at"    TEXT    NOT NULL DEFAULT ${NOW_EXPR},
+        "submitter"   TEXT,
+        "guild"       TEXT
+      )
+    `,
+		columns: [
+			{ name: "code", type: "TEXT", notNull: true, default: "''" },
+			{ name: "name", type: "TEXT", notNull: true, default: "''" },
+			{ name: "alt_names", type: "TEXT", default: "'[]'" },
+			{ name: "description", type: "TEXT" },
+			{ name: "a", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "dc", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "added_at", type: "TEXT", notNull: true, default: NOW_EXPR },
+			{ name: "submitter", type: "TEXT" },
+			{ name: "guild", type: "TEXT" }
 		]
 	}
 ];
@@ -374,7 +404,7 @@ function buildAlterSQL(tableName, col) {
 	let fragment = `"${col.name}" ${col.type}`;
 
 	if (col.notNull) {
-		if (!col.default && col.default !== 0 && col.default !== '') {
+		if (!col.default && col.default !== 0 && col.default !== "") {
 			// Cannot safely add a NOT NULL column without a DEFAULT — downgrade to
 			// nullable so we don't break existing rows.
 			warn(
@@ -403,7 +433,7 @@ async function migrateTable(client, tableDef, dryRun) {
 	const exists = await tableExists(client, name);
 
 	if (!exists) {
-		const ddl = sql.replace(/\s+/g, ' ').trim();
+		const ddl = sql.replace(/\s+/g, " ").trim();
 		if (dryRun) {
 			info(`[dry-run] Would CREATE TABLE "${name}"`);
 		} else {
@@ -419,7 +449,7 @@ async function migrateTable(client, tableDef, dryRun) {
 
 		for (const col of columns) {
 			// Primary key column — never needs to be added via ALTER TABLE
-			if (col.name === 'id') continue;
+			if (col.name === "id") continue;
 
 			if (live.has(col.name)) {
 				summary.skipped.push(col.name);
@@ -447,11 +477,11 @@ async function migrateTable(client, tableDef, dryRun) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function handleLastLoginRename(client, dryRun) {
-	const exists = await tableExists(client, 'Users');
+	const exists = await tableExists(client, "Users");
 	if (!exists) return;
 
-	const live = await liveColumns(client, 'Users');
-	if (!live.has('lastLogin') || live.has('last_login')) return;
+	const live = await liveColumns(client, "Users");
+	if (!live.has("lastLogin") || live.has("last_login")) return;
 
 	const sql = `ALTER TABLE "Users" RENAME COLUMN "lastLogin" TO "last_login"`;
 
@@ -473,6 +503,30 @@ const INDEXES = [
 	// Speed up "get all comments for a bot" — the most common Comments query
 	`CREATE INDEX IF NOT EXISTS "idx_comments_bot_id"
      ON "Comments" ("bot_id")`,
+
+	// ── Emojis indexes ────────────────────────────────────────────────────────
+	// Speed up "get all emojis for a guild" — most common Emojis query
+	`CREATE INDEX IF NOT EXISTS "idx_emojis_guild"
+     ON "Emojis" ("guild")`,
+
+	// Speed up search by name / code
+	`CREATE INDEX IF NOT EXISTS "idx_emojis_name"
+     ON "Emojis" ("name")`,
+
+	`CREATE INDEX IF NOT EXISTS "idx_emojis_code"
+     ON "Emojis" ("code")`,
+
+	// Speed up "top downloaded" sort
+	`CREATE INDEX IF NOT EXISTS "idx_emojis_dc"
+     ON "Emojis" ("dc" DESC)`,
+
+	// Speed up "newest" sort
+	`CREATE INDEX IF NOT EXISTS "idx_emojis_added_at"
+     ON "Emojis" ("added_at" DESC)`,
+
+	// Speed up "find by submitter" (dashboard: my submitted emojis)
+	`CREATE INDEX IF NOT EXISTS "idx_emojis_submitter"
+     ON "Emojis" ("submitter")`,
 
 	// Speed up "did this user already review this bot?" duplicate-check
 	`CREATE INDEX IF NOT EXISTS "idx_comments_bot_user"
@@ -530,26 +584,26 @@ async function ensureIndexes(client, dryRun) {
 
 function printSummary(results) {
 	const COL = { name: 16, status: 12, added: 28, rows: 8 };
-	const hr = '─'.repeat(COL.name + COL.status + COL.added + COL.rows + 9);
+	const hr = "─".repeat(COL.name + COL.status + COL.added + COL.rows + 9);
 
-	log('');
-	log(c.bold('  Summary'));
+	log("");
+	log(c.bold("  Summary"));
 	log(`  ${hr}`);
 	log(
 		c.bold(
-			`  ${'Table'.padEnd(COL.name)}  ${'Status'.padEnd(COL.status)}  ${'Columns added'.padEnd(COL.added)}  ${'Rows'.padStart(COL.rows)}`
+			`  ${"Table".padEnd(COL.name)}  ${"Status".padEnd(COL.status)}  ${"Columns added".padEnd(COL.added)}  ${"Rows".padStart(COL.rows)}`
 		)
 	);
 	log(`  ${hr}`);
 
 	for (const r of results) {
 		const statusStr = r.created
-			? c.green('created')
+			? c.green("created")
 			: r.added.length > 0
-				? c.yellow('evolved')
-				: c.dim('unchanged');
+				? c.yellow("evolved")
+				: c.dim("unchanged");
 
-		const addedStr = r.added.length ? c.yellow(r.added.join(', ')) : c.dim('—');
+		const addedStr = r.added.length ? c.yellow(r.added.join(", ")) : c.dim("—");
 
 		log(
 			`  ${r.name.padEnd(COL.name)}  ${statusStr.padEnd(COL.status + 9)}  ${addedStr.padEnd(COL.added + 9)}  ${String(r.rowCount).padStart(COL.rows)}`
@@ -557,7 +611,7 @@ function printSummary(results) {
 	}
 
 	log(`  ${hr}`);
-	log('');
+	log("");
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -565,19 +619,19 @@ function printSummary(results) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function main() {
-	log('');
-	log(c.bold(c.cyan('╔══════════════════════════════════════════════╗')));
-	log(c.bold(c.cyan('║     Rovel Discord List — DB Migration        ║')));
-	log(c.bold(c.cyan('╚══════════════════════════════════════════════╝')));
+	log("");
+	log(c.bold(c.cyan("╔══════════════════════════════════════════════╗")));
+	log(c.bold(c.cyan("║     Rovel Discord List — DB Migration        ║")));
+	log(c.bold(c.cyan("╚══════════════════════════════════════════════╝")));
 
-	const dryRun = process.env.DRY_RUN === '1' || process.argv.includes('--dry-run');
+	const dryRun = process.env.DRY_RUN === "1" || process.argv.includes("--dry-run");
 	if (dryRun) {
-		log('');
-		log(c.yellow(c.bold('  DRY RUN MODE — no changes will be written to the database')));
+		log("");
+		log(c.yellow(c.bold("  DRY RUN MODE — no changes will be written to the database")));
 	}
 
 	// ── Load environment ──────────────────────────────────────────────────────
-	section('Environment');
+	section("Environment");
 	loadEnv();
 
 	const dbUrl = process.env.DATABASE_URL ?? process.env.ASTRO_DB_REMOTE_URL ?? null;
@@ -585,39 +639,39 @@ async function main() {
 
 	if (!dbUrl) {
 		fail(
-			'No database URL found.\n' +
-				'    Set DATABASE_URL or ASTRO_DB_REMOTE_URL in your .env or shell environment.'
+			"No database URL found.\n" +
+				"    Set DATABASE_URL or ASTRO_DB_REMOTE_URL in your .env or shell environment."
 		);
 		exit(1);
 	}
 
 	info(`Database: ${c.dim(dbUrl)}`);
-	info(`Auth token: ${dbToken ? c.dim('[provided]') : c.dim('[none — local/embedded mode]')}`);
+	info(`Auth token: ${dbToken ? c.dim("[provided]") : c.dim("[none — local/embedded mode]")}`);
 
 	// ── Connect ───────────────────────────────────────────────────────────────
-	section('Connection');
+	section("Connection");
 
 	let client;
 	try {
 		client = createClient({ url: dbUrl, authToken: dbToken });
-		await client.execute({ sql: 'SELECT 1', args: [] });
-		ok('Connected to database');
+		await client.execute({ sql: "SELECT 1", args: [] });
+		ok("Connected to database");
 	} catch (err) {
 		fail(`Could not connect to database: ${err.message}`);
 		exit(1);
 	}
 
 	// ── Legacy rename ─────────────────────────────────────────────────────────
-	section('Legacy column renames');
+	section("Legacy column renames");
 	try {
 		await handleLastLoginRename(client, dryRun);
-		ok('Column rename check complete');
+		ok("Column rename check complete");
 	} catch (err) {
 		warn(`Column rename step failed (non-fatal): ${err.message}`);
 	}
 
 	// ── Tables ────────────────────────────────────────────────────────────────
-	section('Tables');
+	section("Tables");
 
 	const results = [];
 	let anyError = false;
@@ -631,7 +685,7 @@ async function main() {
 				ok(`"${summary.name}" — created (${summary.rowCount} rows)`);
 			} else if (summary.added.length > 0) {
 				ok(
-					`"${summary.name}" — added ${summary.added.length} column(s): ${summary.added.join(', ')} (${summary.rowCount} rows)`
+					`"${summary.name}" — added ${summary.added.length} column(s): ${summary.added.join(", ")} (${summary.rowCount} rows)`
 				);
 			} else {
 				ok(`"${summary.name}" — already up to date (${summary.rowCount} rows)`);
@@ -646,7 +700,7 @@ async function main() {
 	}
 
 	// ── Indexes ───────────────────────────────────────────────────────────────
-	section('Indexes');
+	section("Indexes");
 	try {
 		await ensureIndexes(client, dryRun);
 	} catch (err) {
@@ -654,21 +708,21 @@ async function main() {
 	}
 
 	// ── Summary ───────────────────────────────────────────────────────────────
-	section('Results');
+	section("Results");
 	printSummary(results);
 
 	client.close();
 
 	if (anyError) {
-		fail('Migration completed with errors — see above for details.');
+		fail("Migration completed with errors — see above for details.");
 		exit(1);
 	}
 
-	log(c.green(c.bold('  Migration complete.')));
-	log('');
+	log(c.green(c.bold("  Migration complete.")));
+	log("");
 }
 
 main().catch((err) => {
-	console.error(c.red('\n[fatal] Unexpected error:'), err);
+	console.error(c.red("\n[fatal] Unexpected error:"), err);
 	exit(1);
 });

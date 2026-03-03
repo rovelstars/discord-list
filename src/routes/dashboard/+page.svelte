@@ -1,6 +1,7 @@
 <script lang="ts">
 	import BotCard from "$lib/components/BotCard.svelte";
 	import ServerCard from "$lib/components/ServerCard.svelte";
+	import EmojiCard from "$lib/components/EmojiCard.svelte";
 	import Input from "$lib/components/ui/Input.svelte";
 	import Label from "$lib/components/ui/Label.svelte";
 	import Textarea from "$lib/components/ui/textarea/Textarea.svelte";
@@ -59,6 +60,17 @@
 		}>;
 		totalVotesCast: number;
 		expiredCount: number;
+		submittedEmojis: Array<{
+			id: string;
+			code: string;
+			name: string;
+			alt_names: string[];
+			a: boolean;
+			dc: number;
+			added_at: string | null;
+			guild: string | null;
+			submitter: string | null;
+		}>;
 	};
 
 	const {
@@ -66,13 +78,14 @@
 		discordUser,
 		bots = [],
 		servers = [],
+		submittedEmojis = [],
 		recentVotes,
 		totalVotesCast,
 		expiredCount
 	} = data;
 
 	// ── Active section ────────────────────────────────────────────────────────
-	type Section = "bots" | "servers" | "profile" | "account" | "votes" | "danger";
+	type Section = "bots" | "servers" | "emojis" | "profile" | "account" | "votes" | "danger";
 	let activeSection: Section = "bots";
 
 	// ── Modals ────────────────────────────────────────────────────────────────
@@ -166,6 +179,7 @@
 	const navItems: Array<{ id: Section; label: string; icon: string }> = [
 		{ id: "bots", label: "My Bots", icon: "bot" },
 		{ id: "servers", label: "My Servers", icon: "server" },
+		{ id: "emojis", label: "My Emojis", icon: "emoji" },
 		{ id: "profile", label: "Profile", icon: "user" },
 		{ id: "account", label: "Account", icon: "shield" },
 		{ id: "votes", label: "Vote History", icon: "votes" },
@@ -456,6 +470,22 @@
 											>
 												<polyline points="18 15 12 9 6 15" />
 											</svg>
+										{:else if item.icon === "emoji"}
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="w-3.5 h-3.5"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<circle cx="12" cy="12" r="10" />
+												<path d="M8 14s1.5 2 4 2 4-2 4-2" />
+												<line x1="9" y1="9" x2="9.01" y2="9" />
+												<line x1="15" y1="9" x2="15.01" y2="9" />
+											</svg>
 										{:else if item.icon === "danger"}
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -502,6 +532,12 @@
 											class="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 opacity-70"
 										>
 											{servers.length}
+										</span>
+									{:else if item.id === "emojis" && submittedEmojis.length > 0 && activeSection !== "emojis"}
+										<span
+											class="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 opacity-70"
+										>
+											{submittedEmojis.length}
 										</span>
 									{/if}
 								</button>
@@ -836,6 +872,166 @@
 									</span>
 								</li>
 							</ol>
+						</div>
+					</div>
+
+					<!-- ════════════════════════════════════════════════════════════ -->
+					<!-- EMOJIS                                                       -->
+					<!-- ════════════════════════════════════════════════════════════ -->
+				{:else if activeSection === "emojis"}
+					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+						<div class="px-6 py-4 border-b border-border flex items-center justify-between gap-4">
+							<div class="flex items-center gap-2">
+								<div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="w-4 h-4 text-purple-500"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<circle cx="12" cy="12" r="10" />
+										<path d="M8 14s1.5 2 4 2 4-2 4-2" />
+										<line x1="9" y1="9" x2="9.01" y2="9" />
+										<line x1="15" y1="9" x2="15.01" y2="9" />
+									</svg>
+								</div>
+								<div>
+									<h2 class="text-base font-bold font-heading leading-none">My Submitted Emojis</h2>
+									<p class="text-xs text-muted-foreground mt-0.5">
+										{submittedEmojis.length} emoji{submittedEmojis.length !== 1 ? "s" : ""} you submitted
+										manually
+									</p>
+								</div>
+							</div>
+							<a
+								href="/emojis"
+								class="flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="w-4 h-4"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<circle cx="11" cy="11" r="8" />
+									<path d="m21 21-4.3-4.3" />
+								</svg>
+								Browse All
+							</a>
+						</div>
+						<div class="p-6">
+							{#if submittedEmojis.length === 0}
+								<div class="flex flex-col items-center justify-center py-16 text-center">
+									<div
+										class="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mb-4 text-3xl select-none"
+									>
+										😶
+									</div>
+									<p class="font-bold text-base">No submitted emojis yet</p>
+									<p class="text-sm text-muted-foreground mt-1.5 max-w-xs leading-relaxed">
+										Emojis are automatically synced when your registered servers run
+										<code class="bg-muted px-1 py-0.5 rounded text-xs font-mono">/sync</code>.
+									</p>
+									<a
+										href="/emojis"
+										class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-4 h-4"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<circle cx="11" cy="11" r="8" />
+											<path d="m21 21-4.3-4.3" />
+										</svg>
+										Browse Emojis
+									</a>
+								</div>
+							{:else}
+								<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+									{#each submittedEmojis as emoji (emoji.id)}
+										<EmojiCard {emoji} />
+									{/each}
+								</div>
+							{/if}
+						</div>
+					</div>
+
+					<!-- Server emojis hint -->
+					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+						<div class="px-6 py-4 border-b border-border flex items-center gap-2">
+							<div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="w-4 h-4 text-green-500"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<circle cx="12" cy="12" r="10" />
+									<path d="M12 16v-4" />
+									<path d="M12 8h.01" />
+								</svg>
+							</div>
+							<h2 class="text-base font-bold font-heading leading-none">Server Emojis</h2>
+						</div>
+						<div class="p-6 space-y-4">
+							<p class="text-sm text-muted-foreground leading-relaxed">
+								Emojis from your registered servers are synced automatically. To see or manage them,
+								visit each server's listing page or use the
+								<code class="bg-muted px-1.5 py-0.5 rounded text-xs font-mono text-foreground"
+									>/sync</code
+								>
+								command in Discord.
+							</p>
+							{#if servers.length > 0}
+								<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+									{#each servers as srv}
+										<a
+											href="/emojis?guild={srv.id}"
+											class="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/40 hover:bg-muted/70 border border-border/60 transition-colors group"
+										>
+											<div
+												class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0"
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													class="w-4 h-4 text-primary"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												>
+													<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+													<polyline points="9 22 9 12 15 12 15 22" />
+												</svg>
+											</div>
+											<div class="min-w-0 flex-1">
+												<p class="font-semibold text-sm text-foreground truncate">{srv.name}</p>
+												<p class="text-xs text-muted-foreground mt-0.5">View emojis →</p>
+											</div>
+										</a>
+									{/each}
+								</div>
+							{/if}
 						</div>
 					</div>
 

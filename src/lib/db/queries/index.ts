@@ -141,6 +141,11 @@ export type ServerSummary = {
 
 export type ServerDetail = ServerSummary & {
 	desc: string | null;
+	member_count: number | null;
+	presence_count: number | null;
+	channels: Array<{ id: string; name: string; type: number; nsfw: boolean }>;
+	has_nsfw: boolean;
+	synced_at: string | null;
 };
 
 /** Extended summary that includes rank position and lib, used on the /top page */
@@ -944,7 +949,12 @@ function mapServerSummary(row: RawRow): ServerSummary {
 function mapServerDetail(row: RawRow): ServerDetail {
 	return {
 		...mapServerSummary(row),
-		desc: row.desc ?? null
+		desc: row.desc ?? null,
+		member_count: row.member_count != null ? Number(row.member_count) : null,
+		presence_count: row.presence_count != null ? Number(row.presence_count) : null,
+		channels: parseJson(row.channels, []),
+		has_nsfw: Boolean(row.has_nsfw),
+		synced_at: row.synced_at ?? null
 	};
 }
 
@@ -1052,7 +1062,12 @@ export async function getServerByIdOrSlug(idOrSlug: string): Promise<ServerDetai
 				slug: Servers.slug,
 				promoted: Servers.promoted,
 				badges: Servers.badges,
-				added_at: Servers.added_at
+				added_at: Servers.added_at,
+				member_count: Servers.member_count,
+				presence_count: Servers.presence_count,
+				channels: Servers.channels,
+				has_nsfw: Servers.has_nsfw,
+				synced_at: Servers.synced_at
 			})
 			.from(Servers)
 			.where(or(eq(Servers.id, idOrSlug), eq(Servers.slug, idOrSlug)))
@@ -1093,6 +1108,11 @@ export async function upsertServer(data: {
 	icon?: string | null;
 	owner: string;
 	slug?: string | null;
+	member_count?: number | null;
+	presence_count?: number | null;
+	channels?: Array<{ id: string; name: string; type: number; nsfw: boolean }> | null;
+	has_nsfw?: boolean | null;
+	synced_at?: string | null;
 }): Promise<void> {
 	await withDb((d: DrizzleDb) =>
 		d
@@ -1108,7 +1128,18 @@ export async function upsertServer(data: {
 				added_at: new Date().toISOString(),
 				votes: 0,
 				promoted: false,
-				badges: JSON.stringify([]) as any
+				badges: JSON.stringify([]) as any,
+				// Only include snapshot columns when the caller explicitly provides them.
+				// This keeps the INSERT compatible with databases that haven't had the
+				// migration run yet — registration never passes these values so they are
+				// simply omitted from the query entirely.
+				...(data.member_count !== undefined && { member_count: data.member_count }),
+				...(data.presence_count !== undefined && { presence_count: data.presence_count }),
+				...(data.channels !== undefined && {
+					channels: JSON.stringify(data.channels ?? []) as any
+				}),
+				...(data.has_nsfw !== undefined && { has_nsfw: data.has_nsfw }),
+				...(data.synced_at !== undefined && { synced_at: data.synced_at })
 			})
 			.onConflictDoUpdate({
 				target: Servers.id,
@@ -1119,6 +1150,31 @@ export async function upsertServer(data: {
 				}
 			})
 	);
+}
+
+/**
+ * Write a guild snapshot (member/presence counts, channels, nsfw flag) to an
+ * existing server row. Called by the server-refresh lib after a successful
+ * Discord API fetch.
+ */
+export async function updateServerSnapshot(
+	id: string,
+	snapshot: {
+		member_count?: number | null;
+		presence_count?: number | null;
+		channels?: Array<{ id: string; name: string; type: number; nsfw: boolean }> | null;
+		has_nsfw?: boolean | null;
+		synced_at?: string | null;
+	}
+): Promise<void> {
+	const set: Record<string, unknown> = {
+		synced_at: snapshot.synced_at ?? new Date().toISOString()
+	};
+	if (snapshot.member_count != null) set.member_count = snapshot.member_count;
+	if (snapshot.presence_count != null) set.presence_count = snapshot.presence_count;
+	if (snapshot.channels != null) set.channels = JSON.stringify(snapshot.channels) as any;
+	if (snapshot.has_nsfw != null) set.has_nsfw = snapshot.has_nsfw;
+	await withDb((d: DrizzleDb) => d.update(Servers).set(set).where(eq(Servers.id, id)));
 }
 
 export async function getAllServerSlugs(): Promise<

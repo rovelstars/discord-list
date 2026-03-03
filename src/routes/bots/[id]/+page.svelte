@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from "svelte";
+	import { onMount, afterUpdate } from "svelte";
 	import { browser } from "$app/environment";
 	import getAvatarURL from "$lib/get-avatar-url";
 	import BotCard from "$lib/components/BotCard.svelte";
@@ -45,7 +45,42 @@
 
 	// Reactive destructuring — re-runs whenever SvelteKit replaces `data` after
 	// a client-side navigation to a different bot ID.
-	$: ({ bot, descHtml, randombots, comments, user } = data);
+	$: ({ bot, randombots, comments, user } = data);
+
+	// ── iframe sandboxing ─────────────────────────────────────────────────────
+
+	/**
+	 * The allowed sandbox tokens for user-supplied iframes.
+	 * Notably absent: allow-same-origin, allow-top-navigation, allow-forms, allow-modals.
+	 */
+	const IFRAME_SANDBOX = "allow-scripts allow-popups";
+
+	/**
+	 * Pre-process the server-rendered HTML before inserting it into the DOM:
+	 * ensure every <iframe> has a strict sandbox attribute so even if the browser
+	 * sees it before the DOM-patch below the attribute is already present.
+	 */
+	function sanitizeDesc(html: string | null | undefined): string {
+		if (!html) return "";
+		return html.replace(/<iframe(\s[^>]*)?>/gi, (match, attrs = "") => {
+			// Strip any existing sandbox attribute so we control the value entirely.
+			const stripped = attrs.replace(/\s+sandbox\s*=\s*(?:"[^"]*"|'[^']*'|\S+)/gi, "");
+			return `<iframe${stripped} sandbox="${IFRAME_SANDBOX}">`;
+		});
+	}
+
+	/** Reference to the long-description container so we can patch the DOM after render. */
+	let descEl: HTMLDivElement | null = null;
+
+	/** Walk every iframe in the rendered description and enforce our sandbox. */
+	function patchIframes() {
+		if (!descEl) return;
+		descEl.querySelectorAll("iframe").forEach((frame) => {
+			frame.setAttribute("sandbox", IFRAME_SANDBOX);
+		});
+	}
+
+	$: descHtml = sanitizeDesc(data.descHtml);
 
 	// ── SEO info section helpers ──────────────────────────────────────────────
 
@@ -153,6 +188,14 @@
 
 	// Lazily-loaded ColorThief instance — created once, reused.
 	let colorThief: { getColor: (img: HTMLImageElement) => [number, number, number] } | null = null;
+
+	onMount(() => {
+		patchIframes();
+	});
+
+	afterUpdate(() => {
+		patchIframes();
+	});
 
 	async function ensureColorThief() {
 		if (colorThief) return colorThief;
@@ -334,20 +377,6 @@
 	imageSmall={avatarSrc}
 />
 
-<svelte:head>
-	<!-- highlight.js theme — matches dark/light via media query -->
-	<link
-		rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css"
-		media="(prefers-color-scheme: light)"
-	/>
-	<link
-		rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css"
-		media="(prefers-color-scheme: dark)"
-	/>
-</svelte:head>
-
 <!--
 	Outer two-column layout on xl+:
 	  left  → bot detail card (grows to fill)
@@ -421,7 +450,23 @@
 					<!-- Long description (markdown rendered to HTML server-side) -->
 					{#if descHtml}
 						<div
-							class="mt-6 w-full min-w-0 prose md:prose-xl dark:prose-invert prose-code:before:content-[''] prose-code:after:content-[''] prose-code:bg-popover prose-code:px-2 prose-code:py-1 prose-code:rounded-md overflow-x-auto"
+							bind:this={descEl}
+							class="mt-6 w-full min-w-0 prose prose-sm sm:prose md:prose-base lg:prose-lg dark:prose-invert max-w-none
+													prose-headings:font-heading prose-headings:scroll-mt-20
+													prose-h1:text-3xl prose-h1:font-black prose-h1:mb-2 prose-h1:pb-4 prose-h1:border-b prose-h1:border-border
+													prose-h2:text-xl prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4 prose-h2:pt-4
+													prose-h3:text-base prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3
+													prose-code:before:content-[''] prose-code:after:content-['']
+													prose-code:bg-muted prose-code:text-foreground prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-sm prose-code:font-mono
+													prose-pre:bg-card prose-pre:border prose-pre:border-border prose-pre:rounded-xl prose-pre:shadow-sm
+													prose-pre:code:bg-transparent prose-pre:code:p-0
+													prose-table:border-collapse prose-table:w-full prose-table:text-sm
+													prose-th:bg-muted/50 prose-th:px-4 prose-th:py-2.5 prose-th:text-left prose-th:font-semibold prose-th:text-foreground
+													prose-td:px-4 prose-td:py-2.5 prose-td:border-b prose-td:border-border
+													prose-tr:hover:bg-accent/30
+													prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+													prose-blockquote:border-l-primary/50 prose-blockquote:bg-primary/5 prose-blockquote:rounded-r-lg prose-blockquote:py-1
+													prose-hr:border-border"
 						>
 							{@html descHtml}
 						</div>

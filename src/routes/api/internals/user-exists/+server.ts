@@ -22,7 +22,7 @@ function validateSecret(request: Request): boolean {
  * Auth: x-internal-secret header must match INTERNAL_SECRET env var.
  *
  * Response:
- *   200 { exists: true | false }
+ *   200 { exists: true | false, bal: number | null }
  *   400 { error: "missing_id" }
  *   401 { error: "Unauthorized" }
  *   500 { error: string }
@@ -39,11 +39,16 @@ export const GET: RequestHandler = async ({ request, url }) => {
 
 	try {
 		const rows = await withDb((db: DrizzleDb) =>
-			db.select({ id: Users.id }).from(Users).where(eq(Users.id, id)).limit(1)
+			db.select({ id: Users.id, bal: Users.bal }).from(Users).where(eq(Users.id, id)).limit(1)
 		);
 
 		const exists = Array.isArray(rows) && rows.length > 0;
-		return json({ exists }, { status: 200 });
+		const bal = exists
+			? typeof rows[0].bal === "number"
+				? rows[0].bal
+				: Number(rows[0].bal) || 0
+			: null;
+		return json({ exists, bal }, { status: 200 });
 	} catch (err) {
 		const msg = err instanceof Error ? err.message : String(err);
 		console.error("[user-exists] DB error:", msg);

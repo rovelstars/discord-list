@@ -6,6 +6,7 @@
  *  - Users
  *  - Servers
  *  - Comments  ← rating + threaded replies via parent_id
+ *  - Emojis    ← Discord custom emojis, synced from registered servers or submitted manually
  *
  * Notes:
  * - Some Drizzle sqlite-core builds/export sets may differ between versions.
@@ -122,7 +123,24 @@ export const Servers = sqliteTable("Servers", {
 	slug: text("slug"),
 	//current time
 	added_at: text("added_at").default(new Date().toISOString()),
-	votes: integer("votes").default(0)
+	votes: integer("votes").default(0),
+
+	// Discord guild snapshot — populated/refreshed via the server-refresh lib.
+	// Stored so we can display rich stats without hitting Discord's API on every
+	// page load; values are updated lazily when a page load detects stale data.
+	/** Approximate total member count (from guild.approximate_member_count). */
+	member_count: integer("member_count"),
+	/** Approximate online/active member count (from guild.approximate_presence_count). */
+	presence_count: integer("presence_count"),
+	/**
+	 * JSON array of channel objects: { id, name, type, nsfw }.
+	 * type mirrors the Discord channel type integer (0=text, 2=voice, 4=category, etc.).
+	 */
+	channels: text("channels").default("[]"),
+	/** Whether any channel in the guild is marked NSFW. Stored as INTEGER (0/1). */
+	has_nsfw: integer("has_nsfw", { mode: "boolean" }).default(false),
+	/** ISO 8601 timestamp of the last successful Discord data sync. */
+	synced_at: text("synced_at")
 });
 
 /**
@@ -161,6 +179,84 @@ export const Comments = sqliteTable("Comments", {
 	parent_id: text("parent_id"),
 	created_at: text("created_at").notNull().default(new Date().toISOString()),
 	updated_at: text("updated_at")
+});
+
+/**
+ * Emojis table
+ *
+ * Stores Discord custom emojis. They can arrive via two routes:
+ *  1. Manual submission — a logged-in user submits an emoji; `submitter` is set,
+ *     `guild` is NULL.
+ *  2. Server auto-sync — the bot syncs emojis from a registered guild; `guild`
+ *     is set, `submitter` is NULL (or cleared if a previous manual submission
+ *     is claimed by a guild sync).
+ *
+ * Design notes:
+ *  - `id`         — Discord snowflake for the emoji (unique, primary key).
+ *  - `code`       — Original Discord emoji name (e.g. "pepe_sad"). Never changes.
+ *  - `name`       — Human-friendly display name set by the submitter/admin.
+ *  - `alt_names`  — JSON array of alternative search names.
+ *  - `description`— Optional freeform description.
+ *  - `a`          — 1 if animated (GIF), 0 if static (PNG/WEBP). Short column
+ *                   name for storage efficiency.
+ *  - `dc`         — Download counter; incremented each time the download button
+ *                   is used.
+ *  - `added_at`   — ISO 8601 timestamp when the emoji was first inserted.
+ *  - `submitter`  — Discord user id of the manual submitter. NULL when `guild`
+ *                   is populated. If a guild sync later claims the same emoji
+ *                   the submitter is cleared and guild is set.
+ *  - `guild`      — Discord guild id that owns this emoji (auto-sync path).
+ *                   NULL for manual submissions.
+ *
+ * Constraint: at least one of `submitter` or `guild` must be non-NULL (enforced
+ * at the application layer, not at the DB level for libSQL compat).
+ */
+export const Emojis = sqliteTable("Emojis", {
+	/** Discord snowflake — stable unique identifier for the emoji. */
+	id: text("id").primaryKey(),
+
+	/** Original emoji name as returned by Discord (e.g. "pepe_sad"). */
+	code: text("code").notNull(),
+
+	/** Human-friendly display name. */
+	name: text("name").notNull(),
+
+	/** JSON array of alternative/search names, e.g. ["pepesad","sad_pepe"]. */
+	alt_names: text("alt_names").default("[]"),
+
+	/** Optional description of the emoji. */
+	description: text("description"),
+
+	/**
+	 * Animated flag. 1 = animated (GIF), 0 = static (PNG/WEBP).
+	 * Short column name `a` to keep the schema compact.
+	 */
+	a: integer("a", { mode: "boolean" }).default(false),
+
+	/**
+	 * Download counter. Incremented atomically each time a user uses
+	 * the dedicated download button.
+	 */
+	dc: integer("dc").default(0),
+
+	/** ISO 8601 timestamp when this emoji record was created. */
+	added_at: text("added_at").default(new Date().toISOString()),
+
+	/**
+	 * Discord user id of the person who manually submitted this emoji.
+	 * NULL when the emoji was added via server auto-sync (guild is set instead).
+	 * Cleared and set to NULL if a subsequent guild sync claims the same emoji.
+	 */
+	submitter: text("submitter"),
+
+	/**
+	 * Discord guild (server) id that this emoji belongs to.
+	 * Set during auto-sync from a registered server.
+	 * NULL for manually-submitted emojis.
+	 * If a guild sync later finds an emoji that was previously manually
+	 * submitted, `guild` is set and `submitter` is cleared to NULL.
+	 */
+	guild: text("guild")
 });
 
 /**

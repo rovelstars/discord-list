@@ -1,9 +1,12 @@
 import type { PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import { getServerByIdOrSlug, getRandomServers } from "$lib/db/queries";
+import { refreshServer } from "$lib/server-refresh";
+import { env } from "$env/dynamic/private";
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
+import { getEmojisByGuild, countEmojisByGuild } from "$lib/db/queries/emojis";
 
 const marked = new Marked(
 	markedHighlight({
@@ -15,6 +18,9 @@ const marked = new Marked(
 		}
 	})
 );
+
+/** How old synced_at must be before we fire a background refresh (10 minutes). */
+const SYNC_STALE_MS = 10 * 60 * 1000;
 
 export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 	const idOrSlug = params.id;
@@ -31,6 +37,19 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 
 	const randomServers = await getRandomServers(6);
 
+	let emojis: Awaited<ReturnType<typeof getEmojisByGuild>> = [];
+	let emojiCount = 0;
+	try {
+		[emojis, emojiCount] = await Promise.all([
+			getEmojisByGuild(server.id, 32),
+			countEmojisByGuild(server.id)
+		]);
+	} catch (emojiErr) {
+		// Non-fatal — page renders without the emoji section if the table
+		// isn't ready yet or a transient DB error occurs.
+		console.warn("[server-page] Emoji query failed (non-fatal):", emojiErr);
+	}
+
 	let descHtml: string | null = null;
 	if (server.desc && server.desc !== "Description is not updated.") {
 		try {
@@ -38,6 +57,25 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 		} catch {
 			descHtml = server.desc;
 		}
+	}
+
+	// ── Background guild snapshot refresh ──────────────────────────────────
+	// Fire-and-forget: if data is stale (never synced, or synced >10 min ago)
+	// kick off a refresh so the *next* page load gets fresh data. We don't
+	// await it so it never slows down the response.
+	const discordToken = (env.DISCORD_TOKEN ?? "").trim();
+	const isStale =
+		!server.synced_at || Date.now() - new Date(server.synced_at).getTime() > SYNC_STALE_MS;
+
+	if (discordToken && isStale) {
+		// minAgeMs=0 — the stale check above is our guard; no need to double-check.
+		refreshServer(server.id, discordToken, {
+			triggeredBy: "page-load",
+			minAgeMs: 0
+		}).catch((err) => {
+			// Non-fatal — page still renders with whatever data is in the DB.
+			console.warn("[server-page] Background refresh failed (non-fatal):", err);
+		});
 	}
 
 	setHeaders({
@@ -49,6 +87,8 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 		server,
 		descHtml,
 		randomServers,
+		emojis,
+		emojiCount,
 		user: layoutData.user ?? null
 	};
 };

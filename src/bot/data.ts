@@ -2,8 +2,11 @@
 
 import ping from "./commands/ping";
 import registerServer from "./commands/register-server";
+import transfer from "./commands/transfer";
+import bal from "./commands/bal";
+import syncEmojis from "./commands/sync-emojis";
 
-const commands = [ping.data, registerServer.data];
-const commandFns = [ping.run, registerServer.run];
+const commands = [ping.data, registerServer.data, transfer.data, bal.data, syncEmojis.data];
+const commandFns = [ping.run, registerServer.run, transfer.run, bal.run, syncEmojis.run];
 
 export { commands, commandFns };

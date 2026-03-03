@@ -2,11 +2,12 @@
 	import { onMount, onDestroy } from "svelte";
 	import BotCard from "$lib/components/BotCard.svelte";
 	import ServerCard from "$lib/components/ServerCard.svelte";
+	import EmojiCard from "$lib/components/EmojiCard.svelte";
 	import SEO from "$lib/components/SEO.svelte";
 
 	export let data: any;
 
-	const { topbotsdata, allBotsForBg, topServersData } = data;
+	const { topbotsdata, allBotsForBg, topServersData, topEmojis = [], newestEmojis = [] } = data;
 
 	// ── Animated word cycling ─────────────────────────────────────────────────
 	const words = ["bots", "servers", "stickers", "emojis", "friends"];
@@ -337,6 +338,125 @@
 							class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-green-600 text-white font-bold text-base hover:bg-green-700 transition-colors"
 						>
 							Browse All Servers
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-4 h-4"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="m9 18 6-6-6-6" />
+							</svg>
+						</a>
+					</div>
+				</div>
+			</section>
+		{/if}
+
+		<!-- Section: Featured Emojis (Top Downloaded) -->
+		{#if topEmojis && topEmojis.length > 0}
+			<section class="pt-16 px-4">
+				<div class="max-w-7xl mx-auto">
+					<div class="flex items-center justify-between mb-2">
+						<h2 class="font-heading text-3xl md:text-4xl font-bold flex items-center gap-3">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-8 h-8 text-purple-500"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<circle cx="12" cy="12" r="10" />
+								<path d="M8 14s1.5 2 4 2 4-2 4-2" />
+								<line x1="9" y1="9" x2="9.01" y2="9" />
+								<line x1="15" y1="9" x2="15.01" y2="9" />
+							</svg>
+							Popular Emojis
+						</h2>
+					</div>
+					<p class="text-muted-foreground text-lg mb-8 font-medium">
+						The most-downloaded custom Discord emojis on the listing.
+					</p>
+					<div
+						class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 gap-3"
+					>
+						{#each topEmojis as emoji (emoji.id)}
+							<EmojiCard {emoji} />
+						{/each}
+					</div>
+					<div class="text-center mt-10">
+						<a
+							href="/emojis?sort=popular"
+							class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-purple-600 text-white font-bold text-base hover:bg-purple-700 transition-colors"
+						>
+							Browse All Emojis
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-4 h-4"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="m9 18 6-6-6-6" />
+							</svg>
+						</a>
+					</div>
+				</div>
+			</section>
+		{/if}
+
+		<!-- Section: Newest Emojis -->
+		{#if newestEmojis && newestEmojis.length > 0}
+			<section class="pt-16 px-4">
+				<div class="max-w-7xl mx-auto">
+					<h2 class="font-heading text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-8 h-8 text-purple-400"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path
+								d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"
+							/>
+							<path d="M5 3v4" />
+							<path d="M19 17v4" />
+							<path d="M3 5h4" />
+							<path d="M17 19h4" />
+						</svg>
+						New Emojis
+					</h2>
+					<p class="text-muted-foreground text-lg mb-8 font-medium">
+						Freshly synced custom emojis — be the first to download them.
+					</p>
+					<div
+						class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 gap-3"
+					>
+						{#each newestEmojis as emoji (emoji.id)}
+							<EmojiCard {emoji} />
+						{/each}
+					</div>
+					<div class="text-center mt-10">
+						<a
+							href="/emojis?sort=newest"
+							class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold text-base hover:bg-purple-500/20 transition-colors"
+						>
+							See All New Emojis
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								class="w-4 h-4"

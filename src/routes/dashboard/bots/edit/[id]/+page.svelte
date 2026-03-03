@@ -318,17 +318,6 @@
 />
 <svelte:head>
 	<meta name="robots" content="noindex, nofollow" />
-	<!-- highlight.js theme for code blocks in the markdown preview — matches dark/light via media query -->
-	<link
-		rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css"
-		media="(prefers-color-scheme: light)"
-	/>
-	<link
-		rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css"
-		media="(prefers-color-scheme: dark)"
-	/>
 </svelte:head>
 
 <section class="max-w-3xl mx-auto px-4 py-10">

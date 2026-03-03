@@ -6,6 +6,7 @@ import { getDb } from "$lib/db";
 import { Users, Bots } from "$lib/db/schema";
 import { eq, inArray, like } from "drizzle-orm";
 import { getServersByOwner } from "$lib/db/queries";
+import { listEmojis } from "$lib/db/queries/emojis";
 
 export const load: PageServerLoad = async ({ cookies, url }) => {
 	const key = cookies.get("key");
@@ -188,6 +189,30 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		// non-fatal
 	}
 
+	// ── Manually submitted emojis ─────────────────────────────────────────────
+	let submittedEmojis: Array<{
+		id: string;
+		code: string;
+		name: string;
+		alt_names: string[];
+		a: boolean;
+		dc: number;
+		added_at: string | null;
+		guild: string | null;
+		submitter: string | null;
+	}> = [];
+
+	try {
+		submittedEmojis = await listEmojis({
+			// We filter by submitter at the app layer since there's no dedicated
+			// submitter filter in listEmojis; use a small limit for the dashboard.
+			limit: 100,
+			sort: "newest"
+		}).then((all) => all.filter((e) => e.submitter === discordUser.id));
+	} catch {
+		// non-fatal — show empty list
+	}
+
 	return {
 		// DB user (profile data, balance, etc.)
 		user: {
@@ -215,6 +240,8 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		bots: ownedBots,
 		// Servers this user owns
 		servers: ownedServers,
+		// Manually submitted emojis
+		submittedEmojis,
 		// Vote history
 		recentVotes: recentVotes.map((v) => ({
 			botId: v.bot,

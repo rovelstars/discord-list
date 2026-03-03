@@ -6,6 +6,7 @@
 	import { navigating } from "$app/stores";
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
+	import { browser } from "$app/environment";
 
 	// Stamp data-loaded on every <img> once it finishes loading so the global
 	// CSS fade-in in global.css can trigger. A single delegated listener on
@@ -73,11 +74,13 @@
 	// (goto(), form submissions, etc.) that aren't triggered by a click.
 	let pointerStarted = false;
 
-	$: if ($navigating) {
-		if (!pointerStarted) startBar();
-		pointerStarted = false;
-	} else if (visible) {
-		finishBar();
+	$: if (browser) {
+		if ($navigating) {
+			if (!pointerStarted) startBar();
+			pointerStarted = false;
+		} else if (visible) {
+			finishBar();
+		}
 	}
 
 	// Resolve the closest <a> ancestor (or the element itself).

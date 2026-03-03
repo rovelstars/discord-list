@@ -1,7 +1,117 @@
 @import "tailwindcss";
+@import "highlight.js/styles/github.min.css";
 @plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/forms";
 @plugin "tailwindcss-animate";
+
+/* ── highlight.js theme — uses semantic CSS variables so all accent themes
+   are respected automatically in both light and dark mode.
+   Token → variable mapping:
+     base text   → --color-foreground        (plain code text)
+     keywords    → --color-destructive        (control-flow words)
+     titles      → --color-primary            (function/class names)
+     attrs/nums  → --color-secondary          (literals & operators)
+     strings     → --color-ring               (string values)
+     builtins    → --color-secondary          (built-in identifiers)
+     comments    → --color-muted-foreground   (non-executable text)
+     tags/names  → --color-accent-foreground  (HTML/XML tag names)
+     addition bg → --color-primary / 15%      (diff add highlight)
+     deletion bg → --color-destructive / 15%  (diff del highlight)
+     code bg     → --color-card               (pre block background)
+─────────────────────────────────────────────────────────────────── */
+
+/* Base text colour — applies in both light and dark */
+.hljs,
+.hljs-subst {
+	color: var(--color-foreground);
+}
+
+/* Code block background */
+pre code.hljs {
+	background: var(--color-card);
+}
+
+/* Keywords, types, control-flow */
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta .hljs-keyword,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-variable.language_ {
+	color: var(--color-destructive);
+}
+
+/* Function names, class names, titles */
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+	color: var(--color-primary);
+}
+
+/* Attributes, numbers, operators, selectors */
+.hljs-attr,
+.hljs-attribute,
+.hljs-literal,
+.hljs-meta,
+.hljs-number,
+.hljs-operator,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id,
+.hljs-variable {
+	color: var(--color-secondary);
+}
+
+/* Strings and regexps */
+.hljs-meta .hljs-string,
+.hljs-regexp,
+.hljs-string {
+	color: var(--color-ring);
+}
+
+/* Built-ins and symbols */
+.hljs-built_in,
+.hljs-symbol {
+	color: var(--color-secondary);
+}
+
+/* Comments, formulas — muted, clearly non-executable */
+.hljs-code,
+.hljs-comment,
+.hljs-formula {
+	color: var(--color-muted-foreground);
+	font-style: italic;
+}
+
+/* Tag names, quotes, pseudo-selectors */
+.hljs-name,
+.hljs-quote,
+.hljs-selector-pseudo,
+.hljs-selector-tag {
+	color: var(--color-accent-foreground);
+}
+
+/* Diff additions */
+.hljs-addition {
+	background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+	color: var(--color-primary);
+}
+
+/* Diff deletions */
+.hljs-deletion {
+	background-color: color-mix(in srgb, var(--color-destructive) 15%, transparent);
+	color: var(--color-destructive);
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
 
 @theme {
 	/* ── Radius ─────────────────────────────────────────── */
