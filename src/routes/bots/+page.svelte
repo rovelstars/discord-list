@@ -138,36 +138,39 @@
      HERO — always visible
 ════════════════════════════════════════════════════════════════════════ -->
 <section class="relative overflow-hidden -mt-24 pt-28 pb-6 px-4">
-	<!-- Subtle radial glow behind hero -->
-	<div
-		class="pointer-events-none absolute inset-0 -z-10 flex items-start justify-center"
-		aria-hidden="true"
-	>
-		<div class="w-175 h-100 rounded-full bg-primary/10 blur-3xl"></div>
+	<!-- Decorative blobs -->
+	<div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+		<div class="absolute -top-24 -left-24 w-175 h-100 rounded-full bg-primary/10 blur-3xl"></div>
+		<div class="absolute -bottom-16 -right-16 w-120 h-80 rounded-full bg-primary/5 blur-3xl"></div>
 	</div>
 
-	<div class="text-center max-w-3xl mx-auto">
-		<img
-			src="/assets/img/bot/logo-512.png"
-			class="w-20 h-20 mx-auto mb-5 drop-shadow-xl"
-			alt="Rovel Discord List logo"
-			loading="eager"
-		/>
+	<div class="text-center max-w-3xl mx-auto relative z-10">
+		<!-- Icon -->
+		<div
+			class="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6 shadow-lg"
+		>
+			<img
+				src="/assets/img/bot/logo-512.png"
+				class="w-12 h-12 drop-shadow-xl"
+				alt="Rovel Discord List logo"
+				loading="eager"
+			/>
+		</div>
+
 		<h1 class="font-heading text-4xl md:text-6xl font-bold mb-3 tracking-tight">
-			Rovel Discord List
+			Discord <span class="text-primary">Bots</span>
 		</h1>
-		<p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-medium mb-8">
+		<p class="text-lg md:text-xl text-muted-foreground font-medium mb-8">
 			Discover the perfect bot for your Discord server — search, filter, and explore hundreds of
 			bots.
 		</p>
 
-		<!-- ── Search bar ─────────────────────────────────────────────── -->
+		<!-- Search bar -->
 		<form on:submit={handleSearch} class="flex gap-2 max-w-xl mx-auto mb-6">
 			<div class="relative flex-1">
-				<!-- Search icon -->
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
-					class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+					class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"
@@ -184,32 +187,42 @@
 					bind:value={searchInput}
 					placeholder="Search for bots by name or description…"
 					aria-label="Search bots"
-					class="w-full pl-9 pr-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700
-					       bg-white dark:bg-neutral-900 shadow-sm
-					       focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-					       text-sm transition-shadow"
+					class="w-full pl-9 pr-4 py-2 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/60"
 				/>
 			</div>
 			<button
 				type="submit"
-				class="px-5 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold text-sm transition-colors shadow-sm"
+				class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold transition-colors"
 			>
 				Search
 			</button>
 			{#if q}
 				<a
 					href="/bots"
-					class="px-4 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg font-semibold text-sm
-					       hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+					class="px-4 py-2 rounded-lg border border-border bg-card hover:bg-accent text-foreground font-semibold transition-colors flex items-center gap-1"
 					aria-label="Clear search"
 				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="w-4 h-4"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="M18 6 6 18" />
+						<path d="m6 6 12 12" />
+					</svg>
 					Clear
 				</a>
 			{/if}
 		</form>
 
-		<!-- ── Quick-filter buttons ───────────────────────────────────── -->
-		<div class="flex flex-wrap gap-2 justify-center mb-2">
+		<!-- Filter pills -->
+		<div class="flex flex-wrap gap-2 justify-center">
 			<a
 				href={buildHref({
 					lucky: true,
@@ -219,12 +232,12 @@
 					q: null,
 					offset: 0
 				})}
-				class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border transition-all
-					       {data.lucky
-					? 'bg-primary text-white border-primary shadow-md shadow-primary/30'
-					: 'border-neutral-300 dark:border-neutral-600 hover:border-primary hover:text-primary dark:hover:border-primary'}"
+				class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors
+					{data.lucky
+					? 'bg-primary border-primary text-primary-foreground'
+					: 'border-border bg-card hover:border-primary/60 text-muted-foreground hover:text-foreground'}"
 			>
-				<img src="/assets/img/bot/wink.svg" alt="" class="w-4 h-4" aria-hidden="true" />
+				<img src="/assets/img/bot/wink.svg" alt="" class="w-3.5 h-3.5" aria-hidden="true" />
 				Feeling Lucky
 			</a>
 			<a
@@ -236,14 +249,14 @@
 					q: null,
 					offset: 0
 				})}
-				class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border transition-all
-					       {data.trending
-					? 'bg-primary text-white border-primary shadow-md shadow-primary/30'
-					: 'border-neutral-300 dark:border-neutral-600 hover:border-primary hover:text-primary dark:hover:border-primary'}"
+				class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors
+					{data.trending
+					? 'bg-primary border-primary text-primary-foreground'
+					: 'border-border bg-card hover:border-primary/60 text-muted-foreground hover:text-foreground'}"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
-					class="w-4 h-4"
+					class="w-3.5 h-3.5"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"
@@ -267,13 +280,22 @@
 					q: null,
 					offset: 0
 				})}
-				class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border transition-all
-					       {data.newFlag
-					? 'bg-primary text-white border-primary shadow-md shadow-primary/30'
-					: 'border-neutral-300 dark:border-neutral-600 hover:border-primary hover:text-primary dark:hover:border-primary'}"
+				class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors
+					{data.newFlag
+					? 'bg-primary border-primary text-primary-foreground'
+					: 'border-border bg-card hover:border-primary/60 text-muted-foreground hover:text-foreground'}"
 			>
-				<img src="/assets/img/chemical.svg" alt="" class="w-4 h-4" aria-hidden="true" />
+				<img src="/assets/img/chemical.svg" alt="" class="w-3.5 h-3.5" aria-hidden="true" />
 				Newest
+			</a>
+			<a
+				href="/bots"
+				class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors
+					{!isSearching
+					? 'bg-primary border-primary text-primary-foreground'
+					: 'border-border bg-card hover:border-primary/60 text-muted-foreground hover:text-foreground'}"
+			>
+				All Bots
 			</a>
 		</div>
 	</div>
@@ -290,10 +312,10 @@
 				<button
 					type="button"
 					on:click={() => toggleCategory(slug)}
-					class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all cursor-pointer select-none
-						       {data.category === slug
-						? 'bg-primary text-white border-primary shadow-md shadow-primary/25 scale-105'
-						: 'bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700 hover:border-primary hover:text-primary dark:hover:border-primary hover:scale-105'}"
+					class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors cursor-pointer select-none
+						{data.category === slug
+						? 'bg-primary text-primary-foreground border-primary'
+						: 'bg-card border-border text-muted-foreground hover:border-primary/60 hover:text-foreground'}"
 					aria-pressed={data.category === slug}
 				>
 					<span class="text-base leading-none" aria-hidden="true">{meta.emoji}</span>
@@ -349,16 +371,14 @@
 					{viewLabel}
 				</h2>
 				{#if activeCatMeta}
-					<p class="text-gray-500 dark:text-gray-400 text-sm mt-1 max-w-xl">
+					<p class="text-muted-foreground text-sm mt-1 max-w-xl">
 						{activeCatMeta.description}
 					</p>
 				{/if}
 			</div>
 			<a
 				href="/bots"
-				class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold rounded-lg
-				       border border-neutral-300 dark:border-neutral-600
-				       hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+				class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold rounded-lg border border-border bg-card hover:bg-accent transition-colors"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -388,20 +408,22 @@
 			<div class="py-20 text-center">
 				<div class="text-5xl mb-4" aria-hidden="true">🤖</div>
 				<p class="text-xl font-semibold mb-2">No bots found</p>
-				<p class="text-gray-500 dark:text-gray-400">
+				<p class="text-muted-foreground">
 					{#if data.q}
-						No results for <strong>"{data.q}"</strong>. Try different keywords or browse a category.
+						No results for <strong class="text-foreground">"{data.q}"</strong>. Try different
+						keywords or browse a category.
 					{:else if activeCatMeta}
-						No <strong>{activeCatMeta.name}</strong> have been listed yet. Check back soon!
+						No <strong class="text-foreground">{activeCatMeta.name}</strong> have been listed yet. Check
+						back soon!
 					{:else}
-						Try a different filter or <a href="/bots" class="text-primary underline"
+						Try a different filter or <a href="/bots" class="text-primary hover:underline"
 							>browse all bots</a
 						>.
 					{/if}
 				</p>
 				<a
 					href="/bots"
-					class="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+					class="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
 				>
 					Browse All Bots
 				</a>

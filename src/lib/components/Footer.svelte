@@ -3,23 +3,33 @@
 	const siteOwner = "Rovel Stars™";
 	const email = "support@rovelstars.com";
 
-	const legalLinks = [
-		{ href: "/about", label: "About" },
-		{ href: "/privacy", label: "Privacy Policy" },
-		{ href: "/terms", label: "Terms of Service" }
+	const exploreLinks = [
+		{ href: "/bots", label: "Browse Bots" },
+		{ href: "/servers", label: "Browse Servers" },
+		{ href: "/emojis", label: "Browse Emojis" },
+		{ href: "/stickers", label: "Browse Stickers" },
+		{ href: "/top", label: "Top Bots" },
+		{ href: "/categories", label: "Categories" }
 	];
 
-	const socialLinks = [
-		{ href: `mailto:${email}`, label: email, external: false },
-		{ href: "/server", label: "Discord", external: false },
-		{ href: "https://x.com/RovelStars", label: "Twitter", external: true },
-		{ href: "https://github.com/rovelstars", label: "GitHub", external: true }
+	const developerLinks = [
+		{ href: "/dashboard", label: "Dashboard" },
+		{ href: "/dashboard/bots/new", label: "List a Bot" },
+		{ href: "/dashboard/servers", label: "List a Server" },
+		{ href: "/docs", label: "API Docs" }
+	];
+
+	const companyLinks = [
+		{ href: "/about", label: "About" },
+		{ href: "/privacy", label: "Privacy Policy" },
+		{ href: "/terms", label: "Terms of Service" },
+		{ href: "/server", label: "Discord Server" }
 	];
 </script>
 
 <footer class="mt-12 pt-8 border-t border-border">
 	<div class="max-w-5xl mx-auto px-4">
-		<!-- Top row: brand + legal links -->
+		<!-- Top row: brand + link columns -->
 		<div
 			class="flex flex-col sm:flex-row sm:items-start justify-between gap-8 pb-8 border-b border-border"
 		>
@@ -34,8 +44,8 @@
 					<span class="font-bold text-sm">Rovel Discord List</span>
 				</div>
 				<p class="text-xs text-muted-foreground leading-relaxed">
-					The best place to discover and list Discord bots and servers. Trusted by thousands of
-					server owners and bot developers since 2020.
+					The best place to discover and list Discord bots, servers, emojis, and stickers. Trusted
+					by thousands of communities since 2020.
 				</p>
 				<p class="text-xs text-muted-foreground">
 					<a
@@ -50,13 +60,13 @@
 
 			<!-- Link columns -->
 			<div class="flex flex-wrap gap-10 text-sm">
-				<!-- Platform -->
+				<!-- Explore -->
 				<div class="space-y-3">
 					<p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-						Platform
+						Explore
 					</p>
 					<ul class="space-y-2">
-						{#each [{ href: "/bots", label: "Browse Bots" }, { href: "/servers", label: "Browse Servers" }, { href: "/top", label: "Top Bots" }, { href: "/bots?new", label: "New Bots" }, { href: "/categories", label: "Categories" }] as link}
+						{#each exploreLinks as link}
 							<li>
 								<a
 									href={link.href}
@@ -75,7 +85,7 @@
 						Developers
 					</p>
 					<ul class="space-y-2">
-						{#each [{ href: "/login", label: "Login" }, { href: "/dashboard", label: "Dashboard" }, { href: "/dashboard/bots/new", label: "List a Bot" }, { href: "/servers", label: "List a Server" }] as link}
+						{#each developerLinks as link}
 							<li>
 								<a
 									href={link.href}
@@ -94,7 +104,7 @@
 						Company
 					</p>
 					<ul class="space-y-2">
-						{#each legalLinks as link}
+						{#each companyLinks as link}
 							<li>
 								<a
 									href={link.href}
@@ -104,14 +114,6 @@
 								</a>
 							</li>
 						{/each}
-						<li>
-							<a
-								href="/server"
-								class="text-muted-foreground hover:text-foreground transition-colors text-xs"
-							>
-								Discord Server
-							</a>
-						</li>
 					</ul>
 				</div>
 			</div>

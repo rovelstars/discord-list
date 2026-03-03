@@ -1,10 +1,31 @@
 <script lang="ts">
 	import SEO from "$lib/components/SEO.svelte";
 
-	const lastUpdated = "March 1, 2026";
+	const lastUpdated = "June 23, 2025";
 	const email = "support@rovelstars.com";
 	const siteName = "Rovel Discord List";
 	const siteUrl = "https://discord.rovelstars.com";
+
+	function smoothScroll(node: HTMLElement) {
+		function handleClick(e: MouseEvent) {
+			const target = e.target as HTMLElement;
+			const anchor = target.closest('a[href^="#"]') as HTMLAnchorElement | null;
+			if (!anchor) return;
+			const id = anchor.getAttribute("href")!.slice(1);
+			const el = document.getElementById(id);
+			if (!el) return;
+			e.preventDefault();
+			el.scrollIntoView({ behavior: "smooth", block: "start" });
+			// Update the URL hash without triggering a navigation
+			history.pushState(null, "", anchor.getAttribute("href")!);
+		}
+		node.addEventListener("click", handleClick);
+		return {
+			destroy() {
+				node.removeEventListener("click", handleClick);
+			}
+		};
+	}
 </script>
 
 <SEO
@@ -93,7 +114,8 @@
 				</div>
 				<p class="font-bold text-sm mb-1">Minimal collection</p>
 				<p class="text-xs text-muted-foreground leading-relaxed">
-					We only collect what's necessary to provide the service — your Discord profile data.
+					We only collect what's necessary to provide the service — your Discord profile data and
+					any content you choose to submit.
 				</p>
 			</div>
 			<div class="bg-card border border-border rounded-2xl p-5">
@@ -131,7 +153,7 @@
 						Contents
 					</p>
 				</div>
-				<nav class="p-2">
+				<nav class="p-2" use:smoothScroll>
 					{#each [["#who-we-are", "Who We Are"], ["#data-we-collect", "Data We Collect"], ["#how-we-use-data", "How We Use It"], ["#data-sharing", "Data Sharing"], ["#cookies", "Cookies"], ["#data-retention", "Data Retention"], ["#your-rights", "Your Rights"], ["#childrens-privacy", "Children's Privacy"], ["#changes", "Policy Changes"], ["#contact", "Contact Us"]] as [href, label]}
 						<a
 							{href}
@@ -146,7 +168,6 @@
 
 		<!-- Content -->
 		<div class="md:col-span-3 space-y-12">
-			<!-- ── Section helper component emulated inline ── -->
 			<!-- 1. Who We Are -->
 			<div id="who-we-are" class="scroll-mt-28">
 				<div class="flex items-center gap-3 mb-4">
@@ -171,13 +192,14 @@
 				<div class="text-muted-foreground leading-relaxed space-y-3 text-sm">
 					<p>
 						<strong class="text-foreground">{siteName}</strong> ("{siteName}", "we", "us", or "our")
-						is a Discord bot discovery platform operated by Rovel Stars™. Our service is accessible
-						at
-						<a href={siteUrl} class="text-primary hover:underline">{siteUrl}</a>.
+						is a Discord discovery platform operated by Rovel Stars™. Our service — accessible at
+						<a href={siteUrl} class="text-primary hover:underline">{siteUrl}</a> — lets users browse and
+						list Discord bots, servers, custom emojis, and stickers.
 					</p>
 					<p>
 						This Privacy Policy explains how we collect, use, disclose, and safeguard your
-						information when you visit our website or use our services. Please read it carefully.
+						information when you visit our website or use any of our services. Please read it
+						carefully.
 					</p>
 				</div>
 			</div>
@@ -231,7 +253,7 @@
 							</p>
 						</div>
 						<ul class="divide-y divide-border">
-							{#each [["Profile Bio", "A short description shown on your public profile page."], ["Banner URL", "An image URL used as your profile banner."], ["Bot Listings", "All information submitted when listing a bot (name, description, invite link, etc.)."]] as [field, note]}
+							{#each [["Profile Bio", "A short description shown on your public profile page."], ["Banner URL", "An image URL used as your profile banner."], ["Bot Listings", "All information submitted when listing a bot (name, description, invite link, tags, etc.)."], ["Server Listings", "All information submitted when listing a server (name, description, invite link, tags, icon, etc.)."], ["Emoji & Sticker Submissions", "Names, alt-names, tags, and guild attribution data submitted with each emoji or sticker."]] as [field, note]}
 								<li class="px-5 py-3 flex items-start gap-3">
 									<span class="font-semibold text-foreground shrink-0 w-44">{field}</span>
 									<span>{note}</span>
@@ -247,7 +269,7 @@
 							</p>
 						</div>
 						<ul class="divide-y divide-border">
-							{#each [["Vote History", "Timestamps and bot IDs for votes you cast, used for rewards and leaderboards."], ["Session Cookie", "A secure HTTP-only cookie storing your OAuth access token to keep you logged in."], ["Standard Server Logs", "IP address, browser type, referring URL, and pages visited. Retained for up to 30 days for security purposes."]] as [field, note]}
+							{#each [["Vote History", "Timestamps and listing IDs for votes you cast, used for rewards and leaderboards."], ["Referral Data", "Referral link usage, referred user IDs, milestone types, and reward amounts associated with your referral activity."], ["Session Cookie", "A secure HTTP-only cookie storing your OAuth access token to keep you logged in."], ["Standard Server Logs", "IP address, browser type, referring URL, and pages visited. Retained for up to 30 days for security purposes."]] as [field, note]}
 								<li class="px-5 py-3 flex items-start gap-3">
 									<span class="font-semibold text-foreground shrink-0 w-44">{field}</span>
 									<span>{note}</span>
@@ -282,7 +304,7 @@
 				<div class="text-muted-foreground leading-relaxed space-y-3 text-sm">
 					<p>We use the information we collect solely to operate and improve the service:</p>
 					<ul class="space-y-2 mt-2">
-						{#each ["Authenticate you via Discord OAuth2 and maintain your session.", "Display your public profile, avatar, and listed bots.", "Track your vote history and calculate your R$ reward balance.", "Send webhook notifications to bot developers when you vote.", "Detect and prevent abuse, spam, or fraudulent activity.", "Respond to support requests sent to our email.", "Improve site performance and diagnose technical issues."] as item}
+						{#each ["Authenticate you via Discord OAuth2 and maintain your session.", "Display your public profile, avatar, listed bots, and listed servers.", "Show your submitted emojis and stickers on your public profile and in the directory.", "Track your vote history and calculate your R$ reward balance.", "Send webhook notifications to bot developers and server owners when you vote.", "Calculate and credit referral milestone rewards to your R$ balance.", "Detect and prevent abuse, spam, vote fraud, or fraudulent referral activity.", "Respond to support requests sent to our email.", "Improve site performance and diagnose technical issues."] as item}
 							<li class="flex items-start gap-2">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -345,18 +367,29 @@
 					<div class="space-y-3 mt-2">
 						<div class="bg-card border border-border rounded-xl p-4">
 							<p class="font-semibold text-foreground text-sm mb-1">
-								Bot Developers — Vote Webhooks
+								Vote Webhooks — Bot Developers & Server Owners
 							</p>
 							<p>
-								When you vote for a bot, we send the bot developer's configured webhook your Discord
-								user ID and the timestamp of your vote. No other personal data is included.
+								When you vote for a bot or server, we send the recipient's configured webhook your
+								Discord user ID and the timestamp of your vote. No other personal data is included.
 							</p>
 						</div>
 						<div class="bg-card border border-border rounded-xl p-4">
 							<p class="font-semibold text-foreground text-sm mb-1">Public Profile Data</p>
 							<p>
-								Your username, avatar, bio, and listed bots are visible to everyone on your public
-								profile page. You control the bio and banner; all other data comes from Discord.
+								Your username, avatar, bio, listed bots, listed servers, and submitted emojis and
+								stickers are visible to everyone on your public profile page. You control the bio
+								and banner; all other profile data originates from Discord or your own submissions.
+							</p>
+						</div>
+						<div class="bg-card border border-border rounded-xl p-4">
+							<p class="font-semibold text-foreground text-sm mb-1">
+								Referral Programme Participants
+							</p>
+							<p>
+								If you were referred by another user or you refer someone, each party's public
+								username and avatar may be shown on the respective dashboard referral panel.
+								Sensitive details such as email addresses are never shared.
 							</p>
 						</div>
 						<div class="bg-card border border-border rounded-xl p-4">
@@ -446,19 +479,18 @@
 				<div class="text-muted-foreground leading-relaxed space-y-3 text-sm">
 					<p>
 						We retain your account data for as long as your account is active. If you request
-						account deletion, we will permanently remove your profile, vote history, and any
-						personally identifiable information within <strong class="text-foreground"
-							>30 days</strong
-						>.
+						account deletion, we will permanently remove your profile, vote history, referral
+						records, and any personally identifiable information within
+						<strong class="text-foreground">30 days</strong>.
 					</p>
 					<p>
-						Bot listings you submitted may be retained in anonymised form (no owner link) for
-						historical leaderboard integrity unless you explicitly request full removal.
+						Bot listings, server listings, and emoji/sticker submissions you created may be retained
+						in anonymised form (no owner link) for historical leaderboard and directory integrity
+						unless you explicitly request full removal.
 					</p>
 					<p>
-						Server access logs are automatically purged after <strong class="text-foreground"
-							>30 days</strong
-						>.
+						Server access logs are automatically purged after
+						<strong class="text-foreground">30 days</strong>.
 					</p>
 				</div>
 			</div>
@@ -489,7 +521,7 @@
 						Regardless of where you are located, you have the following rights regarding your data:
 					</p>
 					<ul class="space-y-2 mt-2">
-						{#each [["Access", "Request a copy of the personal data we hold about you."], ["Rectification", "Ask us to correct inaccurate data (e.g. if your profile wasn't updated after a username change)."], ["Erasure", "Request deletion of your account and all personally identifiable information."], ["Restriction", "Ask us to stop processing your data in certain ways while a dispute is resolved."], ["Portability", "Request your data in a structured, machine-readable format."], ["Objection", "Object to our processing of your data for any reason."]] as [right, desc]}
+						{#each [["Access", "Request a copy of the personal data we hold about you."], ["Rectification", "Ask us to correct inaccurate data (e.g. if your profile wasn't updated after a username change)."], ["Erasure", "Request deletion of your account and all personally identifiable information, including referral records and vote history."], ["Restriction", "Ask us to stop processing your data in certain ways while a dispute is resolved."], ["Portability", "Request your data in a structured, machine-readable format."], ["Objection", "Object to our processing of your data for any reason."]] as [right, desc]}
 							<li class="flex items-start gap-2">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"

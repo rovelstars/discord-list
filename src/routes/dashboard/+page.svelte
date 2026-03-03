@@ -31,6 +31,12 @@
 		paid_at: string | null;
 	}
 
+	interface UserProfile {
+		id: string;
+		username: string;
+		avatar: string | null;
+	}
+
 	interface ReferralRow {
 		id: string;
 		referred_id: string;
@@ -38,6 +44,7 @@
 		fingerprint_match: boolean;
 		created_at: string;
 		milestones: Milestone[];
+		referredProfile: UserProfile | null;
 	}
 
 	export let data: {
@@ -83,13 +90,17 @@
 			owner: string;
 			slug: string | null;
 		}>;
-		recentVotes: Array<{
-			botId: string;
-			at: number;
-			botName: string;
-			botSlug: string;
-			botAvatar: string | null;
-		}>;
+		recentVotes: Array<
+			| { type: "bot"; id: string; at: number; name: string; slug: string; avatar: string | null }
+			| {
+					type: "server";
+					id: string;
+					at: number;
+					name: string;
+					slug: string;
+					avatar: string | null;
+			  }
+		>;
 		totalVotesCast: number;
 		expiredCount: number;
 		submittedEmojis: Array<{
@@ -114,7 +125,12 @@
 			totalEarned: number;
 			pendingEarnable: number;
 		};
-		wasReferredBy: { referrer_id: string; created_at: string; reward_status: string } | null;
+		wasReferredBy: {
+			referrer_id: string;
+			created_at: string;
+			reward_status: string;
+			referrerProfile: { id: string; username: string; avatar: string | null } | null;
+		} | null;
 		earnedAsReferred: Array<{
 			id: string;
 			referral_id: string | null;
@@ -462,7 +478,14 @@
 
 <div class="min-h-screen bg-background">
 	<!-- ── Hero header ──────────────────────────────────────────────────────── -->
-	<div class="relative overflow-hidden border-b border-border bg-card pt-32 -mt-28">
+	<div
+		class="relative overflow-hidden border-b border-border bg-card pt-32 -mt-28"
+		style={`background-image: url(${user.banner ? user.banner : "/assets/img/bot/dashboard-banner-placeholder.jpg"}); background-size: cover; background-position: center;`}
+	>
+		<!-- Dark gradient scrim so text is always readable over the banner -->
+		<div
+			class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/80"
+		></div>
 		<div
 			class="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary/10 blur-3xl"
 		></div>
@@ -487,17 +510,25 @@
 				<!-- Name / meta -->
 				<div class="flex-1 min-w-0">
 					<div class="flex flex-wrap items-center gap-2">
-						<h1 class="text-2xl font-extrabold font-heading truncate">{displayName}</h1>
+						<h1
+							class="text-2xl font-extrabold font-heading truncate text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]"
+						>
+							{displayName}
+						</h1>
 						{#if user.nitro}
 							<span
-								class="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30"
+								class="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-200 border border-purple-400/50 drop-shadow"
 							>
 								✦ Nitro
 							</span>
 						{/if}
 					</div>
-					<p class="text-muted-foreground text-sm mt-0.5">{handle}</p>
-					<p class="text-xs text-muted-foreground mt-1 flex items-center gap-1.5">
+					<p class="text-white/70 text-sm mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+						{handle}
+					</p>
+					<p
+						class="text-xs text-white/60 mt-1 flex items-center gap-1.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							class="w-3.5 h-3.5 shrink-0"
@@ -1768,53 +1799,130 @@
 								</div>
 								<p class="font-bold text-base">No votes yet</p>
 								<p class="text-sm text-muted-foreground mt-1.5 max-w-xs">
-									Your vote history will appear here once you start voting for bots.
+									Your vote history will appear here once you start voting for bots or servers.
 								</p>
-								<a
-									href="/bots"
-									class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										class="w-4 h-4"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
+								<div class="mt-5 flex items-center gap-2 flex-wrap justify-center">
+									<a
+										href="/bots"
+										class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20"
 									>
-										<circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-									</svg>
-									Browse Bots
-								</a>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-4 h-4"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+										</svg>
+										Browse Bots
+									</a>
+									<a
+										href="/servers"
+										class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-card text-foreground border border-border text-sm font-semibold hover:bg-accent transition-colors"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-4 h-4"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline
+												points="9 22 9 12 15 12 15 22"
+											/>
+										</svg>
+										Browse Servers
+									</a>
+								</div>
 							</div>
 						{:else}
 							<ul class="divide-y divide-border">
 								{#each recentVotes as vote, i}
+									{@const isBot = vote.type === "bot"}
+									{@const href = isBot ? `/bots/${vote.slug}` : `/servers/${vote.slug}`}
+									{@const avatarSrc = isBot
+										? vote.avatar
+											? getAvatarURL(vote.id, vote.avatar, 40)
+											: getAvatarURL(vote.id, "0")
+										: vote.avatar && vote.avatar !== ""
+											? `https://cdn.discordapp.com/icons/${vote.id}/${vote.avatar}.webp?size=40`
+											: null}
 									<li>
 										<a
-											href="/bots/{vote.botSlug}"
+											{href}
 											class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-accent/40 transition-colors group"
 										>
 											<span
 												class="w-5 text-xs font-mono text-muted-foreground/60 shrink-0 text-right"
 												>{i + 1}</span
 											>
-											<img
-												src={vote.botAvatar
-													? getAvatarURL(vote.botId, vote.botAvatar, 40)
-													: getAvatarURL(vote.botId, "0")}
-												alt="{vote.botName} avatar"
-												class="w-9 h-9 rounded-xl object-cover border border-border shrink-0 shadow-sm"
-											/>
+											{#if avatarSrc}
+												<img
+													src={avatarSrc}
+													alt="{vote.name} avatar"
+													class="w-9 h-9 {isBot
+														? 'rounded-xl'
+														: 'rounded-full'} object-cover border border-border shrink-0 shadow-sm"
+												/>
+											{:else}
+												<div
+													class="w-9 h-9 {isBot
+														? 'rounded-xl'
+														: 'rounded-full'} bg-accent border border-border shrink-0 shadow-sm flex items-center justify-center text-muted-foreground"
+												>
+													{#if isBot}
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															class="w-4 h-4"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															stroke-width="2"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															aria-hidden="true"
+														>
+															<rect width="18" height="11" x="3" y="8" rx="2" /><path
+																d="M8 8V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"
+															/><circle cx="12" cy="13" r="1" fill="currentColor" />
+														</svg>
+													{:else}
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															class="w-4 h-4"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															stroke-width="2"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															aria-hidden="true"
+														>
+															<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline
+																points="9 22 9 12 15 12 15 22"
+															/>
+														</svg>
+													{/if}
+												</div>
+											{/if}
 											<div class="min-w-0 flex-1">
 												<p
 													class="font-semibold text-sm truncate group-hover:text-primary transition-colors"
 												>
-													{vote.botName}
+													{vote.name}
 												</p>
-												<p class="text-xs text-muted-foreground">{relativeTime(vote.at)}</p>
+												<p class="text-xs text-muted-foreground flex items-center gap-1">
+													<span class="opacity-60">{isBot ? "Bot" : "Server"}</span>
+													<span class="opacity-30">·</span>
+													{relativeTime(vote.at)}
+												</p>
 											</div>
 											<span
 												class="shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20"
@@ -2160,10 +2268,31 @@
 								</div>
 								<div class="flex-1 min-w-0">
 									<p class="text-sm font-semibold leading-none">You were referred</p>
-									<p class="text-xs text-muted-foreground mt-0.5">
-										By <code class="font-mono bg-muted px-1 py-0.5 rounded text-[11px]"
-											>{shortId(wasReferredBy.referrer_id)}</code
-										>
+									<p
+										class="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5 flex-wrap"
+									>
+										By
+										{#if wasReferredBy.referrerProfile}
+											<img
+												src={wasReferredBy.referrerProfile.avatar
+													? getAvatarURL(
+															wasReferredBy.referrerProfile.id,
+															wasReferredBy.referrerProfile.avatar,
+															32
+														)
+													: getAvatarURL(wasReferredBy.referrerProfile.id, "0")}
+												alt={wasReferredBy.referrerProfile.username}
+												class="w-4 h-4 rounded-full inline-block bg-muted"
+												loading="lazy"
+											/>
+											<span class="font-semibold text-foreground"
+												>{wasReferredBy.referrerProfile.username}</span
+											>
+										{:else}
+											<code class="font-mono bg-muted px-1 py-0.5 rounded text-[11px]"
+												>{shortId(wasReferredBy.referrer_id)}</code
+											>
+										{/if}
 										on {fmtDate(wasReferredBy.created_at)} —
 										<span class="inline-flex items-center gap-1 font-medium">
 											<span
@@ -2391,12 +2520,31 @@
 												>
 												</span>
 
-												<!-- User ID + date -->
+												<!-- User + date -->
 												<div class="flex-1 min-w-0">
 													<div class="flex items-center gap-2 flex-wrap">
-														<p class="text-sm font-semibold font-mono">
-															{shortId(referral.referred_id)}
-														</p>
+														{#if referral.referredProfile}
+															<!-- Avatar -->
+															<img
+																src={referral.referredProfile.avatar
+																	? getAvatarURL(
+																			referral.referredProfile.id,
+																			referral.referredProfile.avatar,
+																			32
+																		)
+																	: getAvatarURL(referral.referredProfile.id, "0")}
+																alt={referral.referredProfile.username}
+																class="w-6 h-6 rounded-full shrink-0 bg-muted"
+																loading="lazy"
+															/>
+															<span class="text-sm font-semibold leading-none">
+																{referral.referredProfile.username}
+															</span>
+														{:else}
+															<p class="text-sm font-semibold font-mono text-muted-foreground">
+																{shortId(referral.referred_id)}
+															</p>
+														{/if}
 														{#if referral.fingerprint_match}
 															<span
 																class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20"

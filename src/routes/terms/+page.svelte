@@ -1,10 +1,31 @@
 <script lang="ts">
 	import SEO from "$lib/components/SEO.svelte";
 
-	const lastUpdated = "March 1, 2026";
+	const lastUpdated = "June 23, 2025";
 	const email = "support@rovelstars.com";
 	const siteName = "Rovel Discord List";
 	const siteUrl = "https://discord.rovelstars.com";
+
+	function smoothScroll(node: HTMLElement) {
+		function handleClick(e: MouseEvent) {
+			const target = e.target as HTMLElement;
+			const anchor = target.closest('a[href^="#"]') as HTMLAnchorElement | null;
+			if (!anchor) return;
+			const id = anchor.getAttribute("href")!.slice(1);
+			const el = document.getElementById(id);
+			if (!el) return;
+			e.preventDefault();
+			el.scrollIntoView({ behavior: "smooth", block: "start" });
+			// Update the URL hash without triggering a navigation
+			history.pushState(null, "", anchor.getAttribute("href")!);
+		}
+		node.addEventListener("click", handleClick);
+		return {
+			destroy() {
+				node.removeEventListener("click", handleClick);
+			}
+		};
+	}
 </script>
 
 <SEO
@@ -72,7 +93,8 @@
 				</div>
 				<p class="font-bold text-sm mb-1">Free to use</p>
 				<p class="text-xs text-muted-foreground leading-relaxed">
-					Browsing bots, voting, and listing your bot is completely free with no hidden charges.
+					Browsing bots, servers, emojis, stickers, voting, and listing your content is completely
+					free with no hidden charges.
 				</p>
 			</div>
 			<div class="bg-card border border-border rounded-2xl p-5">
@@ -94,7 +116,8 @@
 				</div>
 				<p class="font-bold text-sm mb-1">No abuse tolerated</p>
 				<p class="text-xs text-muted-foreground leading-relaxed">
-					Vote manipulation, spam, and malicious bots will result in immediate removal.
+					Vote manipulation, spam, fraudulent referrals, and malicious listings will result in
+					immediate removal.
 				</p>
 			</div>
 			<div class="bg-card border border-border rounded-2xl p-5">
@@ -132,8 +155,8 @@
 						Contents
 					</p>
 				</div>
-				<nav class="p-2">
-					{#each [["#acceptance", "Acceptance"], ["#eligibility", "Eligibility"], ["#your-account", "Your Account"], ["#acceptable-use", "Acceptable Use"], ["#bot-listings", "Bot Listings"], ["#voting", "Voting & Rewards"], ["#intellectual-prop", "Intellectual Property"], ["#third-party", "Third-Party Services"], ["#disclaimers", "Disclaimers"], ["#limitation", "Limitation of Liability"], ["#termination", "Termination"], ["#changes", "Changes to Terms"], ["#contact", "Contact Us"]] as [href, label]}
+				<nav class="p-2" use:smoothScroll>
+					{#each [["#acceptance", "Acceptance"], ["#eligibility", "Eligibility"], ["#your-account", "Your Account"], ["#acceptable-use", "Acceptable Use"], ["#bot-listings", "Bot Listings"], ["#server-listings", "Server Listings"], ["#emoji-sticker", "Emojis & Stickers"], ["#voting", "Voting & Rewards"], ["#referral", "Referral Programme"], ["#intellectual-prop", "Intellectual Property"], ["#third-party", "Third-Party Services"], ["#disclaimers", "Disclaimers"], ["#limitation", "Limitation of Liability"], ["#termination", "Termination"], ["#changes", "Changes to Terms"], ["#contact", "Contact Us"]] as [href, label]}
 						<a
 							{href}
 							class="block px-3 py-2 rounded-xl text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
@@ -176,7 +199,8 @@
 					</p>
 					<p>
 						If you do not agree with any part of these Terms, you must not use the Service. These
-						Terms apply to all visitors, registered users, and bot developers using the platform.
+						Terms apply to all visitors, registered users, bot developers, server owners, and anyone
+						who submits content (including emojis, stickers, and servers) to the platform.
 					</p>
 				</div>
 			</div>
@@ -263,7 +287,7 @@
 					</p>
 					<p>You agree not to:</p>
 					<ul class="space-y-2">
-						{#each ["Share your session or allow others to use your account.", "Use automated tools, scripts, or bots to interact with the Service on your behalf.", "Attempt to access another user's account or data without authorisation.", "Impersonate another person or organisation."] as item}
+						{#each ["Share your session or allow others to use your account.", "Use automated tools, scripts, or bots to interact with the Service on your behalf.", "Attempt to access another user's account or data without authorisation.", "Impersonate another person or organisation.", "Create multiple accounts to circumvent bans, suspensions, or platform limits."] as item}
 							<li class="flex items-start gap-2">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -322,7 +346,7 @@
 							</p>
 						</div>
 						<ul class="divide-y divide-border">
-							{#each ["Posting content that is illegal, harmful, threatening, abusive, harassing, defamatory, or otherwise objectionable.", "Distributing malware, viruses, or any code designed to disrupt, damage, or gain unauthorised access to systems.", "Scraping, crawling, or indexing the Service without our prior written consent.", "Attempting to overload, attack, or interfere with the availability of the Service (DDoS, etc.).", "Circumventing any rate limits, access controls, or security measures.", "Using the Service for commercial spam or unsolicited bulk messaging.", "Posting content that infringes any third-party intellectual property rights."] as item}
+							{#each ["Posting content that is illegal, harmful, threatening, abusive, harassing, defamatory, or otherwise objectionable.", "Distributing malware, viruses, or any code designed to disrupt, damage, or gain unauthorised access to systems.", "Scraping, crawling, or indexing the Service without our prior written consent.", "Attempting to overload, attack, or interfere with the availability of the Service (DDoS, etc.).", "Circumventing any rate limits, access controls, or security measures.", "Using the Service for commercial spam or unsolicited bulk messaging.", "Posting content that infringes any third-party intellectual property rights.", "Submitting false, misleading, or duplicate listings for bots, servers, emojis, or stickers."] as item}
 								<li class="px-5 py-3 flex items-start gap-2.5 text-xs">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -410,7 +434,121 @@
 
 			<hr class="border-border" />
 
-			<!-- 6. Voting & Rewards -->
+			<!-- 6. Server Listings -->
+			<div id="server-listings" class="scroll-mt-28">
+				<div class="flex items-center gap-3 mb-4">
+					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-4 h-4 text-primary"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle
+								cx="9"
+								cy="7"
+								r="4"
+							/><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+						</svg>
+					</div>
+					<h2 class="text-xl font-bold font-heading">Server Listings</h2>
+				</div>
+				<div class="text-muted-foreground leading-relaxed space-y-4 text-sm">
+					<p>
+						Server owners may list their Discord servers to attract new members. By submitting a
+						server, you confirm you have the authority (owner or administrator role) to list it on
+						our platform.
+					</p>
+
+					<div class="bg-card border border-border rounded-2xl overflow-hidden">
+						<div class="px-5 py-3 border-b border-border bg-muted/30">
+							<p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+								Server Listing Requirements
+							</p>
+						</div>
+						<ul class="divide-y divide-border">
+							{#each [["Authorisation", "You must be the owner or an administrator of the server you are listing."], ["Active server", "The server must be active and accepting new members at the time of listing."], ["Accurate description", "The server name, description, and tags must genuinely represent the community. Misleading listings will be removed."], ["Discord ToS compliance", "The server must fully comply with Discord's Community Guidelines and Terms of Service."], ["No NSFW on public listing", "NSFW content must not appear in any public-facing listing field (name, short description, icon, or tags)."], ["Valid invite link", "A permanent or long-lived invite link must be provided and kept up to date."]] as [field, desc]}
+								<li class="px-5 py-3 flex items-start gap-3 text-xs">
+									<span class="font-semibold text-foreground shrink-0 w-36">{field}</span>
+									<span>{desc}</span>
+								</li>
+							{/each}
+						</ul>
+					</div>
+
+					<p>
+						If a listed server becomes inactive, violates Discord's guidelines, or no longer meets
+						our requirements, we reserve the right to remove the listing without notice. Server
+						owners are responsible for keeping their invite links and descriptions current via the
+						dashboard.
+					</p>
+				</div>
+			</div>
+
+			<hr class="border-border" />
+
+			<!-- 7. Emojis & Stickers -->
+			<div id="emoji-sticker" class="scroll-mt-28">
+				<div class="flex items-center gap-3 mb-4">
+					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-4 h-4 text-primary"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<circle cx="12" cy="12" r="10" /><path d="M8 14s1.5 2 4 2 4-2 4-2" /><line
+								x1="9"
+								y1="9"
+								x2="9.01"
+								y2="9"
+							/><line x1="15" y1="9" x2="15.01" y2="9" />
+						</svg>
+					</div>
+					<h2 class="text-xl font-bold font-heading">Emojis & Stickers</h2>
+				</div>
+				<div class="text-muted-foreground leading-relaxed space-y-4 text-sm">
+					<p>
+						Users may submit custom Discord emojis and stickers for inclusion in our public
+						directory. Emojis and stickers are sourced from Discord servers and attributed to the
+						originating guild where available.
+					</p>
+
+					<div class="bg-card border border-border rounded-2xl overflow-hidden">
+						<div class="px-5 py-3 border-b border-border bg-muted/30">
+							<p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+								Submission Rules
+							</p>
+						</div>
+						<ul class="divide-y divide-border">
+							{#each [["Rights & permission", "You must have the right to submit the emoji or sticker. Do not submit content you do not own or do not have permission to share publicly."], ["No NSFW content", "Explicit, sexual, gory, or otherwise NSFW emojis and stickers are not permitted in the public directory."], ["No hate symbols", "Emojis or stickers containing hate speech, slurs, or symbols associated with discrimination or violence will be removed immediately."], ["Accurate naming", "Names, alt-names, and tags must accurately describe the content. Keyword stuffing or misleading tags are not allowed."], ["No duplicates", "Do not submit the same emoji or sticker multiple times. Duplicate submissions will be merged or removed."]] as [field, desc]}
+								<li class="px-5 py-3 flex items-start gap-3 text-xs">
+									<span class="font-semibold text-foreground shrink-0 w-36">{field}</span>
+									<span>{desc}</span>
+								</li>
+							{/each}
+						</ul>
+					</div>
+
+					<p>
+						We reserve the right to remove any emoji or sticker from the directory at our
+						discretion. Submitting content to our directory does not transfer ownership — you retain
+						any rights you hold in the original asset.
+					</p>
+				</div>
+			</div>
+
+			<hr class="border-border" />
+
+			<!-- 8. Voting & Rewards -->
 			<div id="voting" class="scroll-mt-28">
 				<div class="flex items-center gap-3 mb-4">
 					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -431,8 +569,9 @@
 				</div>
 				<div class="text-muted-foreground leading-relaxed space-y-3 text-sm">
 					<p>
-						Registered users may cast one vote per bot every 12 hours. Votes contribute to a bot's
-						ranking on the leaderboard and trigger webhook notifications to bot developers.
+						Registered users may cast one vote per bot or server every 12 hours. Votes contribute to
+						a listing's ranking on the leaderboard and trigger webhook notifications to the
+						respective developer or server owner.
 					</p>
 					<p>
 						Votes may award in-platform R$ balance, used for cosmetic or platform features. R$
@@ -441,7 +580,7 @@
 					</p>
 					<p>The following vote-related conduct is strictly prohibited:</p>
 					<ul class="space-y-2">
-						{#each ["Voting using automated scripts, bots, or any non-human method.", "Creating multiple accounts to inflate vote counts.", "Paying, incentivising, or coercing other users to vote for your bot outside of Discord server vote-reward systems.", "Attempting to manipulate the leaderboard rankings through any means other than legitimate organic votes."] as item}
+						{#each ["Voting using automated scripts, bots, or any non-human method.", "Creating multiple accounts to inflate vote counts.", "Paying, incentivising, or coercing other users to vote for your listing outside of Discord server vote-reward systems.", "Attempting to manipulate the leaderboard rankings through any means other than legitimate organic votes."] as item}
 							<li class="flex items-start gap-2">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -468,7 +607,67 @@
 
 			<hr class="border-border" />
 
-			<!-- 7. Intellectual Property -->
+			<!-- 9. Referral Programme -->
+			<div id="referral" class="scroll-mt-28">
+				<div class="flex items-center gap-3 mb-4">
+					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-4 h-4 text-primary"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle
+								cx="18"
+								cy="19"
+								r="3"
+							/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line
+								x1="15.41"
+								y1="6.51"
+								x2="8.59"
+								y2="10.49"
+							/>
+						</svg>
+					</div>
+					<h2 class="text-xl font-bold font-heading">Referral Programme</h2>
+				</div>
+				<div class="text-muted-foreground leading-relaxed space-y-4 text-sm">
+					<p>
+						We operate an optional referral programme that awards in-platform R$ balance for
+						inviting new users and reaching activity milestones. By participating you agree to the
+						following additional rules:
+					</p>
+
+					<div class="bg-card border border-border rounded-2xl overflow-hidden">
+						<div class="px-5 py-3 border-b border-border bg-muted/30">
+							<p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+								Programme Rules
+							</p>
+						</div>
+						<ul class="divide-y divide-border">
+							{#each [["One account per person", "Each person may hold only one account. Using multiple accounts or devices to generate self-referrals is strictly prohibited."], ["Genuine referrals only", "Rewards are only paid for referrals where the referred user creates an account and meets the required activity milestones. Fake or incentivised sign-ups will be flagged."], ["No fraudulent milestones", "Attempting to artificially trigger milestone rewards (e.g. through scripted activity or bot traffic) will result in forfeiture of all pending rewards and account termination."], ["Reward conditions", "R$ rewards are subject to anti-fraud review. We reserve the right to withhold, reverse, or adjust any reward at our sole discretion if fraud is suspected."], ["No monetary value", "Referral rewards are granted solely as in-platform R$ balance. They carry no cash value and cannot be redeemed, transferred, or exchanged outside the platform."], ["Programme changes", "We may modify, pause, or terminate the referral programme at any time. Pending rewards at the time of termination will be honoured subject to fraud review."]] as [field, desc]}
+								<li class="px-5 py-3 flex items-start gap-3 text-xs">
+									<span class="font-semibold text-foreground shrink-0 w-40">{field}</span>
+									<span>{desc}</span>
+								</li>
+							{/each}
+						</ul>
+					</div>
+
+					<p>
+						Participation in the referral programme is voluntary and may be revoked at any time for
+						any user found to be abusing it.
+					</p>
+				</div>
+			</div>
+
+			<hr class="border-border" />
+
+			<!-- 10. Intellectual Property -->
 			<div id="intellectual-prop" class="scroll-mt-28">
 				<div class="flex items-center gap-3 mb-4">
 					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -498,10 +697,11 @@
 						Stars™ and are protected by applicable copyright and trademark laws.
 					</p>
 					<p>
-						By submitting content to the Service (including bot descriptions, banners, and profile
-						bios), you grant us a non-exclusive, worldwide, royalty-free licence to display and
-						distribute that content as part of operating the Service. You retain ownership of your
-						content and may remove it at any time by deleting your listing or account.
+						By submitting content to the Service (including bot descriptions, server descriptions,
+						emojis, stickers, banners, and profile bios), you grant us a non-exclusive, worldwide,
+						royalty-free licence to display and distribute that content as part of operating the
+						Service. You retain ownership of your content and may remove it at any time by deleting
+						your listing or account.
 					</p>
 					<p>
 						You represent that you have all necessary rights to any content you submit and that it
@@ -512,7 +712,7 @@
 
 			<hr class="border-border" />
 
-			<!-- 8. Third-Party Services -->
+			<!-- 11. Third-Party Services -->
 			<div id="third-party" class="scroll-mt-28">
 				<div class="flex items-center gap-3 mb-4">
 					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -563,16 +763,17 @@
 						imply endorsement.
 					</p>
 					<p>
-						Bot invite links and support servers are provided by bot developers and are entirely
-						outside our control. Rovel Stars™ accepts no responsibility for the conduct or content
-						of third-party Discord bots.
+						Bot invite links, server invite links, and support servers are provided by their
+						respective owners and are entirely outside our control. Rovel Stars™ accepts no
+						responsibility for the conduct or content of any third-party Discord bot, server, emoji,
+						or sticker listed on our platform.
 					</p>
 				</div>
 			</div>
 
 			<hr class="border-border" />
 
-			<!-- 9. Disclaimers -->
+			<!-- 12. Disclaimers -->
 			<div id="disclaimers" class="scroll-mt-28">
 				<div class="flex items-center gap-3 mb-4">
 					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -600,7 +801,7 @@
 						either express or implied.
 					</p>
 					<div class="space-y-2">
-						{#each ["We do not warrant that the Service will be uninterrupted, error-free, or free of viruses or other harmful components.", "We do not guarantee the accuracy, completeness, or usefulness of any information provided by third-party bot listings.", "Rovel Stars™ is not affiliated with, endorsed by, or in any way officially connected with Discord Inc.", "All bot listings are provided by their respective developers. We are not responsible for any actions taken by listed bots in your Discord servers."] as item}
+						{#each ["We do not warrant that the Service will be uninterrupted, error-free, or free of viruses or other harmful components.", "We do not guarantee the accuracy, completeness, or usefulness of any information provided by third-party bot, server, emoji, or sticker listings.", "Rovel Stars™ is not affiliated with, endorsed by, or in any way officially connected with Discord Inc.", "All listings are provided by their respective owners. We are not responsible for any actions taken by listed bots in your Discord servers, the content or conduct of listed servers, or the quality of submitted emojis and stickers.", "R$ balance and referral rewards are provided as a courtesy feature. We make no guarantee of their continued availability or value."] as item}
 							<div
 								class="bg-card border border-border rounded-xl px-4 py-3 flex items-start gap-2.5 text-xs"
 							>
@@ -632,7 +833,7 @@
 
 			<hr class="border-border" />
 
-			<!-- 10. Limitation of Liability -->
+			<!-- 13. Limitation of Liability -->
 			<div id="limitation" class="scroll-mt-28">
 				<div class="flex items-center gap-3 mb-4">
 					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -677,7 +878,7 @@
 
 			<hr class="border-border" />
 
-			<!-- 11. Termination -->
+			<!-- 14. Termination -->
 			<div id="termination" class="scroll-mt-28">
 				<div class="flex items-center gap-3 mb-4">
 					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -710,16 +911,17 @@
 						to violation of these Terms, inactivity, or actions deemed harmful to the community.
 					</p>
 					<p>
-						Upon termination, your right to access the Service ceases immediately. Sections covering
-						Intellectual Property, Disclaimers, Limitation of Liability, and any other provisions
-						that by their nature should survive termination will remain in effect.
+						Upon termination, your right to access the Service ceases immediately. Any accrued R$
+						balance or pending referral rewards are forfeited without compensation. Sections
+						covering Intellectual Property, Disclaimers, Limitation of Liability, and any other
+						provisions that by their nature should survive termination will remain in effect.
 					</p>
 				</div>
 			</div>
 
 			<hr class="border-border" />
 
-			<!-- 12. Changes -->
+			<!-- 15. Changes -->
 			<div id="changes" class="scroll-mt-28">
 				<div class="flex items-center gap-3 mb-4">
 					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -756,7 +958,7 @@
 
 			<hr class="border-border" />
 
-			<!-- 13. Contact -->
+			<!-- 16. Contact -->
 			<div id="contact" class="scroll-mt-28">
 				<div class="flex items-center gap-3 mb-4">
 					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">

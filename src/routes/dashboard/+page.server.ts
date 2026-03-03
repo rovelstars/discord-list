@@ -3,8 +3,11 @@ import { redirect } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
 import { env } from "$env/dynamic/private";
 import { getDb } from "$lib/db";
-import { Users, Bots } from "$lib/db/schema";
+import { Users, Bots, Servers } from "$lib/db/schema";
 import { eq, and, sql, inArray, like } from "drizzle-orm";
+
+/** Minimal user profile shape used for referral display. */
+type UserProfile = { id: string; username: string; avatar: string | null };
 import { getServersByOwner } from "$lib/db/queries";
 import { listEmojis } from "$lib/db/queries/emojis";
 import {
@@ -123,20 +126,26 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	}
 
 	// ── Vote history ─────────────────────────────────────────────────────────
-	let voteHistory: { bot: string; at: number }[] = [];
+	let voteHistory: { bot?: string; server?: string; at: number }[] = [];
 	let expiredCount = 0;
 
 	try {
 		const parsed = JSON.parse((dbUser.votes as string) ?? "[]");
-		const raw: { bot: string; at: unknown }[] = Array.isArray(parsed) ? parsed : [];
+		const raw: { bot?: string; server?: string; at: unknown }[] = Array.isArray(parsed)
+			? parsed
+			: [];
 		// Normalise `at` to a numeric ms timestamp.
 		// Old AstroDB rows stored `at` as ISO strings (e.g. "2022-07-16T00:00:00.000Z"),
 		// while new votes written by the app use Date.now() (a number).
 		// Mixing the two makes the numeric sort produce NaN, so we coerce here.
-		const normalised = raw.map((v) => ({
-			bot: String(v.bot ?? ""),
-			at: typeof v.at === "number" ? v.at : new Date(v.at as string).getTime() || 0
-		}));
+		// Each entry is either { bot: string } or { server: string } — preserve whichever is set.
+		const normalised = raw
+			.filter((v) => v.bot || v.server)
+			.map((v) => ({
+				...(v.bot ? { bot: String(v.bot) } : {}),
+				...(v.server ? { server: String(v.server) } : {}),
+				at: typeof v.at === "number" ? v.at : new Date(v.at as string).getTime() || 0
+			}));
 
 		// Drop votes older than 30 days
 		const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
@@ -158,29 +167,69 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		voteHistory = [];
 	}
 
-	const recentVotes = [...voteHistory].sort((a, b) => b.at - a.at).slice(0, 10);
+	// voteHistory entries are a union of { bot?: string; server?: string; at: number }
+	const typedHistory = voteHistory as Array<{ bot?: string; server?: string; at: number }>;
+	const recentVotes = [...typedHistory].sort((a, b) => b.at - a.at).slice(0, 10);
 
 	let votedBotNames: Record<string, { username: string; slug: string; avatar: string | null }> = {};
+	let votedServerNames: Record<string, { name: string; slug: string; icon: string | null }> = {};
 
-	if (recentVotes.length > 0) {
-		const botIds = [...new Set(recentVotes.map((v) => v.bot))];
-		try {
-			const botRows = await db
-				.select({ id: Bots.id, username: Bots.username, slug: Bots.slug, avatar: Bots.avatar })
-				.from(Bots)
-				.where(inArray(Bots.id, botIds));
+	const botVoteIds = [...new Set(recentVotes.filter((v) => v.bot).map((v) => v.bot as string))];
+	const serverVoteIds = [
+		...new Set(recentVotes.filter((v) => v.server).map((v) => v.server as string))
+	];
 
-			for (const b of botRows) {
-				votedBotNames[b.id] = {
-					username: b.username,
-					slug: b.slug ?? b.id,
-					avatar: b.avatar ?? null
-				};
-			}
-		} catch {
-			// non-fatal
-		}
-	}
+	await Promise.all([
+		botVoteIds.length > 0
+			? (async () => {
+					try {
+						const botRows = await db
+							.select({
+								id: Bots.id,
+								username: Bots.username,
+								slug: Bots.slug,
+								avatar: Bots.avatar
+							})
+							.from(Bots)
+							.where(inArray(Bots.id, botVoteIds));
+						for (const b of botRows) {
+							votedBotNames[b.id] = {
+								username: b.username,
+								slug: b.slug ?? b.id,
+								avatar: b.avatar ?? null
+							};
+						}
+					} catch {
+						// non-fatal
+					}
+				})()
+			: Promise.resolve(),
+
+		serverVoteIds.length > 0
+			? (async () => {
+					try {
+						const serverRows = await db
+							.select({
+								id: Servers.id,
+								name: Servers.name,
+								slug: Servers.slug,
+								icon: Servers.icon
+							})
+							.from(Servers)
+							.where(inArray(Servers.id, serverVoteIds));
+						for (const s of serverRows) {
+							votedServerNames[s.id] = {
+								name: s.name,
+								slug: s.slug ?? s.id,
+								icon: s.icon ?? null
+							};
+						}
+					} catch {
+						// non-fatal
+					}
+				})()
+			: Promise.resolve()
+	]);
 
 	// ── Owned servers ────────────────────────────────────────────────────────
 	let ownedServers: Array<{
@@ -231,6 +280,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		reward_status: string;
 		fingerprint_match: boolean;
 		created_at: string;
+		referredProfile: UserProfile | null;
 		// milestones for this specific referral, resolved below
 		milestones: Array<{
 			id: string;
@@ -244,8 +294,12 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	}> = [];
 
 	// 2. Whether this user was referred by someone (referred view)
-	let wasReferredBy: { referrer_id: string; created_at: string; reward_status: string } | null =
-		null;
+	let wasReferredBy: {
+		referrer_id: string;
+		created_at: string;
+		reward_status: string;
+		referrerProfile: UserProfile | null;
+	} | null = null;
 
 	// 3. Aggregate stats
 	let referralStats = {
@@ -304,7 +358,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			})
 		);
 
-		referralsSent = withMilestones;
+		referralsSent = withMilestones.map((r) => ({ ...r, referredProfile: null }));
 
 		// Compute aggregate stats
 		referralStats.total = referralsSent.length;
@@ -338,14 +392,62 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 				.limit(1)
 		);
 		if (Array.isArray(referredRows) && referredRows.length > 0) {
-			wasReferredBy = referredRows[0] as {
+			const row = referredRows[0] as {
 				referrer_id: string;
 				created_at: string;
 				reward_status: string;
 			};
+			wasReferredBy = {
+				referrer_id: row.referrer_id,
+				created_at: row.created_at,
+				reward_status: row.reward_status,
+				referrerProfile: null
+			};
 		}
 	} catch {
 		// non-fatal
+	}
+
+	// ── Resolve referral user profiles (username + avatar) ───────────────────
+	// Collect all user IDs that appear as referred_id or referrer_id, then do
+	// a single inArray query against Users so the UI can show name + avatar
+	// instead of raw snowflake IDs.
+	try {
+		const profileIds = new Set<string>();
+		for (const r of referralsSent) profileIds.add(r.referred_id);
+		if (wasReferredBy) profileIds.add(wasReferredBy.referrer_id);
+
+		if (profileIds.size > 0) {
+			const profileRows = await db
+				.select({ id: Users.id, username: Users.username, avatar: Users.avatar })
+				.from(Users)
+				.where(inArray(Users.id, [...profileIds]));
+
+			const profileMap = new Map<string, UserProfile>();
+			for (const row of profileRows) {
+				profileMap.set(String(row.id), {
+					id: String(row.id),
+					username: String(row.username ?? "Unknown"),
+					avatar: row.avatar ?? null
+				});
+			}
+
+			// Attach profile to each sent referral
+			referralsSent = referralsSent.map((r) => ({
+				...r,
+				referredProfile: profileMap.get(r.referred_id) ?? null
+			}));
+
+			// Attach referrer profile to wasReferredBy
+			if (wasReferredBy) {
+				wasReferredBy = {
+					...wasReferredBy,
+					referrerProfile: profileMap.get(wasReferredBy.referrer_id) ?? null
+				};
+			}
+		}
+	} catch {
+		// non-fatal — pages degrade to showing the raw ID if this fails
 	}
 
 	// Referral link is simply /login?ref=<userId>
@@ -381,14 +483,29 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		servers: ownedServers,
 		// Manually submitted emojis
 		submittedEmojis,
-		// Vote history
-		recentVotes: recentVotes.map((v) => ({
-			botId: v.bot,
-			at: v.at,
-			botName: votedBotNames[v.bot]?.username ?? v.bot,
-			botSlug: votedBotNames[v.bot]?.slug ?? v.bot,
-			botAvatar: votedBotNames[v.bot]?.avatar ?? null
-		})),
+		// Vote history — union of bot and server votes
+		recentVotes: recentVotes.map((v) => {
+			if (v.bot) {
+				return {
+					type: "bot" as const,
+					id: v.bot,
+					at: v.at,
+					name: votedBotNames[v.bot]?.username ?? v.bot,
+					slug: votedBotNames[v.bot]?.slug ?? v.bot,
+					avatar: votedBotNames[v.bot]?.avatar ?? null
+				};
+			} else {
+				const sid = v.server as string;
+				return {
+					type: "server" as const,
+					id: sid,
+					at: v.at,
+					name: votedServerNames[sid]?.name ?? sid,
+					slug: votedServerNames[sid]?.slug ?? sid,
+					avatar: votedServerNames[sid]?.icon ?? null
+				};
+			}
+		}),
 		totalVotesCast: voteHistory.length,
 		expiredCount,
 		// Referral system
