@@ -76,7 +76,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({ error: "bot_token_missing" }, { status: 500 });
 	}
 
-	// Run the sync — wrapped so any unexpected throw (e.g. table not yet
+	// Run the sync - wrapped so any unexpected throw (e.g. table not yet
 	// migrated on first deploy) is caught and returned as a structured error
 	// rather than an unhandled 500.
 	let result: Awaited<ReturnType<typeof syncServerEmojis>>;
@@ -101,7 +101,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 
-		// db_error variants — surface the detail so the caller can diagnose
+		// db_error variants - surface the detail so the caller can diagnose
 		return json({ error: result.error }, { status: 500 });
 	}
 

@@ -11,7 +11,7 @@
 	 * Usage:
 	 *  {@html CheckboxHtml({ id: 'agree', checked: true, className: 'my-class' })}
 	 *
-	 * Note: This is a static snippet — to capture events or use bind:checked,
+	 * Note: This is a static snippet - to capture events or use bind:checked,
 	 * create a proper `Checkbox.svelte` component instead.
 	 */
 	export function CheckboxHtml({

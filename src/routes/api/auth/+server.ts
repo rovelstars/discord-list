@@ -304,7 +304,7 @@ export const GET: RequestHandler = async (event) => {
 		// Default redirect to domain root
 		throw redirect(302, "/?auth=1");
 	} catch (err: any) {
-		// Re-throw SvelteKit redirects — they are not errors
+		// Re-throw SvelteKit redirects - they are not errors
 		if (err?.status && err.status >= 300 && err.status < 400) throw err;
 		console.error("/api/auth error:", err);
 		return json(

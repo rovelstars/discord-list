@@ -1,5 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { InteractionResponseType } from "discord-interactions";
+import { withDb, type DrizzleDb } from "$lib/db";
+import { Users } from "$lib/db/schema";
+import { eq } from "drizzle-orm";
 
 const DISCORD_API = "https://discord.com/api/v10";
 
@@ -27,6 +30,33 @@ async function editFollowup(
 	}
 }
 
+/**
+ * Look up a user's balance directly from the DB.
+ * Returns { exists: true, bal: number } or { exists: false, bal: null }.
+ * Never throws - all DB errors are caught and logged.
+ */
+async function getUserBal(
+	userId: string
+): Promise<{ exists: true; bal: number } | { exists: false; bal: null }> {
+	try {
+		const rows = await withDb((db: DrizzleDb) =>
+			db.select({ id: Users.id, bal: Users.bal }).from(Users).where(eq(Users.id, userId)).limit(1)
+		);
+
+		if (!Array.isArray(rows) || rows.length === 0) {
+			return { exists: false, bal: null };
+		}
+
+		const raw = (rows[0] as any).bal;
+		const bal = typeof raw === "number" ? raw : Number(raw) || 0;
+		return { exists: true, bal };
+	} catch (err) {
+		console.error("[bal] getUserBal DB error:", err);
+		// Re-throw so the caller's catch block can send a user-facing error.
+		throw err;
+	}
+}
+
 export default {
 	data: new SlashCommandBuilder()
 		.setName("bal")
@@ -42,7 +72,6 @@ export default {
 		const appId = env?.DISCORD_BOT_ID ?? "";
 		const interactionToken: string = interaction.token;
 		const domain = (env?.DOMAIN ?? "http://localhost:5173").replace(/\/$/, "");
-		const internalSecret = env?.INTERNAL_SECRET ?? "";
 
 		const invokerId: string | undefined = interaction.member?.user?.id ?? interaction.user?.id;
 		const invokerName: string =
@@ -64,49 +93,23 @@ export default {
 		if (!invokerId) {
 			return {
 				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					content: `❌ Couldn't figure out who you are — please try again.`
-				}
+				data: { content: `❌ Couldn't figure out who you are - please try again.` }
 			};
 		}
 
 		if (!targetUserId) {
 			return {
 				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: { content: `❌ Couldn't resolve that user — please try again.` }
-			};
-		}
-
-		if (!internalSecret) {
-			console.error("[bal] INTERNAL_SECRET is not configured.");
-			return {
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					content: `⚙️ The bot isn't configured correctly. Please contact the server admin.`
-				}
+				data: { content: `❌ Couldn't resolve that user - please try again.` }
 			};
 		}
 
 		// ── Kick off the async work ───────────────────────────────────────────
 		(async () => {
 			try {
-				const res = await fetch(
-					`${domain}/api/internals/user-exists?id=${encodeURIComponent(targetUserId)}`,
-					{ headers: { "x-internal-secret": internalSecret } }
-				);
+				const result = await getUserBal(targetUserId);
 
-				if (!res.ok) {
-					await editFollowup(
-						appId,
-						interactionToken,
-						`⚠️ Couldn't reach the Rovel Discord List service right now (HTTP ${res.status}). Try again in a moment!`
-					);
-					return;
-				}
-
-				const data = await res.json().catch(() => null);
-
-				if (!data?.exists) {
+				if (!result.exists) {
 					const targetUser = resolvedUsers[targetUserId];
 					const targetName =
 						targetUser?.global_name ?? targetUser?.username ?? `<@${targetUserId}>`;
@@ -114,13 +117,11 @@ export default {
 						appId,
 						interactionToken,
 						isSelf
-							? `👋 Hey **${invokerName}**, looks like you don't have a Rovel Discord List account yet!\n\n👉 Head over to ${domain}/login to sign in with Discord and get started — you'll receive **50 ${RC}** just for joining!`
+							? `👋 Hey **${invokerName}**, looks like you don't have a Rovel Discord List account yet!\n\n👉 Head over to ${domain}/login to sign in with Discord and get started - you'll receive **50 ${RC}** just for joining!`
 							: `❌ **${targetName}** doesn't have a Rovel Discord List account yet, so there's no balance to show.`
 					);
 					return;
 				}
-
-				const bal: number = typeof data.bal === "number" ? data.bal : Number(data.bal) || 0;
 
 				const targetUser = resolvedUsers[targetUserId];
 				const targetName = targetUser?.global_name ?? targetUser?.username ?? `<@${targetUserId}>`;
@@ -129,16 +130,15 @@ export default {
 					appId,
 					interactionToken,
 					isSelf
-						? `${RC} **${invokerName}**, your current balance is **${bal} ${RC}**!`
-						: `${RC} **${targetName}** has a balance of **${bal} ${RC}**.`
+						? `${RC} **${invokerName}**, your current balance is **${result.bal.toLocaleString()} ${RC}**!`
+						: `${RC} **${targetName}** has a balance of **${result.bal.toLocaleString()} ${RC}**.`
 				);
 			} catch (err) {
 				console.error("[bal] Background task failed:", err);
-				const msg = err instanceof Error ? err.message : String(err);
 				await editFollowup(
 					appId,
 					interactionToken,
-					`⚠️ Something went wrong on our end: \`${msg}\` — please try again in a moment.`
+					`⚠️ Something went wrong while fetching that balance - please try again in a moment.`
 				).catch(() => {});
 			}
 		})();

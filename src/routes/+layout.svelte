@@ -24,7 +24,7 @@
 			if (img.complete) stampLoaded(img);
 		});
 
-		// Delegated listener — catches every future image load in one place.
+		// Delegated listener - catches every future image load in one place.
 		function onLoad(e: Event) {
 			const target = e.target as HTMLElement;
 			if (target.tagName === "IMG") stampLoaded(target as HTMLImageElement);
@@ -34,7 +34,7 @@
 		return () => document.removeEventListener("load", onLoad, { capture: true });
 	}
 
-	// Progress bar — starts instantly on mousedown/touchstart so the user gets
+	// Progress bar - starts instantly on mousedown/touchstart so the user gets
 	// immediate feedback, then completes once $navigating clears.
 	let progress = 0;
 	let visible = false;
@@ -56,7 +56,7 @@
 		clearTimers();
 		visible = true;
 		progress = 0;
-		// Asymptotic fill toward 85% — fast at first, then slows naturally.
+		// Asymptotic fill toward 85% - fast at first, then slows naturally.
 		fillTimer = setInterval(() => {
 			progress += (85 - progress) * 0.06;
 		}, 30);
@@ -103,7 +103,7 @@
 		try {
 			const url = new URL(anchor.href);
 			if (url.origin !== location.origin) return false;
-			// Hash-only navigation on the same page — no load, skip.
+			// Hash-only navigation on the same page - no load, skip.
 			if (url.pathname === location.pathname && url.search === location.search) return false;
 			return true;
 		} catch {
@@ -153,7 +153,7 @@
 	//
 	// A separate visit-ping is fired to record today's site_visit in
 	// UserActivityLog for the retention milestone tracker. Both calls are
-	// completely fire-and-forget — they never block rendering or navigation.
+	// completely fire-and-forget - they never block rendering or navigation.
 
 	const FP_SESSION_KEY = "rdl_fp_sent";
 	const VISIT_SESSION_KEY = "rdl_visit_sent";
@@ -178,7 +178,7 @@
 				sessionStorage.setItem(FP_SESSION_KEY, userId);
 			}
 		} catch {
-			// Network errors are completely silent — never surface to the user.
+			// Network errors are completely silent - never surface to the user.
 		}
 	}
 
@@ -198,7 +198,7 @@
 				sessionStorage.setItem(todayKey, userId);
 			}
 		} catch {
-			// Silent — visit tracking is best-effort only.
+			// Silent - visit tracking is best-effort only.
 		}
 	}
 

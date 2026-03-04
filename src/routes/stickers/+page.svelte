@@ -77,7 +77,7 @@
 	}
 
 	$: seoTitle = q
-		? `"${q}" — Sticker Search · Rovel Discord List`
+		? `"${q}" - Sticker Search · Rovel Discord List`
 		: guildId
 			? `Server Stickers · Rovel Discord List`
 			: "Discord Stickers · Rovel Discord List";

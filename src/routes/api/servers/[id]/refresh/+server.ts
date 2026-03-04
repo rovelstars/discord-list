@@ -41,7 +41,7 @@ function markRefreshed(serverId: string): void {
  * the page can use it to decide whether to soft-reload.
  *
  * Security model:
- *   - No secret required from the client — this is a public route.
+ *   - No secret required from the client - this is a public route.
  *   - DISCORD_TOKEN is read server-side only and never exposed to the browser.
  *   - Per-server rate limiting (10 min window) prevents abuse.
  *   - Only servers that already exist in the DB can be refreshed.
@@ -77,7 +77,7 @@ export const POST: RequestHandler = async ({ params }) => {
 	}
 
 	// ------------------------------------------------------------------
-	// Discord token — required; fail fast if not configured.
+	// Discord token - required; fail fast if not configured.
 	// ------------------------------------------------------------------
 	const discordToken = (env.DISCORD_TOKEN ?? "").trim();
 	if (!discordToken) {

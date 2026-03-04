@@ -122,7 +122,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			status: "online"
 		}));
 	} catch {
-		// non-fatal — show empty bot list
+		// non-fatal - show empty bot list
 	}
 
 	// ── Vote history ─────────────────────────────────────────────────────────
@@ -138,7 +138,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		// Old AstroDB rows stored `at` as ISO strings (e.g. "2022-07-16T00:00:00.000Z"),
 		// while new votes written by the app use Date.now() (a number).
 		// Mixing the two makes the numeric sort produce NaN, so we coerce here.
-		// Each entry is either { bot: string } or { server: string } — preserve whichever is set.
+		// Each entry is either { bot: string } or { server: string } - preserve whichever is set.
 		const normalised = raw
 			.filter((v) => v.bot || v.server)
 			.map((v) => ({
@@ -160,7 +160,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 					.set({ votes: JSON.stringify(voteHistory) as any })
 					.where(eq(Users.id, discordUser.id));
 			} catch {
-				// non-fatal — stale votes will just be pruned again next load
+				// non-fatal - stale votes will just be pruned again next load
 			}
 		}
 	} catch {
@@ -269,7 +269,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			sort: "newest"
 		}).then((all) => all.filter((e) => e.submitter === discordUser.id));
 	} catch {
-		// non-fatal — show empty list
+		// non-fatal - show empty list
 	}
 
 	// ── Referral data ─────────────────────────────────────────────────────────
@@ -338,7 +338,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			.filter((m) => m.status === "paid")
 			.reduce((sum, m) => sum + m.reward_amount, 0);
 	} catch {
-		// non-fatal — show empty section
+		// non-fatal - show empty section
 	}
 
 	try {
@@ -370,12 +370,16 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			else if (r.reward_status === "rejected") referralStats.rejected++;
 
 			for (const m of r.milestones) {
+				// Exclude companion rows written for the referred user - those belong
+				// to the referred user's earnings, not the referrer's.
+				if ((m.meta as any).recipient === "referred") continue;
+
 				if (m.status === "paid") referralStats.totalEarned += m.reward_amount;
 				else if (m.status === "pending") referralStats.pendingEarnable += m.reward_amount;
 			}
 		}
 	} catch {
-		// non-fatal — show empty referral section
+		// non-fatal - show empty referral section
 	}
 
 	try {
@@ -447,7 +451,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			}
 		}
 	} catch {
-		// non-fatal — pages degrade to showing the raw ID if this fails
+		// non-fatal - pages degrade to showing the raw ID if this fails
 	}
 
 	// Referral link is simply /login?ref=<userId>
@@ -483,7 +487,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		servers: ownedServers,
 		// Manually submitted emojis
 		submittedEmojis,
-		// Vote history — union of bot and server votes
+		// Vote history - union of bot and server votes
 		recentVotes: recentVotes.map((v) => {
 			if (v.bot) {
 				return {

@@ -9,7 +9,7 @@ const FETCH_TIMEOUT_MS = 15_000;
  * POST /api/stickers/[id]/download
  *
  * Increments the download counter for a sticker, fetches the binary from the
- * Discord CDN server-side (bypassing the browser's CORS restrictions — the CDN
+ * Discord CDN server-side (bypassing the browser's CORS restrictions - the CDN
  * does not send Access-Control-Allow-Origin headers), and streams the file
  * directly back to the client as an attachment.
  *
@@ -44,7 +44,7 @@ export const POST: RequestHandler = async ({ params }) => {
 		return json({ error: "not_found" }, { status: 404 });
 	}
 
-	// Increment download counter fire-and-forget — never block the response.
+	// Increment download counter fire-and-forget - never block the response.
 	incrementStickerDownload(id).catch((err) => {
 		console.warn(`[sticker-download] Failed to increment dc for sticker ${id}:`, err);
 	});
@@ -98,7 +98,7 @@ export const POST: RequestHandler = async ({ params }) => {
 	const contentType =
 		mimeTypes[ext] ?? cdnRes.headers.get("content-type") ?? "application/octet-stream";
 
-	// Stream the CDN response body straight back — no buffering into memory.
+	// Stream the CDN response body straight back - no buffering into memory.
 	return new Response(cdnRes.body, {
 		status: 200,
 		headers: {
@@ -109,7 +109,7 @@ export const POST: RequestHandler = async ({ params }) => {
 			...(cdnRes.headers.has("content-length")
 				? { "Content-Length": cdnRes.headers.get("content-length")! }
 				: {}),
-			// Cache the proxied file briefly on the client — the sticker binary
+			// Cache the proxied file briefly on the client - the sticker binary
 			// never changes for a given id, so a short cache is safe.
 			"Cache-Control": "public, max-age=86400, immutable"
 		}

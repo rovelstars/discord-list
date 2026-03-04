@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Check } from "@lucide/svelte";
 	import { createEventDispatcher } from "svelte";
 
 	/**
@@ -78,23 +79,7 @@
 		aria-hidden="true"
 	>
 		{#if checked}
-			<!-- simple check icon -->
-			<svg
-				class="w-3 h-3"
-				viewBox="0 0 24 24"
-				fill="none"
-				aria-hidden="true"
-				focusable="false"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path
-					d="M20 6L9 17l-5-5"
-					stroke="currentColor"
-					stroke-width="1.8"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				/>
-			</svg>
+			<Check class="w-3 h-3" aria-hidden="true" />
 		{/if}
 	</span>
 

@@ -114,13 +114,13 @@ export type Comment = {
 	author_username: string;
 	author_avatar: string | null;
 	author_discriminator: string;
-	// nested replies — populated after the flat query
+	// nested replies - populated after the flat query
 	replies?: Comment[];
 	/** Aggregated reactions for this comment (populated by getCommentsByBotId). */
 	reactions: ReactionCount[];
 };
 
-/** Minimal shape used for sitemap generation — only slug + timestamp */
+/** Minimal shape used for sitemap generation - only slug + timestamp */
 export type BotSlugEntry = {
 	slug: string;
 	added_at: number | null;
@@ -343,7 +343,7 @@ export async function listBots(
 		limit?: number;
 		newFlag?: boolean;
 		trending?: boolean;
-		/** Category keyword — searches username, short description, and tags */
+		/** Category keyword - searches username, short description, and tags */
 		category?: string | null;
 	} = {}
 ): Promise<BotSummary[]> {
@@ -514,7 +514,7 @@ export async function getBotsByOwner(
 }
 
 /**
- * Return only slug + added_at for every bot — used exclusively for sitemap.xml
+ * Return only slug + added_at for every bot - used exclusively for sitemap.xml
  * generation. Fetches the absolute minimum columns to keep the query cheap.
  */
 export async function getAllBotSlugs(): Promise<BotSlugEntry[]> {
@@ -536,7 +536,7 @@ export async function getAllBotSlugs(): Promise<BotSlugEntry[]> {
  * info from Users. Returns a tree: top-level comments each carry a `replies`
  * array of their direct children, sorted oldest-first within each level.
  *
- * Strategy: one flat SELECT JOIN, then group in-memory — avoids recursive SQL
+ * Strategy: one flat SELECT JOIN, then group in-memory - avoids recursive SQL
  * which libSQL doesn't support, and is fast enough for the volumes expected.
  */
 export async function getCommentsByBotId(
@@ -607,7 +607,7 @@ export async function getCommentsByBotId(
 
 /**
  * Fetch a single comment by its id (used for ownership checks before mutations).
- * Reactions are NOT hydrated here — this is intentionally lightweight for auth checks.
+ * Reactions are NOT hydrated here - this is intentionally lightweight for auth checks.
  */
 export async function getCommentById(id: string): Promise<Comment | null> {
 	const rows = (await withDb((d: DrizzleDb) =>
@@ -739,7 +739,7 @@ export async function deleteComment(id: string): Promise<void> {
 }
 
 /**
- * Top bots with rank position, lib, and prefix — used on the /top leaderboard page.
+ * Top bots with rank position, lib, and prefix - used on the /top leaderboard page.
  * Ordered by votes descending.
  */
 export async function getTopBotsFull(limit = 100): Promise<BotRanked[]> {
@@ -794,7 +794,7 @@ function emptyReactions(): ReactionCount[] {
  * will have an entry; emojis with zero reactions are included (count = 0).
  *
  * @param commentIds  Array of comment ids to aggregate reactions for.
- * @param currentUserId  Optional — if provided, the `reacted` flag will be set
+ * @param currentUserId  Optional - if provided, the `reacted` flag will be set
  *                       to true for each emoji that this user has reacted with.
  */
 export async function getReactionsForComments(
@@ -1132,7 +1132,7 @@ export async function upsertServer(data: {
 				badges: JSON.stringify([]) as any,
 				// Only include snapshot columns when the caller explicitly provides them.
 				// This keeps the INSERT compatible with databases that haven't had the
-				// migration run yet — registration never passes these values so they are
+				// migration run yet - registration never passes these values so they are
 				// simply omitted from the query entirely.
 				...(data.member_count !== undefined && { member_count: data.member_count }),
 				...(data.presence_count !== undefined && { presence_count: data.presence_count }),
@@ -1204,7 +1204,7 @@ export async function getBotsByLibrary(lib: string, limit = 10): Promise<BotSumm
 }
 
 /**
- * Bots filtered by a category keyword — searches username, short description,
+ * Bots filtered by a category keyword - searches username, short description,
  * and the tags JSON column. Used by /categories/[slug].
  * Excludes bots with default avatars (0-4) to surface higher-quality results.
  */

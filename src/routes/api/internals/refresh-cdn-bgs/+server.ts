@@ -3,7 +3,7 @@
  *
  * Internal endpoint that triggers a full CDN background-URL refresh cycle.
  *
- * Security — the secret is accepted from either of two sources (checked in order):
+ * Security - the secret is accepted from either of two sources (checked in order):
  *   1. Header:        X-Internal-Secret: <INTERNAL_SECRET>
  *      Used by the Netlify scheduled function (can't set query params on cron calls).
  *   2. Query param:   ?secret=<INTERNAL_SECRET>
@@ -34,7 +34,7 @@ export const GET: RequestHandler = async ({ request, url }) => {
 	const internalSecret = (env.INTERNAL_SECRET ?? "").trim();
 
 	if (!internalSecret) {
-		// Misconfiguration — refuse to run without a secret so the endpoint is
+		// Misconfiguration - refuse to run without a secret so the endpoint is
 		// never accidentally left open.
 		console.error("[refresh-cdn-bgs] INTERNAL_SECRET env var is not set.");
 		return json(

@@ -10,15 +10,15 @@
  * How it works on Netlify free tier:
  *   - Netlify Scheduled Functions are built on top of Background Functions.
  *   - They run serverlessly on Netlify's infrastructure on the given cron
- *     schedule, completely independent of incoming web traffic — the site stays
+ *     schedule, completely independent of incoming web traffic - the site stays
  *     up the entire time.
  *   - The free tier includes 125,000 function invocations / month and
  *     background function runtime up to 15 minutes per invocation, both of
  *     which are far more than enough for this task.
  *
  * Required environment variables (set in Netlify UI → Site → Environment vars):
- *   INTERNAL_SECRET   — shared secret, must match the one the SvelteKit app reads
- *   SITE_URL          — your deployed site origin, e.g. https://yoursite.netlify.app
+ *   INTERNAL_SECRET   - shared secret, must match the one the SvelteKit app reads
+ *   SITE_URL          - your deployed site origin, e.g. https://yoursite.netlify.app
  *                       (Netlify also exposes URL / DEPLOY_URL automatically, but
  *                        we read our own SITE_URL so staging deploys don't
  *                        accidentally call production, and vice-versa)
@@ -38,13 +38,13 @@ export default async function handler(_req: Request, _ctx: Context): Promise<Res
 	// Guard: both vars must be present or we refuse to run and log clearly.
 	// ------------------------------------------------------------------
 	if (!secret) {
-		console.error('[scheduled-cdn-refresh] INTERNAL_SECRET is not set — aborting.');
+		console.error('[scheduled-cdn-refresh] INTERNAL_SECRET is not set - aborting.');
 		// Return 200 so Netlify doesn't keep retrying a permanent misconfiguration.
 		return new Response('Misconfiguration: INTERNAL_SECRET not set.', { status: 200 });
 	}
 
 	if (!siteUrl) {
-		console.error('[scheduled-cdn-refresh] DOMAIN (or URL) is not set — aborting.');
+		console.error('[scheduled-cdn-refresh] DOMAIN (or URL) is not set - aborting.');
 		return new Response('Misconfiguration: DOMAIN not set.', { status: 200 });
 	}
 
@@ -71,7 +71,7 @@ export default async function handler(_req: Request, _ctx: Context): Promise<Res
 				`[scheduled-cdn-refresh] Endpoint returned HTTP ${response.status} after ${durationMs}ms:`,
 				body
 			);
-			// Still return 200 to Netlify — the error is logged, retrying immediately
+			// Still return 200 to Netlify - the error is logged, retrying immediately
 			// won't help if the site itself returned a 4xx/5xx.
 			return new Response(`Endpoint error ${response.status}: ${body}`, { status: 200 });
 		}
@@ -99,7 +99,7 @@ export default async function handler(_req: Request, _ctx: Context): Promise<Res
 				);
 			}
 		} catch {
-			// Body wasn't JSON — log as-is and move on.
+			// Body wasn't JSON - log as-is and move on.
 			console.log(`[scheduled-cdn-refresh] Response (${durationMs}ms):`, body);
 		}
 
@@ -110,7 +110,7 @@ export default async function handler(_req: Request, _ctx: Context): Promise<Res
 			`[scheduled-cdn-refresh] fetch() threw after ${durationMs}ms:`,
 			err instanceof Error ? err.message : String(err)
 		);
-		return new Response('Fetch error — see logs.', { status: 200 });
+		return new Response('Fetch error - see logs.', { status: 200 });
 	}
 }
 

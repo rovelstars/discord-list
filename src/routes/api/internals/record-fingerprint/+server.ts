@@ -17,7 +17,7 @@
  *     After upserting, queries getUsersWithFingerprint() to find other accounts
  *     that share this fingerprint. If any are found, the trust_score for this
  *     fingerprint is lowered on all associated accounts, and a warning is logged.
- *     This does NOT automatically ban anyone — it surfaces the signal for review.
+ *     This does NOT automatically ban anyone - it surfaces the signal for review.
  *
  *  3. Referral fraud flagging
  *     If the authenticated user was referred by someone, checks whether the
@@ -70,7 +70,7 @@ import {
 const TRUST_SCORE_SHARED_PENALTY = 15;
 
 /**
- * Minimum trust score — clamped so it never goes below this value.
+ * Minimum trust score - clamped so it never goes below this value.
  * A score of 0 would mean "completely untrusted"; 10 keeps some headroom
  * for graduated responses rather than a hard binary.
  */
@@ -91,7 +91,7 @@ const FINGERPRINT_HEX_LENGTH = 64;
  * Returns the user's { id, keys } or null if the session is missing/invalid.
  *
  * We look up the user by matching the access_token stored in their keys JSON
- * array against the "key" cookie value — the same pattern used by the rest of
+ * array against the "key" cookie value - the same pattern used by the rest of
  * the app (see +layout.server.ts and the auth callback).
  */
 async function resolveSession(
@@ -122,7 +122,7 @@ async function resolveSession(
  * Apply a penalty to the trust_score for every (user_id, fingerprint) row
  * that shares the given fingerprint. Clamps the score to TRUST_SCORE_MIN.
  *
- * This is a best-effort operation — errors are logged but do not abort the
+ * This is a best-effort operation - errors are logged but do not abort the
  * main request flow.
  */
 async function penaliseTrustScores(fingerprint: string): Promise<void> {
@@ -182,7 +182,7 @@ async function checkAndFlagReferralFraud(
 	referredId: string,
 	fingerprint: string
 ): Promise<boolean> {
-	// Find the referral for this referred user (at most one — a user can only
+	// Find the referral for this referred user (at most one - a user can only
 	// be referred once, enforced in createReferral).
 	const referralRows = await withDb((db: DrizzleDb) =>
 		db
@@ -198,7 +198,7 @@ async function checkAndFlagReferralFraud(
 	);
 
 	if (!Array.isArray(referralRows) || referralRows.length === 0) {
-		// This user was not referred by anyone — nothing to flag.
+		// This user was not referred by anyone - nothing to flag.
 		return false;
 	}
 
@@ -209,7 +209,7 @@ async function checkAndFlagReferralFraud(
 		fingerprint_match: boolean | number;
 	};
 
-	// Already flagged on a previous request — nothing to do.
+	// Already flagged on a previous request - nothing to do.
 	if (referral.fingerprint_match) return false;
 
 	// Check if the referrer has this same fingerprint on their account.
@@ -269,7 +269,7 @@ async function readTrustScore(userId: string, fingerprint: string): Promise<numb
 			return typeof score === "number" ? score : 50;
 		}
 	} catch {
-		// ignore — fall through to default
+		// ignore - fall through to default
 	}
 	return 50;
 }

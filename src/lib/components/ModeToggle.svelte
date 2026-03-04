@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { themeStore, themeActions, initThemeStore } from "$lib/theme-store";
+	import { Sun, Moon, Monitor } from "@lucide/svelte";
 
 	onMount(() => {
 		initThemeStore();
@@ -39,43 +40,20 @@
 		aria-label="Toggle theme"
 	>
 		<!-- Sun icon (shown in light mode) -->
-		<svg
+		<Sun
 			class="h-5 w-5 transition-all duration-200 {isDark
 				? 'rotate-90 scale-0 absolute'
 				: 'rotate-0 scale-100'}"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="1.5"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
-			focusable="false"
-		>
-			<circle cx="12" cy="12" r="4" />
-			<path
-				d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
-			/>
-		</svg>
+		/>
 
 		<!-- Moon icon (shown in dark mode) -->
-		<svg
+		<Moon
 			class="h-5 w-5 transition-all duration-200 {isDark
 				? 'rotate-0 scale-100'
 				: '-rotate-90 scale-0 absolute'}"
-			viewBox="0 0 24 24"
-			fill="currentColor"
-			stroke="currentColor"
-			stroke-width="1.5"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
-			focusable="false"
-		>
-			<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-		</svg>
+		/>
 
 		<span class="sr-only">Toggle theme</span>
 	</button>
@@ -106,48 +84,11 @@
 						}}
 					>
 						{#if item.id === "light"}
-							<svg
-								class="h-4 w-4 shrink-0"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="1.75"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								aria-hidden="true"
-							>
-								<circle cx="12" cy="12" r="4" />
-								<path
-									d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
-								/>
-							</svg>
+							<Sun class="h-4 w-4 shrink-0" aria-hidden="true" />
 						{:else if item.id === "dark"}
-							<svg
-								class="h-4 w-4 shrink-0"
-								viewBox="0 0 24 24"
-								fill="currentColor"
-								stroke="currentColor"
-								stroke-width="1.75"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								aria-hidden="true"
-							>
-								<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-							</svg>
+							<Moon class="h-4 w-4 shrink-0" aria-hidden="true" />
 						{:else}
-							<svg
-								class="h-4 w-4 shrink-0"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="1.75"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								aria-hidden="true"
-							>
-								<rect x="2" y="3" width="20" height="14" rx="2" />
-								<path d="M8 21h8M12 17v4" />
-							</svg>
+							<Monitor class="h-4 w-4 shrink-0" aria-hidden="true" />
 						{/if}
 						{item.label}
 					</button>

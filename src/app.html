@@ -6,14 +6,14 @@
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="alternate icon" href="/favicon.png" type="image/png" sizes="48x48" />
 		<!--
-			Blocking inline script — runs synchronously before any CSS is painted.
+			Blocking inline script - runs synchronously before any CSS is painted.
 			Reads the persisted theme preferences and applies:
 			  • the `.dark` class on <html> when the resolved polarity is dark
 			  • the `data-theme` attribute on <html> for the accent theme
 			  • writes `theme-system-dark` cookie so the server knows the OS
 			    preference on the *next* request (eliminates SSR flash for
 			    "system" mode users).
-			Kept intentionally tiny — no imports, no dependencies.
+			Kept intentionally tiny - no imports, no dependencies.
 		-->
 		<script>
 			(function () {
@@ -49,7 +49,7 @@
 						document.cookie = "theme-system-dark=" + hint + ";path=/;max-age=86400;SameSite=Lax";
 					}
 				} catch (e) {
-					// Swallow — restricted environments (private browsing without
+					// Swallow - restricted environments (private browsing without
 					// storage access) should still render without throwing.
 				}
 

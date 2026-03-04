@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 	const lucky = url.searchParams.has("lucky");
 	const category = url.searchParams.get("category") ?? null;
 
-	// "Searching" means the user has applied any filter — show results grid, not landing sections
+	// "Searching" means the user has applied any filter - show results grid, not landing sections
 	const isSearching = !!(q || newFlag || trending || lucky || category);
 
 	// Always fetch the filtered bot list

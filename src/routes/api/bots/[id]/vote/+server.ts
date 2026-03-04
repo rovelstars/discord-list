@@ -302,7 +302,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 		}
 
 		// Record vote in the activity log for the referral vote-20 milestone.
-		// Fire-and-forget — never let this block or fail the vote response.
+		// Fire-and-forget - never let this block or fail the vote response.
 		recordVote(userData.id, id, "bot").catch((err) => {
 			console.warn(
 				"[bot-vote] recordVote failed (non-fatal):",
@@ -316,7 +316,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 			const domain = (env.DOMAIN ?? "https://discord.rovelstars.com").replace(/\/$/, "");
 
 			// When the configured URL is a Discord webhook, send a rich embed instead
-			// of the raw vote data payload — Discord only accepts its own schema.
+			// of the raw vote data payload - Discord only accepts its own schema.
 			const discordWebhook = isDiscordWebhook(bot.webhook);
 
 			const body = discordWebhook
@@ -347,7 +347,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 					};
 
 			try {
-				// Discord webhooks must NOT receive the bot's secret code — they use
+				// Discord webhooks must NOT receive the bot's secret code - they use
 				// their own token embedded in the URL. Only append code for custom webhooks.
 				const webhookUrl = discordWebhook
 					? bot.webhook

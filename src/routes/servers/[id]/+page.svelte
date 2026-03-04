@@ -143,7 +143,7 @@
 		return CHANNEL_TYPE_LABEL[type] ?? "Other";
 	}
 
-	// Only show non-category channels in the public list — categories just clutter it
+	// Only show non-category channels in the public list - categories just clutter it
 	$: publicChannels = (server.channels ?? []).filter((ch) => ch.type !== 4);
 	$: textChannels = publicChannels.filter((ch) => [0, 5, 11, 15].includes(ch.type));
 	$: voiceChannels = publicChannels.filter((ch) => [2, 13].includes(ch.type));
@@ -178,7 +178,7 @@
 			const c = colorThief.getColor(img);
 			if (Array.isArray(c) && c.length === 3) gradientColor = c as [number, number, number];
 		} catch {
-			// cross-origin or decode error — skip
+			// cross-origin or decode error - skip
 		}
 	}
 
@@ -246,7 +246,7 @@
 
 	function buildSeoTitle(): string {
 		const memberStr = server.member_count ? ` · ${approx(server.member_count)} members` : "";
-		return `${server.name}${memberStr} — Discord Server`;
+		return `${server.name}${memberStr} - Discord Server`;
 	}
 
 	$: seoTitle = buildSeoTitle();
@@ -267,12 +267,12 @@
 			.then(async (res) => {
 				const body = await res.json().catch(() => ({}));
 				if (res.ok && body.updated) {
-					// Fresh data is in the DB — reload to show it
+					// Fresh data is in the DB - reload to show it
 					location.reload();
 				}
 			})
 			.catch(() => {
-				// non-fatal — best-effort only
+				// non-fatal - best-effort only
 			});
 	});
 </script>
@@ -404,7 +404,7 @@
 										{approx(server.member_count)}
 									</span>
 								{:else}
-									<span class="text-2xl font-black text-muted-foreground leading-none">—</span>
+									<span class="text-2xl font-black text-muted-foreground leading-none">-</span>
 								{/if}
 								<span class="text-xs text-muted-foreground font-medium mt-1">Members</span>
 							</div>
@@ -418,7 +418,7 @@
 										{approx(server.presence_count)}
 									</span>
 								{:else}
-									<span class="text-2xl font-black text-muted-foreground leading-none">—</span>
+									<span class="text-2xl font-black text-muted-foreground leading-none">-</span>
 								{/if}
 								<span class="text-xs text-muted-foreground font-medium mt-1">Online</span>
 							</div>
@@ -432,7 +432,7 @@
 										{publicChannels.length}
 									</span>
 								{:else}
-									<span class="text-2xl font-black text-muted-foreground leading-none">—</span>
+									<span class="text-2xl font-black text-muted-foreground leading-none">-</span>
 								{/if}
 								<span class="text-xs text-muted-foreground font-medium mt-1">Channels</span>
 							</div>
@@ -629,7 +629,7 @@
 									{/if}
 								</span>
 							{:else}
-								<span class="text-xl font-black text-muted-foreground leading-none">—</span>
+								<span class="text-xl font-black text-muted-foreground leading-none">-</span>
 								<span class="text-xs text-muted-foreground font-medium mt-0.5">Members</span>
 							{/if}
 						</div>
@@ -932,7 +932,7 @@
 				</div>
 
 				<div class="p-4">
-					<!-- Animated / Static split tabs — computed in script -->
+					<!-- Animated / Static split tabs - computed in script -->
 					{#if visibleEmojis.filter((e) => e.a).length > 0 && visibleEmojis.filter((e) => !e.a).length > 0}
 						<!-- Mixed: show both sections -->
 						<p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
@@ -1118,7 +1118,7 @@
 			</div>
 		{/if}
 
-		<!-- Random servers — shown below on smaller screens -->
+		<!-- Random servers - shown below on smaller screens -->
 		{#if randomServers && randomServers.length > 0}
 			<div class="mt-10 xl:hidden">
 				<h3 class="font-heading text-2xl font-bold mb-2 flex items-center gap-2">
@@ -1150,7 +1150,7 @@
 		{/if}
 	</div>
 
-	<!-- ── Sidebar: random servers — xl screens only ──────────────────────── -->
+	<!-- ── Sidebar: random servers - xl screens only ──────────────────────── -->
 	{#if randomServers && randomServers.length > 0}
 		<aside
 			class="hidden xl:flex xl:flex-col gap-4 w-80 shrink-0 sticky top-28 self-start"

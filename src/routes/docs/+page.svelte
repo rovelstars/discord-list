@@ -8,7 +8,7 @@
 
 	$: sections = data.docs;
 
-	// Active section — driven by URL hash, defaults to first section
+	// Active section - driven by URL hash, defaults to first section
 	let activeSlug: string = "";
 	let mobileNavOpen = false;
 
@@ -38,7 +38,7 @@
 
 <SEO
 	title="API Documentation"
-	description="Complete reference for the Rovel Discord List public REST API — bots, votes, users, and webhooks."
+	description="Complete reference for the Rovel Discord List public REST API - bots, votes, users, and webhooks."
 />
 
 <svelte:head>

@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { InteractionResponseType } from "discord-interactions";
 
 /**
- * /sync — Force-sync all custom emojis AND stickers from the current server
+ * /sync - Force-sync all custom emojis AND stickers from the current server
  * into the listing.
  *
  * Requirements:
@@ -144,7 +144,7 @@ export default {
 			);
 		}
 
-		// ── All synchronous checks passed — defer and do the rest async ────────
+		// ── All synchronous checks passed - defer and do the rest async ────────
 		(async () => {
 			try {
 				// ── 4. Run emoji + sticker syncs in parallel ───────────────────
@@ -153,7 +153,7 @@ export default {
 					callSyncEndpoint(domain, "/api/internals/sync-stickers", internalSecret, guildId)
 				]);
 
-				// Unwrap settled results — a rejection here would be a programming
+				// Unwrap settled results - a rejection here would be a programming
 				// error since callSyncEndpoint never throws (it catches internally).
 				const emojiRes = emojiSettled.status === "fulfilled" ? emojiSettled.value : null;
 				const stickerRes = stickerSettled.status === "fulfilled" ? stickerSettled.value : null;
@@ -179,7 +179,7 @@ export default {
 
 				// ── 6. Check for "server not registered" (404 on either) ──────
 				// A 404 from either endpoint means the server isn't in the listing
-				// at all — both checks would return 404 simultaneously, so testing
+				// at all - both checks would return 404 simultaneously, so testing
 				// either is sufficient.
 				const notRegistered =
 					(emojiRes && !emojiRes._fetchError && emojiRes.status === 404) ||
@@ -199,7 +199,7 @@ export default {
 				}
 
 				// ── 7. Extract per-type results ────────────────────────────────
-				// A fetch error for stickers alone is non-fatal — we still report
+				// A fetch error for stickers alone is non-fatal - we still report
 				// emoji results and note the sticker issue separately.
 				const emojiOk = emojiRes?.ok ?? false;
 				const stickerOk = stickerRes?.ok ?? false;
@@ -221,11 +221,11 @@ export default {
 					lines.push(`✅ Sync complete for **${guildName}**!`);
 				} else if (emojiOk && !stickerOk) {
 					lines.push(
-						`⚠️ Partial sync complete for **${guildName}** — emojis synced, stickers failed.`
+						`⚠️ Partial sync complete for **${guildName}** - emojis synced, stickers failed.`
 					);
 				} else if (!emojiOk && stickerOk) {
 					lines.push(
-						`⚠️ Partial sync complete for **${guildName}** — stickers synced, emojis failed.`
+						`⚠️ Partial sync complete for **${guildName}** - stickers synced, emojis failed.`
 					);
 				} else {
 					// Both failed but we already handled the 404/fetch-error cases above,
@@ -255,7 +255,7 @@ export default {
 						lines.push("😶 **Emojis:** No custom emojis found in this server.");
 					} else {
 						lines.push(
-							`😄 **Emojis:** ${emojiTotal} total — 🆕 ${emojiCreated} new, 🔄 ${emojiUpdated} updated`
+							`😄 **Emojis:** ${emojiTotal} total - 🆕 ${emojiCreated} new, 🔄 ${emojiUpdated} updated`
 						);
 					}
 				} else {
@@ -271,7 +271,7 @@ export default {
 						lines.push("🪄 **Stickers:** No custom stickers found in this server.");
 					} else {
 						lines.push(
-							`🪄 **Stickers:** ${stickerTotal} total — 🆕 ${stickerCreated} new, 🔄 ${stickerUpdated} updated`
+							`🪄 **Stickers:** ${stickerTotal} total - 🆕 ${stickerCreated} new, 🔄 ${stickerUpdated} updated`
 						);
 					}
 				} else {
@@ -281,7 +281,7 @@ export default {
 					lines.push(`🪄 **Stickers:** Sync failed (${errMsg})`);
 				}
 
-				// Browse links — only add for types that actually have content
+				// Browse links - only add for types that actually have content
 				const browseLines: string[] = [];
 				if (emojiOk && emojiTotal > 0) {
 					browseLines.push(`😄 Emojis: ${domain}/emojis?guild=${encodeURIComponent(guildId)}`);

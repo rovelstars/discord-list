@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { InteractionResponseType } from "discord-interactions";
 
 /**
- * /register — Register the current Discord server on the listing site.
+ * /register - Register the current Discord server on the listing site.
  *
  * Requirements:
  *  1. The invoking member must have "Manage Guild" (0x20) or "Administrator"
@@ -17,11 +17,11 @@ import { InteractionResponseType } from "discord-interactions";
  *    return an immediate ephemeral CHANNEL_MESSAGE_WITH_SOURCE so Discord never
  *    times out waiting for us.
  *  - Once we know we need to do async work (network calls) we return
- *    DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE (ephemeral) immediately — Discord shows
- *    "Bot is thinking…" — and kick off a background IIFE that edits the original
+ *    DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE (ephemeral) immediately - Discord shows
+ *    "Bot is thinking…" - and kick off a background IIFE that edits the original
  *    deferred message when it's done.
  *
- * This function NEVER throws — every code path returns a valid Discord
+ * This function NEVER throws - every code path returns a valid Discord
  * interaction response object so the caller never has to worry about
  * unhandled rejections causing "application did not respond" errors.
  */
@@ -44,7 +44,7 @@ function hasRequiredPermission(permissionsString: string | null | undefined): bo
 	}
 }
 
-/** Immediate ephemeral reply — for synchronous pre-flight errors. */
+/** Immediate ephemeral reply - for synchronous pre-flight errors. */
 function reply(content: string) {
 	return {
 		type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -52,7 +52,7 @@ function reply(content: string) {
 	};
 }
 
-/** Deferred ephemeral response — tells Discord "Bot is thinking…" ephemerally. */
+/** Deferred ephemeral response - tells Discord "Bot is thinking…" ephemerally. */
 const DEFERRED_EPHEMERAL = {
 	type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
 	data: { flags: 64 }
@@ -142,7 +142,7 @@ export default {
 			);
 		}
 
-		// ── All synchronous checks passed — defer and do the rest async ───────
+		// ── All synchronous checks passed - defer and do the rest async ───────
 		(async () => {
 			try {
 				// ── 5. Verify the user has a site account ─────────────────────
@@ -304,7 +304,7 @@ export default {
 					].join("\n")
 				);
 			} catch (fatalErr) {
-				// Absolute last-resort — something totally unexpected slipped through.
+				// Absolute last-resort - something totally unexpected slipped through.
 				const msg = fatalErr instanceof Error ? fatalErr.message : String(fatalErr);
 				console.error("[register] Fatal unhandled error in background task:", fatalErr);
 				await editFollowup(
@@ -315,7 +315,7 @@ export default {
 			}
 		})();
 
-		// Return the deferred ephemeral response immediately — Discord shows
+		// Return the deferred ephemeral response immediately - Discord shows
 		// "Bot is thinking…" (visible only to the invoker) while the async
 		// work above runs in the background.
 		return DEFERRED_EPHEMERAL;

@@ -83,8 +83,8 @@ bun run build   # or: npm run build
 
 Discord CDN attachment URLs (used as bot background images) expire after ~24 hours. This project includes a Netlify Scheduled Function that automatically refreshes them every 12 hours with **zero site downtime**:
 
-- `netlify/functions/scheduled-cdn-refresh.mts` — runs on cron `0 */12 * * *`, calls the internal endpoint below.
-- `src/routes/api/internals/refresh-cdn-bgs/+server.ts` — fetches only `id`+`bg` columns, classifies URLs in memory (no CDN fetches), sends expired ones to Discord's `POST /attachments/refresh-urls` API in batches of 50, and writes back only the rows that actually changed.
+- `netlify/functions/scheduled-cdn-refresh.mts` - runs on cron `0 */12 * * *`, calls the internal endpoint below.
+- `src/routes/api/internals/refresh-cdn-bgs/+server.ts` - fetches only `id`+`bg` columns, classifies URLs in memory (no CDN fetches), sends expired ones to Discord's `POST /attachments/refresh-urls` API in batches of 50, and writes back only the rows that actually changed.
 
 Make sure `INTERNAL_SECRET`, `SITE_URL`, and `DISCORD_TOKEN` are set in your Netlify environment variables for this to work.
 

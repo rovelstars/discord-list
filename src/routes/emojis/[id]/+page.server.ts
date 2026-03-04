@@ -37,7 +37,7 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 				};
 			}
 		} catch {
-			// Non-fatal — fall back to showing the raw guild ID
+			// Non-fatal - fall back to showing the raw guild ID
 		}
 	}
 

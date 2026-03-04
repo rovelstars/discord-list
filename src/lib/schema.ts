@@ -5,7 +5,7 @@
  * The canonical schema was moved to "$lib/db/schema". This file re-exports
  * the schema symbols so existing imports keep working.
  *
- * Do not add runtime logic here — this is purely a compile-time/type re-export.
+ * Do not add runtime logic here - this is purely a compile-time/type re-export.
  */
 
 export { Bots, Users, Servers, Comments, CommentReactions, Emojis, Stickers } from "./db/schema";

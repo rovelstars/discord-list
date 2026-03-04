@@ -97,7 +97,7 @@ export async function fetchGuildStickers(
 			return null;
 		}
 
-		// Filter to guild stickers only — must have an id, name, and format_type.
+		// Filter to guild stickers only - must have an id, name, and format_type.
 		// Standard stickers (Nitro/built-in) have no guild_id and should be skipped.
 		return stickers.filter(
 			(s: any) =>
@@ -123,7 +123,7 @@ export async function fetchGuildStickers(
  *
  * @param guildId   Discord guild snowflake.
  * @param botToken  Bot token for authorization.
- * @param syncFn    The DB upsert function — accepts (guildId, stickers[]) and
+ * @param syncFn    The DB upsert function - accepts (guildId, stickers[]) and
  *                  returns Promise<{ created: number; updated: number }>.
  */
 export async function syncServerStickersWithFn(

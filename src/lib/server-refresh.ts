@@ -9,12 +9,12 @@
  * than bot identity data.
  *
  * Discord API calls made:
- *   GET /guilds/:id?with_counts=true  — member + presence approximations
- *   GET /guilds/:id/channels          — full channel list (type + nsfw flag)
+ *   GET /guilds/:id?with_counts=true  - member + presence approximations
+ *   GET /guilds/:id/channels          - full channel list (type + nsfw flag)
  *
  * Both calls require the bot to be a member of the guild. If the bot has left
  * or was never in the guild, the calls return 403/404 and are treated as
- * non-fatal partial errors — the function still updates whatever it could.
+ * non-fatal partial errors - the function still updates whatever it could.
  *
  * Stale-data guard:
  *   The caller can supply `minAgeMs` (default 10 minutes). If `synced_at` in
@@ -55,7 +55,7 @@ export interface ServerRefreshOptions {
 }
 
 // ---------------------------------------------------------------------------
-// Discord API shapes (minimal — only the fields we care about)
+// Discord API shapes (minimal - only the fields we care about)
 // ---------------------------------------------------------------------------
 
 interface DiscordGuild {
@@ -177,13 +177,13 @@ export async function refreshServer(
 	const dbServer = rows[0];
 
 	// -----------------------------------------------------------------------
-	// Step 2: Stale-data guard — skip if recently synced
+	// Step 2: Stale-data guard - skip if recently synced
 	// -----------------------------------------------------------------------
 	if (minAgeMs > 0 && dbServer.synced_at) {
 		const age = Date.now() - new Date(dbServer.synced_at).getTime();
 		if (age < minAgeMs) {
 			console.debug(
-				`${logPrefix} id=${serverId} skipped — synced ${Math.round(age / 1000)}s ago (minAge=${minAgeMs / 1000}s)`
+				`${logPrefix} id=${serverId} skipped - synced ${Math.round(age / 1000)}s ago (minAge=${minAgeMs / 1000}s)`
 			);
 			result.skipped = true;
 			return result;
@@ -217,7 +217,7 @@ export async function refreshServer(
 			: `channels_fetch_failed: ${msg}`;
 	}
 
-	// If both calls failed there is nothing to write — bail early so we don't
+	// If both calls failed there is nothing to write - bail early so we don't
 	// thrash synced_at without actually having any data.
 	if (!guild && !rawChannels) {
 		console.warn(`${logPrefix} Both Discord fetches failed for ${serverId}, aborting.`);
@@ -257,7 +257,7 @@ export async function refreshServer(
 	}
 
 	if (rawChannels) {
-		// Map to our compact shape — keep only the fields the UI needs.
+		// Map to our compact shape - keep only the fields the UI needs.
 		const mappedChannels = rawChannels.map((ch) => ({
 			id: ch.id,
 			name: ch.name ?? "",
@@ -282,7 +282,7 @@ export async function refreshServer(
 	}
 
 	// -----------------------------------------------------------------------
-	// Step 6: Persist — always write synced_at so the stale guard works even
+	// Step 6: Persist - always write synced_at so the stale guard works even
 	//         when nothing else changed.
 	// -----------------------------------------------------------------------
 	await updateServerSnapshot(serverId, snapshot);

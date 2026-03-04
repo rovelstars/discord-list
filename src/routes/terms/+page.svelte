@@ -65,7 +65,7 @@
 			Rules of the road
 		</h1>
 		<p class="text-muted-foreground max-w-xl mx-auto leading-relaxed">
-			By using Rovel Discord List you agree to these terms. They're written in plain language — no
+			By using Rovel Discord List you agree to these terms. They're written in plain language - no
 			legalese. Please take a few minutes to read them.
 		</p>
 		<p class="text-xs text-muted-foreground mt-4">Last updated: {lastUpdated}</p>
@@ -406,7 +406,7 @@
 				<div class="text-muted-foreground leading-relaxed space-y-4 text-sm">
 					<p>
 						Bot developers may submit bots for listing subject to the following rules. Submission
-						does not guarantee approval — all bots are reviewed before going live.
+						does not guarantee approval - all bots are reviewed before going live.
 					</p>
 
 					<div class="bg-card border border-border rounded-2xl overflow-hidden">
@@ -540,7 +540,7 @@
 
 					<p>
 						We reserve the right to remove any emoji or sticker from the directory at our
-						discretion. Submitting content to our directory does not transfer ownership — you retain
+						discretion. Submitting content to our directory does not transfer ownership - you retain
 						any rights you hold in the original asset.
 					</p>
 				</div>
@@ -907,7 +907,7 @@
 					</p>
 					<p>
 						<strong class="text-foreground">By us:</strong> We may suspend or terminate your access to
-						the Service at any time, with or without notice, for any reason — including but not limited
+						the Service at any time, with or without notice, for any reason - including but not limited
 						to violation of these Terms, inactivity, or actions deemed harmful to the community.
 					</p>
 					<p>

@@ -50,7 +50,7 @@ Authorization: YOUR_TOKEN
 PATCH /api/users/me
 ```
 
-Updates editable fields on your own profile. Requires authentication. Only the fields you include in the request body are updated — omitted fields are left unchanged.
+Updates editable fields on your own profile. Requires authentication. Only the fields you include in the request body are updated - omitted fields are left unchanged.
 
 ### Request Body
 
@@ -105,12 +105,12 @@ Every user account starts with **50 <:Rcoin:948896802298548224> Rcoins** (R$) on
 
 ### How to Earn Rcoins
 
-- **Sign up** — 50 R$ granted automatically when you create your account.
-- **Vote for bots** — some bots may reward voters (bot-owner configured).
+- **Sign up** - 50 R$ granted automatically when you create your account.
+- **Vote for bots** - some bots may reward voters (bot-owner configured).
 
 ### How to Spend Rcoins
 
-- **Coin-based voting** — spend **10 R$ per vote** on bots that have opted into this system.
-- **Transfer** — send Rcoins to another user via the `/transfer` Discord bot command.
+- **Coin-based voting** - spend **10 R$ per vote** on bots that have opted into this system.
+- **Transfer** - send Rcoins to another user via the `/transfer` Discord bot command.
 
 > Your current balance is always included in the `GET /api/users/me` response as the `bal` field.

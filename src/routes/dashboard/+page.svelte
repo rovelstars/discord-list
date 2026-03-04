@@ -224,7 +224,7 @@
 					bio_too_long: "Bio must be 200 characters or fewer.",
 					invalid_banner: "Banner must be a valid http/https URL.",
 					user_not_found: "User not found. Please log in again.",
-					db_update_failed: "Database error — please try again."
+					db_update_failed: "Database error - please try again."
 				};
 				saveError = errMap[resData.err] ?? resData.err ?? "An error occurred.";
 			} else {
@@ -232,7 +232,7 @@
 				setTimeout(() => (saveSuccess = false), 3500);
 			}
 		} catch {
-			saveError = "Network error — please try again.";
+			saveError = "Network error - please try again.";
 		} finally {
 			saving = false;
 		}
@@ -300,17 +300,17 @@
 		switch (type) {
 			case "retention_daily":
 				if ((meta as any).type === "signup_reward") return "Welcome Handshake";
-				return `Engagement Sprint — Day ${(meta as any).day ?? "?"}`;
+				return `Engagement Sprint - Day ${(meta as any).day ?? "?"}`;
 			case "signup_welcome":
 				return "Welcome Bonus";
 			case "engagement_sprint_referred":
-				return `Engagement Sprint — Day ${(meta as any).day ?? "?"} (Your Bonus)`;
+				return `Engagement Sprint - Day ${(meta as any).day ?? "?"} (Your Bonus)`;
 			case "vote_20":
 				return "20-Vote Achievement";
 			case "server_bounty":
-				return "Growth Bounty — Referrer";
+				return "Growth Bounty - Referrer";
 			case "server_bounty_referred":
-				return "Growth Bounty — Your Reward";
+				return "Growth Bounty - Your Reward";
 			case "self_listing_100":
 				return "Self-Listing Reward (50+ members)";
 			case "self_listing_500":
@@ -368,11 +368,15 @@
 	}
 
 	function hasSignupRewardPaid(r: ReferralRow): boolean {
+		// Light up if either the referrer-side carrier row (retention_daily day=0,
+		// meta.type="signup_reward") OR the referred-side companion row
+		// (signup_welcome) has been paid.  Pass 1 of settle-rewards writes the two
+		// sides independently, so one can succeed before the other.
 		return r.milestones.some(
 			(m) =>
-				m.milestone_type === "retention_daily" &&
 				m.status === "paid" &&
-				(m.meta as any).type === "signup_reward"
+				((m.milestone_type === "retention_daily" && (m.meta as any).type === "signup_reward") ||
+					m.milestone_type === "signup_welcome")
 		);
 	}
 
@@ -386,9 +390,20 @@
 
 	function totalEarnedFromReferral(r: ReferralRow): number {
 		// Only count the referrer-side milestones for the "earned as referrer" display
-		return r.milestones
-			.filter((m) => m.status === "paid" && (m.meta as any).recipient !== "referred")
+		return referrerMilestones(r)
+			.filter((m) => m.status === "paid")
 			.reduce((s, m) => s + m.reward_amount, 0);
+	}
+
+	/** Strip out any companion rows that were written for the referred user. */
+	function referrerMilestones(r: ReferralRow) {
+		return r.milestones.filter(
+			(m) =>
+				(m.meta as any).recipient !== "referred" &&
+				m.milestone_type !== "signup_welcome" &&
+				m.milestone_type !== "engagement_sprint_referred" &&
+				m.milestone_type !== "server_bounty_referred"
+		);
 	}
 
 	// Label for referred-user milestone types shown in their rewards panel
@@ -397,7 +412,7 @@
 			case "signup_welcome":
 				return "Welcome Bonus";
 			case "engagement_sprint_referred":
-				return `Engagement Sprint — Day ${(meta as any).day ?? "?"}`;
+				return `Engagement Sprint - Day ${(meta as any).day ?? "?"}`;
 			case "server_bounty_referred":
 				return "Growth Bounty (Listed Server)";
 			default:
@@ -2019,7 +2034,7 @@
 							<div>
 								<h2 class="text-base font-bold font-heading leading-none">Your Referral Link</h2>
 								<p class="text-xs text-muted-foreground mt-0.5">
-									Share this link — earn R$ when friends join and stay active
+									Share this link - earn R$ when friends join and stay active
 								</p>
 							</div>
 						</div>
@@ -2084,10 +2099,10 @@
 								</button>
 							</div>
 
-							<!-- How it works — double-sided reward table -->
+							<!-- How it works - double-sided reward table -->
 							<div class="bg-muted/40 rounded-xl p-4 space-y-3">
 								<p class="text-xs font-semibold text-foreground uppercase tracking-wider">
-									How rewards work — both of you earn
+									How rewards work - both of you earn
 								</p>
 
 								<!-- Header row -->
@@ -2293,7 +2308,7 @@
 												>{shortId(wasReferredBy.referrer_id)}</code
 											>
 										{/if}
-										on {fmtDate(wasReferredBy.created_at)} —
+										on {fmtDate(wasReferredBy.created_at)} -
 										<span class="inline-flex items-center gap-1 font-medium">
 											<span
 												class="inline-block w-1.5 h-1.5 rounded-full {wasReferredBy.reward_status ===
@@ -2395,7 +2410,7 @@
 								</p>
 							{:else}
 								<p class="text-xs text-muted-foreground px-5 py-3.5">
-									Complete activities in your first week to earn more rewards — visit 5 days or cast
+									Complete activities in your first week to earn more rewards - visit 5 days or cast
 									20 votes, then list a server with 50+ members for <strong class="text-foreground"
 										>R$500</strong
 									>.
@@ -2432,7 +2447,7 @@
 								<div>
 									<h2 class="text-base font-bold font-heading leading-none">Referral History</h2>
 									<p class="text-xs text-muted-foreground mt-0.5">
-										{referralsSent.length} referral{referralsSent.length !== 1 ? "s" : ""} sent — click
+										{referralsSent.length} referral{referralsSent.length !== 1 ? "s" : ""} sent - click
 										any row to see milestone details
 									</p>
 								</div>
@@ -2684,11 +2699,12 @@
 											<div class="bg-background/50 border-t border-border px-5 py-4">
 												{#if referral.milestones.length === 0}
 													<p class="text-xs text-muted-foreground text-center py-3">
-														No milestones recorded yet — rewards are processed daily at 02:00 UTC.
+														No milestones recorded yet - rewards are processed daily at 02:00 UTC.
 													</p>
 												{:else}
+													{@const myMilestones = referrerMilestones(referral)}
 													<ul class="space-y-2">
-														{#each referral.milestones as m (m.id)}
+														{#each myMilestones as m (m.id)}
 															<li class="flex items-center gap-3 text-sm">
 																<!-- Milestone icon -->
 																<div
@@ -2751,8 +2767,8 @@
 														class="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground"
 													>
 														<span
-															>{referral.milestones.filter((m) => m.status === "paid").length} of {referral
-																.milestones.length} milestones paid</span
+															>{myMilestones.filter((m) => m.status === "paid").length} of {myMilestones.length}
+															milestones paid</span
 														>
 														<span class="font-bold text-foreground flex items-center gap-1">
 															<img src="/assets/img/bot/moneh.svg" alt="R$" class="w-3 h-3" />

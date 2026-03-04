@@ -11,7 +11,7 @@ const FETCH_TIMEOUT_MS = 10_000;
  * Access-Control-Allow-Origin so the browser can load it into a canvas
  * (required by ColorThief for dominant-colour extraction).
  *
- * The visible <img> on the page still points directly at the CDN — only a
+ * The visible <img> on the page still points directly at the CDN - only a
  * small hidden image used by ColorThief hits this endpoint, so there is no
  * perceptible latency cost to the user.
  */

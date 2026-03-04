@@ -3,16 +3,16 @@
 # Netlify build & function configuration for the discord-list SvelteKit site.
 #
 # Scheduled functions:
-#   scheduled-cdn-refresh — runs every 12 hours to refresh stale Discord CDN
+#   scheduled-cdn-refresh - runs every 12 hours to refresh stale Discord CDN
 #   attachment URLs stored in the Bots.bg column of the database.
 #
 # Required environment variables (set in Netlify UI → Site → Environment vars):
-#   INTERNAL_SECRET   — shared secret used to authenticate calls from the
+#   INTERNAL_SECRET   - shared secret used to authenticate calls from the
 #                       scheduled function to /api/internals/refresh-cdn-bgs
-#   SITE_URL          — your deployed origin, e.g. https://yoursite.netlify.app
-#   DISCORD_TOKEN     — Discord Bot token used to call the refresh-urls API
-#   DATABASE_URL      — libSQL / Turso database URL
-#   TURSO_TOKEN       — (optional) Turso auth token if your DB requires one
+#   SITE_URL          - your deployed origin, e.g. https://yoursite.netlify.app
+#   DISCORD_TOKEN     - Discord Bot token used to call the refresh-urls API
+#   DATABASE_URL      - libSQL / Turso database URL
+#   TURSO_TOKEN       - (optional) Turso auth token if your DB requires one
 
 # ---------------------------------------------------------------------------
 # Build settings
@@ -35,7 +35,7 @@
 
 # adapter-netlify (invoked by adapter-auto on Netlify) injects its own
 # catch-all redirect and SSR function automatically during the build step.
-# Do NOT add a manual [[redirects]] catch-all here — it will conflict with
+# Do NOT add a manual [[redirects]] catch-all here - it will conflict with
 # the adapter and break SSR routes.
 
 # ---------------------------------------------------------------------------

@@ -57,7 +57,7 @@
 		} | null;
 	};
 
-	// Reactive destructuring — re-runs whenever SvelteKit replaces `data` after
+	// Reactive destructuring - re-runs whenever SvelteKit replaces `data` after
 	// a client-side navigation to a different bot ID.
 	$: ({ bot, randombots, comments, relatedServers, user } = data);
 
@@ -145,7 +145,7 @@
 	/** Build a natural-language prefix sentence */
 	function prefixSentence(prefix: string | null | undefined): string {
 		if (!prefix || prefix === "/") {
-			return `${bot.username} is a slash-command bot and uses Discord's native <code>/</code> command system, meaning all commands appear in Discord's built-in autocomplete menu — no prefix memorisation needed.`;
+			return `${bot.username} is a slash-command bot and uses Discord's native <code>/</code> command system, meaning all commands appear in Discord's built-in autocomplete menu - no prefix memorisation needed.`;
 		}
 		return `${bot.username} uses the command prefix <code>${prefix}</code>. Type <code>${prefix}help</code> in any channel the bot has access to for a full list of available commands.`;
 	}
@@ -200,7 +200,7 @@
 		refreshDispatched = false;
 	}
 
-	// Lazily-loaded ColorThief instance — created once, reused.
+	// Lazily-loaded ColorThief instance - created once, reused.
 	let colorThief: { getColor: (img: HTMLImageElement) => [number, number, number] } | null = null;
 
 	onMount(() => {
@@ -230,7 +230,7 @@
 			const c = colorThief.getColor(img);
 			if (Array.isArray(c) && c.length === 3) gradientColor = c as [number, number, number];
 		} catch {
-			// Cross-origin or decode error — silently skip
+			// Cross-origin or decode error - silently skip
 		}
 	}
 
@@ -343,7 +343,7 @@
 		const target = event.target as HTMLImageElement;
 		const src = target?.src ?? "";
 
-		// Only trigger a refresh for Discord CDN images — external images that
+		// Only trigger a refresh for Discord CDN images - external images that
 		// happen to 404 should not cause a bot refresh.
 		const isDiscordImage =
 			src.startsWith("https://cdn.discordapp.com/") ||
@@ -354,7 +354,7 @@
 		refreshDispatched = true;
 		console.debug("[bot-page] Discord image load error, queuing refresh for bot", bot.id);
 
-		// POST to the public proxy route — the server adds the INTERNAL_SECRET
+		// POST to the public proxy route - the server adds the INTERNAL_SECRET
 		// before forwarding to /api/internals/refresh-bot/[id], so no secret
 		// is ever exposed in the browser.
 		fetch(`/api/bots/${encodeURIComponent(bot.id)}/refresh`, {
@@ -368,7 +368,7 @@
 				} else {
 					console.debug("[bot-page] Refresh response:", body);
 					if (body.updated) {
-						// soft reload the page to fetch new images — this won't cause a full reload if the data hasn't changed.
+						// soft reload the page to fetch new images - this won't cause a full reload if the data hasn't changed.
 						location.reload();
 					} else {
 						console.debug("[bot-page] Bot data is already up to date, no reload needed.");
@@ -376,7 +376,7 @@
 				}
 			})
 			.catch((err) => {
-				// Network errors are entirely non-fatal — best-effort only.
+				// Network errors are entirely non-fatal - best-effort only.
 				console.debug("[bot-page] Refresh request network error (non-fatal):", err);
 			});
 	}
@@ -432,7 +432,7 @@
 				{/if}
 			</div>
 
-			<!-- Body: 3-col info grid — gradient overlay matches dominant banner colour -->
+			<!-- Body: 3-col info grid - gradient overlay matches dominant banner colour -->
 			<div class="grid grid-cols-1 md:grid-cols-4 gap-6 p-4" style={gradientOverlayStyle}>
 				<!-- Description column (spans 3) -->
 				<div
@@ -560,7 +560,7 @@
 										>{bot.lib}</span
 									>
 								{:else}
-									<span class="text-sm font-bold text-muted-foreground leading-none">—</span>
+									<span class="text-sm font-bold text-muted-foreground leading-none">-</span>
 								{/if}
 								<span class="text-xs text-muted-foreground font-medium mt-1">Library</span>
 							</div>
@@ -707,7 +707,7 @@
 							</div>
 						{/if}
 
-						<!-- FAQ / Q&A block — great for featured snippets -->
+						<!-- FAQ / Q&A block - great for featured snippets -->
 						<div class="mb-2">
 							<h3 class="text-base font-semibold text-foreground mb-3">
 								Frequently asked questions
@@ -798,7 +798,7 @@
 											Is {bot.username} open source?
 										</dt>
 										<dd class="text-sm text-muted-foreground leading-relaxed">
-											Yes — {bot.username} is open source. You can browse, fork, or contribute to its
+											Yes - {bot.username} is open source. You can browse, fork, or contribute to its
 											source code on
 											<a
 												href={bot.source_repo}
@@ -1175,7 +1175,7 @@
 			</div>
 		{/if}
 
-		<!-- You Might Also Like — mobile only (below the card, visible only on < xl) -->
+		<!-- You Might Also Like - mobile only (below the card, visible only on < xl) -->
 		{#if randombots && randombots.length > 0}
 			<div class="mt-10 xl:hidden">
 				<h3 class="font-heading text-3xl font-bold mb-2 flex items-center gap-2">

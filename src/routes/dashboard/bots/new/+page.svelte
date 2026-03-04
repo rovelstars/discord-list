@@ -207,7 +207,7 @@
 				setTimeout(() => goto(`/bots/${botId.trim()}`), 1200);
 			}
 		} catch (e) {
-			errorMsg = "Network error — please try again.";
+			errorMsg = "Network error - please try again.";
 		} finally {
 			submitting = false;
 		}
@@ -227,7 +227,7 @@
 	imageSmall="/assets/img/bot/logo-512.png"
 />
 <svelte:head>
-	<!-- Private page — don't index in search engines -->
+	<!-- Private page - don't index in search engines -->
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
@@ -546,7 +546,7 @@
 						class="w-16 h-16 rounded-full object-cover border-4 border-border"
 					/>
 					<div>
-						<p class="font-bold text-lg">{headerBot?.username ?? botId ?? "—"}</p>
+						<p class="font-bold text-lg">{headerBot?.username ?? botId ?? "-"}</p>
 						<p class="text-muted-foreground">#{headerBot?.discriminator ?? "0000"}</p>
 					</div>
 				</div>

@@ -7,13 +7,13 @@
  * Used by two different route handlers that share identical core behaviour but
  * differ only in their auth / rate-limiting concerns:
  *
- *   - POST /api/internals/refresh-bot/[id]  — internal, INTERNAL_SECRET protected
- *   - POST /api/bots/[id]/refresh           — public-facing, rate-limited
+ *   - POST /api/internals/refresh-bot/[id]  - internal, INTERNAL_SECRET protected
+ *   - POST /api/bots/[id]/refresh           - public-facing, rate-limited
  *
  * Steps performed by `refreshBot()`:
  *   1. Load the current bot row from DB (id, username, discriminator, avatar, bg, owners).
  *   2. Fetch the latest identity from Discord via GET /users/:id (bot token).
- *   3. Diff each field against the DB value — only changed fields are written.
+ *   3. Diff each field against the DB value - only changed fields are written.
  *   4. If `bg` is an expired Discord CDN attachment URL, refresh it via
  *      POST /attachments/refresh-urls and include it in the write.
  *   5. Write the update set to the DB (single UPDATE, only when something changed).
@@ -47,7 +47,7 @@ export interface BotRefreshResult {
 	/** Whether the `bg` CDN URL was successfully refreshed. */
 	bgRefreshed: boolean;
 	/**
-	 * The latest resolved `bg` value after this refresh cycle — set whenever
+	 * The latest resolved `bg` value after this refresh cycle - set whenever
 	 * `updates.bg` was written (either a new banner hash from Discord identity
 	 * or a freshly-signed CDN URL). The client can use this to update the card
 	 * in-place without a full page reload.
@@ -263,7 +263,7 @@ export async function refreshBot(
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : String(err);
 			console.warn(`${logPrefix} Could not refresh bg CDN URL for ${botId}: ${msg}`);
-			// Non-fatal — still write any identity changes collected above.
+			// Non-fatal - still write any identity changes collected above.
 		}
 	}
 
@@ -309,7 +309,7 @@ export async function refreshBot(
 				}
 			});
 		} catch (logErr) {
-			// Logging failures are non-fatal — the DB update already succeeded.
+			// Logging failures are non-fatal - the DB update already succeeded.
 			console.warn(`${logPrefix} SendLog failed (non-fatal):`, logErr);
 		}
 	}

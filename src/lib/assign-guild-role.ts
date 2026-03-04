@@ -43,7 +43,7 @@ export interface AssignRoleOptions {
  * Attempt to add `roleId` to `userId` in the configured guild.
  *
  * Returns `true` when the role was successfully assigned (or was already
- * present — Discord returns 204 in both cases), `false` on any failure.
+ * present - Discord returns 204 in both cases), `false` on any failure.
  *
  * Never throws.
  */
@@ -68,7 +68,7 @@ export async function assignGuildRole(opts: AssignRoleOptions): Promise<boolean>
 		return true;
 	} catch (err) {
 		// 403 → bot lacks MANAGE_ROLES or its top role is too low.
-		// 404 → user is not a member of the guild (they haven't joined yet —
+		// 404 → user is not a member of the guild (they haven't joined yet -
 		//        this is the expected case; the role will be assigned on their
 		//        next login once they are in the server).
 		// Any other error → transient Discord API issue.

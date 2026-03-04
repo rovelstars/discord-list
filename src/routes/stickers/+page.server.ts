@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ url, setHeaders, parent }) => {
 
 	const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-	// Resolve custom emoji IDs in tags — one DB round-trip for all 48 stickers.
+	// Resolve custom emoji IDs in tags - one DB round-trip for all 48 stickers.
 	let resolvedTagsMap: Awaited<ReturnType<typeof resolveStickerTagsBulk>> = new Map();
 	try {
 		resolvedTagsMap = await resolveStickerTagsBulk(stickers);

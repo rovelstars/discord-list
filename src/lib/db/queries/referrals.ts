@@ -210,7 +210,7 @@ export async function wouldCreateReferralLoop(
 
 /**
  * Returns true if `referredId` has already been referred by anyone.
- * A user can only be referred once — this prevents double-referral.
+ * A user can only be referred once - this prevents double-referral.
  */
 export async function isAlreadyReferred(referredId: string): Promise<boolean> {
 	const rows = await withDb((db: DrizzleDb) =>
@@ -229,7 +229,7 @@ export async function isAlreadyReferred(referredId: string): Promise<boolean> {
 
 /**
  * Look up all fingerprints associated with a given user.
- * Ordered by last_seen ascending (oldest first) — ready for FIFO eviction.
+ * Ordered by last_seen ascending (oldest first) - ready for FIFO eviction.
  */
 export async function getUserFingerprints(
 	userId: string
@@ -300,9 +300,9 @@ export async function getUsersWithFingerprint(
  *      (smallest last_seen) via DELETE, then INSERT the new one.
  *
  * Returns:
- *   "updated"  — existing fingerprint refreshed.
- *   "inserted" — new fingerprint added (slot was available).
- *   "evicted"  — oldest fingerprint removed to make room; new one added.
+ *   "updated"  - existing fingerprint refreshed.
+ *   "inserted" - new fingerprint added (slot was available).
+ *   "evicted"  - oldest fingerprint removed to make room; new one added.
  */
 export async function upsertFingerprint(
 	userId: string,
@@ -333,7 +333,7 @@ export async function upsertFingerprint(
 		return "updated";
 	}
 
-	// ── 2. New device — check current count ──────────────────────────────────
+	// ── 2. New device - check current count ──────────────────────────────────
 	const allForUser = await getUserFingerprints(userId); // ordered by last_seen ASC
 
 	if (allForUser.length >= MAX_FINGERPRINTS) {
@@ -408,11 +408,11 @@ export async function resolveReferralCode(code: string): Promise<string | null> 
  * reward_status so the SettleRewards function can process it without
  * re-deriving eligibility:
  *
- *   1. Loop prevention — returns early if A→B already exists.
- *   2. Duplicate prevention — a user may only be referred once.
- *   3. Fraud check — if the referred user's fingerprint is already on the
+ *   1. Loop prevention - returns early if A→B already exists.
+ *   2. Duplicate prevention - a user may only be referred once.
+ *   3. Fraud check - if the referred user's fingerprint is already on the
  *      referrer's device list, reward_status is set to "flagged".
- *   4. Eligibility — account age ≥ 7 days AND verified email → "payable";
+ *   4. Eligibility - account age ≥ 7 days AND verified email → "payable";
  *      otherwise "rejected" (or "flagged" takes precedence).
  *
  * @param referrerId       Discord user ID of the referrer.
@@ -468,13 +468,13 @@ export async function createReferral(
 	// ── Determine reward_status ──────────────────────────────────────────────
 	let status: ReferralRewardStatus;
 	if (fingerprintMatch) {
-		// Soft-flag — log the relationship but don't pay out.
+		// Soft-flag - log the relationship but don't pay out.
 		status = "flagged";
 	} else if (!accountOldEnough || !emailVerified) {
 		// Hard eligibility failure.
 		status = "rejected";
 	} else {
-		// All checks pass — mark as payable so SettleRewards credits it.
+		// All checks pass - mark as payable so SettleRewards credits it.
 		status = "payable";
 	}
 
@@ -547,7 +547,7 @@ export async function markReferralPaid(referralId: string): Promise<void> {
 // ---------------------------------------------------------------------------
 
 /**
- * Record a site-visit event for a user (idempotent — one row per user per day).
+ * Record a site-visit event for a user (idempotent - one row per user per day).
  *
  * Inserts a UserActivityLog row only if one with the same
  * (user_id, "site_visit", event_day) doesn't already exist.
@@ -587,7 +587,7 @@ export async function recordSiteVisit(userId: string): Promise<void> {
 }
 
 /**
- * Record a vote event for a user (idempotent — one row per user per unique entity).
+ * Record a vote event for a user (idempotent - one row per user per unique entity).
  *
  * Inserts a UserActivityLog row only if the user hasn't already voted on
  * this entity (uniqueness is on user_id + entity_id across all days).
@@ -861,7 +861,7 @@ export async function milestoneExists(
  * Returns the UUID of the new row.
  *
  * The caller is responsible for calling milestoneExists() first to ensure
- * idempotency — this function does NOT check for duplicates.
+ * idempotency - this function does NOT check for duplicates.
  */
 export async function createMilestone(params: {
 	referralId: string | null;
@@ -893,7 +893,7 @@ export async function createMilestone(params: {
 
 /**
  * Credit R$ to a user and mark the milestone row as "paid" atomically
- * (two sequential writes — libSQL does not expose interactive transactions
+ * (two sequential writes - libSQL does not expose interactive transactions
  * through Drizzle, but the milestone guard above ensures idempotency).
  *
  * Flow:
@@ -942,7 +942,7 @@ export async function creditReward(
 /**
  * Credit R$ to BOTH the referrer and the referred user in a single logical
  * "double-credit" operation. This is the core of the double-sided rewards
- * system — both users get milestone rows created and their balances updated.
+ * system - both users get milestone rows created and their balances updated.
  *
  * For each user:
  *   1. A ReferralMilestones row is created with the appropriate amount and
@@ -1047,7 +1047,7 @@ export async function getActiveReferralsInWindow(): Promise<PendingReferral[]> {
 			.where(
 				and(
 					// Only process referrals where the sign-up reward is paid (fully onboarded)
-					// OR payable (sign-up reward not yet processed — SettleRewards handles both).
+					// OR payable (sign-up reward not yet processed - SettleRewards handles both).
 					// We deliberately include "payable" here so a single run of SettleRewards
 					// can credit the sign-up reward AND check activity milestones in one pass.
 					sql`${Referrals.reward_status} IN ('payable', 'paid')`,

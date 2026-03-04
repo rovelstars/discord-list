@@ -63,10 +63,10 @@ export const GET: RequestHandler = async ({ params }) => {
 // POST /api/bots/[id]/comments
 //
 // Body (JSON):
-//   rating?   number   — required for top-level; forbidden for replies
+//   rating?   number   - required for top-level; forbidden for replies
 //                        (0.5–5.0, one decimal place, e.g. 4.3)
-//   text?     string   — optional comment body (max 2 000 chars)
-//   parent_id? string  — omit or null for top-level; set to a comment id for a reply
+//   text?     string   - optional comment body (max 2 000 chars)
+//   parent_id? string  - omit or null for top-level; set to a comment id for a reply
 //
 // Auth: key cookie / query param / Authorization header
 // ─────────────────────────────────────────────────────────────────────────────
@@ -135,7 +135,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 			);
 		}
 
-		// One review per user per bot — check for an existing top-level comment
+		// One review per user per bot - check for an existing top-level comment
 		const existing = (await withDb((d: DrizzleDb) =>
 			d
 				.select({ id: Comments.id })
@@ -191,7 +191,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 	}
 
 	if (!text && parentId === null) {
-		// Top-level without any text is fine — rating alone is sufficient.
+		// Top-level without any text is fine - rating alone is sufficient.
 		// Leave text as null.
 	}
 

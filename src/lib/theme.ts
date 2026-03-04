@@ -41,7 +41,7 @@ export interface AccentTheme {
 // ─── Default / Base theme ────────────────────────────────────────────────────
 // "default" is the original brand palette from global.css.
 // Its light/dark values are empty because global.css already defines them on
-// :root and .dark — no extra overrides needed.
+// :root and .dark - no extra overrides needed.
 
 const defaultTheme: AccentTheme = {
 	id: "default",
@@ -289,7 +289,7 @@ const tokyoNightTheme: AccentTheme = {
 		"color-ring": "hsl(229 70% 68%)"
 	},
 	light: {
-		// Tokyo Night Storm Light — a softer variant
+		// Tokyo Night Storm Light - a softer variant
 		"color-background": "hsl(224 20% 94%)",
 		"color-foreground": "hsl(225 27% 20%)",
 		"color-card": "hsl(224 20% 88%)",
@@ -527,7 +527,7 @@ const amoledTheme: AccentTheme = {
 	label: "AMOLED",
 	swatch: "#4D9FFF",
 	dark: {
-		"color-background": "hsl(0 0% 0%)", // #000000 — true black
+		"color-background": "hsl(0 0% 0%)", // #000000 - true black
 		"color-foreground": "hsl(0 0% 95%)",
 		"color-card": "hsl(0 0% 4%)", // near-black card
 		"color-card-foreground": "hsl(0 0% 95%)",
@@ -611,7 +611,7 @@ const hyperOceanTheme: AccentTheme = {
 		"color-ring": "hsl(213 55% 49%)"
 	},
 	light: {
-		// A lighter "ocean dawn" — desaturated sky palette derived from the same hues
+		// A lighter "ocean dawn" - desaturated sky palette derived from the same hues
 		"color-background": "hsl(213 40% 96%)",
 		"color-foreground": "hsl(231 28% 18%)",
 		"color-card": "hsl(213 30% 90%)",
@@ -724,7 +724,7 @@ export function parseAccent(raw: string | undefined | null): ThemeId {
 /**
  * Resolve the actual light/dark polarity from a stored mode preference and
  * an optional `prefers-color-scheme` hint (passed from the client via a
- * cookie or a request header — absent on cold SSR).
+ * cookie or a request header - absent on cold SSR).
  *
  * On the server, when mode is "system" and we have no hint, we default to
  * "light" to avoid a jarring dark flash on users whose system is actually

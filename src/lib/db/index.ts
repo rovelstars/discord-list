@@ -114,7 +114,7 @@ export async function withDb<T>(fn: (db: DrizzleDb) => Promise<T>): Promise<T> {
 	} catch (firstErr) {
 		if (!isConnectionError(firstErr)) throw firstErr;
 
-		// Stale connection — reset and retry once with a fresh client
+		// Stale connection - reset and retry once with a fresh client
 		console.warn("[db] Connection error detected, reconnecting…", (firstErr as Error).message);
 		resetSingletons();
 

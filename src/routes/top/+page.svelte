@@ -21,7 +21,7 @@
 		}>;
 	};
 
-	// Reactive — stays fresh after client-side navigations
+	// Reactive - stays fresh after client-side navigations
 	$: ({ bots } = data);
 
 	const currentYear = new Date().getFullYear();
@@ -39,7 +39,7 @@
 		return String(rank);
 	}
 
-	// FAQ items — reactive so bots[0] is always defined (avoids SSR crash)
+	// FAQ items - reactive so bots[0] is always defined (avoids SSR crash)
 	$: faqs = [
 		{
 			q: `What are the best Discord bots in ${currentYear}?`,
@@ -85,7 +85,7 @@
 </script>
 
 <SEO
-	title="Top 100 Discord Bots {currentYear} — Leaderboard"
+	title="Top 100 Discord Bots {currentYear} - Leaderboard"
 	description="The definitive ranking of the best Discord bots in {currentYear}, voted by real users. See which music, moderation, utility and fun bots top the charts this month."
 	imageSmall="/assets/img/bot/logo-512.png"
 />
@@ -108,11 +108,11 @@
 	</h1>
 	<p class="text-gray-600 dark:text-gray-300 text-xl font-semibold max-w-2xl mx-auto mb-4">
 		The definitive leaderboard of the most-voted Discord bots, ranked by real community votes.
-		Updated continuously — cast your vote every 12 hours!
+		Updated continuously - cast your vote every 12 hours!
 	</p>
 	<p class="text-muted-foreground text-base max-w-xl mx-auto">
 		Whether you need a music bot, a powerful moderation suite, or something fun to keep your
-		community engaged — the rankings below show exactly what the Discord community trusts most.
+		community engaged - the rankings below show exactly what the Discord community trusts most.
 	</p>
 </section>
 
@@ -137,7 +137,7 @@
 			{#each bots as bot (bot.id)}
 				<!--
 					Desktop: 5-column grid  (sm+)
-					Mobile:  2-column grid — rank+avatar+name left, stats+action right
+					Mobile:  2-column grid - rank+avatar+name left, stats+action right
 				-->
 				<div
 					class="group border-b border-border last:border-0
@@ -154,7 +154,7 @@
 						{rankMedal(bot.rank)}
 					</span>
 
-					<!-- Avatar + name + short — spans col 2 on both layouts -->
+					<!-- Avatar + name + short - spans col 2 on both layouts -->
 					<a href="/bots/{bot.slug}" class="flex items-center gap-2.5 min-w-0">
 						<img
 							src={getAvatarURL(bot.id, bot.avatar ?? "0", 48)}
@@ -187,7 +187,7 @@
 					</a>
 
 					<!--
-						Mobile action button — top-right cell (col 3, row 1)
+						Mobile action button - top-right cell (col 3, row 1)
 						Hidden on sm+ (desktop has its own cell below)
 					-->
 					<div class="flex justify-end items-center sm:hidden">
@@ -202,7 +202,7 @@
 					</div>
 
 					<!--
-						Mobile stats row — col 2–3, row 2
+						Mobile stats row - col 2–3, row 2
 						Shows votes + servers inline, hidden on sm+
 					-->
 					<div class="flex items-center gap-3 sm:hidden col-start-2 col-span-2 pb-0.5">
@@ -278,7 +278,7 @@
 		</p>
 	</section>
 {:else}
-	<p class="text-center text-muted-foreground py-20 text-lg">No bots found — check back soon!</p>
+	<p class="text-center text-muted-foreground py-20 text-lg">No bots found - check back soon!</p>
 {/if}
 
 <!-- ── Top 3 cards ───────────────────────────────────────────────────────── -->
@@ -306,12 +306,12 @@
 
 <!-- ── SEO editorial copy ─────────────────────────────────────────────────── -->
 <section class="max-w-3xl mx-auto px-4 pb-16 prose prose-base dark:prose-invert">
-	<h2>Best Discord Bots {currentYear} — Full Ranking Guide</h2>
+	<h2>Best Discord Bots {currentYear} - Full Ranking Guide</h2>
 	<p>
 		Finding the right bot for your Discord server can make the difference between a quiet, inactive
 		community and one that's thriving and engaged. This leaderboard ranks the <strong
 			>top {bots.length} Discord bots</strong
-		> by votes cast directly by Discord users — making it the most democratic and community-driven bot
+		> by votes cast directly by Discord users - making it the most democratic and community-driven bot
 		ranking on the internet.
 	</p>
 
@@ -326,12 +326,12 @@
 	<h3>Categories Represented</h3>
 	<p>The leaderboard spans every major bot category:</p>
 	<ul>
-		<li><strong>Music bots</strong> — stream from YouTube, Spotify, SoundCloud and more</li>
-		<li><strong>Moderation bots</strong> — auto-mod, logging, role management, anti-raid</li>
-		<li><strong>Economy bots</strong> — virtual currency, shops, leaderboards</li>
-		<li><strong>Fun &amp; games</strong> — mini-games, trivia, memes, image commands</li>
-		<li><strong>Utility bots</strong> — server stats, polls, reminders, translations</li>
-		<li><strong>Leveling bots</strong> — XP systems, rank cards, activity rewards</li>
+		<li><strong>Music bots</strong> - stream from YouTube, Spotify, SoundCloud and more</li>
+		<li><strong>Moderation bots</strong> - auto-mod, logging, role management, anti-raid</li>
+		<li><strong>Economy bots</strong> - virtual currency, shops, leaderboards</li>
+		<li><strong>Fun &amp; games</strong> - mini-games, trivia, memes, image commands</li>
+		<li><strong>Utility bots</strong> - server stats, polls, reminders, translations</li>
+		<li><strong>Leveling bots</strong> - XP systems, rank cards, activity rewards</li>
 	</ul>
 
 	<h3>How to Climb the Rankings</h3>

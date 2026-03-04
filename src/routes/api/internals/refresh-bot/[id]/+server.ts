@@ -33,7 +33,7 @@ function validateSecret(request: Request, url: URL): { ok: boolean; misconfigure
  * background URL. All core logic lives in `$lib/bot-refresh.ts`; this handler
  * only deals with authentication.
  *
- * Auth — secret required (same pattern as /refresh-cdn-bgs):
+ * Auth - secret required (same pattern as /refresh-cdn-bgs):
  *   - Header:      X-Internal-Secret: <INTERNAL_SECRET>
  *   - Query param: ?secret=<INTERNAL_SECRET>
  *

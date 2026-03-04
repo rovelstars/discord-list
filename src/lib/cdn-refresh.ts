@@ -8,7 +8,7 @@
  *
  * A Discord CDN URL is considered invalid (needs refresh) when it meets ALL of:
  *   1. It starts with https://cdn.discordapp.com/attachments/  (it's a CDN attachment)
- *   2. It carries signed query params (ex, is, hm) — unsigned URLs never expire
+ *   2. It carries signed query params (ex, is, hm) - unsigned URLs never expire
  *      and therefore never need refreshing.
  *   3. The `ex` (Unix timestamp hex, seconds) is in the past → the token is expired.
  *
@@ -22,10 +22,10 @@
  * ## Efficiency notes
  *
  *   - Single DB read: only the `id` and `bg` columns are fetched (no joins, no extra cols).
- *   - All classification is done purely in memory — no network requests to Discord CDN.
+ *   - All classification is done purely in memory - no network requests to Discord CDN.
  *   - A single POST to Discord's refresh-urls endpoint covers up to 50 URLs per call
  *     (Discord's documented batch limit). We batch automatically.
- *   - Only rows that receive a new URL are written back — one UPDATE per changed row
+ *   - Only rows that receive a new URL are written back - one UPDATE per changed row
  *     (Turso/libSQL does not support bulk multi-value UPDATE in a single statement
  *     through Drizzle, so we fire individual updates; each is tiny and only done when
  *     truly necessary).
@@ -40,7 +40,7 @@ import { eq } from "drizzle-orm";
 // Types
 // ---------------------------------------------------------------------------
 
-/** Minimal row shape fetched from the DB — keeps the read cheap. */
+/** Minimal row shape fetched from the DB - keeps the read cheap. */
 interface BotBgRow {
 	id: string;
 	bg: string | null;
@@ -73,9 +73,9 @@ export interface CdnRefreshResult {
 	totalCdnUrls: number;
 	/** CDN URLs that were permanent (no ex/is/hm) and skipped. */
 	permanentUrls: number;
-	/** CDN URLs that were signed but not yet expired — skipped. */
+	/** CDN URLs that were signed but not yet expired - skipped. */
 	validSignedUrls: number;
-	/** CDN URLs that were expired (or expiry unreadable) — sent for refresh. */
+	/** CDN URLs that were expired (or expiry unreadable) - sent for refresh. */
 	invalidUrls: number;
 	/** URLs successfully refreshed by Discord. */
 	refreshed: number;
@@ -119,7 +119,7 @@ function parseSignedParams(url: string): {
 	hm: string | null;
 } {
 	try {
-		// Use URL constructor — handles relative paths gracefully by ignoring them
+		// Use URL constructor - handles relative paths gracefully by ignoring them
 		// (they won't start with https:// so they're already filtered above).
 		const parsed = new URL(url);
 		return {
@@ -128,7 +128,7 @@ function parseSignedParams(url: string): {
 			hm: parsed.searchParams.get("hm")
 		};
 	} catch {
-		// Malformed URL — treat as having no signed params so we skip it.
+		// Malformed URL - treat as having no signed params so we skip it.
 		return { ex: null, is: null, hm: null };
 	}
 }
@@ -137,9 +137,9 @@ function parseSignedParams(url: string): {
  * Classify a single Discord CDN attachment URL.
  *
  * Returns:
- *  - `'permanent'`  — no signed params → URL never expires, no action needed.
- *  - `'valid'`      — signed params present and expiry is in the future.
- *  - `'invalid'`    — signed params present and URL is expired (or expiry is
+ *  - `'permanent'`  - no signed params → URL never expires, no action needed.
+ *  - `'valid'`      - signed params present and expiry is in the future.
+ *  - `'invalid'`    - signed params present and URL is expired (or expiry is
  *                     unreadable), needs a refresh.
  */
 function classifyCdnUrl(url: string): "permanent" | "valid" | "invalid" {
@@ -147,7 +147,7 @@ function classifyCdnUrl(url: string): "permanent" | "valid" | "invalid" {
 
 	// Permanent URL: all three params must be absent.
 	// (Partially-signed URLs with only some params are treated as invalid to
-	//  be safe — Discord requires all three.)
+	//  be safe - Discord requires all three.)
 	if (!ex && !is && !hm) {
 		return "permanent";
 	}
@@ -161,7 +161,7 @@ function classifyCdnUrl(url: string): "permanent" | "valid" | "invalid" {
 	// ex is a lowercase hex string representing a Unix timestamp in seconds.
 	const expirySeconds = parseInt(ex, 16);
 	if (Number.isNaN(expirySeconds)) {
-		// Unreadable expiry — treat as invalid.
+		// Unreadable expiry - treat as invalid.
 		return "invalid";
 	}
 
@@ -206,7 +206,7 @@ async function updateBotBg(botId: string, newBg: string): Promise<void> {
  * Call Discord's POST /attachments/refresh-urls endpoint for a batch of URLs.
  *
  * @param urls       Array of CDN URLs to refresh (max 50 per Discord's limit).
- * @param botToken   Bot token (without the "Bot " prefix — we add it here).
+ * @param botToken   Bot token (without the "Bot " prefix - we add it here).
  * @returns          Array of { original, refreshed } pairs on success.
  */
 async function discordRefreshBatch(
@@ -240,7 +240,7 @@ async function discordRefreshBatch(
  *
  * Steps:
  *  1. Read all bot rows that have a Discord CDN bg URL (single cheap SELECT).
- *  2. Classify each URL in memory — no network calls to Discord CDN.
+ *  2. Classify each URL in memory - no network calls to Discord CDN.
  *  3. Collect the invalid/expired ones.
  *  4. Batch-POST them to Discord's refresh-urls endpoint (≤50 per request).
  *  5. For each refreshed URL that actually differs from the stored one, fire
@@ -289,14 +289,14 @@ export async function runCdnBgRefresh(botToken: string): Promise<CdnRefreshResul
 		} else if (classification === "valid") {
 			result.validSignedUrls++;
 		} else {
-			// 'invalid' — expired or malformed signed URL
+			// 'invalid' - expired or malformed signed URL
 			result.invalidUrls++;
 			invalid.push({ botId: row.id, url: row.bg });
 		}
 	}
 
 	if (invalid.length === 0) {
-		// Nothing to do — return early without hitting Discord API at all.
+		// Nothing to do - return early without hitting Discord API at all.
 		return result;
 	}
 
@@ -337,7 +337,7 @@ export async function runCdnBgRefresh(botToken: string): Promise<CdnRefreshResul
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : String(err);
 			result.errors.push(`Discord API batch error (offset ${i}): ${msg}`);
-			// Continue with remaining batches — partial success is better than none.
+			// Continue with remaining batches - partial success is better than none.
 		}
 	}
 

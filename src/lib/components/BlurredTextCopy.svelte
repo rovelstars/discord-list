@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { Eye, EyeOff, Check, Copy } from "@lucide/svelte";
 
 	export let text: string = "";
 	export let className: string = "";
@@ -67,7 +68,7 @@
 				isBlurred ? "blur-sm select-none" : "select-text"
 			}`}
 			aria-hidden={isBlurred}
-			title={isBlurred ? "Hidden — click eye to reveal" : ""}
+			title={isBlurred ? "Hidden - click eye to reveal" : ""}
 		>
 			{isBlurred ? "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" : text}
 		</p>
@@ -82,35 +83,9 @@
 			title={isBlurred ? "Show text" : "Hide text"}
 		>
 			{#if isBlurred}
-				<!-- Eye icon -->
-				<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden focusable="false">
-					<path
-						d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"
-						stroke="currentColor"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
-					<circle cx="12" cy="12" r="3" fill="currentColor" />
-				</svg>
+				<Eye class="w-4 h-4" aria-hidden="true" />
 			{:else}
-				<!-- Eye Off icon -->
-				<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden focusable="false">
-					<path
-						d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-6 0-10-7-10-7a19.25 19.25 0 0 1 5.11-5.11"
-						stroke="currentColor"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
-					<path
-						d="M1 1l22 22"
-						stroke="currentColor"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
-				</svg>
+				<EyeOff class="w-4 h-4" aria-hidden="true" />
 			{/if}
 		</button>
 	</div>
@@ -124,34 +99,9 @@
 		title="Copy to clipboard"
 	>
 		{#if isCopied}
-			<!-- Check icon -->
-			<svg
-				class="w-4 h-4 text-green-600"
-				viewBox="0 0 24 24"
-				fill="none"
-				aria-hidden
-				focusable="false"
-			>
-				<path
-					d="M20 6L9 17l-5-5"
-					stroke="currentColor"
-					stroke-width="1.8"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				/>
-			</svg>
+			<Check class="w-4 h-4 text-green-600" aria-hidden="true" />
 		{:else}
-			<!-- Copy icon -->
-			<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden focusable="false">
-				<rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.5" />
-				<path
-					d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				/>
-			</svg>
+			<Copy class="w-4 h-4" aria-hidden="true" />
 		{/if}
 	</button>
 

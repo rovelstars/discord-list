@@ -33,17 +33,17 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 		icon: "/assets/img/bot/wink.svg",
 		headline: "The Best Discord Music Bots",
 		description:
-			"Stream music from YouTube, Spotify, SoundCloud and more. Queue management, equaliser, lyrics and 24/7 playback — everything your listening party needs.",
+			"Stream music from YouTube, Spotify, SoundCloud and more. Queue management, equaliser, lyrics and 24/7 playback - everything your listening party needs.",
 		longDescription:
 			"Music bots are the most popular category on Discord by a wide margin. They let your server members queue songs, manage playlists, apply audio filters and listen together in voice channels. The best music bots support multiple sources (YouTube, Spotify, SoundCloud, Apple Music), offer reliable 24/7 uptime, and include useful extras like lyrics display, bass boost, and DJ role restrictions.",
 		faqs: [
 			{
 				q: "What is the best music bot for Discord?",
-				a: "The best music bot depends on your needs. For YouTube & Spotify support with high audio quality, look for bots near the top of this page — they are ranked by how many Discord servers actively use them."
+				a: "The best music bot depends on your needs. For YouTube & Spotify support with high audio quality, look for bots near the top of this page - they are ranked by how many Discord servers actively use them."
 			},
 			{
 				q: "Do Discord music bots still work in 2024?",
-				a: "Yes — while some older bots were affected by YouTube API changes, many modern music bots have adapted by supporting multiple audio sources and using updated extraction methods. The bots listed here are community-verified to be working."
+				a: "Yes - while some older bots were affected by YouTube API changes, many modern music bots have adapted by supporting multiple audio sources and using updated extraction methods. The bots listed here are community-verified to be working."
 			},
 			{
 				q: "Can I use a music bot in multiple servers?",
@@ -64,7 +64,7 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 		icon: "/assets/img/mod.svg",
 		headline: "Best Discord Moderation Bots",
 		description:
-			"Keep your community safe and healthy. Auto-mod, anti-spam, logging, mute/ban commands and raid protection — the essential toolkit for any growing server.",
+			"Keep your community safe and healthy. Auto-mod, anti-spam, logging, mute/ban commands and raid protection - the essential toolkit for any growing server.",
 		longDescription:
 			"As Discord servers grow, manual moderation becomes impossible. Moderation bots fill the gap by automatically filtering hate speech, spam and NSFW content; issuing warnings; managing mutes, kicks and bans; and keeping detailed audit logs. A good moderation bot is the backbone of any healthy community, silently enforcing your rules around the clock.",
 		faqs: [
@@ -74,7 +74,7 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 			},
 			{
 				q: "Are moderation bots safe to give admin permissions?",
-				a: "Most moderation bots only need 'Manage Messages', 'Kick Members', 'Ban Members' and 'Manage Roles' — not full Administrator. Only grant the minimum permissions each bot actually needs."
+				a: "Most moderation bots only need 'Manage Messages', 'Kick Members', 'Ban Members' and 'Manage Roles' - not full Administrator. Only grant the minimum permissions each bot actually needs."
 			},
 			{
 				q: "Can a moderation bot automatically remove spam?",
@@ -101,7 +101,7 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 			},
 			{
 				q: "Is there a Discord bot for tournament organisation?",
-				a: "Yes — several bots on this page specialise in running tournaments with bracket generation, match scheduling, result reporting and automated role assignment for winners."
+				a: "Yes - several bots on this page specialise in running tournaments with bracket generation, match scheduling, result reporting and automated role assignment for winners."
 			}
 		],
 		relatedSlugs: ["economy", "leveling", "fun"]
@@ -139,11 +139,11 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 		description:
 			"Server stats, polls, reminders, calculators, weather, translation and the hundreds of other handy tools that make running a Discord server easier.",
 		longDescription:
-			"Utility bots are the Swiss Army knives of Discord. They don't focus on one thing — they do everything. From posting server statistics and running polls to sending timed reminders, fetching weather data, converting currencies and translating messages in real time, utility bots fill in the gaps that more specialised bots leave. Most server admins keep at least one utility bot alongside their dedicated music and moderation bots.",
+			"Utility bots are the Swiss Army knives of Discord. They don't focus on one thing - they do everything. From posting server statistics and running polls to sending timed reminders, fetching weather data, converting currencies and translating messages in real time, utility bots fill in the gaps that more specialised bots leave. Most server admins keep at least one utility bot alongside their dedicated music and moderation bots.",
 		faqs: [
 			{
 				q: "What is a utility bot on Discord?",
-				a: "A utility bot is a general-purpose bot that provides a broad set of helpful commands — polls, reminders, server stats, search tools, calculators and more. They're designed to fill the everyday gaps in your server's functionality."
+				a: "A utility bot is a general-purpose bot that provides a broad set of helpful commands - polls, reminders, server stats, search tools, calculators and more. They're designed to fill the everyday gaps in your server's functionality."
 			},
 			{
 				q: "Do I need a utility bot if I already have a moderation bot?",
@@ -170,7 +170,7 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 			},
 			{
 				q: "Are there Discord bots for playing games in chat?",
-				a: "Yes — many fun bots include text-based games you can play directly in Discord. Common options include trivia, word games, number games, chess and simple card games."
+				a: "Yes - many fun bots include text-based games you can play directly in Discord. Common options include trivia, word games, number games, chess and simple card games."
 			}
 		],
 		relatedSlugs: ["gaming", "anime", "economy"]
@@ -189,7 +189,7 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 		faqs: [
 			{
 				q: "Is there a Discord bot for tracking anime episodes?",
-				a: "Yes — several anime bots on this page can notify your server when new episodes of currently airing anime drop, pulling data from sources like AniList and MyAnimeList."
+				a: "Yes - several anime bots on this page can notify your server when new episodes of currently airing anime drop, pulling data from sources like AniList and MyAnimeList."
 			},
 			{
 				q: "What is a waifu bot on Discord?",
@@ -208,7 +208,7 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 		description:
 			"Reward activity with XP, rank cards and role unlocks. A well-configured leveling system turns lurkers into regulars by giving everyone a visible goal.",
 		longDescription:
-			"Leveling bots track member activity — messages, voice time, reactions — and convert it into experience points. As members accumulate XP they level up, unlocking custom role rewards and climbing a visible server leaderboard. This gamification mechanic is one of the most proven strategies for improving member retention and keeping a server active over the long term.",
+			"Leveling bots track member activity - messages, voice time, reactions - and convert it into experience points. As members accumulate XP they level up, unlocking custom role rewards and climbing a visible server leaderboard. This gamification mechanic is one of the most proven strategies for improving member retention and keeping a server active over the long term.",
 		faqs: [
 			{
 				q: "What is the best leveling bot for Discord?",
@@ -235,11 +235,11 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 		faqs: [
 			{
 				q: "Why do I need a logging bot on Discord?",
-				a: "Discord's built-in audit log is limited and doesn't capture things like deleted message content. A dedicated logging bot records far more detail — including the content of deleted messages, edit history, and a complete record of moderator actions."
+				a: "Discord's built-in audit log is limited and doesn't capture things like deleted message content. A dedicated logging bot records far more detail - including the content of deleted messages, edit history, and a complete record of moderator actions."
 			},
 			{
 				q: "Can a Discord logging bot record deleted messages?",
-				a: "Yes — logging bots that are online when a message is sent cache its content. If the message is later deleted, the bot posts the original content to your log channel. Note that bots cannot retroactively retrieve messages they weren't online to see."
+				a: "Yes - logging bots that are online when a message is sent cache its content. If the message is later deleted, the bot posts the original content to your log channel. Note that bots cannot retroactively retrieve messages they weren't online to see."
 			}
 		],
 		relatedSlugs: ["moderation", "utility", "announce"]
@@ -277,15 +277,15 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 		description:
 			"Auto-post YouTube uploads, Twitch live alerts, Reddit feeds and custom announcements so your community never misses important updates.",
 		longDescription:
-			"Announcement and feed bots act as automated news desks for your Discord server. They monitor external platforms — YouTube channels, Twitch streams, Twitter/X accounts, Reddit subreddits, RSS feeds — and automatically post to a designated Discord channel the moment new content appears. For content creators and community managers, these bots eliminate the manual work of cross-posting updates.",
+			"Announcement and feed bots act as automated news desks for your Discord server. They monitor external platforms - YouTube channels, Twitch streams, Twitter/X accounts, Reddit subreddits, RSS feeds - and automatically post to a designated Discord channel the moment new content appears. For content creators and community managers, these bots eliminate the manual work of cross-posting updates.",
 		faqs: [
 			{
 				q: "Can a Discord bot automatically post when I go live on Twitch?",
-				a: "Yes — several bots on this page support Twitch live notifications. You configure the Twitch channel to monitor and the Discord channel to post to, and the bot will automatically announce when the stream goes live, including a preview embed."
+				a: "Yes - several bots on this page support Twitch live notifications. You configure the Twitch channel to monitor and the Discord channel to post to, and the bot will automatically announce when the stream goes live, including a preview embed."
 			},
 			{
 				q: "Is there a Discord bot that posts Reddit content automatically?",
-				a: "Yes — Reddit feed bots let you subscribe to one or more subreddits and automatically post new submissions (with configurable filters for score, flair and NSFW) to a Discord channel of your choice."
+				a: "Yes - Reddit feed bots let you subscribe to one or more subreddits and automatically post new submissions (with configurable filters for score, flair and NSFW) to a Discord channel of your choice."
 			}
 		],
 		relatedSlugs: ["utility", "moderation", "logging"]
@@ -304,7 +304,7 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 		faqs: [
 			{
 				q: "Can a Discord bot translate messages automatically?",
-				a: "Yes — some translation bots can be configured to automatically translate every message in a designated channel into a target language, making global communities much more accessible."
+				a: "Yes - some translation bots can be configured to automatically translate every message in a designated channel into a target language, making global communities much more accessible."
 			},
 			{
 				q: "How many languages do Discord translation bots support?",
@@ -315,5 +315,5 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
 	}
 };
 
-/** Sorted list of all slugs — useful for sitemap generation and the index page. */
+/** Sorted list of all slugs - useful for sitemap generation and the index page. */
 export const CATEGORY_SLUGS = Object.keys(CATEGORIES) as (keyof typeof CATEGORIES)[];

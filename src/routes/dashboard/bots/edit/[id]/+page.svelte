@@ -100,7 +100,7 @@
 	let codeRevealed = false;
 	let codeCopied = false;
 
-	// The live code value — starts as what the server loaded, replaced in-place
+	// The live code value - starts as what the server loaded, replaced in-place
 	// after a successful regeneration so the user sees the new token immediately.
 	let currentCode = bot.code;
 
@@ -126,10 +126,10 @@
 	}
 
 	// ── Regenerate code state ──────────────────────────────────────────────────
-	// 'idle'      — default, button shows normally
-	// 'confirm'   — inline confirmation prompt is visible
-	// 'loading'   — API call in flight
-	// 'done'      — regeneration succeeded, new code is shown unblurred with a warning
+	// 'idle'      - default, button shows normally
+	// 'confirm'   - inline confirmation prompt is visible
+	// 'loading'   - API call in flight
+	// 'done'      - regeneration succeeded, new code is shown unblurred with a warning
 	type RegenState = "idle" | "confirm" | "loading" | "done";
 	let regenState: RegenState = "idle";
 	let regenError = "";
@@ -162,7 +162,7 @@
 					invalid_key: "Your session is invalid. Please log in again.",
 					not_owner: "You are not an owner of this bot.",
 					no_bot_found: "Bot not found.",
-					db_update_failed: "Database error — please try again.",
+					db_update_failed: "Database error - please try again.",
 					server_error: "An unexpected server error occurred."
 				};
 				regenError = errMap[data.err] ?? data.err ?? "Unknown error.";
@@ -170,13 +170,13 @@
 				return;
 			}
 
-			// Success — replace the displayed code and force it revealed so the
+			// Success - replace the displayed code and force it revealed so the
 			// user can immediately see and copy it.
 			currentCode = data.code;
 			codeRevealed = true;
 			regenState = "done";
 		} catch {
-			regenError = "Network error — please try again.";
+			regenError = "Network error - please try again.";
 			regenState = "idle";
 		}
 	}
@@ -287,7 +287,7 @@
 					invalid_key: "Your session is invalid. Please log in again.",
 					not_owner: "You are not an owner of this bot.",
 					no_bot_found: "Bot not found.",
-					db_update_failed: "Database error — please try again."
+					db_update_failed: "Database error - please try again."
 				};
 				errorMsg = errMap[responseData.err] ?? responseData.err;
 			} else {
@@ -296,7 +296,7 @@
 				setTimeout(() => goto(`/bots/${slug || bot.id}`), 1200);
 			}
 		} catch {
-			errorMsg = "Network error — please try again.";
+			errorMsg = "Network error - please try again.";
 		} finally {
 			submitting = false;
 		}
@@ -312,7 +312,7 @@
 </script>
 
 <SEO
-	title="Edit {bot.username} — Dashboard"
+	title="Edit {bot.username} - Dashboard"
 	description="Edit your bot's details on Rovel Discord List."
 	imageSmall="/assets/img/bot/logo-512.png"
 />
@@ -657,7 +657,7 @@
 							class="rounded-md bg-yellow-500/10 border border-yellow-500/40 px-4 py-3 space-y-1"
 						>
 							<p class="text-sm font-semibold text-yellow-600 dark:text-yellow-400">
-								⚠ New token generated — copy it now
+								⚠ New token generated - copy it now
 							</p>
 							<p class="text-sm text-muted-foreground">
 								This is the only time the new token is shown unblurred. Any integrations using the
@@ -831,7 +831,7 @@
 				</div>
 			{/if}
 
-			<!-- Long description — rendered through the same marked+hljs pipeline
+			<!-- Long description - rendered through the same marked+hljs pipeline
 			     the real bot page uses server-side, so the preview is faithful. -->
 			{#if descHtml}
 				<div

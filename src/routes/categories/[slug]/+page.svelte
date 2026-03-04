@@ -43,7 +43,7 @@
 	const listSchema = {
 		"@context": "https://schema.org",
 		"@type": "ItemList",
-		name: `${meta.name} — Rovel Discord List`,
+		name: `${meta.name} - Rovel Discord List`,
 		description: meta.description,
 		itemListElement: bots.slice(0, 10).map((bot: any, i: number) => ({
 			"@type": "ListItem",
@@ -118,7 +118,7 @@
 	<p
 		class="text-gray-600 dark:text-gray-300 text-xl mb-8 md:mx-32 mx-4 md:text-left text-center font-semibold"
 	>
-		Ranked by server count — the most widely used {meta.name.toLowerCase()} in the Discord community.
+		Ranked by server count - the most widely used {meta.name.toLowerCase()} in the Discord community.
 	</p>
 
 	{#if bots.length > 0}
@@ -179,7 +179,7 @@
 			</div>
 			<div class="bg-card border border-border rounded-xl p-4 text-center">
 				<p class="text-3xl font-bold font-heading text-orange-500">
-					{bots[0]?.username ?? "—"}
+					{bots[0]?.username ?? "-"}
 				</p>
 				<p class="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-wide">#1 Bot</p>
 			</div>
@@ -244,26 +244,26 @@
 			.toLowerCase()
 			.replace(" bots", " bot")} for your server comes down to a few key questions: How many servers is
 		it in? Is it actively maintained? Does it have a support server where you can get help? The bots listed
-		above are ranked by real-world usage — the ones at the top are there because thousands of server owners
+		above are ranked by real-world usage - the ones at the top are there because thousands of server owners
 		trust them enough to keep them installed.
 	</p>
 
 	<h3>What to Check Before Adding Any Bot</h3>
 	<ul>
 		<li>
-			<strong>Permission scope</strong> — only grant the permissions the bot actually requires. Avoid
+			<strong>Permission scope</strong> - only grant the permissions the bot actually requires. Avoid
 			bots that ask for Administrator unnecessarily.
 		</li>
 		<li>
-			<strong>Support &amp; documentation</strong> — a bot with an active support server and clear docs
+			<strong>Support &amp; documentation</strong> - a bot with an active support server and clear docs
 			is much easier to configure and troubleshoot.
 		</li>
 		<li>
-			<strong>Uptime &amp; reliability</strong> — check the bot's server count and vote history. Popular
+			<strong>Uptime &amp; reliability</strong> - check the bot's server count and vote history. Popular
 			bots tend to invest more in infrastructure.
 		</li>
 		<li>
-			<strong>Open source</strong> — if security matters to you, prefer bots with a public repository
+			<strong>Open source</strong> - if security matters to you, prefer bots with a public repository
 			so the code can be audited.
 		</li>
 	</ul>
@@ -278,7 +278,7 @@
 	<h3>Submit Your {meta.name.replace(" Bots", " Bot")} to This List</h3>
 	<p>
 		Built a {meta.name.replace(" Bots", " bot").toLowerCase()} and want it featured here?
-		<a href="/dashboard/bots/new">Submit it via your dashboard</a> — once approved it will appear on this
+		<a href="/dashboard/bots/new">Submit it via your dashboard</a> - once approved it will appear on this
 		page and become discoverable by every server owner browsing Rovel Discord List.
 	</p>
 </section>

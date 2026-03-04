@@ -9,7 +9,7 @@
  *
  * This is the ground-truth source for the "this bot is in these servers" and
  * "this server has these bots" features on bot/server detail pages.  The
- * page-load queries simply read from these cached columns — no Discord API
+ * page-load queries simply read from these cached columns - no Discord API
  * call is needed at render time.
  *
  * Security:
@@ -93,9 +93,9 @@ function sleep(ms: number): Promise<void> {
  * Check whether `botId` is currently a member of `guildId`.
  *
  * Returns:
- *   true   — 2xx response (bot is in the guild)
- *   false  — 404 (bot is NOT in the guild; this is the normal "not present" case)
- *   null   — any other HTTP error or network failure (treat as unknown / skip)
+ *   true   - 2xx response (bot is in the guild)
+ *   false  - 404 (bot is NOT in the guild; this is the normal "not present" case)
+ *   null   - any other HTTP error or network failure (treat as unknown / skip)
  */
 async function isBotInGuild(
 	guildId: string,
@@ -172,7 +172,7 @@ async function runSync(
 	// are checked together.  This makes the per-server accumulator easy to manage
 	// and lets us write each server row in one update after its batch completes.
 	//
-	// In-memory accumulators — keyed by ID — collect the confirmed memberships
+	// In-memory accumulators - keyed by ID - collect the confirmed memberships
 	// so we write each row only once at the end (or per-server for servers).
 
 	// botId → Set<serverId> where bot is confirmed present
@@ -202,7 +202,7 @@ async function runSync(
 				const present = await isBotInGuild(serverId, botId, botToken);
 
 				if (present === null) {
-					// Unknown / transient error — skip without recording as confirmed
+					// Unknown / transient error - skip without recording as confirmed
 					// or as absent; the existing stored value is preserved.
 					return;
 				}
@@ -307,7 +307,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
 		const durationMs = Date.now() - startedAt;
 
 		console.log(
-			`[sync-bot-memberships] Done in ${durationMs}ms — ` +
+			`[sync-bot-memberships] Done in ${durationMs}ms - ` +
 				`checked=${result.totalChecked} confirmed=${result.confirmed} ` +
 				`botsUpdated=${result.botsUpdated} serversUpdated=${result.serversUpdated} ` +
 				`errors=${result.errors.length}` +

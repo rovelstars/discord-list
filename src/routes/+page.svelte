@@ -97,7 +97,7 @@
 			_type: "emoji" as const
 		}));
 
-		// Pool per row type — cycle: bot, server, sticker, emoji, bot, server
+		// Pool per row type - cycle: bot, server, sticker, emoji, bot, server
 		const pools: BgItem[][] = [bots, servers, stickers, emojis, bots, servers];
 
 		const rows: BgItem[][] = [];
@@ -125,7 +125,7 @@
 </script>
 
 <SEO
-	title="Rovel Discord List — Find Bots, Servers, Emojis & More"
+	title="Rovel Discord List - Find Bots, Servers, Emojis & More"
 	description="Discover the next Discord bot, server, sticker, emoji, or friend right here. The best Discord discovery platform."
 	imageSmall="/assets/img/bot/logo-512.png"
 	noSuffix={true}
@@ -137,7 +137,7 @@
 	<!--
 		The stage is positioned to cover the full viewport (plus bleed on all sides
 		so the tilt never reveals bare background). Cards render at natural size
-		inside a CSS-scaled stage — one transform on the whole stage, nothing nested.
+		inside a CSS-scaled stage - one transform on the whole stage, nothing nested.
 	-->
 	<div class="bg-stage blur-xs" aria-hidden="true">
 		<div class="bg-tilt">
@@ -221,7 +221,7 @@
 			<p
 				class="text-foreground/70 text-base sm:text-lg md:text-xl font-semibold text-center max-w-xl mb-8 sm:mb-12"
 			>
-				The ultimate Discord discovery platform — bots, servers, stickers, emojis, and communities,
+				The ultimate Discord discovery platform - bots, servers, stickers, emojis, and communities,
 				all in one place.
 			</p>
 
@@ -374,7 +374,7 @@
 						Featured Servers
 					</h2>
 					<p class="text-muted-foreground text-lg mb-8 font-medium">
-						Thriving Discord communities — find your next home.
+						Thriving Discord communities - find your next home.
 					</p>
 					<div class="flex flex-wrap justify-center gap-4">
 						{#each topServersData.slice(0, 6) as server}
@@ -491,7 +491,7 @@
 						New Emojis
 					</h2>
 					<p class="text-muted-foreground text-lg mb-8 font-medium">
-						Freshly synced custom emojis — be the first to download them.
+						Freshly synced custom emojis - be the first to download them.
 					</p>
 					<div
 						class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3"
@@ -611,7 +611,7 @@
 						New Stickers
 					</h2>
 					<p class="text-muted-foreground text-lg mb-8 font-medium">
-						Freshly synced custom stickers — be the first to download them.
+						Freshly synced custom stickers - be the first to download them.
 					</p>
 					<div
 						class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3"
@@ -715,7 +715,7 @@
 						</div>
 						<h3 class="font-heading text-xl font-bold">Top Bots</h3>
 						<p class="text-muted-foreground text-sm leading-relaxed">
-							The most popular bots ranked by community votes — only the best make it here.
+							The most popular bots ranked by community votes - only the best make it here.
 						</p>
 						<span class="text-amber-500 text-sm font-semibold group-hover:underline"
 							>See rankings →</span
@@ -757,7 +757,7 @@
 						</div>
 						<h3 class="font-heading text-xl font-bold">Categories</h3>
 						<p class="text-muted-foreground text-sm leading-relaxed">
-							Browse bots by category — music, moderation, games, utility, and more.
+							Browse bots by category - music, moderation, games, utility, and more.
 						</p>
 						<span class="text-blue-500 text-sm font-semibold group-hover:underline"
 							>Explore categories →</span
@@ -789,7 +789,7 @@
 						</div>
 						<h3 class="font-heading text-xl font-bold">New Arrivals</h3>
 						<p class="text-muted-foreground text-sm leading-relaxed">
-							Fresh bots just added — be among the first to discover them.
+							Fresh bots just added - be among the first to discover them.
 						</p>
 						<span class="text-green-500 text-sm font-semibold group-hover:underline"
 							>See what's new →</span
@@ -852,7 +852,7 @@
 						</div>
 						<h3 class="font-heading text-xl font-bold">Servers</h3>
 						<p class="text-muted-foreground text-sm leading-relaxed">
-							Discover vibrant communities to join — gaming, art, coding, music and more.
+							Discover vibrant communities to join - gaming, art, coding, music and more.
 						</p>
 						<span class="text-green-500 text-sm font-semibold group-hover:underline"
 							>Find communities →</span
@@ -933,11 +933,11 @@
 	/* ── Background stage ──────────────────────────────────────────────────── */
 
 	/*
-		.bg-stage  — covers the full viewport plus generous bleed on all sides so
+		.bg-stage  - covers the full viewport plus generous bleed on all sides so
 		             the tilt never exposes bare background. Pointer events off.
-		.bg-tilt   — applies the 3-D perspective tilt to every row at once.
+		.bg-tilt   - applies the 3-D perspective tilt to every row at once.
 		             scale(1.15) compensates for the rotation shrinking the visible area.
-		.bg-row    — one horizontally-scrolling strip of cards.
+		.bg-row    - one horizontally-scrolling strip of cards.
 	*/
 
 	.bg-stage {
@@ -954,14 +954,14 @@
 	}
 
 	.bg-tilt {
-		/* GPU layer for the whole tilted stage — smooths skew antialiasing */
+		/* GPU layer for the whole tilted stage - smooths skew antialiasing */
 		transform-style: preserve-3d;
 		-webkit-transform-style: preserve-3d;
 		image-rendering: auto;
 		/* Subpixel hint */
 		-webkit-font-smoothing: subpixel-antialiased;
 		/*
-		 * Isometric-style tilt using skew — no perspective depth tricks,
+		 * Isometric-style tilt using skew - no perspective depth tricks,
 		 * so rows stay exactly where they are vertically.
 		 *
 		 * We place the box so it fills the viewport with generous bleed,

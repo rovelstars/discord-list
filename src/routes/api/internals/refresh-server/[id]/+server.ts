@@ -34,7 +34,7 @@ function validateSecret(request: Request, url: URL): { ok: boolean; misconfigure
  * lives in `$lib/server-refresh.ts`; this handler only deals with
  * authentication.
  *
- * Auth — secret required (same pattern as /refresh-bot):
+ * Auth - secret required (same pattern as /refresh-bot):
  *   - Header:      X-Internal-Secret: <INTERNAL_SECRET>
  *   - Query param: ?secret=<INTERNAL_SECRET>
  *
@@ -88,7 +88,7 @@ export const POST: RequestHandler = async ({ request, url, params }) => {
 	}
 
 	// ------------------------------------------------------------------
-	// Optional force flag — bypasses the stale-data guard in the lib
+	// Optional force flag - bypasses the stale-data guard in the lib
 	// ------------------------------------------------------------------
 	const force = url.searchParams.get("force") === "1";
 

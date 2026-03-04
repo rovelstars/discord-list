@@ -55,7 +55,7 @@ async function getDiscordUser(key: string): Promise<{ id: string; username: stri
 // If the user already reacted with this emoji → removes the reaction.
 //
 // Body (JSON):
-//   emoji  string  — one of the nine canonical slugs:
+//   emoji  string  - one of the nine canonical slugs:
 //                    funny | useful | informative | like | dislike |
 //                    love | angry | sad | skull
 //

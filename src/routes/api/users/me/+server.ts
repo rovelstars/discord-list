@@ -108,7 +108,7 @@ export const PATCH: RequestHandler = async ({ request, cookies }) => {
 			updates.banner = banner || null;
 		}
 
-		// Nothing to update — treat as success
+		// Nothing to update - treat as success
 		if (Object.keys(updates).length === 0) {
 			return json({ success: true }, { status: 200 });
 		}

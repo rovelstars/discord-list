@@ -1,4 +1,5 @@
 <script>
+	import { Mail } from "@lucide/svelte";
 	const year = new Date().getFullYear();
 	const siteOwner = "Rovel Stars™";
 	const email = "support@rovelstars.com";
@@ -134,20 +135,7 @@
 					aria-label="Email support"
 					class="text-muted-foreground hover:text-foreground transition-colors"
 				>
-					<svg
-						class="w-4 h-4"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"
-					>
-						<path d="M3 8.5v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-						<path d="M21 8.5l-9 6-9-6" />
-						<path d="M3 8.5V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5" opacity="0.5" />
-					</svg>
+					<Mail class="w-4 h-4" aria-hidden="true" />
 				</a>
 
 				<!-- Discord -->

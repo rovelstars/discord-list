@@ -24,7 +24,7 @@
  *   The referrer earns R$250 over 5 retention days (R$50/day).
  *   The referred user earns R$200 over 5 retention days (R$40/day).
  *   Both totals are reached naturally as SettleRewards processes each day.
- *   There is no separate vote-20 row — the engagement sprint is purely
+ *   There is no separate vote-20 row - the engagement sprint is purely
  *   visit-day based (5 visits = full payout). The vote-20 condition is an
  *   ALTERNATIVE trigger: if the referred user casts 20 votes before reaching
  *   5 visit-days, SettleRewards treats the engagement sprint as "met" and
@@ -32,12 +32,12 @@
  *
  * ─── What this endpoint does ─────────────────────────────────────────────────
  *
- * Pass 1 — Welcome Handshake (sign-up reward)
+ * Pass 1 - Welcome Handshake (sign-up reward)
  *   Fetches every Referrals row in "payable" status and issues a double-credit:
  *   R$100 → referrer  |  R$50 → referred user (Welcome Bonus).
  *   Marks the referral row as "paid".
  *
- * Pass 2 — Engagement Sprint (retention & voting milestones)
+ * Pass 2 - Engagement Sprint (retention & voting milestones)
  *   For every referral whose 7-day activity window is still open:
  *
  *   A. Retention daily double-bonus  (R$50 referrer + R$40 referred, up to 5 days)
@@ -63,7 +63,7 @@
  *   processed:              number,
  *   signupRewardsPaid:      number,   // "Welcome Handshake" pairs credited
  *   retentionDaysPaid:      number,   // individual daily bonus pairs credited
- *   serverBountiesPaid:     number,   // reserved — handled inline on listing
+ *   serverBountiesPaid:     number,   // reserved - handled inline on listing
  *   skipped:                number,
  *   errors:                 string[],
  *   durationMs:             number
@@ -141,7 +141,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	const errors: string[] = [];
 
 	// =========================================================================
-	// PASS 1 — Welcome Handshake (sign-up double-credit)
+	// PASS 1 - Welcome Handshake (sign-up double-credit)
 	// =========================================================================
 	// Fetch every Referrals row in "payable" status.  These have already passed
 	// the account-age and email-verification checks in createReferral() but
@@ -154,7 +154,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const msg = err instanceof Error ? err.message : String(err);
 		console.error("[settle-rewards] Failed to fetch payable referrals:", msg);
 		errors.push(`fetch_payable_referrals: ${msg}`);
-		// Continue — pass 2 can still run independently.
+		// Continue - pass 2 can still run independently.
 	}
 
 	for (const referral of payableReferrals) {
@@ -173,7 +173,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			]);
 
 			if (referrerSignupExists && referredWelcomeExists) {
-				// Both sides already credited — nothing to do.
+				// Both sides already credited - nothing to do.
 				skipped++;
 				continue;
 			}
@@ -265,11 +265,11 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	// =========================================================================
-	// PASS 2 — Engagement Sprint (retention daily double-bonus)
+	// PASS 2 - Engagement Sprint (retention daily double-bonus)
 	// =========================================================================
 	// Fetch all referrals whose 7-day activity window is still open (created
 	// within the past 7 days) and whose status is "payable" OR "paid".
-	// "payable" rows may have just been promoted in Pass 1 — that is
+	// "payable" rows may have just been promoted in Pass 1 - that is
 	// intentional; we process both in the same run.
 
 	let activeReferrals: Awaited<ReturnType<typeof getActiveReferralsInWindow>> = [];

@@ -21,7 +21,7 @@ const SITE_NAME = "Rovel Discord List";
 const SITE_SHORT_NAME = "RDL";
 const SITE_URL = "https://discord.rovelstars.com";
 const DESCRIPTION =
-	"Imagine a place — where you find everything about Discord! Bots, Servers, Emojis, Templates and more. We got you covered!";
+	"Imagine a place - where you find everything about Discord! Bots, Servers, Emojis, Templates and more. We got you covered!";
 const THEME_COLOR = "#5865F2";
 const BACKGROUND_COLOR = "#0b0d12";
 
@@ -80,7 +80,7 @@ const manifest = {
 			// "any" keeps the full logo for every other context.
 			purpose: "any maskable"
 		},
-		// SVG — scalable, used by modern Chromium-based browsers
+		// SVG - scalable, used by modern Chromium-based browsers
 		{
 			src: "/favicon.svg",
 			sizes: "any",

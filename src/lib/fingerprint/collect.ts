@@ -6,25 +6,25 @@
  * Produces a stable, opaque hash string that identifies a browser/device
  * combination without storing any personally-identifiable information.
  * The hash is computed entirely in the browser and only the final hex digest
- * is ever sent to the server — raw signal values never leave the client.
+ * is ever sent to the server - raw signal values never leave the client.
  *
  * Signal sources (in order of stability):
- *   1. Canvas 2D rendering  — GPU/driver differences produce subtly different
+ *   1. Canvas 2D rendering  - GPU/driver differences produce subtly different
  *      pixel output across hardware+OS+driver combinations.
- *   2. WebGL renderer info  — GPU vendor & renderer strings from the graphics
+ *   2. WebGL renderer info  - GPU vendor & renderer strings from the graphics
  *      driver; very stable across browser restarts.
- *   3. Audio context        — The AudioContext's sample-rate and the output of
+ *   3. Audio context        - The AudioContext's sample-rate and the output of
  *      an OscillatorNode → DynamicsCompressor pipeline vary across OS audio
  *      stacks and hardware.
- *   4. Screen geometry      — colorDepth, pixelRatio, screen dimensions.
- *   5. Hardware concurrency — logical CPU core count.
- *   6. Navigator strings    — platform, language list, UA brands (via hints API
+ *   4. Screen geometry      - colorDepth, pixelRatio, screen dimensions.
+ *   5. Hardware concurrency - logical CPU core count.
+ *   6. Navigator strings    - platform, language list, UA brands (via hints API
  *      where available, falling back to userAgent).
- *   7. Timezone             — IANA timezone identifier.
- *   8. Installed fonts      — A small fixed probe list measured via canvas text
+ *   7. Timezone             - IANA timezone identifier.
+ *   8. Installed fonts      - A small fixed probe list measured via canvas text
  *      width; which fonts are present differs between OS/user profiles.
- *   9. Touch support        — maxTouchPoints, presence of ontouchstart.
- *  10. Media devices        — Hashed count of audio/video input/output devices
+ *   9. Touch support        - maxTouchPoints, presence of ontouchstart.
+ *  10. Media devices        - Hashed count of audio/video input/output devices
  *      (labels omitted so no permission is required).
  *
  * Stability vs. uniqueness trade-off:
@@ -46,7 +46,7 @@
  *
  * Browser compatibility:
  *   Requires SubtleCrypto (available in all modern browsers over HTTPS).
- *   Individual signal collectors degrade gracefully — a failed signal
+ *   Individual signal collectors degrade gracefully - a failed signal
  *   contributes an empty string rather than throwing.
  */
 
@@ -64,13 +64,13 @@
  */
 export async function collectFingerprint(): Promise<string | null> {
 	if (typeof window === "undefined") {
-		// Server-side render context — fingerprinting is a client-only operation.
+		// Server-side render context - fingerprinting is a client-only operation.
 		return null;
 	}
 
 	if (!window.crypto?.subtle) {
 		// SubtleCrypto unavailable (HTTP context or very old browser).
-		console.warn("[fingerprint] SubtleCrypto unavailable — cannot compute fingerprint.");
+		console.warn("[fingerprint] SubtleCrypto unavailable - cannot compute fingerprint.");
 		return null;
 	}
 
@@ -177,7 +177,7 @@ function collectCanvas(): string {
 	ctx.fillStyle = grad;
 	ctx.fillRect(10, 10, SIZE - 20, 25);
 
-	// Text with emoji — emoji rendering differs widely between platforms
+	// Text with emoji - emoji rendering differs widely between platforms
 	ctx.font = "16px Arial, sans-serif";
 	ctx.fillStyle = "#1a1a2e";
 	ctx.fillText("Rovel Stars 🌟 fp", 12, 60);
@@ -214,7 +214,7 @@ function collectCanvas(): string {
 /**
  * Query the WebGL renderer and vendor strings exposed by the GPU driver.
  * On most systems these look like "NVIDIA GeForce RTX 3080/PCIe/SSE2" and
- * "NVIDIA Corporation" — stable across browser restarts, unique per GPU.
+ * "NVIDIA Corporation" - stable across browser restarts, unique per GPU.
  *
  * Falls back to WebGL2 → WebGL1 → empty string.
  */
@@ -267,7 +267,7 @@ function collectWebGL(): string {
  */
 async function collectAudio(): Promise<string> {
 	// OfflineAudioContext processes audio faster than real-time and never plays
-	// through speakers — ideal for fingerprinting.
+	// through speakers - ideal for fingerprinting.
 	const AudioCtx =
 		window.OfflineAudioContext ??
 		(window as any).webkitOfflineAudioContext;
@@ -299,7 +299,7 @@ async function collectAudio(): Promise<string> {
 	const buffer = await ctx.startRendering();
 	const data = buffer.getChannelData(0);
 
-	// Hash a sample of output values — full array is 4096 floats; we take
+	// Hash a sample of output values - full array is 4096 floats; we take
 	// every 8th to keep the string manageable while retaining uniqueness.
 	const samples: string[] = [];
 	for (let i = 0; i < data.length; i += 8) {
@@ -319,7 +319,7 @@ async function collectAudio(): Promise<string> {
 
 /**
  * Collect stable screen metrics.
- * window.innerWidth/innerHeight are intentionally excluded — they change on
+ * window.innerWidth/innerHeight are intentionally excluded - they change on
  * resize and vary between browser window states.
  */
 function collectScreen(): string {
@@ -361,7 +361,7 @@ async function collectNavigator(): Promise<string> {
 	// Platform (deprecated but still widely supported and very stable)
 	parts.push(navigator.platform ?? "");
 
-	// Language list — first two entries are usually most stable
+	// Language list - first two entries are usually most stable
 	parts.push((navigator.languages ?? [navigator.language]).slice(0, 3).join(","));
 
 	// Cookie / service worker / storage availability
@@ -369,7 +369,7 @@ async function collectNavigator(): Promise<string> {
 	parts.push("serviceWorker" in navigator ? "sw1" : "sw0");
 	parts.push("storage" in navigator ? "storage1" : "storage0");
 
-	// UA Client Hints (Chrome 90+, Edge 90+) — more stable than UA string
+	// UA Client Hints (Chrome 90+, Edge 90+) - more stable than UA string
 	const uaData = (navigator as any).userAgentData;
 	if (uaData) {
 		try {
@@ -427,8 +427,8 @@ function collectTimezone(): string {
  *
  * The resulting bitmask (which fonts are present) is encoded as a hex string.
  *
- * No font name strings appear in the final fingerprint — only the presence/
- * absence bitmask — so this probe leaks no information beyond what fonts
+ * No font name strings appear in the final fingerprint - only the presence/
+ * absence bitmask - so this probe leaks no information beyond what fonts
  * are installed.
  */
 function collectFonts(): string {
@@ -510,7 +510,7 @@ function collectTouch(): string {
 }
 
 // ---------------------------------------------------------------------------
-// Signal: Media devices (count only — no labels, no permission required)
+// Signal: Media devices (count only - no labels, no permission required)
 // ---------------------------------------------------------------------------
 
 /**

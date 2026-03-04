@@ -4,7 +4,7 @@
 @plugin "@tailwindcss/forms";
 @plugin "tailwindcss-animate";
 
-/* ── highlight.js theme — uses semantic CSS variables so all accent themes
+/* ── highlight.js theme - uses semantic CSS variables so all accent themes
    are respected automatically in both light and dark mode.
    Token → variable mapping:
      base text   → --color-foreground        (plain code text)
@@ -20,7 +20,7 @@
      code bg     → --color-card               (pre block background)
 ─────────────────────────────────────────────────────────────────── */
 
-/* Base text colour — applies in both light and dark */
+/* Base text colour - applies in both light and dark */
 .hljs,
 .hljs-subst {
 	color: var(--color-foreground);
@@ -77,7 +77,7 @@ pre code.hljs {
 	color: var(--color-secondary);
 }
 
-/* Comments, formulas — muted, clearly non-executable */
+/* Comments, formulas - muted, clearly non-executable */
 .hljs-code,
 .hljs-comment,
 .hljs-formula {
@@ -164,7 +164,7 @@ pre code.hljs {
    variants. We use the .dark class strategy here.
 ─────────────────────────────────────────────────────── */
 @variant dark (&:where(.dark, .dark *)) {
-	/* intentionally empty — overrides live in the :root block below */
+	/* intentionally empty - overrides live in the :root block below */
 }
 
 /* Class-based dark mode token overrides */
@@ -234,10 +234,10 @@ pre code.hljs {
 	 * so they appear instantly with no visible transition.
 	 *
 	 * Exemptions:
-	 *   • [data-loaded]        — already loaded, plays the fade-in once
-	 *   • .no-fade             — opt-out class for images that must be visible
+	 *   • [data-loaded]        - already loaded, plays the fade-in once
+	 *   • .no-fade             - opt-out class for images that must be visible
 	 *                            immediately (e.g. ColorThief hidden helpers)
-	 *   • [aria-hidden="true"] — decorative images; skip the transition
+	 *   • [aria-hidden="true"] - decorative images; skip the transition
 	 */
 	img:not([data-loaded]):not(.no-fade) {
 		opacity: 0;
@@ -278,7 +278,7 @@ pre code.hljs {
    Light variant: [data-theme="id"]          (default polarity)
    Dark  variant: [data-theme="id"].dark     (when .dark is on <html>)
 
-   The "default" theme needs no overrides — global.css already defines it
+   The "default" theme needs no overrides - global.css already defines it
    via @theme {} (light) and .dark {} (dark) above.
 ─────────────────────────────────────────────────────────────────────────── */
 
@@ -762,7 +762,7 @@ pre code.hljs {
 /* backgroundColor #0F111A · foreground #8F93A2 · blue #3A75C4               */
 /* cyan #87D3F8 · magenta #703FAF · green #14B37D · red #E25822               */
 [data-theme="hyper-ocean"] {
-	/* Ocean Dawn — light variant derived from the same hues */
+	/* Ocean Dawn - light variant derived from the same hues */
 	--color-background: hsl(213 40% 96%);
 	--color-foreground: hsl(231 28% 18%);
 	--color-card: hsl(213 30% 90%);

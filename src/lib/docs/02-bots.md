@@ -14,13 +14,13 @@ Returns a paginated list of bots. Supports searching, sorting by newest, and sor
 
 | Parameter  | Type    | Default | Description |
 |------------|---------|---------|-------------|
-| `q`        | string  | —       | Search query — matches against bot name and short description |
+| `q`        | string  | -       | Search query - matches against bot name and short description |
 | `limit`    | number  | `10`    | Number of results to return (max `50`) |
 | `offset`   | number  | `0`     | Pagination offset |
-| `new`      | flag    | —       | Sort by newest first. Cannot be combined with `trending` |
-| `trending` | flag    | —       | Sort by most votes. Cannot be combined with `new` |
+| `new`      | flag    | -       | Sort by newest first. Cannot be combined with `trending` |
+| `trending` | flag    | -       | Sort by most votes. Cannot be combined with `new` |
 
-> **Flags** are query parameters that are activated by their presence — you don't need to set a value. E.g. `/api/bots?trending`
+> **Flags** are query parameters that are activated by their presence - you don't need to set a value. E.g. `/api/bots?trending`
 
 ### Example Request
 
@@ -122,14 +122,14 @@ Submits a vote for a bot on behalf of the authenticated user. Requires authentic
 
 There are two voting modes depending on whether the bot has opted into coin-based voting:
 
-- **Time-based** (default) — one vote per user per 24 hours.
-- **Coin-based** — spend Rcoins instead of waiting. Only available when the bot has `opted_coins: true`. Every **10 Rcoins** equals **1 vote**. The `coins` parameter must be a positive multiple of 10.
+- **Time-based** (default) - one vote per user per 24 hours.
+- **Coin-based** - spend Rcoins instead of waiting. Only available when the bot has `opted_coins: true`. Every **10 Rcoins** equals **1 vote**. The `coins` parameter must be a positive multiple of 10.
 
 ### Query Parameters
 
 | Parameter | Type   | Description |
 |-----------|--------|-------------|
-| `key`     | string | Auth token (alternatively supply via header or cookie — see [Authentication](/docs#authentication)) |
+| `key`     | string | Auth token (alternatively supply via header or cookie - see [Authentication](/docs#authentication)) |
 | `coins`   | number | Rcoins to spend. Only valid when the bot has `opted_coins: true` |
 
 ### Example Request (time-based)
@@ -224,7 +224,7 @@ Returns all reviews and threaded replies for a bot.
 }
 ```
 
-> **Note:** `rating` is stored as an integer — it is the actual rating multiplied by 10. So a rating of `4.3` is stored and returned as `43`. Divide by 10 to get the display value.
+> **Note:** `rating` is stored as an integer - it is the actual rating multiplied by 10. So a rating of `4.3` is stored and returned as `43`. Divide by 10 to get the display value.
 
 ---
 
@@ -254,7 +254,7 @@ Posts a review or reply for a bot. Requires authentication.
 
 **Rules:**
 - Each user may only post **one top-level review** per bot.
-- Replies can only be made to top-level comments — no deep nesting.
+- Replies can only be made to top-level comments - no deep nesting.
 - Replies must include `text`. Rating is ignored on replies.
 
 ### Example Response

@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			}
 		}
 
-		// Emoji queries are non-fatal — the table may not exist yet on first
+		// Emoji queries are non-fatal - the table may not exist yet on first
 		// deploy before migration runs, or may be temporarily unavailable.
 		let topEmojis: Awaited<ReturnType<typeof getTopEmojis>> = [];
 		let newestEmojis: Awaited<ReturnType<typeof getNewestEmojis>> = [];

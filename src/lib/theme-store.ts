@@ -8,7 +8,7 @@
  * Both are persisted to:
  *   1. localStorage  (fast sync on same tab / next visit)
  *   2. A cookie      (read by hooks.server.ts so SSR always ships the right
- *                     classes on the first byte — no flash)
+ *                     classes on the first byte - no flash)
  *
  * The store also manages the .dark class and data-theme attribute on
  * document.documentElement so Tailwind's class-based dark mode and the
@@ -37,7 +37,7 @@ function writeCookie(name: string, value: string): void {
   try {
     document.cookie = `${name}=${encodeURIComponent(value)};path=/;max-age=${COOKIE_MAX_AGE};SameSite=Lax`;
   } catch {
-    // SSR or cookie-restricted environment — no-op
+    // SSR or cookie-restricted environment - no-op
   }
 }
 
@@ -66,7 +66,7 @@ function lsSet(key: string, value: string): void {
   try {
     localStorage.setItem(key, value);
   } catch {
-    // Quota exceeded or private browsing — ignore
+    // Quota exceeded or private browsing - ignore
   }
 }
 
@@ -109,7 +109,7 @@ function applyToDom(mode: ThemeMode, accent: ThemeId): void {
     // Keep color-scheme in sync for native browser UI (scrollbars etc.)
     root.style.colorScheme = isDark ? "dark" : "light";
   } catch {
-    // SSR — nothing to do
+    // SSR - nothing to do
   }
 }
 
@@ -118,11 +118,11 @@ function applyToDom(mode: ThemeMode, accent: ThemeId): void {
 export interface ThemeState {
   mode: ThemeMode;
   accent: ThemeId;
-  /** The resolved polarity — "light" or "dark" — accounting for "system". */
+  /** The resolved polarity - "light" or "dark" - accounting for "system". */
   resolvedPolarity: "light" | "dark";
 }
 
-// Raw writable stores — internal, not exported directly
+// Raw writable stores - internal, not exported directly
 const _mode = writable<ThemeMode>("system");
 const _accent = writable<ThemeId>("default");
 
@@ -135,7 +135,7 @@ let _initialised = false;
 /**
  * Initialise the store from persisted values.
  * Must be called inside `onMount` (client-only).
- * Idempotent — safe to call multiple times.
+ * Idempotent - safe to call multiple times.
  */
 export function initThemeStore(): void {
   if (_initialised) return;
@@ -184,7 +184,7 @@ export function initThemeStore(): void {
       (_mql as any).addListener(_mqlHandler);
     }
   } catch {
-    // No matchMedia support — ignore
+    // No matchMedia support - ignore
   }
 }
 
@@ -259,7 +259,7 @@ export const themeActions = {
   },
 
   /**
-   * Set both dimensions at once — useful when importing from an external
+   * Set both dimensions at once - useful when importing from an external
    * theme preset or resetting to defaults.
    */
   set(mode: ThemeMode, accent: ThemeId): void {

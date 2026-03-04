@@ -3,6 +3,7 @@
 	import { browser } from "$app/environment";
 	import { themeStore, themeActions, initThemeStore } from "$lib/theme-store";
 	import { THEMES } from "$lib/theme";
+	import { Sun, Moon, Monitor, Check } from "@lucide/svelte";
 
 	let open = false;
 	let triggerEl: HTMLButtonElement;
@@ -82,7 +83,7 @@
 
 	// ── Svelte action: portal ─────────────────────────────────────────────────
 	// Moves the node to document.body so it escapes any overflow/clip ancestor.
-	// The function itself only does DOM work — it is only ever called by Svelte
+	// The function itself only does DOM work - it is only ever called by Svelte
 	// on the client (actions never run during SSR), so no browser guard needed.
 
 	function portal(node: HTMLElement) {
@@ -112,47 +113,28 @@
 	on:click={toggle}
 	class="relative inline-flex items-center justify-center h-10 w-10 rounded-md border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 overflow-hidden"
 >
-	<!-- Sun — shown in light mode -->
-	<svg
+	<!-- Sun - shown in light mode -->
+	<Sun
 		class="h-5 w-5 transition-all duration-200 {isDark
 			? 'scale-0 rotate-90 absolute'
 			: 'scale-100 rotate-0'}"
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		stroke-width="1.5"
-		stroke-linecap="round"
-		stroke-linejoin="round"
 		aria-hidden="true"
-	>
-		<circle cx="12" cy="12" r="4" />
-		<path
-			d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
-		/>
-	</svg>
-	<!-- Moon — shown in dark mode -->
-	<svg
+	/>
+	<!-- Moon - shown in dark mode -->
+	<Moon
 		class="h-5 w-5 transition-all duration-200 {isDark
 			? 'scale-100 rotate-0'
 			: 'scale-0 -rotate-90 absolute'}"
-		viewBox="0 0 24 24"
-		fill="currentColor"
-		stroke="currentColor"
-		stroke-width="1.5"
-		stroke-linecap="round"
-		stroke-linejoin="round"
 		aria-hidden="true"
-	>
-		<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-	</svg>
+	/>
 	<span class="sr-only">Theme selector</span>
 </button>
 
 <!-- ── Dropdown panel ─────────────────────────────────────────────────────── -->
 <!--
 	use:portal appends this node to <body>, so it is never clipped by the
-	navbar's overflow-x:auto. Svelte actions are client-only — they never
-	execute during SSR — so document access here is always safe.
+	navbar's overflow-x:auto. Svelte actions are client-only - they never
+	execute during SSR - so document access here is always safe.
 	The {#if} is also gated on `browser` as a belt-and-braces guard.
 -->
 {#if open && browser}
@@ -188,48 +170,11 @@
 							: 'bg-background hover:bg-accent hover:text-accent-foreground text-foreground border border-border'}"
 					>
 						{#if m.icon === "sun"}
-							<svg
-								class="h-4 w-4"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="1.75"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								aria-hidden="true"
-							>
-								<circle cx="12" cy="12" r="4" />
-								<path
-									d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
-								/>
-							</svg>
+							<Sun class="h-4 w-4" aria-hidden="true" />
 						{:else if m.icon === "moon"}
-							<svg
-								class="h-4 w-4"
-								viewBox="0 0 24 24"
-								fill="currentColor"
-								stroke="currentColor"
-								stroke-width="1.75"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								aria-hidden="true"
-							>
-								<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-							</svg>
+							<Moon class="h-4 w-4" aria-hidden="true" />
 						{:else}
-							<svg
-								class="h-4 w-4"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="1.75"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								aria-hidden="true"
-							>
-								<rect x="2" y="3" width="20" height="14" rx="2" />
-								<path d="M8 21h8M12 17v4" />
-							</svg>
+							<Monitor class="h-4 w-4" aria-hidden="true" />
 						{/if}
 						{m.label}
 					</button>
@@ -264,18 +209,7 @@
 							style="background-color: {t.swatch};"
 						>
 							{#if accent === t.id}
-								<svg
-									class="h-4 w-4 drop-shadow"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="white"
-									stroke-width="3"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									aria-hidden="true"
-								>
-									<path d="M5 12l5 5L19 7" />
-								</svg>
+								<Check class="h-4 w-4 drop-shadow" stroke="white" aria-hidden="true" />
 							{/if}
 						</span>
 						<span

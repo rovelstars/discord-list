@@ -138,7 +138,7 @@
 			const { default: CT } = await import("colorthief");
 			colorThief = new (CT as any)();
 		} catch {
-			// unavailable — silently skip
+			// unavailable - silently skip
 		}
 		return colorThief;
 	}
@@ -150,7 +150,7 @@
 			const c = colorThief.getColor(img);
 			if (Array.isArray(c) && c.length === 3) dominantColor = c as [number, number, number];
 		} catch {
-			// cross-origin / decode error — skip
+			// cross-origin / decode error - skip
 		}
 	}
 
@@ -172,13 +172,13 @@
 	// Reset dominant color when sticker changes
 	$: if (sticker) dominantColor = null;
 
-	// Proxy URL used only for ColorThief — the visible <img> stays on the CDN
+	// Proxy URL used only for ColorThief - the visible <img> stays on the CDN
 	// directly (no crossorigin attr) so it never triggers a CORS error.
 	// The sticker CDN doesn't send CORS headers, so we route through our own
 	// server-side proxy which adds Access-Control-Allow-Origin: *.
 	$: colorThiefSrc = isLottie ? null : `/api/stickers/${sticker.id}/preview`;
 
-	// First text tag for the "how to use" hint — prefer plain text over a snowflake ID.
+	// First text tag for the "how to use" hint - prefer plain text over a snowflake ID.
 	$: hintTag = (() => {
 		const first = resolvedTags.find((t) => t.type === "text") as
 			| { type: "text"; value: string }
@@ -194,7 +194,7 @@
 		.filter((t): t is { type: "text"; value: string } => t.type === "text")
 		.map((t) => t.value);
 
-	$: seoTitle = `${sticker.name} — Discord Sticker · Rovel Discord List`;
+	$: seoTitle = `${sticker.name} - Discord Sticker · Rovel Discord List`;
 	$: seoDescription = sticker.description
 		? `${sticker.description} Download this ${animated ? "animated" : "static"} Discord sticker: ${sticker.name}.`
 		: `Download the "${sticker.name}" ${formatLabel} Discord custom sticker. Downloaded ${sticker.dc.toLocaleString()} times.`;
@@ -233,7 +233,7 @@
 					style="background: linear-gradient(135deg, hsl(var(--primary)/0.12) 0%, hsl(var(--muted)/0.25) 100%);"
 					on:contextmenu={preventContextMenu}
 				>
-					<!-- Dominant-color overlay — fades in once ColorThief resolves -->
+					<!-- Dominant-color overlay - fades in once ColorThief resolves -->
 					<div
 						class="absolute inset-0 transition-opacity duration-700 ease-in-out pointer-events-none"
 						style="{dominantColorStyle} opacity: {dominantColor ? 1 : 0};"
@@ -507,7 +507,7 @@
 									<a
 										href="/emojis/{tag.emoji.id}"
 										class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary text-xs font-medium text-muted-foreground transition-colors group"
-										title=":{tag.emoji.code}: — view emoji"
+										title=":{tag.emoji.code}: - view emoji"
 									>
 										<img
 											src="https://cdn.discordapp.com/emojis/{tag.emoji.id}.{tag.emoji.a
@@ -690,7 +690,7 @@
 		</div>
 	</div>
 
-	<!-- About + FAQ — single full-width card, no height-mismatch possible -->
+	<!-- About + FAQ - single full-width card, no height-mismatch possible -->
 	<div class="mt-6 bg-card border border-border rounded-2xl p-6 shadow-sm">
 		<h2 class="text-lg font-extrabold font-heading text-foreground mb-1">
 			About the {sticker.name} sticker
@@ -708,7 +708,7 @@
 				Animated stickers require Boost <strong class="text-foreground">Level 2+</strong> to upload to
 				a server.
 			{:else}
-				Works at all boost levels — no Nitro required to upload.
+				Works at all boost levels - no Nitro required to upload.
 			{/if}
 		</p>
 
@@ -719,7 +719,7 @@
 				<dd class="text-sm text-muted-foreground leading-relaxed">
 					Click the <strong class="text-foreground">Download</strong> button above. It saves in
 					<strong class="text-foreground">{formatLabel} format</strong>. Right-click saving is
-					disabled — use the button instead.
+					disabled - use the button instead.
 				</dd>
 			</div>
 
@@ -738,15 +738,15 @@
 				<dt class="font-semibold text-sm text-foreground mb-1">What format is this sticker?</dt>
 				<dd class="text-sm text-muted-foreground leading-relaxed">
 					{#if sticker.format === 1}
-						<strong class="text-foreground">PNG</strong> — static, works at all boost levels.
+						<strong class="text-foreground">PNG</strong> - static, works at all boost levels.
 					{:else if sticker.format === 2}
-						<strong class="text-foreground">Lottie</strong> — used only in Discord's official packs; cannot
+						<strong class="text-foreground">Lottie</strong> - used only in Discord's official packs; cannot
 						be uploaded to custom slots.
 					{:else if sticker.format === 3}
-						<strong class="text-foreground">Animated APNG</strong> — requires Boost
+						<strong class="text-foreground">Animated APNG</strong> - requires Boost
 						<strong class="text-foreground">Level 2+</strong> to upload.
 					{:else if sticker.format === 4}
-						<strong class="text-foreground">Animated GIF</strong> — requires Boost
+						<strong class="text-foreground">Animated GIF</strong> - requires Boost
 						<strong class="text-foreground">Level 2+</strong> to upload.
 					{:else}
 						<strong class="text-foreground">{formatLabel}</strong>.
@@ -796,7 +796,7 @@
 					</dt>
 					<dd class="text-sm text-muted-foreground leading-relaxed">
 						From the
-						<strong class="text-foreground">{guildInfo?.name ?? "a Discord server"}</strong> —
+						<strong class="text-foreground">{guildInfo?.name ?? "a Discord server"}</strong> -
 						<a
 							href="/servers/{guildInfo?.slug ?? sticker.guild}"
 							class="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"

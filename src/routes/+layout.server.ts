@@ -24,7 +24,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 	try {
 		userData = await oauth.getUser(key);
 	} catch {
-		// Token may have expired — attempt refresh using stored keys
+		// Token may have expired - attempt refresh using stored keys
 		try {
 			const result = await withDb((db: DrizzleDb) =>
 				db
@@ -35,7 +35,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 			);
 
 			if (!result || result.length === 0) {
-				// No matching user record at all — clear bad cookie
+				// No matching user record at all - clear bad cookie
 				cookies.delete("key", { path: "/" });
 				return { user: null };
 			}
@@ -93,7 +93,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 					// non-fatal
 				}
 			} catch {
-				// Refresh also failed — clear cookie
+				// Refresh also failed - clear cookie
 				cookies.delete("key", { path: "/" });
 				return { user: null };
 			}
@@ -115,7 +115,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 		);
 		if (rows && rows.length > 0) bal = (rows[0] as any).bal ?? 0;
 	} catch {
-		// non-fatal — just return without bal
+		// non-fatal - just return without bal
 	}
 
 	return {

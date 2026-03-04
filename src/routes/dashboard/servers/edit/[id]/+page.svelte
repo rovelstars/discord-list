@@ -137,7 +137,7 @@
 					slug_invalid:
 						"Vanity URL must be 2–32 characters: lowercase letters, numbers, and hyphens only.",
 					slug_taken: "That vanity URL is already taken. Please choose another.",
-					db_update_failed: "Database error — please try again."
+					db_update_failed: "Database error - please try again."
 				};
 				errorMsg = errMap[responseData.err] ?? responseData.err;
 			} else {
@@ -148,7 +148,7 @@
 				setTimeout(() => goto(dest), 1200);
 			}
 		} catch {
-			errorMsg = "Network error — please try again.";
+			errorMsg = "Network error - please try again.";
 		} finally {
 			submitting = false;
 		}
@@ -172,7 +172,7 @@
 </script>
 
 <SEO
-	title="Edit Server — {server.name}"
+	title="Edit Server - {server.name}"
 	description="Edit your server listing on Rovel Stars."
 	imageSmall="/assets/img/bot/logo-512.png"
 />
@@ -511,7 +511,7 @@
 				</div>
 			{:else if desc.trim()}
 				<p class="text-muted-foreground italic text-sm">
-					(Markdown preview unavailable — raw text shown above.)
+					(Markdown preview unavailable - raw text shown above.)
 				</p>
 			{:else}
 				<p class="text-muted-foreground italic text-sm">No description written yet.</p>

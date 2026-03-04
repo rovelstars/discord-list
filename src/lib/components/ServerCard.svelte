@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Eye, ChevronUp, Server } from "@lucide/svelte";
 	import { onMount } from "svelte";
 	import approx from "$lib/approx-num";
 	import Tag from "$lib/components/ui/Tag.svelte";
@@ -82,20 +83,7 @@
 			<div
 				class="z-10 w-16 h-16 rounded-full absolute -top-8 left-4 border-4 border-card bg-primary/20 shadow-black shadow-2xl flex items-center justify-center"
 			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="w-7 h-7 text-primary"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					aria-hidden="true"
-				>
-					<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-					<polyline points="9 22 9 12 15 12 15 22" />
-				</svg>
+				<Server class="w-7 h-7 text-primary" aria-hidden="true" />
 			</div>
 		{/if}
 	</div>
@@ -136,18 +124,7 @@
 					<!-- Votes tag -->
 					<Tag firstClass="bg-muted dark:bg-card text-white" secondClass="bg-green-600 text-white">
 						<span slot="first" class="flex items-center">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								class="w-4 h-4 mr-1"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							>
-								<path d="m18 15-6-6-6 6" />
-							</svg>
+							<ChevronUp class="w-4 h-4 mr-1" aria-hidden="true" />
 							Votes
 						</span>
 						<span slot="second">{approx(server?.votes ?? 0)}</span>
@@ -188,20 +165,7 @@
 					<div class="w-full h-9 bg-muted animate-pulse rounded-md"></div>
 				{:else}
 					<a href="/servers/{server?.slug}" class={buttonVariants({ variant: "default" })}>
-						<!-- Eye icon -->
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="w-4 h-4 mr-2"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-							<circle cx="12" cy="12" r="3" />
-						</svg>
+						<Eye class="w-4 h-4 mr-2" aria-hidden="true" />
 						View
 					</a>
 					{#if edit}

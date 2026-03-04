@@ -22,7 +22,7 @@
 	};
 
 	// Read directly from `data` so every reactive expression sees the latest
-	// server payload after client-side navigations — no stale local copies.
+	// server payload after client-side navigations - no stale local copies.
 	$: ({ bots, q, limit, offset, newFlag, trending, lucky, category, isSearching } = data);
 
 	$: prevOffset = Math.max(0, offset - limit);
@@ -30,7 +30,7 @@
 	$: hasPrev = offset > 0;
 	$: hasNext = bots.length === limit;
 
-	// Local search input value — kept in sync with URL param
+	// Local search input value - kept in sync with URL param
 	let searchInput = q ?? "";
 	$: searchInput = q ?? "";
 
@@ -97,13 +97,13 @@
 
 	// ── SEO title / description ────────────────────────────────────────────
 	$: seoTitle = (() => {
-		if (data.q) return `Results for "${data.q}" — Bots`;
+		if (data.q) return `Results for "${data.q}" - Bots`;
 		if (data.category && CATEGORIES[data.category])
-			return `${CATEGORIES[data.category].name} — Browse Bots`;
+			return `${CATEGORIES[data.category].name} - Browse Bots`;
 		if (data.newFlag) return "Newest Bots";
 		if (data.trending) return "Most Popular Bots";
-		if (data.lucky) return "Feeling Lucky — Random Bots";
-		return "Browse Discord Bots — Rovel Discord List";
+		if (data.lucky) return "Feeling Lucky - Random Bots";
+		return "Browse Discord Bots - Rovel Discord List";
 	})();
 
 	$: seoDesc = (() => {
@@ -128,14 +128,14 @@
 		if (data.newFlag) return "Newest Bots";
 		if (data.trending) return "Most Popular Bots";
 		if (data.lucky) return "Feeling Lucky?";
-		return null; // landing — no sub-heading needed
+		return null; // landing - no sub-heading needed
 	})();
 </script>
 
 <SEO title={seoTitle} description={seoDesc} imageSmall="/assets/img/bot/logo-512.png" />
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     HERO — always visible
+     HERO - always visible
 ════════════════════════════════════════════════════════════════════════ -->
 <section class="relative overflow-hidden -mt-24 pt-28 pb-6 px-4">
 	<!-- Decorative blobs -->
@@ -161,7 +161,7 @@
 			Discord <span class="text-primary">Bots</span>
 		</h1>
 		<p class="text-lg md:text-xl text-muted-foreground font-medium mb-8">
-			Discover the perfect bot for your Discord server — search, filter, and explore hundreds of
+			Discover the perfect bot for your Discord server - search, filter, and explore hundreds of
 			bots.
 		</p>
 
@@ -491,7 +491,7 @@
 	</section>
 
 	<!-- ═══════════════════════════════════════════════════════════════════════
-     LANDING — curated sections  (only shown on bare /bots with no filters)
+     LANDING - curated sections  (only shown on bare /bots with no filters)
 ════════════════════════════════════════════════════════════════════════ -->
 {:else}
 	<div class="pb-16">
@@ -534,7 +534,7 @@
 					{/each}
 				</div>
 			{:else}
-				<p class="text-center text-gray-400 py-10">No bots here yet — check back soon!</p>
+				<p class="text-center text-gray-400 py-10">No bots here yet - check back soon!</p>
 			{/if}
 		</section>
 
@@ -561,7 +561,7 @@
 						Featured Music Bots
 					</h2>
 					<p class="text-gray-500 dark:text-gray-400 mt-1 font-medium max-w-xl">
-						Bring the music to your community — seamless playback from YouTube, Spotify and beyond.
+						Bring the music to your community - seamless playback from YouTube, Spotify and beyond.
 					</p>
 				</div>
 				<button
@@ -591,7 +591,7 @@
 					{/each}
 				</div>
 			{:else}
-				<p class="text-center text-gray-400 py-10">No music bots found — check back soon!</p>
+				<p class="text-center text-gray-400 py-10">No music bots found - check back soon!</p>
 			{/if}
 		</section>
 
@@ -604,7 +604,7 @@
 						Esports Tools &amp; Text Adventures
 					</h2>
 					<p class="text-gray-500 dark:text-gray-400 mt-1 font-medium max-w-xl">
-						Get the competitive edge — tournament bots, stat trackers and in-chat mini-games.
+						Get the competitive edge - tournament bots, stat trackers and in-chat mini-games.
 					</p>
 				</div>
 				<button
@@ -634,7 +634,7 @@
 					{/each}
 				</div>
 			{:else}
-				<p class="text-center text-gray-400 py-10">No gaming bots found — check back soon!</p>
+				<p class="text-center text-gray-400 py-10">No gaming bots found - check back soon!</p>
 			{/if}
 		</section>
 
@@ -647,7 +647,7 @@
 						Community Care Bots
 					</h2>
 					<p class="text-gray-500 dark:text-gray-400 mt-1 font-medium max-w-xl">
-						Keep your server safe — auto-mod, anti-spam, logging and raid protection.
+						Keep your server safe - auto-mod, anti-spam, logging and raid protection.
 					</p>
 				</div>
 				<button
@@ -677,7 +677,7 @@
 					{/each}
 				</div>
 			{:else}
-				<p class="text-center text-gray-400 py-10">No moderation bots found — check back soon!</p>
+				<p class="text-center text-gray-400 py-10">No moderation bots found - check back soon!</p>
 			{/if}
 		</section>
 

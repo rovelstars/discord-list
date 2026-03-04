@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * unregister-commands.mjs — Discord slash-command unregistration
+ * unregister-commands.mjs - Discord slash-command unregistration
  *
  * Fetches all currently registered commands from Discord and deletes them
  * one-by-one.  Useful for cleaning up stale or renamed commands, or wiping
@@ -20,17 +20,17 @@
  *
  * Required environment variables
  * ───────────────────────────────
- *   DISCORD_TOKEN     — bot token
- *   DISCORD_BOT_ID    — application / client id
- *   DISCORD_GUILD_ID  — guild id (required when scope includes guild commands)
+ *   DISCORD_TOKEN     - bot token
+ *   DISCORD_BOT_ID    - application / client id
+ *   DISCORD_GUILD_ID  - guild id (required when scope includes guild commands)
  *
  * The script loads these from a .env file in the project root if present.
  * CI/CD pipelines can set them directly in the environment instead.
  *
  * Exit codes
  * ──────────
- *   0 — all targeted commands deleted successfully (or none existed)
- *   1 — missing required env var or Discord API error
+ *   0 - all targeted commands deleted successfully (or none existed)
+ *   1 - missing required env var or Discord API error
  */
 
 import { readFileSync, existsSync } from 'node:fs';
@@ -39,7 +39,7 @@ import { fileURLToPath } from 'node:url';
 import { exit } from 'node:process';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Colour helpers (no deps — pure ANSI)
+// Colour helpers (no deps - pure ANSI)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const isTTY = process.stdout.isTTY;
@@ -72,7 +72,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 function loadEnv() {
 	const envPath = resolve(__dirname, '../.env');
 	if (!existsSync(envPath)) {
-		warn('.env file not found — relying on shell environment variables only.');
+		warn('.env file not found - relying on shell environment variables only.');
 		return;
 	}
 
@@ -131,7 +131,7 @@ function requireEnv(name) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Discord REST helpers  (no @discordjs/rest needed — plain fetch)
+// Discord REST helpers  (no @discordjs/rest needed - plain fetch)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const DISCORD_API = 'https://discord.com/api/v10';
@@ -203,7 +203,7 @@ async function unregisterScope(label, listPath, deletePath, token) {
 	}
 
 	if (!Array.isArray(commands) || commands.length === 0) {
-		info(`No ${label} commands found — nothing to delete.`);
+		info(`No ${label} commands found - nothing to delete.`);
 		return { deleted: 0, failed: 0 };
 	}
 
@@ -289,7 +289,7 @@ async function main() {
 		exit(1);
 	} else {
 		ok(
-			`Done — ${c.bold}${totalDeleted}${c.reset} command(s) successfully unregistered.`
+			`Done - ${c.bold}${totalDeleted}${c.reset} command(s) successfully unregistered.`
 		);
 	}
 }

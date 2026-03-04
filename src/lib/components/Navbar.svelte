@@ -5,6 +5,18 @@
 	import getAvatarURL from "$lib/get-avatar-url";
 	import { goto, invalidateAll } from "$app/navigation";
 	import LogoNavbar from "$lib/components/LogoNavbar.svelte";
+	import {
+		Bot,
+		House,
+		Trophy,
+		Smile,
+		Sticker,
+		LayoutGrid,
+		Menu,
+		X,
+		ChevronDown,
+		LogOut
+	} from "@lucide/svelte";
 
 	export let user: {
 		id: string;
@@ -36,42 +48,18 @@
 		? getAvatarURL(user.id, user.avatar, 64)
 		: "/assets/img/bot/logo-144.png";
 
-	// Primary nav links — always visible on desktop
+	// Primary nav links - always visible on desktop
 	const primaryLinks = [
-		{
-			href: "/bots",
-			label: "Bots",
-			icon: `<rect width="18" height="11" x="3" y="8" rx="2"/><path d="M8 8V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><circle cx="12" cy="13" r="1" fill="currentColor"/>`
-		},
-		{
-			href: "/servers",
-			label: "Servers",
-			icon: `<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>`
-		},
-		{
-			href: "/top",
-			label: "Top",
-			icon: `<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>`
-		}
+		{ href: "/bots", label: "Bots", icon: Bot },
+		{ href: "/servers", label: "Servers", icon: House },
+		{ href: "/top", label: "Top", icon: Trophy }
 	];
 
-	// Secondary links — shown in "More" dropdown on desktop, inline on mobile
+	// Secondary links - shown in "More" dropdown on desktop, inline on mobile
 	const secondaryLinks = [
-		{
-			href: "/emojis",
-			label: "Emojis",
-			icon: `<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>`
-		},
-		{
-			href: "/stickers",
-			label: "Stickers",
-			icon: `<path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z"/><path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5H15"/><path d="M15 2v5h5"/>`
-		},
-		{
-			href: "/categories",
-			label: "Categories",
-			icon: `<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>`
-		}
+		{ href: "/emojis", label: "Emojis", icon: Smile },
+		{ href: "/stickers", label: "Stickers", icon: Sticker },
+		{ href: "/categories", label: "Categories", icon: LayoutGrid }
 	];
 
 	function closeMore() {
@@ -104,17 +92,7 @@
 					href={link.href}
 					class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
 				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="w-3.5 h-3.5 shrink-0"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true">{@html link.icon}</svg
-					>
+					<svelte:component this={link.icon} class="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
 					{link.label}
 				</a>
 			{/each}
@@ -129,17 +107,10 @@
 					class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
 				>
 					More
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
+					<ChevronDown
 						class="w-3 h-3 transition-transform duration-150 {moreOpen ? 'rotate-180' : ''}"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg
-					>
+						aria-hidden="true"
+					/>
 				</button>
 
 				{#if moreOpen}
@@ -158,17 +129,7 @@
 								on:click={closeMore}
 								class="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
 							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="w-4 h-4 shrink-0"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									aria-hidden="true">{@html link.icon}</svg
-								>
+								<svelte:component this={link.icon} class="w-4 h-4 shrink-0" aria-hidden="true" />
 								{link.label}
 							</a>
 						{/each}
@@ -197,7 +158,7 @@
 				<!-- User pill -->
 				<a
 					href="/dashboard"
-					title="Dashboard — {user.username}"
+					title="Dashboard - {user.username}"
 					class="hidden md:inline-flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border border-border bg-card hover:bg-accent transition-colors"
 				>
 					<img src={avatarSrc} alt="" class="w-6 h-6 rounded-full object-cover" loading="lazy" />
@@ -234,29 +195,9 @@
 				on:click|stopPropagation={() => (mobileOpen = !mobileOpen)}
 			>
 				{#if mobileOpen}
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="w-5 h-5"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg
-					>
+					<X class="w-5 h-5" aria-hidden="true" />
 				{:else}
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="w-5 h-5"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg
-					>
+					<Menu class="w-5 h-5" aria-hidden="true" />
 				{/if}
 			</button>
 		</div>
@@ -309,17 +250,7 @@
 					on:click={() => (mobileOpen = false)}
 					class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
 				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="w-4 h-4 shrink-0"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true">{@html link.icon}</svg
-					>
+					<svelte:component this={link.icon} class="w-4 h-4 shrink-0" aria-hidden="true" />
 					{link.label}
 				</a>
 			{/each}
@@ -335,20 +266,7 @@
 					}}
 					class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors cursor-pointer w-full text-left"
 				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="w-4 h-4 shrink-0"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"
-						><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline
-							points="16 17 21 12 16 7"
-						/><line x1="21" y1="12" x2="9" y2="12" /></svg
-					>
+					<LogOut class="w-4 h-4 shrink-0" aria-hidden="true" />
 					Logout
 				</button>
 			{:else}

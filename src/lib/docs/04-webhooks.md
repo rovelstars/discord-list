@@ -1,6 +1,6 @@
 # Webhooks
 
-When a user votes for your bot, Rovel Discord List can notify your server in real time by sending an HTTP POST request to a URL you configure — this is your **vote webhook**.
+When a user votes for your bot, Rovel Discord List can notify your server in real time by sending an HTTP POST request to a URL you configure - this is your **vote webhook**.
 
 ## Setting Up a Webhook
 
@@ -9,7 +9,7 @@ When a user votes for your bot, Rovel Discord List can notify your server in rea
 3. Optionally set a **Webhook Secret** (called the bot code). This is sent as both an `Authorization` header and appended as `?code=` in the query string, so you can verify requests are genuinely from RDL.
 4. Save your changes.
 
-That's it — RDL will POST to your URL every time someone votes for your bot.
+That's it - RDL will POST to your URL every time someone votes for your bot.
 
 ---
 
@@ -39,7 +39,7 @@ RDL sends a `POST` request with `Content-Type: application/json`. The body is a 
 | `user.id` | string | Discord snowflake of the user who voted |
 | `user.username` | string | Discord username of the voter |
 | `user.discriminator` | string | Discord discriminator (`"0"` for new-style usernames) |
-| `user.avatar` | string \| null | Avatar hash — construct the URL as `https://cdn.discordapp.com/avatars/{id}/{avatar}.webp` |
+| `user.avatar` | string \| null | Avatar hash - construct the URL as `https://cdn.discordapp.com/avatars/{id}/{avatar}.webp` |
 | `user.bal` | number | The voter's Rcoin balance **after** the vote was processed |
 | `coins` | number \| null | Rcoins the user spent on this vote, or `null` for a time-based vote |
 | `votes` | number | Number of votes added by this action (always `1` for time-based; `coins / 10` for coin-based) |
@@ -80,7 +80,7 @@ app.post('/webhook', (req, res) => {
 ## Delivery Behaviour
 
 - RDL attempts to deliver the webhook **once** per vote. There is no automatic retry on failure.
-- If your endpoint responds with a non-2xx status code, RDL logs the failure internally but the vote is **still counted** — a webhook failure does not roll back the vote.
+- If your endpoint responds with a non-2xx status code, RDL logs the failure internally but the vote is **still counted** - a webhook failure does not roll back the vote.
 - Delivery is best-effort and fire-and-forget. Your endpoint should respond within a few seconds to avoid being considered failed.
 
 > **Tip:** Respond with `200 OK` immediately and process the payload asynchronously if your handler does heavy work (e.g. database writes, sending Discord messages). This prevents timeouts from being logged as failures.
@@ -159,7 +159,7 @@ app.post('/vote', async (c) => {
   if (auth !== process.env.RDL_SECRET) return c.text('Unauthorized', 401);
 
   const { user, votes, currentVotes } = await c.req.json();
-  console.log(`${user.username} voted — total: ${currentVotes}`);
+  console.log(`${user.username} voted - total: ${currentVotes}`);
 
   return c.text('OK');
 });

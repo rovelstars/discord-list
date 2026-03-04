@@ -13,11 +13,11 @@ import { env } from "$env/dynamic/private";
  *   { id, username, discriminator, avatar }
  *
  * Error responses:
- *   { err: 'missing_token' }   — DISCORD_TOKEN not configured
- *   { err: 'not_found' }       — Discord returned 404 / 10013
- *   { err: 'not_a_bot' }       — The resolved user is not a bot
- *   { err: 'discord_error', status: number } — any other Discord API error
- *   { err: 'server_error' }    — unexpected exception
+ *   { err: 'missing_token' }   - DISCORD_TOKEN not configured
+ *   { err: 'not_found' }       - Discord returned 404 / 10013
+ *   { err: 'not_a_bot' }       - The resolved user is not a bot
+ *   { err: 'discord_error', status: number } - any other Discord API error
+ *   { err: 'server_error' }    - unexpected exception
  */
 export const GET: RequestHandler = async ({ params }) => {
 	const userId = params.id?.trim();
@@ -66,7 +66,7 @@ export const GET: RequestHandler = async ({ params }) => {
 			{
 				status: 200,
 				headers: {
-					// Short cache — bot profiles rarely change, but don't stale forever
+					// Short cache - bot profiles rarely change, but don't stale forever
 					"Cache-Control": "public, max-age=60, stale-while-revalidate=300"
 				}
 			}

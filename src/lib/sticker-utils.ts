@@ -1,5 +1,5 @@
 /**
- * Sticker utility functions — client-safe
+ * Sticker utility functions - client-safe
  *
  * This module contains ONLY pure functions with zero server-side imports.
  * It is safe to import from both +page.svelte files and +server.ts files.

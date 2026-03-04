@@ -41,8 +41,8 @@ async function getDiscordUser(key: string): Promise<{ id: string; username: stri
 // PATCH /api/bots/[id]/comments/[commentId]
 //
 // Body (JSON):
-//   rating?  number  — new rating (0.5–5.0, one decimal place). Ignored for replies.
-//   text?    string  — new text body (max 2 000 chars). Pass null to clear.
+//   rating?  number  - new rating (0.5–5.0, one decimal place). Ignored for replies.
+//   text?    string  - new text body (max 2 000 chars). Pass null to clear.
 //
 // Auth: key cookie / query param / Authorization header
 // Only the comment's author may edit it.

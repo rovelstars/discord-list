@@ -21,7 +21,7 @@
 	};
 
 	const { bot } = data;
-	// Coerce bal to a number — libSQL can return INTEGER columns as strings
+	// Coerce bal to a number - libSQL can return INTEGER columns as strings
 	// depending on the driver version, so we normalise it here once.
 	const user = data.user ? { ...data.user, bal: Number(data.user.bal) || 0 } : null;
 
@@ -103,7 +103,7 @@
 	<!-- Vote area -->
 	<div class="mt-8 flex flex-col items-center gap-4">
 		{#if user}
-			<!-- Coin input — only when the bot opted in to coin-based votes -->
+			<!-- Coin input - only when the bot opted in to coin-based votes -->
 			{#if bot.opted_coins}
 				<div class="w-full max-w-xs flex flex-col gap-1">
 					<label for="coins" class="text-sm font-medium text-muted-foreground">

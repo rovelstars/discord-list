@@ -215,7 +215,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 								img: bot.avatar
 									? `https://cdn.discordapp.com/avatars/${id}/${bot.avatar}?size=128`
 									: undefined,
-								// bot.owners may be stored as serialized JSON TEXT in DB — parse if necessary
+								// bot.owners may be stored as serialized JSON TEXT in DB - parse if necessary
 								owners:
 									typeof bot.owners === "string"
 										? JSON.parse(bot.owners || "[]")
@@ -239,7 +239,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 						body: {
 							title: `Failed to send webhook for ${bot.username} (${id})`,
 							desc: String(e),
-							// bot.owners may be stored as serialized JSON TEXT in DB — parse if necessary
+							// bot.owners may be stored as serialized JSON TEXT in DB - parse if necessary
 							owners:
 								typeof bot.owners === "string" ? JSON.parse(bot.owners || "[]") : (bot.owners ?? [])
 						}

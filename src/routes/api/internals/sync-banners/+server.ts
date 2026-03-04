@@ -11,10 +11,10 @@
  *   https://cdn.discordapp.com/banners/{botId}/{hash}.webp?size=512
  *
  * Bots that have no banner on Discord (`banner: null`) are intentionally left
- * alone — we only write when Discord provides a non-null value, so manually
+ * alone - we only write when Discord provides a non-null value, so manually
  * set custom `bg` URLs/hashes are preserved for bannerless bots.
  *
- * Security — identical to other /api/internals/* routes:
+ * Security - identical to other /api/internals/* routes:
  *   1. Header:      X-Internal-Secret: <INTERNAL_SECRET>
  *   2. Query param: ?secret=<INTERNAL_SECRET>
  *
@@ -121,7 +121,7 @@ async function runBannerSync(discordToken: string): Promise<SyncBannersResult> {
 	}
 
 	// ------------------------------------------------------------------
-	// Step 2: Process in batches — fetch banner from Discord, diff, write.
+	// Step 2: Process in batches - fetch banner from Discord, diff, write.
 	// ------------------------------------------------------------------
 	for (let offset = 0; offset < bots.length; offset += BATCH_SIZE) {
 		const batch = bots.slice(offset, offset + BATCH_SIZE);
@@ -132,7 +132,7 @@ async function runBannerSync(discordToken: string): Promise<SyncBannersResult> {
 					const discordUser = await fetchDiscordBotUser(bot.id, discordToken);
 
 					// Discord returns null banner for bots that have no banner set.
-					// Leave the existing bg value untouched — it may be a custom URL
+					// Leave the existing bg value untouched - it may be a custom URL
 					// or a manually set hash the owner provided.
 					if (!discordUser.banner) {
 						result.skippedNoBanner++;
@@ -156,12 +156,12 @@ async function runBannerSync(discordToken: string): Promise<SyncBannersResult> {
 				} catch (err: any) {
 					const status = err?.status ?? "?";
 					const message = err instanceof Error ? err.message : String(err);
-					result.errors.push(`bot ${bot.id}: HTTP ${status} — ${message}`);
+					result.errors.push(`bot ${bot.id}: HTTP ${status} - ${message}`);
 				}
 			})
 		);
 
-		// Throttle between batches — skip the delay after the last batch.
+		// Throttle between batches - skip the delay after the last batch.
 		const isLastBatch = offset + BATCH_SIZE >= bots.length;
 		if (!isLastBatch) {
 			await sleep(BATCH_DELAY_MS);

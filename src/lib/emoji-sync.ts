@@ -106,7 +106,7 @@ export async function fetchGuildEmojis(
  *
  * @param guildId   Discord guild snowflake.
  * @param botToken  Bot token for authorization.
- * @param syncFn    The DB upsert function — accepts (guildId, emojis[]) and
+ * @param syncFn    The DB upsert function - accepts (guildId, emojis[]) and
  *                  returns Promise<{ created: number; updated: number }>.
  */
 export async function syncServerEmojisWithFn(
@@ -163,7 +163,7 @@ export async function syncServerEmojisWithFn(
  */
 export async function syncServerEmojis(guildId: string, botToken: string): Promise<SyncResult> {
 	// Inline import keeps the module usable even if the caller hasn't
-	// set up path aliases — SvelteKit resolves this at bundle time.
+	// set up path aliases - SvelteKit resolves this at bundle time.
 	const { syncGuildEmojis } = await import("$lib/db/queries/emojis");
 	return syncServerEmojisWithFn(guildId, botToken, syncGuildEmojis);
 }

@@ -29,7 +29,7 @@ export const POST: RequestHandler = async ({ params }) => {
 			return json({ error: "not_found" }, { status: 404 });
 		}
 
-		// Increment download counter (fire-and-forget — never block the response)
+		// Increment download counter (fire-and-forget - never block the response)
 		incrementEmojiDownload(id).catch((err) => {
 			console.warn(`[emoji-download] Failed to increment dc for emoji ${id}:`, err);
 		});

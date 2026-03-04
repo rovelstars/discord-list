@@ -114,7 +114,7 @@
 				</div>
 				<p class="font-bold text-sm mb-1">Minimal collection</p>
 				<p class="text-xs text-muted-foreground leading-relaxed">
-					We only collect what's necessary to provide the service — your Discord profile data and
+					We only collect what's necessary to provide the service - your Discord profile data and
 					any content you choose to submit.
 				</p>
 			</div>
@@ -192,8 +192,8 @@
 				<div class="text-muted-foreground leading-relaxed space-y-3 text-sm">
 					<p>
 						<strong class="text-foreground">{siteName}</strong> ("{siteName}", "we", "us", or "our")
-						is a Discord discovery platform operated by Rovel Stars™. Our service — accessible at
-						<a href={siteUrl} class="text-primary hover:underline">{siteUrl}</a> — lets users browse and
+						is a Discord discovery platform operated by Rovel Stars™. Our service - accessible at
+						<a href={siteUrl} class="text-primary hover:underline">{siteUrl}</a> - lets users browse and
 						list Discord bots, servers, custom emojis, and stickers.
 					</p>
 					<p>
@@ -367,7 +367,7 @@
 					<div class="space-y-3 mt-2">
 						<div class="bg-card border border-border rounded-xl p-4">
 							<p class="font-semibold text-foreground text-sm mb-1">
-								Vote Webhooks — Bot Developers & Server Owners
+								Vote Webhooks - Bot Developers & Server Owners
 							</p>
 							<p>
 								When you vote for a bot or server, we send the recipient's configured webhook your
@@ -576,7 +576,7 @@
 					<p>
 						Our service is not directed to children under the age of 13. We do not knowingly collect
 						personal information from children under 13. Because our service requires a Discord
-						account — and Discord's own Terms of Service require users to be at least 13 — access by
+						account - and Discord's own Terms of Service require users to be at least 13 - access by
 						younger users is inherently restricted.
 					</p>
 					<p>

@@ -21,7 +21,7 @@
 	let searchInput = q ?? "";
 
 	const seoTitle = q
-		? `Search: "${q}" — Discord Servers`
+		? `Search: "${q}" - Discord Servers`
 		: newFlag
 			? "New Discord Servers"
 			: trending
@@ -110,7 +110,7 @@
 			Discord <span class="text-green-500">Servers</span>
 		</h1>
 		<p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-medium mb-8">
-			Discover communities built by real people — for gaming, art, coding, and everything in
+			Discover communities built by real people - for gaming, art, coding, and everything in
 			between.
 		</p>
 

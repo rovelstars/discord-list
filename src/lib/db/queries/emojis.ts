@@ -330,7 +330,7 @@ function validateSyncEmoji(
 	}
 	if (!guildId || typeof guildId !== "string" || !/^\d+$/.test(guildId.trim())) {
 		console.warn(
-			`[syncGuildEmojis] Skipping emoji ${emoji.id} — invalid guildId: ${JSON.stringify(guildId)}`
+			`[syncGuildEmojis] Skipping emoji ${emoji.id} - invalid guildId: ${JSON.stringify(guildId)}`
 		);
 		return null;
 	}
@@ -419,7 +419,7 @@ export async function syncGuildEmojis(
 				guild: v.safeGuildId
 			});
 		} else {
-			// Existing — compute the display name to keep
+			// Existing - compute the display name to keep
 			const keepName = existing.submitter
 				? (existing.name ?? v.safeName.replace(/_/g, " "))
 				: v.safeName.replace(/_/g, " ");
@@ -456,7 +456,7 @@ export async function syncGuildEmojis(
 
 	// ── 4b. Update changed existing emojis ────────────────────────────────────
 	// libSQL (Turso) doesn't support multi-row UPDATE in one statement, so we
-	// fire individual UPDATEs — but only for rows that actually changed, which
+	// fire individual UPDATEs - but only for rows that actually changed, which
 	// in practice is a small fraction of the total on repeated syncs.
 	for (const u of toUpdate) {
 		await withDb((db: DrizzleDb) =>
@@ -480,6 +480,17 @@ export async function syncGuildEmojis(
  * Get a random selection of emojis.
  * Useful for homepage highlights.
  */
+/**
+ * Returns a minimal list of all emoji ids and their added_at timestamps.
+ * Intended for sitemap generation only - keeps the payload small.
+ */
+export async function getAllEmojiIds(): Promise<{ id: string; added_at: string | null }[]> {
+	const rows = (await withDb((db: DrizzleDb) =>
+		db.select({ id: Emojis.id, added_at: Emojis.added_at }).from(Emojis)
+	)) as { id: string; added_at: string | null }[];
+	return rows.map((r) => ({ id: String(r.id), added_at: r.added_at ?? null }));
+}
+
 export async function getRandomEmojis(limit = 12): Promise<EmojiSummary[]> {
 	const rows = (await withDb((db: DrizzleDb) =>
 		db

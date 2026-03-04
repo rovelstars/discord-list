@@ -74,7 +74,7 @@ export default {
 			return {
 				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 				data: {
-					content: `❌ Couldn't figure out who you are — please try again.`
+					content: `❌ Couldn't figure out who you are - please try again.`
 				}
 			};
 		}
@@ -82,7 +82,7 @@ export default {
 		if (!targetUserId) {
 			return {
 				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: { content: `❌ Couldn't resolve that user — please try again.` }
+				data: { content: `❌ Couldn't resolve that user - please try again.` }
 			};
 		}
 
@@ -102,7 +102,7 @@ export default {
 			};
 		}
 
-		// Enforce integer — Discord's addIntegerOption already prevents floats
+		// Enforce integer - Discord's addIntegerOption already prevents floats
 		// from the client side, but guard server-side too.
 		const amount = Math.floor(rawAmount);
 		if (amount <= 0 || !Number.isFinite(amount)) {
@@ -122,7 +122,7 @@ export default {
 			};
 		}
 
-		// ── Kick off the async work — no await so we return immediately ───────
+		// ── Kick off the async work - no await so we return immediately ───────
 		(async () => {
 			try {
 				const res = await fetch(`${domain}/api/internals/transfer-bal`, {
@@ -143,7 +143,7 @@ export default {
 				if (!res.ok || !data?.success) {
 					const errKey = data?.error ?? "";
 					const errMap: Record<string, string> = {
-						sender_not_found: `👋 Hey **${senderName}**, looks like you don't have a Rovel Discord List account yet!\n\n👉 Head over to ${domain}/login to sign in with Discord — you'll receive **50 ${RC}** just for joining!`,
+						sender_not_found: `👋 Hey **${senderName}**, looks like you don't have a Rovel Discord List account yet!\n\n👉 Head over to ${domain}/login to sign in with Discord - you'll receive **50 ${RC}** just for joining!`,
 						recipient_not_found: `❌ **${targetName}** doesn't have a Rovel Discord List account yet, so the transfer couldn't go through.`,
 						insufficient_balance: `❌ Not enough ${RC}, **${senderName}**! You only have **${data?.have ?? "?"} ${RC}** but tried to send **${amount} ${RC}**.`,
 						same_user: `❌ You can't send ${RC} to yourself, **${senderName}**!`,
@@ -154,7 +154,7 @@ export default {
 
 					const msg =
 						errMap[errKey] ??
-						`⚠️ Transfer failed: \`${errKey || "unknown error"}\` — please try again.`;
+						`⚠️ Transfer failed: \`${errKey || "unknown error"}\` - please try again.`;
 					await editFollowup(appId, interactionToken, msg);
 					return;
 				}
@@ -174,12 +174,12 @@ export default {
 				await editFollowup(
 					appId,
 					interactionToken,
-					`⚠️ Something went wrong on our end: \`${msg}\` — please try again in a moment.`
+					`⚠️ Something went wrong on our end: \`${msg}\` - please try again in a moment.`
 				).catch(() => {});
 			}
 		})();
 
-		// Return deferred public response immediately — Discord shows "Bot is thinking…"
+		// Return deferred public response immediately - Discord shows "Bot is thinking…"
 		// while the transfer processes in the background.
 		return {
 			type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE

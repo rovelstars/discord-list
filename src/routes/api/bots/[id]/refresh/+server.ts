@@ -6,7 +6,7 @@ import { refreshBot, NotFoundError } from "$lib/bot-refresh";
 // ---------------------------------------------------------------------------
 // Simple in-memory rate limiter
 // Prevents the same bot from being refreshed more than once per 5 minutes from
-// the public endpoint — mitigates accidental or malicious hammering.
+// the public endpoint - mitigates accidental or malicious hammering.
 // ---------------------------------------------------------------------------
 
 const RATE_LIMIT_MS = 5 * 60 * 1000; // 5 minutes
@@ -41,7 +41,7 @@ function markRefreshed(botId: string): void {
  * POST-only so GET-based crawlers/CDN prefetch cannot trigger it.
  *
  * Security model:
- *   - No secret required from the client — this is a public route.
+ *   - No secret required from the client - this is a public route.
  *   - DISCORD_TOKEN is read server-side only and never exposed to the browser.
  *   - Per-bot rate limiting (5 min window) prevents abuse.
  *   - Only bots that already exist in the DB can be refreshed.
@@ -78,7 +78,7 @@ export const POST: RequestHandler = async ({ params }) => {
 	}
 
 	// ------------------------------------------------------------------
-	// Discord token — required; fail fast if not configured.
+	// Discord token - required; fail fast if not configured.
 	// ------------------------------------------------------------------
 	const discordToken = (env.DISCORD_TOKEN ?? "").trim();
 	if (!discordToken) {

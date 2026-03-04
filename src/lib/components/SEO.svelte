@@ -19,7 +19,7 @@
 
 	export let title: string = SITE_NAME;
 	export let description: string =
-		"Imagine a place — where you find everything about Discord! Bots, Servers, Emojis, Templates and more. We got you covered!";
+		"Imagine a place - where you find everything about Discord! Bots, Servers, Emojis, Templates and more. We got you covered!";
 	export let image: string | null = null;
 	export let imageSmall: string | null = null;
 	export let canonical: string | null = null;
@@ -68,7 +68,7 @@
 	<meta property="og:image" content={ogImage} />
 	<meta property="og:image:type" content={imageType} />
 	{#if isLargeImage}
-		<!-- Wide banner image — Discord renders this as a large preview embed -->
+		<!-- Wide banner image - Discord renders this as a large preview embed -->
 		<meta property="og:image:width" content="1920" />
 		<meta property="og:image:height" content="1080" />
 	{:else}

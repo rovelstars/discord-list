@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { X } from "@lucide/svelte";
 	import { onMount, onDestroy, createEventDispatcher, tick } from "svelte";
 	import { browser } from "$app/environment";
 
@@ -16,7 +17,7 @@
 	let dialogEl: HTMLElement | null = null;
 	let previouslyFocused: Element | null = null;
 
-	// Portal action — moves the node to document.body on mount and restores on destroy
+	// Portal action - moves the node to document.body on mount and restores on destroy
 	function portal(node: HTMLElement) {
 		document.body.appendChild(node);
 		return {
@@ -125,7 +126,7 @@
 </div>
 
 {#if open}
-	<!-- Overlay — portalled to body so fixed positioning is never clipped -->
+	<!-- Overlay - portalled to body so fixed positioning is never clipped -->
 	<div use:portal>
 		<div
 			data-dialog-overlay
@@ -151,15 +152,7 @@
 					class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
 					on:click={closeDialog}
 				>
-					<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-						<path
-							d="M6 6l12 12M6 18L18 6"
-							stroke="currentColor"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
-					</svg>
+					<X class="h-4 w-4" aria-hidden="true" />
 					<span class="sr-only">Close</span>
 				</button>
 			</slot>

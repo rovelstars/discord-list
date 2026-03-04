@@ -3,7 +3,7 @@
  *
  * Internal endpoint that triggers Discord slash-command registration.
  *
- * Security — the secret is accepted from either of two sources (checked in order):
+ * Security - the secret is accepted from either of two sources (checked in order):
  *   1. Header:       X-Internal-Secret: <INTERNAL_SECRET>
  *      Used by automated callers (CI, deploy hooks, scheduled functions).
  *   2. Query param:  ?secret=<INTERNAL_SECRET>
@@ -34,7 +34,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
 	const internalSecret = (env.INTERNAL_SECRET ?? "").trim();
 
 	if (!internalSecret) {
-		console.error("[register-commands] INTERNAL_SECRET env var is not set — refusing to run.");
+		console.error("[register-commands] INTERNAL_SECRET env var is not set - refusing to run.");
 		return json(
 			{ ok: false, error: "server_misconfiguration" },
 			{ status: 500 }
@@ -46,7 +46,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
 	const provided     = headerSecret || querySecret;
 
 	if (!provided || provided !== internalSecret) {
-		console.warn("[register-commands] Unauthorized attempt — invalid or missing secret.");
+		console.warn("[register-commands] Unauthorized attempt - invalid or missing secret.");
 		return json({ ok: false, error: "unauthorized" }, { status: 401 });
 	}
 
@@ -92,7 +92,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
 		const scope = isGuild ? "guild" : "global";
 
 		console.log(
-			`[register-commands] Done — ${registeredList.length || "?"} command(s) registered ${scope === "guild" ? `to guild ${env.DISCORD_GUILD_ID}` : "globally"}.`
+			`[register-commands] Done - ${registeredList.length || "?"} command(s) registered ${scope === "guild" ? `to guild ${env.DISCORD_GUILD_ID}` : "globally"}.`
 		);
 
 		return json({

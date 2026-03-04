@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * register-commands.mjs — Discord slash-command registration
+ * register-commands.mjs - Discord slash-command registration
  *
  * Registers all slash commands defined in src/bot/register.ts with Discord's
  * API via the REST client.  Run this once after adding or changing commands.
@@ -20,18 +20,18 @@
  *
  * Required environment variables
  * ───────────────────────────────
- *   DISCORD_TOKEN     — bot token
- *   DISCORD_BOT_ID    — application / client id
- *   DISCORD_GUILD_ID  — guild id (only required when MODE=development)
- *   MODE              — "development" | "production"  (defaults to "development")
+ *   DISCORD_TOKEN     - bot token
+ *   DISCORD_BOT_ID    - application / client id
+ *   DISCORD_GUILD_ID  - guild id (only required when MODE=development)
+ *   MODE              - "development" | "production"  (defaults to "development")
  *
  * The script loads these from a .env file in the project root if present.
  * CI/CD pipelines can set them directly in the environment instead.
  *
  * Exit codes
  * ──────────
- *   0 — all commands registered successfully
- *   1 — missing required env var or Discord API error
+ *   0 - all commands registered successfully
+ *   1 - missing required env var or Discord API error
  */
 
 import { readFileSync, existsSync } from "node:fs";
@@ -40,7 +40,7 @@ import { fileURLToPath } from "node:url";
 import { exit } from "node:process";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Colour helpers (no deps — pure ANSI)
+// Colour helpers (no deps - pure ANSI)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const isTTY = process.stdout.isTTY;
@@ -73,7 +73,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 function loadEnv() {
 	const envPath = resolve(__dirname, "../.env");
 	if (!existsSync(envPath)) {
-		warn(".env file not found — relying on shell environment variables only.");
+		warn(".env file not found - relying on shell environment variables only.");
 		return;
 	}
 
@@ -154,7 +154,7 @@ function getCommandPayloads() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Discord REST helpers  (no @discordjs/rest needed — plain fetch)
+// Discord REST helpers  (no @discordjs/rest needed - plain fetch)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const DISCORD_API = "https://discord.com/api/v10";
@@ -218,7 +218,7 @@ async function main() {
 	const commands = getCommandPayloads();
 
 	if (commands.length === 0) {
-		warn("No commands defined — nothing to register.");
+		warn("No commands defined - nothing to register.");
 		exit(0);
 	}
 

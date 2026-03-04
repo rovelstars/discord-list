@@ -25,7 +25,7 @@
 			icon: "code",
 			title: "Developer Friendly",
 			description:
-				"Webhook vote notifications, a clean REST API, and a simple bot submission flow — we make it easy to grow."
+				"Webhook vote notifications, a clean REST API, and a simple bot submission flow - we make it easy to grow."
 		},
 		{
 			icon: "shield",
@@ -47,7 +47,7 @@
 
 <SEO
 	title="About Us"
-	description="Learn about Rovel Discord List — who we are, what we stand for, and why we built the best place to discover Discord bots."
+	description="Learn about Rovel Discord List - who we are, what we stand for, and why we built the best place to discover Discord bots."
 	imageSmall="/assets/img/bot/logo-512.png"
 />
 
@@ -118,7 +118,7 @@
 			</h2>
 			<p class="text-muted-foreground leading-relaxed mb-4">
 				Discord has transformed how communities connect online. Bots are the backbone of those
-				communities — automating moderation, adding games, playing music, and so much more. But
+				communities - automating moderation, adding games, playing music, and so much more. But
 				finding the <em>right</em> bot has always been harder than it should be.
 			</p>
 			<p class="text-muted-foreground leading-relaxed">

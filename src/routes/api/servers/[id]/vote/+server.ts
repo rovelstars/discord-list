@@ -70,7 +70,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 
 		const userRow = userRows[0] as any;
 
-		// Parse the shared votes array — entries can be { bot } or { server }
+		// Parse the shared votes array - entries can be { bot } or { server }
 		let votesArr: Array<{ bot?: string; server?: string; at: number }> = [];
 		try {
 			if (!userRow.votes) votesArr = [];
@@ -101,7 +101,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 
 		const server = serverRows[0] as any;
 
-		// Cooldown check — 24 hours
+		// Cooldown check - 24 hours
 		const lastVote = votesArr.find((v) => v.server === id);
 		if (lastVote && lastVote.at > Date.now() - 86_400_000) {
 			const timeRemaining = 86_400_000 - (Date.now() - lastVote.at);
@@ -129,7 +129,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 		}
 
 		// Record vote in the activity log for the referral vote-20 milestone.
-		// Fire-and-forget — never let this block or fail the vote response.
+		// Fire-and-forget - never let this block or fail the vote response.
 		recordVote(userData.id, id, "server").catch((err) => {
 			console.warn(
 				"[server-vote] recordVote failed (non-fatal):",
@@ -156,7 +156,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 				}
 			});
 		} catch {
-			// Non-fatal — vote already recorded
+			// Non-fatal - vote already recorded
 		}
 
 		return json({ success: true }, { status: 200 });

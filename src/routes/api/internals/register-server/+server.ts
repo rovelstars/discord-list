@@ -191,7 +191,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		// Fire-and-forget: sync the guild's custom emojis and stickers
 		// immediately after registration so they appear in the listing without
 		// requiring a separate /sync command. Neither call blocks or fails the
-		// registration response — they run independently of each other.
+		// registration response - they run independently of each other.
 		const botToken = (env.DISCORD_TOKEN ?? "").trim();
 		if (botToken) {
 			syncServerEmojis(guildId, botToken)

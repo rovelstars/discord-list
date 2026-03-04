@@ -111,7 +111,7 @@
 
 		<p class="text-center text-base md:text-lg font-semibold text-muted-foreground max-w-md">
 			Tip: Votes are updated on the main site every few minutes. Your vote may not reflect
-			immediately — but it is counted!
+			immediately - but it is counted!
 		</p>
 	</div>
 

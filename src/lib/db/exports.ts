@@ -12,7 +12,7 @@
  * runtime helper (`./index`), the typed schema (`./schema`) and the
  * query helpers (`./queries/helpers`).
  *
- * Keep this file minimal — implementation details live in their own modules.
+ * Keep this file minimal - implementation details live in their own modules.
  */
 
 import { getClient, getDb, ping, withDb } from "./index";
@@ -52,28 +52,28 @@ export {
 export type { StickerSummary, StickerDetail, StickerFormatType } from "./queries/stickers";
 
 // ---------------------------------------------------------------------------
-// Referral system — schema tables, query helpers, and type definitions
+// Referral system - schema tables, query helpers, and type definitions
 // ---------------------------------------------------------------------------
 // Schema tables (for use with Drizzle query builders in server code)
 export { Referrals, ReferralMilestones, UserFingerprints, UserActivityLog } from "./schema";
 
-// Query helpers — grouped by responsibility:
-//   createReferral / resolveReferralCode       — sign-up flow
-//   upsertFingerprint / getUserFingerprints    — device fingerprint management (FIFO)
-//   getUsersWithFingerprint / fingerprintBelongsToUser — cross-account fraud detection
-//   recordSiteVisit / recordVote               — activity logging
-//   getPayableSignupReferrals / getActiveReferralsInWindow — SettleRewards batch queries
-//   markReferralPaid                           — sign-up reward settlement
-//   checkRetentionProgress / checkVotingProgress — milestone evaluation
-//   milestoneExists / createMilestone          — idempotent milestone writes
-//   creditReward                               — atomic R$ crediting (single user)
-//   creditDoubleReward                         — atomic double-sided R$ credit (referrer + referred)
-//   signupWelcomeBonusExists                   — idempotency guard for the referred user's welcome bonus
-//   awardServerBounty / awardSelfListing       — server-listing rewards
-//   getReferralsByReferrer / getMilestonesForReferral — dashboard queries (referrer view)
-//   getMilestonesForUser                       — dashboard queries (referred user view)
-//   snowflakeToDate / snowflakeAgeInDays       — Discord Snowflake utilities
-//   wouldCreateReferralLoop / isAlreadyReferred — loop & duplicate prevention
+// Query helpers - grouped by responsibility:
+//   createReferral / resolveReferralCode       - sign-up flow
+//   upsertFingerprint / getUserFingerprints    - device fingerprint management (FIFO)
+//   getUsersWithFingerprint / fingerprintBelongsToUser - cross-account fraud detection
+//   recordSiteVisit / recordVote               - activity logging
+//   getPayableSignupReferrals / getActiveReferralsInWindow - SettleRewards batch queries
+//   markReferralPaid                           - sign-up reward settlement
+//   checkRetentionProgress / checkVotingProgress - milestone evaluation
+//   milestoneExists / createMilestone          - idempotent milestone writes
+//   creditReward                               - atomic R$ crediting (single user)
+//   creditDoubleReward                         - atomic double-sided R$ credit (referrer + referred)
+//   signupWelcomeBonusExists                   - idempotency guard for the referred user's welcome bonus
+//   awardServerBounty / awardSelfListing       - server-listing rewards
+//   getReferralsByReferrer / getMilestonesForReferral - dashboard queries (referrer view)
+//   getMilestonesForUser                       - dashboard queries (referred user view)
+//   snowflakeToDate / snowflakeAgeInDays       - Discord Snowflake utilities
+//   wouldCreateReferralLoop / isAlreadyReferred - loop & duplicate prevention
 export {
 	// Date / calendar utilities
 	todayUtc,

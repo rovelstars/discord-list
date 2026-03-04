@@ -1,6 +1,6 @@
 # Introduction
 
-Welcome to the **Rovel Discord List API** — the public REST API powering [Rovel Discord List](https://discord.rovelstars.com).
+Welcome to the **Rovel Discord List API** - the public REST API powering [Rovel Discord List](https://discord.rovelstars.com).
 
 You can use this API to fetch bot and server data, submit votes, post reviews, and manage your account programmatically.
 
@@ -10,7 +10,7 @@ You can use this API to fetch bot and server data, submit votes, post reviews, a
 https://discord.rovelstars.com
 ```
 
-All endpoints are relative to this base URL. The API speaks JSON — every request body should be `Content-Type: application/json` and every response is `application/json`.
+All endpoints are relative to this base URL. The API speaks JSON - every request body should be `Content-Type: application/json` and every response is `application/json`.
 
 ## Authentication
 
@@ -25,7 +25,7 @@ Authentication is done via a **Discord OAuth2 access token**. Once a user logs i
 | `RDL-key` header | `RDL-key: YOUR_TOKEN` |
 | Cookie | `key=YOUR_TOKEN` |
 
-> **Note:** The token is a raw Discord OAuth2 access token — not a bot token. You obtain one by completing the Discord OAuth2 flow on the site (`/api/auth`).
+> **Note:** The token is a raw Discord OAuth2 access token - not a bot token. You obtain one by completing the Discord OAuth2 flow on the site (`/api/auth`).
 
 ### Obtaining a Token
 
@@ -56,4 +56,4 @@ All responses are JSON objects. Successful responses include the relevant data a
 
 ## Rate Limiting
 
-There are no hard API rate limits enforced at the HTTP level right now, but please be a good citizen — cache responses where possible and avoid hammering endpoints in tight loops. Abusive clients may be blocked without notice.
+There are no hard API rate limits enforced at the HTTP level right now, but please be a good citizen - cache responses where possible and avoid hammering endpoints in tight loops. Abusive clients may be blocked without notice.

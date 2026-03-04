@@ -10,7 +10,7 @@
 			icon: "/assets/img/bot/wink.svg",
 			emoji: "🎵",
 			description:
-				"Stream music from YouTube, Spotify, SoundCloud and more. Queue management, equalizer, lyrics — everything your listening party needs.",
+				"Stream music from YouTube, Spotify, SoundCloud and more. Queue management, equalizer, lyrics - everything your listening party needs.",
 			keywords: ["music", "audio", "playlist", "stream", "radio"]
 		},
 		{
@@ -116,8 +116,8 @@
 </script>
 
 <SEO
-	title="Discord Bot Categories {currentYear} — Browse by Type"
-	description="Browse every type of Discord bot in one place. Music, moderation, gaming, economy, utility, fun and more — find the perfect bot for your server by category."
+	title="Discord Bot Categories {currentYear} - Browse by Type"
+	description="Browse every type of Discord bot in one place. Music, moderation, gaming, economy, utility, fun and more - find the perfect bot for your server by category."
 	imageSmall="/assets/img/bot/logo-512.png"
 />
 
@@ -130,7 +130,7 @@
 		the most popular bots in that space.
 	</p>
 	<p class="text-muted-foreground text-base max-w-xl mx-auto">
-		From music and moderation to anime and economy — there's a perfect bot for every kind of Discord
+		From music and moderation to anime and economy - there's a perfect bot for every kind of Discord
 		server.
 	</p>
 </section>
@@ -150,7 +150,7 @@
 		<p
 			class="text-gray-600 dark:text-gray-300 text-lg mb-10 text-center md:text-left font-semibold"
 		>
-			{categories.length} categories — click any to see the bots inside.
+			{categories.length} categories - click any to see the bots inside.
 		</p>
 
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -195,7 +195,7 @@
 	<h2>Finding the Right Discord Bot</h2>
 	<p>
 		With thousands of Discord bots available, picking the right one for your server doesn't have to
-		be overwhelming. The best approach is to start with what your community actually needs — then
+		be overwhelming. The best approach is to start with what your community actually needs - then
 		browse the relevant category to compare the top options side by side.
 	</p>
 
@@ -210,7 +210,7 @@
 	<h3>Adding Multiple Bots</h3>
 	<p>
 		Most servers run three to five bots covering different roles: one for music, one for moderation,
-		one for leveling, and one or two for fun or utility. Keep your bot count reasonable — too many
+		one for leveling, and one or two for fun or utility. Keep your bot count reasonable - too many
 		bots create permission conflicts and clutter your channel list with unnecessary command
 		suggestions.
 	</p>

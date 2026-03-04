@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * migrate.mjs — Rovel Discord List database migration
+ * migrate.mjs - Rovel Discord List database migration
  *
  * Responsibilities
  * ────────────────
@@ -20,13 +20,13 @@
  *
  * Environment variables (at least one URL variant is required)
  * ────────────────────────────────────────────────────────────
- *   DATABASE_URL        or  ASTRO_DB_REMOTE_URL  — libsql:// or https:// URL
- *   TURSO_TOKEN         or  ASTRO_DB_APP_TOKEN   — auth token (omit for local file)
+ *   DATABASE_URL        or  ASTRO_DB_REMOTE_URL  - libsql:// or https:// URL
+ *   TURSO_TOKEN         or  ASTRO_DB_APP_TOKEN   - auth token (omit for local file)
  *
  * Safety guarantees
  * ─────────────────
  * • Never drops or truncates any table or column.
- * • Every CREATE TABLE uses IF NOT EXISTS — safe to re-run at any time.
+ * • Every CREATE TABLE uses IF NOT EXISTS - safe to re-run at any time.
  * • Every ALTER TABLE ADD COLUMN is guarded by a prior column-existence check.
  * • A dry-run mode is available: set DRY_RUN=1 to print SQL without executing.
  * • Exits with code 1 on any unrecoverable error so CI/CD pipelines can catch it.
@@ -39,7 +39,7 @@ import { fileURLToPath } from "node:url";
 import { exit } from "node:process";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Colour helpers (no deps — pure ANSI)
+// Colour helpers (no deps - pure ANSI)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const isTTY = process.stdout.isTTY;
@@ -82,7 +82,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 function loadEnv() {
 	const envPath = resolve(__dirname, "../.env");
 	if (!existsSync(envPath)) {
-		warn(".env not found — relying entirely on shell environment");
+		warn(".env not found - relying entirely on shell environment");
 		return;
 	}
 
@@ -118,14 +118,14 @@ function loadEnv() {
 // Schema definitions
 //
 // Each table is described as:
-//   { sql: string }            — the full CREATE TABLE IF NOT EXISTS statement
-//   { columns: ColumnDef[] }   — individual column specs used for ALTER TABLE
+//   { sql: string }            - the full CREATE TABLE IF NOT EXISTS statement
+//   { columns: ColumnDef[] }   - individual column specs used for ALTER TABLE
 //
 // ColumnDef: { name, type, notNull?, default? }
-//   name    — column name (must match the name in `sql` exactly)
-//   type    — SQLite type affinity: TEXT | INTEGER | REAL | BLOB
-//   notNull — whether NOT NULL applies (default false)
-//   default — the DEFAULT expression as a raw SQL string, e.g. "'[]'" or "0"
+//   name    - column name (must match the name in `sql` exactly)
+//   type    - SQLite type affinity: TEXT | INTEGER | REAL | BLOB
+//   notNull - whether NOT NULL applies (default false)
+//   default - the DEFAULT expression as a raw SQL string, e.g. "'[]'" or "0"
 //             When notNull is true and default is provided, the ALTER TABLE
 //             statement becomes:  ADD COLUMN "col" TYPE NOT NULL DEFAULT expr
 //             which is required by SQLite for non-null columns added to
@@ -484,8 +484,8 @@ const SCHEMA = [
 	// to evaluate the retention (5 visit days) and voting (20 unique entities)
 	// milestones within a referred user's first 7 days.
 	// Deduplication is enforced at the application layer:
-	//   site_visit — one row per (user_id, event_day).
-	//   vote       — one row per (user_id, entity_id) across all days.
+	//   site_visit - one row per (user_id, event_day).
+	//   vote       - one row per (user_id, entity_id) across all days.
 	{
 		name: "UserActivityLog",
 		sql: `
@@ -558,7 +558,7 @@ function buildAlterSQL(tableName, col) {
 
 	if (col.notNull) {
 		if (!col.default && col.default !== 0 && col.default !== "") {
-			// Cannot safely add a NOT NULL column without a DEFAULT — downgrade to
+			// Cannot safely add a NOT NULL column without a DEFAULT - downgrade to
 			// nullable so we don't break existing rows.
 			warn(
 				`Column "${col.name}" on "${tableName}" is NOT NULL but has no DEFAULT. ` +
@@ -601,7 +601,7 @@ async function migrateTable(client, tableDef, dryRun) {
 		const live = await liveColumns(client, name);
 
 		for (const col of columns) {
-			// Primary key column — never needs to be added via ALTER TABLE
+			// Primary key column - never needs to be added via ALTER TABLE
 			if (col.name === "id") continue;
 
 			if (live.has(col.name)) {
@@ -626,7 +626,7 @@ async function migrateTable(client, tableDef, dryRun) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Users table — legacy column rename: lastLogin → last_login
+// Users table - legacy column rename: lastLogin → last_login
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function handleLastLoginRename(client, dryRun) {
@@ -649,16 +649,16 @@ async function handleLastLoginRename(client, dryRun) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Index creation — kept idempotent via CREATE INDEX IF NOT EXISTS
+// Index creation - kept idempotent via CREATE INDEX IF NOT EXISTS
 // ─────────────────────────────────────────────────────────────────────────────
 
 const INDEXES = [
-	// Speed up "get all comments for a bot" — the most common Comments query
+	// Speed up "get all comments for a bot" - the most common Comments query
 	`CREATE INDEX IF NOT EXISTS "idx_comments_bot_id"
      ON "Comments" ("bot_id")`,
 
 	// ── Emojis indexes ────────────────────────────────────────────────────────
-	// Speed up "get all emojis for a guild" — most common Emojis query
+	// Speed up "get all emojis for a guild" - most common Emojis query
 	`CREATE INDEX IF NOT EXISTS "idx_emojis_guild"
      ON "Emojis" ("guild")`,
 
@@ -716,7 +716,7 @@ const INDEXES = [
      ON "CommentReactions" ("comment_id", "user_id", "emoji")`,
 
 	// ── Stickers indexes ──────────────────────────────────────────────────────
-	// Speed up "get all stickers for a guild" — most common Stickers query
+	// Speed up "get all stickers for a guild" - most common Stickers query
 	`CREATE INDEX IF NOT EXISTS "idx_stickers_guild"
      ON "Stickers" ("guild")`,
 
@@ -774,23 +774,23 @@ const INDEXES = [
 
 	// ── UserFingerprints indexes ──────────────────────────────────────────────
 
-	// getUserFingerprints() — fetch all fingerprints for a user ordered by last_seen.
+	// getUserFingerprints() - fetch all fingerprints for a user ordered by last_seen.
 	// Also used for FIFO eviction: ORDER BY last_seen ASC, LIMIT 1.
 	`CREATE INDEX IF NOT EXISTS "idx_fingerprints_user_last_seen"
      ON "UserFingerprints" ("user_id", "last_seen" ASC)`,
 
-	// getUsersWithFingerprint() — find all users sharing a fingerprint (fraud detection).
+	// getUsersWithFingerprint() - find all users sharing a fingerprint (fraud detection).
 	`CREATE INDEX IF NOT EXISTS "idx_fingerprints_fp"
      ON "UserFingerprints" ("fingerprint")`,
 
 	// ── UserActivityLog indexes ───────────────────────────────────────────────
 
-	// countVisitDaysInWindow() — count distinct visit days within a date range.
+	// countVisitDaysInWindow() - count distinct visit days within a date range.
 	// Covers: WHERE user_id = ? AND event_type = 'site_visit' AND event_day BETWEEN …
 	`CREATE INDEX IF NOT EXISTS "idx_activity_user_type_day"
      ON "UserActivityLog" ("user_id", "event_type", "event_day")`,
 
-	// countUniqueVotesInWindow() — count distinct entity votes within a date range.
+	// countUniqueVotesInWindow() - count distinct entity votes within a date range.
 	// Covers: WHERE user_id = ? AND event_type = 'vote' AND event_day BETWEEN …
 	`CREATE INDEX IF NOT EXISTS "idx_activity_user_vote_entity"
      ON "UserActivityLog" ("user_id", "event_type", "entity_id")`,
@@ -841,7 +841,7 @@ function printSummary(results) {
 				? c.yellow("evolved")
 				: c.dim("unchanged");
 
-		const addedStr = r.added.length ? c.yellow(r.added.join(", ")) : c.dim("—");
+		const addedStr = r.added.length ? c.yellow(r.added.join(", ")) : c.dim("-");
 
 		log(
 			`  ${r.name.padEnd(COL.name)}  ${statusStr.padEnd(COL.status + 9)}  ${addedStr.padEnd(COL.added + 9)}  ${String(r.rowCount).padStart(COL.rows)}`
@@ -859,13 +859,13 @@ function printSummary(results) {
 async function main() {
 	log("");
 	log(c.bold(c.cyan("╔══════════════════════════════════════════════╗")));
-	log(c.bold(c.cyan("║     Rovel Discord List — DB Migration        ║")));
+	log(c.bold(c.cyan("║     Rovel Discord List - DB Migration        ║")));
 	log(c.bold(c.cyan("╚══════════════════════════════════════════════╝")));
 
 	const dryRun = process.env.DRY_RUN === "1" || process.argv.includes("--dry-run");
 	if (dryRun) {
 		log("");
-		log(c.yellow(c.bold("  DRY RUN MODE — no changes will be written to the database")));
+		log(c.yellow(c.bold("  DRY RUN MODE - no changes will be written to the database")));
 	}
 
 	// ── Load environment ──────────────────────────────────────────────────────
@@ -884,7 +884,7 @@ async function main() {
 	}
 
 	info(`Database: ${c.dim(dbUrl)}`);
-	info(`Auth token: ${dbToken ? c.dim("[provided]") : c.dim("[none — local/embedded mode]")}`);
+	info(`Auth token: ${dbToken ? c.dim("[provided]") : c.dim("[none - local/embedded mode]")}`);
 
 	// ── Connect ───────────────────────────────────────────────────────────────
 	section("Connection");
@@ -920,16 +920,16 @@ async function main() {
 			results.push(summary);
 
 			if (summary.created) {
-				ok(`"${summary.name}" — created (${summary.rowCount} rows)`);
+				ok(`"${summary.name}" - created (${summary.rowCount} rows)`);
 			} else if (summary.added.length > 0) {
 				ok(
-					`"${summary.name}" — added ${summary.added.length} column(s): ${summary.added.join(", ")} (${summary.rowCount} rows)`
+					`"${summary.name}" - added ${summary.added.length} column(s): ${summary.added.join(", ")} (${summary.rowCount} rows)`
 				);
 			} else {
-				ok(`"${summary.name}" — already up to date (${summary.rowCount} rows)`);
+				ok(`"${summary.name}" - already up to date (${summary.rowCount} rows)`);
 			}
 		} catch (err) {
-			fail(`"${tableDef.name}" — ${err.message}`);
+			fail(`"${tableDef.name}" - ${err.message}`);
 			// Print the full error stack in non-TTY/CI environments for better logs
 			if (!isTTY) console.error(err);
 			anyError = true;
@@ -952,7 +952,7 @@ async function main() {
 	client.close();
 
 	if (anyError) {
-		fail("Migration completed with errors — see above for details.");
+		fail("Migration completed with errors - see above for details.");
 		exit(1);
 	}
 

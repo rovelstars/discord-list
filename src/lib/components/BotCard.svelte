@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Compass, ChevronUp, Eye, UserRoundPlus } from "@lucide/svelte";
 	import { onMount } from "svelte";
 	import getAvatarURL from "$lib/get-avatar-url";
 	import approx from "$lib/approx-num";
@@ -13,7 +14,7 @@
 	let imageRef: HTMLImageElement | null = null;
 	let bgColor: number[] | null = null;
 
-	// Overrides bot.bg after a successful refresh — keeps the card in sync
+	// Overrides bot.bg after a successful refresh - keeps the card in sync
 	// without requiring a full page reload or parent re-render.
 	let bgOverride: string | null = null;
 
@@ -79,7 +80,7 @@
 				else imageRef.onload = () => trySetColor();
 			}
 		} catch {
-			// noop — ColorThief unavailable or image not ready
+			// noop - ColorThief unavailable or image not ready
 		}
 	});
 
@@ -92,7 +93,7 @@
 
 		const src = (event.target as HTMLImageElement)?.src ?? "";
 
-		// Only trigger for Discord CDN images — unrelated external image 404s
+		// Only trigger for Discord CDN images - unrelated external image 404s
 		// should not cause a bot refresh.
 		const isDiscordImage =
 			src.startsWith("https://cdn.discordapp.com/") ||
@@ -106,7 +107,7 @@
 		refreshDispatched = true;
 
 		try {
-			// POST to the public proxy — DISCORD_TOKEN stays server-side only.
+			// POST to the public proxy - DISCORD_TOKEN stays server-side only.
 			const res = await fetch(`/api/bots/${encodeURIComponent(id)}/refresh`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" }
@@ -206,20 +207,7 @@
 						secondClass="bg-primary text-white"
 					>
 						<span slot="first" class="flex items-center">
-							<!-- Compass icon (lucide) -->
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								class="w-3 h-3 mr-1"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							>
-								<circle cx="12" cy="12" r="10" />
-								<polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
-							</svg>
+							<Compass class="w-3 h-3 mr-1" aria-hidden="true" />
 							In
 						</span>
 						<span slot="second">{approx(bot?.servers)}</span>
@@ -227,19 +215,7 @@
 					<!-- Votes tag -->
 					<Tag firstClass="bg-muted dark:bg-card text-white" secondClass="bg-green-600 text-white">
 						<span slot="first" class="flex items-center">
-							<!-- Vote / ChevronUp icon (lucide) -->
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								class="w-4 h-4 mr-1"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							>
-								<path d="m18 15-6-6-6 6" />
-							</svg>
+							<ChevronUp class="w-4 h-4 mr-1" aria-hidden="true" />
 							Votes
 						</span>
 						<span slot="second">{approx(bot?.votes)}</span>
@@ -280,20 +256,7 @@
 					<div class="w-full h-9 bg-muted animate-pulse rounded-md"></div>
 				{:else}
 					<a href="/bots/{bot?.slug ?? bot?.id}" class={buttonVariants({ variant: "default" })}>
-						<!-- Eye icon (lucide) -->
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="w-4 h-4 mr-2"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-							<circle cx="12" cy="12" r="3" />
-						</svg>
+						<Eye class="w-4 h-4 mr-2" aria-hidden="true" />
 						View
 					</a>
 					<a
@@ -302,22 +265,7 @@
 						rel="noopener noreferrer"
 						class={buttonVariants({ variant: "outline" })}
 					>
-						<!-- UserRoundPlus icon (lucide) -->
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="w-4 h-4 mr-2"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<path d="M2 21a8 8 0 0 1 13.292-6" />
-							<circle cx="10" cy="8" r="5" />
-							<path d="M19 16v6" />
-							<path d="M22 19h-6" />
-						</svg>
+						<UserRoundPlus class="w-4 h-4 mr-2" aria-hidden="true" />
 						Invite
 					</a>
 					{#if edit}

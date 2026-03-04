@@ -255,7 +255,7 @@
 		{#if hasResolvedTags}
 			<!--
 				Resolved tags: render each token according to its type.
-				The row is a single flex line that truncates gracefully — we show as
+				The row is a single flex line that truncates gracefully - we show as
 				many chips as fit and let overflow clip silently since the full list
 				is visible on the detail page.
 			-->
@@ -274,12 +274,12 @@
 							{tag.value}
 						</span>
 					{:else if tag.emoji}
-						<!-- Custom emoji in our listing — image + :code: label, links to emoji page -->
+						<!-- Custom emoji in our listing - image + :code: label, links to emoji page -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
 						<a
 							href="/emojis/{tag.emoji.id}"
 							class="inline-flex items-center gap-0.5 shrink-0 hover:opacity-80 transition-opacity"
-							title=":{tag.emoji.code}: — view emoji"
+							title=":{tag.emoji.code}: - view emoji"
 							on:click|stopPropagation
 						>
 							<img
@@ -295,7 +295,7 @@
 							</span>
 						</a>
 					{:else}
-						<!-- Custom emoji ID not in our listing — faded placeholder -->
+						<!-- Custom emoji ID not in our listing - faded placeholder -->
 						<span
 							class="inline-flex items-center gap-0.5 shrink-0"
 							title="Custom emoji (not in listing)"
@@ -323,7 +323,7 @@
 				{/each}
 			</div>
 		{:else if sticker.tags}
-			<!-- Fallback: no resolved tags passed in — show raw string -->
+			<!-- Fallback: no resolved tags passed in - show raw string -->
 			<p class="text-xs text-muted-foreground font-mono truncate mt-0.5" title={sticker.tags}>
 				{sticker.tags}
 			</p>

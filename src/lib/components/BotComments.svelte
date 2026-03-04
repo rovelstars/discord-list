@@ -154,7 +154,7 @@
 	let deletingId: string | null = null;
 	let deleteSubmitting = false;
 
-	// Reaction state — tracks in-flight toggles per "commentId:emoji" key
+	// Reaction state - tracks in-flight toggles per "commentId:emoji" key
 	let reactionPending = new Set<string>();
 
 	// Which comment's emoji picker is open (by comment id, covers both top-level and replies)
@@ -309,7 +309,7 @@
 			submitSuccess = true;
 			setTimeout(() => (submitSuccess = false), 3500);
 		} catch {
-			submitError = "Network error — please try again.";
+			submitError = "Network error - please try again.";
 		} finally {
 			submitting = false;
 		}
@@ -345,7 +345,7 @@
 			replyText = "";
 			replyOpenFor = null;
 		} catch {
-			replyError = "Network error — please try again.";
+			replyError = "Network error - please try again.";
 		} finally {
 			replySubmitting = false;
 		}
@@ -397,7 +397,7 @@
 			tree = patchTree(tree);
 			editingId = null;
 		} catch {
-			editError = "Network error — please try again.";
+			editError = "Network error - please try again.";
 		} finally {
 			editSubmitting = false;
 		}
@@ -567,7 +567,7 @@
 
 		<!-- Total reply count sub-label -->
 		{#if totalReviews === 0}
-			<p class="text-sm text-muted-foreground italic">No reviews yet — be the first!</p>
+			<p class="text-sm text-muted-foreground italic">No reviews yet - be the first!</p>
 		{/if}
 	</div>
 

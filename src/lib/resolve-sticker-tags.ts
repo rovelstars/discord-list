@@ -4,7 +4,7 @@
  *
  * A sticker's `tags` field is a comma-separated string where each token is:
  *   - A unicode emoji or plain text  (e.g. "😄", "wave")
- *   - A Discord snowflake ID         (e.g. "783358486275817472") — a custom
+ *   - A Discord snowflake ID         (e.g. "783358486275817472") - a custom
  *     emoji that the guild owner chose as the sticker's autocomplete tag.
  *
  * This module is SERVER-ONLY. It imports from $lib/db and must never be
@@ -74,7 +74,7 @@ export async function resolveStickerTags(tags: string | null | undefined): Promi
 		try {
 			emojiMap = await getEmojisByIds(snowflakeIds);
 		} catch (err) {
-			// Non-fatal — fall back to rendering unknown chips for all snowflakes.
+			// Non-fatal - fall back to rendering unknown chips for all snowflakes.
 			console.warn("[resolve-sticker-tags] Emoji batch lookup failed (non-fatal):", err);
 		}
 	}

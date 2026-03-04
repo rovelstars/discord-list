@@ -22,7 +22,7 @@ function validateSecret(request: Request, url: URL): { ok: boolean; misconfigure
  * POST /api/internals/migrate-servers
  *
  * One-shot migration: adds the five guild-snapshot columns to the Servers table
- * if they don't already exist. Safe to call multiple times — each ALTER TABLE
+ * if they don't already exist. Safe to call multiple times - each ALTER TABLE
  * is wrapped in a try/catch so already-existing columns are silently skipped.
  *
  * Auth: X-Internal-Secret header or ?secret= query param.

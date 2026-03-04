@@ -7,7 +7,7 @@ import { commands, runs } from "@/bot/register";
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Build a valid ephemeral Discord message response — always HTTP 200. */
+/** Build a valid ephemeral Discord message response - always HTTP 200. */
 function ephemeralReply(content: string) {
 	return new Response(
 		JSON.stringify({
@@ -27,7 +27,7 @@ function jsonResponse(body: unknown, status = 200) {
 }
 
 // ---------------------------------------------------------------------------
-// GET — health / info
+// GET - health / info
 // ---------------------------------------------------------------------------
 
 export const GET: RequestHandler = async () => {
@@ -35,7 +35,7 @@ export const GET: RequestHandler = async () => {
 };
 
 // ---------------------------------------------------------------------------
-// POST — Discord interaction webhook
+// POST - Discord interaction webhook
 // ---------------------------------------------------------------------------
 
 /**
@@ -43,7 +43,7 @@ export const GET: RequestHandler = async () => {
  *
  * Design goals:
  *  1. Always return HTTP 200 with a valid interaction response body when the
- *     interaction type is APPLICATION_COMMAND — Discord marks anything else as
+ *     interaction type is APPLICATION_COMMAND - Discord marks anything else as
  *     "application did not respond".
  *  2. Never let an unhandled exception propagate; wrap everything in a
  *     guaranteed fallback that returns an ephemeral error message to the user.
@@ -55,7 +55,7 @@ export const GET: RequestHandler = async () => {
 export const POST: RequestHandler = async ({ request }) => {
 	// ── 1. Signature verification ────────────────────────────────────────────
 	// Must happen before any other processing; Discord drops connections that
-	// don't verify correctly.  A failure here is a genuine 401 — the request
+	// don't verify correctly.  A failure here is a genuine 401 - the request
 	// didn't come from Discord (or the public key is misconfigured).
 	let bodyBuffer: ArrayBuffer;
 	let bodyText: string;
@@ -70,7 +70,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	const publicKey = (env.DISCORD_PUBLIC_KEY ?? "").trim();
 	if (!publicKey) {
-		// Misconfiguration — we can't verify anything.  Log loudly and bail.
+		// Misconfiguration - we can't verify anything.  Log loudly and bail.
 		console.error(
 			"[discord/bot] DISCORD_PUBLIC_KEY is not set. " +
 				"Set it in your environment to enable interaction verification."
@@ -106,7 +106,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		return new Response("Invalid interaction payload.", { status: 400 });
 	}
 
-	// ── 3. PING — required by Discord during endpoint registration ───────────
+	// ── 3. PING - required by Discord during endpoint registration ───────────
 	if (interaction.type === InteractionType.PING) {
 		return jsonResponse({ type: InteractionResponseType.PONG });
 	}
@@ -127,7 +127,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				console.warn("[discord/bot] Unknown command received:", incomingName);
 				return ephemeralReply(
 					`❓ Unknown command \`/${incomingName}\`. ` +
-						"This command may not be registered yet — please contact the server admin."
+						"This command may not be registered yet - please contact the server admin."
 				);
 			}
 
@@ -157,7 +157,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			try {
 				result = await run(interaction, envPayload);
 			} catch (handlerErr) {
-				// The handler itself threw — surface a clear message.
+				// The handler itself threw - surface a clear message.
 				const msg = handlerErr instanceof Error ? handlerErr.message : String(handlerErr);
 				console.error(
 					`[discord/bot] Handler for "/${incomingName}" threw an exception:`,
@@ -177,7 +177,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				});
 			}
 
-			// Handler returned something unusable — treat as a bug.
+			// Handler returned something unusable - treat as a bug.
 			console.error(
 				`[discord/bot] Handler for "/${incomingName}" returned an invalid response:`,
 				result
@@ -187,7 +187,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					"Please report this to the bot developer."
 			);
 		} catch (outerErr) {
-			// Absolute last-resort catch — something went badly wrong outside the
+			// Absolute last-resort catch - something went badly wrong outside the
 			// handler itself (e.g. command lookup, env construction, etc.).
 			const msg = outerErr instanceof Error ? outerErr.message : String(outerErr);
 			console.error("[discord/bot] Unexpected error in command dispatch:", outerErr);

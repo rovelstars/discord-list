@@ -108,7 +108,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		}
 
 		// Ensure requestor is an owner
-		// owners is stored as serialised JSON text in the DB — parse it before checking.
+		// owners is stored as serialised JSON text in the DB - parse it before checking.
 		const parsedOwners: string[] = (() => {
 			if (Array.isArray(bot.owners)) return bot.owners;
 			if (typeof bot.owners === "string") {
@@ -203,7 +203,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 					return json({ err: "expired_support" }, { status: 400 });
 				}
 			} catch {
-				// If Discord API fails, best-effort — don't block the update for temporary Discord API failures.
+				// If Discord API fails, best-effort - don't block the update for temporary Discord API failures.
 			}
 		}
 
@@ -212,10 +212,10 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 			if (String(body.lib).length > 20) return json({ err: "lib_too_long" }, { status: 400 });
 		}
 
-		// All validations passed — perform the DB update
+		// All validations passed - perform the DB update
 		const updateValues: any = {
 			lib: body.lib ?? bot.lib,
-			// owners stored as serialized JSON TEXT in the schema — stringify on writes.
+			// owners stored as serialized JSON TEXT in the schema - stringify on writes.
 			owners: body.owners ? JSON.stringify(body.owners) : bot.owners,
 			prefix: body.prefix ?? bot.prefix,
 			short: body.short ?? bot.short,
@@ -249,7 +249,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 			const target = env.DOMAIN
 				? internalUrl
 				: `/api/internals/update/bot/${bot.id}?modified=${userData.id}`;
-			// Do not await too long — fire-and-forget style:
+			// Do not await too long - fire-and-forget style:
 			fetch(target).catch(() => {});
 		} catch {
 			// ignore

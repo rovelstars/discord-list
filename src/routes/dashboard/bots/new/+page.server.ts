@@ -46,7 +46,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 				};
 			}
 		} catch {
-			// non-fatal — form will still render without pre-fill
+			// non-fatal - form will still render without pre-fill
 		}
 	}
 

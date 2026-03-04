@@ -10,7 +10,7 @@
  *   - DISCORD_BOTDEV_ROLE → every user who owns at least one bot listed on the
  *                           website AND is currently in the guild.
  *
- * Security — identical to /api/internals/refresh-cdn-bgs:
+ * Security - identical to /api/internals/refresh-cdn-bgs:
  *   1. Header:      X-Internal-Secret: <INTERNAL_SECRET>
  *   2. Query param: ?secret=<INTERNAL_SECRET>
  *
@@ -20,7 +20,7 @@
  *   - A short delay is inserted between batches to stay comfortably below
  *     Discord's REST rate limits (50 req/s global bucket for bots).
  *   - 404 from GET /guilds/{g}/members/{u} simply means the user is not in
- *     the server — skipped silently, not counted as an error.
+ *     the server - skipped silently, not counted as an error.
  *   - All other per-user errors are collected as non-fatal warnings and
  *     included in the summary response; they never abort the run.
  *
@@ -107,7 +107,7 @@ async function isGuildMember(
  * Assign a single role to a guild member.
  *
  * Returns `true` on success (204), `false` if the PUT itself fails.
- * Errors are surfaced to the caller via the thrown value — never swallowed
+ * Errors are surfaced to the caller via the thrown value - never swallowed
  * here so the caller can decide whether to count them.
  */
 async function putGuildMemberRole(
@@ -121,7 +121,7 @@ async function putGuildMemberRole(
 
 /**
  * Fetch every user id stored in the DB.
- * Only `id` is selected — keeps the read cheap regardless of user count.
+ * Only `id` is selected - keeps the read cheap regardless of user count.
  */
 async function fetchAllUserIds(): Promise<string[]> {
 	const rows = (await withDb((db: DrizzleDb) => db.select({ id: Users.id }).from(Users))) as {
@@ -134,7 +134,7 @@ async function fetchAllUserIds(): Promise<string[]> {
  * Build a Set of user ids that own at least one bot in the Bots table.
  *
  * The `owners` column is stored as a JSON-serialised text array, so we
- * query all bot rows and parse the owners field in memory — this avoids
+ * query all bot rows and parse the owners field in memory - this avoids
  * complex SQL and stays correct regardless of JSON formatting.
  *
  * For very large datasets a normalised junction table would be preferable,
@@ -156,7 +156,7 @@ async function fetchBotOwnerIds(): Promise<Set<string>> {
 				}
 			}
 		} catch {
-			// Malformed JSON in owners column — skip this row.
+			// Malformed JSON in owners column - skip this row.
 		}
 	}
 	return ownerSet;
@@ -221,7 +221,7 @@ async function runRoleSync(
 						} catch (err: any) {
 							const status = err?.status ?? "?";
 							result.errors.push(
-								`user-role for ${userId}: HTTP ${status} — ${err instanceof Error ? err.message : String(err)}`
+								`user-role for ${userId}: HTTP ${status} - ${err instanceof Error ? err.message : String(err)}`
 							);
 						}
 					}
@@ -234,7 +234,7 @@ async function runRoleSync(
 						} catch (err: any) {
 							const status = err?.status ?? "?";
 							result.errors.push(
-								`botdev-role for ${userId}: HTTP ${status} — ${err instanceof Error ? err.message : String(err)}`
+								`botdev-role for ${userId}: HTTP ${status} - ${err instanceof Error ? err.message : String(err)}`
 							);
 						}
 					}
@@ -242,13 +242,13 @@ async function runRoleSync(
 					// Unexpected error during membership check or role assignment.
 					const status = err?.status ?? "?";
 					result.errors.push(
-						`user ${userId}: HTTP ${status} — ${err instanceof Error ? err.message : String(err)}`
+						`user ${userId}: HTTP ${status} - ${err instanceof Error ? err.message : String(err)}`
 					);
 				}
 			})
 		);
 
-		// Throttle between batches — skip the delay after the last batch.
+		// Throttle between batches - skip the delay after the last batch.
 		const isLastBatch = offset + BATCH_SIZE >= userIds.length;
 		if (!isLastBatch) {
 			await sleep(BATCH_DELAY_MS);
@@ -307,7 +307,7 @@ export const GET: RequestHandler = async ({ request, url }) => {
 		);
 	}
 
-	// Roles are optional — if not set, that role simply won't be assigned and
+	// Roles are optional - if not set, that role simply won't be assigned and
 	// the sync still runs for whichever role IS configured.
 	const userRoleId = (env.DISCORD_USER_ROLE ?? "").trim();
 	const botdevRoleId = (env.DISCORD_BOTDEV_ROLE ?? "").trim();

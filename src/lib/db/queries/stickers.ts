@@ -313,7 +313,7 @@ function validateSyncSticker(
 	}
 	if (!guildId || typeof guildId !== "string" || !/^\d+$/.test(guildId.trim())) {
 		console.warn(
-			`[syncGuildStickers] Skipping sticker ${sticker.id} — invalid guildId: ${JSON.stringify(guildId)}`
+			`[syncGuildStickers] Skipping sticker ${sticker.id} - invalid guildId: ${JSON.stringify(guildId)}`
 		);
 		return null;
 	}
@@ -471,6 +471,17 @@ export async function syncGuildStickers(
  * Get a random selection of stickers.
  * Useful for homepage highlights.
  */
+/**
+ * Returns a minimal list of all sticker ids and their added_at timestamps.
+ * Intended for sitemap generation only - keeps the payload small.
+ */
+export async function getAllStickerIds(): Promise<{ id: string; added_at: string | null }[]> {
+	const rows = (await withDb((db: DrizzleDb) =>
+		db.select({ id: Stickers.id, added_at: Stickers.added_at }).from(Stickers)
+	)) as { id: string; added_at: string | null }[];
+	return rows.map((r) => ({ id: String(r.id), added_at: r.added_at ?? null }));
+}
+
 export async function getRandomStickers(limit = 12): Promise<StickerSummary[]> {
 	const rows = (await withDb((db: DrizzleDb) =>
 		db

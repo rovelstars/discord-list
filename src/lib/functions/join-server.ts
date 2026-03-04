@@ -16,7 +16,7 @@ export default async function joinServer({
 	};
 }) {
 	try {
-		// Add the user to the guild via OAuth (no roles passed here — we assign
+		// Add the user to the guild via OAuth (no roles passed here - we assign
 		// roles separately via the bot token so we are not limited to roles the
 		// OAuth scope would allow).
 		const result = await oauth.addMember({

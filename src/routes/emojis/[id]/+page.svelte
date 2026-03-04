@@ -128,7 +128,7 @@
 			const { default: CT } = await import("colorthief");
 			colorThief = new (CT as any)();
 		} catch {
-			// unavailable — silently skip
+			// unavailable - silently skip
 		}
 		return colorThief;
 	}
@@ -140,7 +140,7 @@
 			const c = colorThief.getColor(img);
 			if (Array.isArray(c) && c.length === 3) dominantColor = c as [number, number, number];
 		} catch {
-			// cross-origin / decode error — skip
+			// cross-origin / decode error - skip
 		}
 	}
 
@@ -162,7 +162,7 @@
 	// Reset dominant color when emoji changes
 	$: if (emoji) dominantColor = null;
 
-	$: seoTitle = `${emoji.name} — Discord Emoji · Rovel Discord List`;
+	$: seoTitle = `${emoji.name} - Discord Emoji · Rovel Discord List`;
 	$: seoDescription = emoji.description
 		? `${emoji.description} Download this ${emoji.a ? "animated" : "static"} Discord emoji: ${emoji.code}.`
 		: `Download the "${emoji.name}" (${emoji.code}) ${emoji.a ? "animated GIF" : "PNG"} Discord custom emoji. Downloaded ${emoji.dc.toLocaleString()} times.`;
@@ -201,7 +201,7 @@
 					style="background: linear-gradient(135deg, hsl(var(--primary)/0.12) 0%, hsl(var(--muted)/0.25) 100%);"
 					on:contextmenu={preventContextMenu}
 				>
-					<!-- Dominant-color overlay — fades in once ColorThief resolves -->
+					<!-- Dominant-color overlay - fades in once ColorThief resolves -->
 					<div
 						class="absolute inset-0 transition-opacity duration-700 ease-in-out pointer-events-none"
 						style="{dominantColorStyle} opacity: {dominantColor ? 1 : 0};"
@@ -575,7 +575,7 @@
 		</div>
 	</div>
 
-	<!-- About + FAQ — single full-width card, no height-mismatch possible -->
+	<!-- About + FAQ - single full-width card, no height-mismatch possible -->
 	<div class="mt-6 bg-card border border-border rounded-2xl p-6 shadow-sm">
 		<h2 class="text-lg font-extrabold font-heading text-foreground mb-1">
 			About the {emoji.name} emoji
@@ -597,7 +597,7 @@
 				Animated emojis require <strong class="text-foreground">Discord Nitro</strong> to use outside
 				their home server.
 			{:else}
-				Static PNG — no Nitro needed to use within the server it's uploaded to.
+				Static PNG - no Nitro needed to use within the server it's uploaded to.
 			{/if}
 		</p>
 
@@ -609,7 +609,7 @@
 				</dt>
 				<dd class="text-sm text-muted-foreground leading-relaxed">
 					Click <strong class="text-foreground">Download {emoji.a ? "GIF" : "PNG"}</strong> above. Right-click
-					saving is disabled — the button gives you the full-quality file.
+					saving is disabled - the button gives you the full-quality file.
 				</dd>
 			</div>
 
@@ -632,9 +632,14 @@
 					Can I use it without Discord Nitro?
 				</dt>
 				<dd class="text-sm text-muted-foreground leading-relaxed">
-					Yes, <em>within</em> the server it lives in — no Nitro needed. To use it
-					<em>across other servers</em> you need
-					<strong class="text-foreground">Discord Nitro</strong>.
+					{#if !emoji.a}
+						Yes, <em>within</em> the server it lives in - no Nitro needed. To use it
+						<em>across other servers</em> you need
+						<strong class="text-foreground">Discord Nitro</strong>.
+					{:else}
+						No, animated emojis require <strong class="text-foreground">Discord Nitro</strong> to use even within their home server.
+            They can be used across servers with Nitro as well.
+					{/if}
 				</dd>
 			</div>
 
@@ -656,10 +661,10 @@
 				</dt>
 				<dd class="text-sm text-muted-foreground leading-relaxed">
 					{#if emoji.a}
-						Yes — it's an <strong class="text-foreground">animated GIF</strong> that loops in chat.
-						Cross-server use requires <strong class="text-foreground">Nitro</strong>.
+						Yes - it's an <strong class="text-foreground">animated GIF</strong> that loops in chat.
+						Both Cross-server and Home-server use requires <strong class="text-foreground">Nitro</strong>.
 					{:else}
-						No — it's a <strong class="text-foreground">static PNG</strong>, usable in any server
+						No - it's a <strong class="text-foreground">static PNG</strong>, usable in any server
 						it's uploaded to without Nitro.
 					{/if}
 				</dd>
@@ -687,7 +692,7 @@
 					</dt>
 					<dd class="text-sm text-muted-foreground leading-relaxed">
 						From the
-						<strong class="text-foreground">{guildInfo?.name ?? "a Discord server"}</strong> —
+						<strong class="text-foreground">{guildInfo?.name ?? "a Discord server"}</strong> -
 						<a
 							href="/servers/{guildInfo?.slug ?? emoji.guild}"
 							class="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"

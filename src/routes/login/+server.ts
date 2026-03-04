@@ -25,7 +25,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	if (refCode) {
 		cookies.set("ref", refCode, {
 			path: "/",
-			maxAge: 60 * 15, // 15 minutes — enough for the full OAuth round-trip
+			maxAge: 60 * 15, // 15 minutes - enough for the full OAuth round-trip
 			sameSite: "lax",
 			httpOnly: true
 		});
@@ -39,7 +39,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	// Persist scopes so the callback (/api/auth) can use them
 	cookies.set("scopes", JSON.stringify(scopes), {
 		path: "/",
-		maxAge: 60 * 10, // 10 minutes — just long enough for the OAuth round-trip
+		maxAge: 60 * 10, // 10 minutes - just long enough for the OAuth round-trip
 		sameSite: "lax",
 		httpOnly: true
 	});

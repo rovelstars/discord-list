@@ -39,7 +39,7 @@ import { recordSiteVisit, todayUtc } from "$lib/db/queries/referrals";
  * Resolve the "key" session cookie to a verified user ID.
  *
  * Looks up the user by matching their serialised `keys` JSON TEXT column
- * against the cookie value — identical to the strategy used in
+ * against the cookie value - identical to the strategy used in
  * /api/internals/record-fingerprint and the layout server load.
  *
  * Returns the user's Discord ID string, or null when no match is found.

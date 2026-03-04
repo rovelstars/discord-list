@@ -71,7 +71,7 @@
 	}
 
 	$: seoTitle = q
-		? `"${q}" — Emoji Search · Rovel Discord List`
+		? `"${q}" - Emoji Search · Rovel Discord List`
 		: guildId
 			? `Server Emojis · Rovel Discord List`
 			: "Discord Emojis · Rovel Discord List";

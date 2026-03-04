@@ -107,7 +107,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const newSenderBal = senderBal - parsedAmount;
 		const newRecipientBal = recipientBal + parsedAmount;
 
-		// Write both updates — not wrapped in a true SQL transaction since libSQL
+		// Write both updates - not wrapped in a true SQL transaction since libSQL
 		// doesn't expose interactive transactions via Drizzle here, but the
 		// balance check above ensures we never go negative.
 		await Promise.all([

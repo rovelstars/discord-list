@@ -1,16 +1,16 @@
 /**
  * netlify/functions/settle-rewards.mts
  *
- * Netlify scheduled function — runs once per day (02:00 UTC) to process all
+ * Netlify scheduled function - runs once per day (02:00 UTC) to process all
  * outstanding referral rewards for the Rovel Stars platform.
  *
  * What it does in a single run:
  *
- *  Pass 1 — Sign-up rewards (R$100)
+ *  Pass 1 - Sign-up rewards (R$100)
  *    Fetches every Referrals row in "payable" status and credits R$100 to the
  *    referrer, then marks the row as "paid".
  *
- *  Pass 2 — Retention & voting milestones
+ *  Pass 2 - Retention & voting milestones
  *    For every referral whose 7-day activity window is still open (or just
  *    closed), evaluates two independent conditions:
  *
@@ -29,14 +29,14 @@
  *  - Non-blocking: errors for a single referral are caught and logged; the
  *    function continues processing all remaining referrals.
  *  - Calls the SvelteKit internal API endpoint rather than importing DB helpers
- *    directly, keeping the Netlify function layer thin and stateless — the
+ *    directly, keeping the Netlify function layer thin and stateless - the
  *    application server owns all business logic and DB access.
  *  - Returns HTTP 200 in all cases so Netlify does not treat a single-batch
  *    error as a function failure and spam the retry queue.
  *
  * Required environment variables (Netlify UI → Site → Environment vars):
- *   INTERNAL_SECRET   — shared secret (same value the SvelteKit app reads)
- *   DOMAIN            — deployed origin, e.g. https://rovelstars.com
+ *   INTERNAL_SECRET   - shared secret (same value the SvelteKit app reads)
+ *   DOMAIN            - deployed origin, e.g. https://rovelstars.com
  *                       Falls back to the Netlify-injected URL variable.
  *
  * Schedule: daily at 02:00 UTC (quiet period, low user traffic).
@@ -122,11 +122,11 @@ export default async function handler(_req: Request, _ctx: Context): Promise<Res
 
 	// ── Pre-flight checks ────────────────────────────────────────────────────
 	if (!secret) {
-		console.error("[settle-rewards] INTERNAL_SECRET is not set — aborting.");
+		console.error("[settle-rewards] INTERNAL_SECRET is not set - aborting.");
 		return new Response("Misconfiguration: INTERNAL_SECRET not set.", { status: 200 });
 	}
 	if (!siteUrl) {
-		console.error("[settle-rewards] DOMAIN (or URL) env-var is not set — aborting.");
+		console.error("[settle-rewards] DOMAIN (or URL) env-var is not set - aborting.");
 		return new Response("Misconfiguration: DOMAIN not set.", { status: 200 });
 	}
 
@@ -137,7 +137,7 @@ export default async function handler(_req: Request, _ctx: Context): Promise<Res
 	// All heavy logic (DB queries, fraud checks, milestone creation, balance
 	// crediting) lives inside the app server so it can share DB helpers and
 	// Drizzle types.  The scheduled function is intentionally a thin HTTP
-	// client — it just triggers the run and logs the summary.
+	// client - it just triggers the run and logs the summary.
 	const endpoint = `${siteUrl}/api/internals/settle-rewards`;
 
 	try {
@@ -176,7 +176,7 @@ export default async function handler(_req: Request, _ctx: Context): Promise<Res
 		const durationMs = Date.now() - startedAt;
 		const msg = err instanceof Error ? err.message : String(err);
 		console.error(`[settle-rewards] Fatal error after ${durationMs}ms:`, msg);
-		// Return 200 so Netlify does not retry — a misconfiguration or app-level
+		// Return 200 so Netlify does not retry - a misconfiguration or app-level
 		// 500 won't be resolved by immediate retries.
 		return new Response(JSON.stringify({ ok: false, error: msg, durationMs }), {
 			status: 200,

@@ -49,7 +49,7 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 			countEmojisByGuild(server.id)
 		]);
 	} catch (emojiErr) {
-		// Non-fatal — page renders without the emoji section if the table
+		// Non-fatal - page renders without the emoji section if the table
 		// isn't ready yet or a transient DB error occurs.
 		console.warn("[server-page] Emoji query failed (non-fatal):", emojiErr);
 	}
@@ -62,7 +62,7 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 			countStickersByGuild(server.id)
 		]);
 	} catch (stickerErr) {
-		// Non-fatal — page renders without the sticker section if the table
+		// Non-fatal - page renders without the sticker section if the table
 		// isn't ready yet or a transient DB error occurs.
 		console.warn("[server-page] Sticker query failed (non-fatal):", stickerErr);
 	}
@@ -85,12 +85,12 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 		!server.synced_at || Date.now() - new Date(server.synced_at).getTime() > SYNC_STALE_MS;
 
 	if (discordToken && isStale) {
-		// minAgeMs=0 — the stale check above is our guard; no need to double-check.
+		// minAgeMs=0 - the stale check above is our guard; no need to double-check.
 		refreshServer(server.id, discordToken, {
 			triggeredBy: "page-load",
 			minAgeMs: 0
 		}).catch((err) => {
-			// Non-fatal — page still renders with whatever data is in the DB.
+			// Non-fatal - page still renders with whatever data is in the DB.
 			console.warn("[server-page] Background refresh failed (non-fatal):", err);
 		});
 	}

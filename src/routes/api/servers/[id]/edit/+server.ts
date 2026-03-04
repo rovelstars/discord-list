@@ -2,9 +2,9 @@
  * POST /api/servers/[id]/edit
  *
  * Allows the server owner to update their server listing's editable fields:
- *   short   — short description (tagline shown on cards)
- *   desc    — full Markdown description
- *   slug    — optional vanity URL slug
+ *   short   - short description (tagline shown on cards)
+ *   desc    - full Markdown description
+ *   slug    - optional vanity URL slug
  *
  * Auth: Discord OAuth2 token via cookie "key", Authorization header, or
  *       query param "key" (same pattern as bot edit endpoint).
@@ -12,24 +12,24 @@
  * Ownership: only Servers.owner === caller's Discord ID may edit.
  *
  * Validated fields:
- *   short  — 11–150 chars, required
- *   desc   — 100–10 000 chars, required
- *   slug   — optional; lowercase letters/numbers/hyphens only, 2–32 chars, unique
+ *   short  - 11–150 chars, required
+ *   desc   - 100–10 000 chars, required
+ *   slug   - optional; lowercase letters/numbers/hyphens only, 2–32 chars, unique
  *
  * Errors (returned as { err: string }):
- *   not_logged_in    — no auth token supplied
- *   invalid_key      — Discord OAuth rejected the token
- *   missing_id       — params.id absent
- *   no_server_found  — server doesn't exist in DB
- *   not_owner        — caller is not the server owner
- *   invalid_body     — request body is not valid JSON
- *   short_too_short  — short < 11 chars
- *   short_too_long   — short > 150 chars
- *   desc_too_short   — desc < 100 chars
- *   desc_too_long    — desc > 10 000 chars
- *   slug_invalid     — slug doesn't match [a-z0-9-]{2,32}
- *   slug_taken       — another server already uses that slug
- *   db_update_failed — database write error
+ *   not_logged_in    - no auth token supplied
+ *   invalid_key      - Discord OAuth rejected the token
+ *   missing_id       - params.id absent
+ *   no_server_found  - server doesn't exist in DB
+ *   not_owner        - caller is not the server owner
+ *   invalid_body     - request body is not valid JSON
+ *   short_too_short  - short < 11 chars
+ *   short_too_long   - short > 150 chars
+ *   desc_too_short   - desc < 100 chars
+ *   desc_too_long    - desc > 10 000 chars
+ *   slug_invalid     - slug doesn't match [a-z0-9-]{2,32}
+ *   slug_taken       - another server already uses that slug
+ *   db_update_failed - database write error
  */
 
 import type { RequestHandler } from "@sveltejs/kit";
@@ -165,7 +165,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 			if (!/^[a-z0-9-]{2,32}$/.test(rawSlug)) {
 				return json({ err: "slug_invalid" }, { status: 400 });
 			}
-			// Uniqueness — exclude the server being edited
+			// Uniqueness - exclude the server being edited
 			const taken = await db
 				.select({ id: Servers.id })
 				.from(Servers)

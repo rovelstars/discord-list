@@ -66,7 +66,7 @@ export const load: PageServerLoad = async ({ params, cookies, setHeaders }) => {
 				bal
 			};
 		} catch {
-			// Invalid / expired token — treat as logged out, don't crash the page
+			// Invalid / expired token - treat as logged out, don't crash the page
 			user = null;
 		}
 	}

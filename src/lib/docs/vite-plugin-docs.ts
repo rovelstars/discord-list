@@ -46,7 +46,7 @@ function readDocs(): DocSection[] {
 		const titleMatch = raw.match(/^#\s+(.+)$/m);
 		const title = titleMatch ? titleMatch[1].trim() : file;
 
-		// slug: strip numeric prefix and .md — "01-introduction.md" → "introduction"
+		// slug: strip numeric prefix and .md - "01-introduction.md" → "introduction"
 		const slug = basename(file, ".md").replace(/^\d+-/, "");
 
 		return { slug, title, html };
@@ -71,7 +71,7 @@ export function docsPlugin(): Plugin {
 			if (id !== RESOLVED_VIRTUAL_ID) return;
 
 			// In dev: read + parse on every load (hot reload for free).
-			// In build: read + parse once — Rollup inlines the result as a
+			// In build: read + parse once - Rollup inlines the result as a
 			// static JS module so zero markdown processing happens at runtime.
 			const sections = readDocs();
 			return `export const docs = ${JSON.stringify(sections)};`;
