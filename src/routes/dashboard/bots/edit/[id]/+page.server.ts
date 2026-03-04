@@ -5,6 +5,7 @@ import { env } from "$env/dynamic/private";
 import { getDb } from "$lib/db";
 import { Bots } from "$lib/db/schema";
 import { eq, or } from "drizzle-orm";
+import { isAdmin } from "$lib/is-admin";
 
 export const load: PageServerLoad = async ({ params, cookies, url }) => {
 	const key = cookies.get("key");
@@ -85,9 +86,10 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 		owners = [];
 	}
 
-	// Only an owner may access the edit page
-	console.log("Bot owners:", owners, "Current user ID:", userData.id);
-	if (!owners.includes(userData.id)) {
+	// Only an owner or a site admin may access the edit page
+	const userIsAdmin = isAdmin(userData.id);
+	console.log("Bot owners:", owners, "Current user ID:", userData.id, "isAdmin:", userIsAdmin);
+	if (!owners.includes(userData.id) && !userIsAdmin) {
 		throw error(403, "You are not an owner of this bot");
 	}
 
@@ -98,6 +100,7 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 			discriminator: (userData.discriminator ?? "0") as string,
 			avatar: (userData.avatar ?? null) as string | null
 		},
+		isAdmin: userIsAdmin,
 		bot: {
 			id: bot.id,
 			slug: bot.slug ?? bot.id,

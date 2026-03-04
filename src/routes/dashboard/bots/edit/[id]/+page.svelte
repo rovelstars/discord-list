@@ -49,6 +49,7 @@
 			discriminator: string;
 			avatar: string | null;
 		};
+		isAdmin: boolean;
 		bot: {
 			id: string;
 			slug: string;
@@ -72,7 +73,7 @@
 		};
 	};
 
-	const { user, bot } = data;
+	const { user, bot, isAdmin } = data;
 
 	// ── Form state (pre-filled from server data) ───────────────────────────────
 	let lib = bot.lib;
@@ -273,6 +274,8 @@
 					slug_taken: "Vanity URL name is already taken. Please choose another one.",
 					main_owner_cant_be_changed: "You cannot change who the main owner is.",
 					not_main_owner: "Only the main owner can modify the owners list.",
+					admins_cannot_change_owners:
+						"Admins cannot modify the owners list of bots they don't own.",
 					owners_not_array: "Owners must be a list of IDs.",
 					invalid_webhook: "Webhook URL is invalid.",
 					invalid_source_repo: "Source repository URL is invalid.",
@@ -321,6 +324,14 @@
 </svelte:head>
 
 <section class="max-w-3xl mx-auto px-4 py-10">
+	{#if isAdmin && !bot.owners.includes(user.id)}
+		<div
+			class="mb-4 rounded-lg border border-yellow-500/40 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-700 dark:text-yellow-300"
+		>
+			⚠️ You are editing this bot as a <strong>site admin</strong>. You are not an owner of this
+			bot.
+		</div>
+	{/if}
 	<!-- ── Tabs ──────────────────────────────────────────────────────────────── -->
 	<div class="bg-card rounded-2xl mb-6 overflow-hidden">
 		<div class="relative flex">

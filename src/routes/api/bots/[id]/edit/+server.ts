@@ -9,6 +9,7 @@ import SendLog from "@/bot/log";
 import { formSchema as BotFormSchema } from "$lib/components/bot-form-schema";
 import isValidHttpUrl from "$lib/functions/valid-url";
 import UserAccountFetch from "$lib/functions/user-bot";
+import { isAdmin } from "$lib/is-admin";
 
 import { env } from "$env/dynamic/private";
 
@@ -122,7 +123,9 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		})();
 		bot.owners = parsedOwners;
 
-		if (!parsedOwners.includes(userData.id)) {
+		const callerIsAdmin = isAdmin(userData.id);
+
+		if (!parsedOwners.includes(userData.id) && !callerIsAdmin) {
 			return json({ err: "not_owner" }, { status: 403 });
 		}
 
@@ -166,8 +169,12 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		// Owners update rules:
 		// - owners must be array
 		// - only main owner (owners[0]) can change owners
+		// - admins editing a bot they don't own cannot change owners
 		if (body.owners && JSON.stringify(body.owners) !== JSON.stringify(bot.owners)) {
 			if (!Array.isArray(body.owners)) return json({ err: "owners_not_array" }, { status: 400 });
+			if (callerIsAdmin && !parsedOwners.includes(userData.id)) {
+				return json({ err: "admins_cannot_change_owners" }, { status: 403 });
+			}
 			if (bot.owners[0] !== userData.id) return json({ err: "not_main_owner" }, { status: 403 });
 			if (body.owners[0] !== userData.id)
 				return json({ err: "main_owner_cant_be_changed" }, { status: 403 });

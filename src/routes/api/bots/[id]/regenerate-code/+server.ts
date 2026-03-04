@@ -6,6 +6,7 @@ import { Bots } from "$lib/db/schema";
 import { eq, or } from "drizzle-orm";
 import SendLog from "@/bot/log";
 import getAvatarURL from "@/lib/get-avatar-url";
+import { isAdmin } from "$lib/is-admin";
 import { env } from "$env/dynamic/private";
 
 /**
@@ -112,7 +113,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 			owners = [];
 		}
 
-		if (!owners.includes(userData.id)) {
+		if (!owners.includes(userData.id) && !isAdmin(userData.id)) {
 			return json({ err: "not_owner" }, { status: 403 });
 		}
 
