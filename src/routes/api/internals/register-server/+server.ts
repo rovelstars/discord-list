@@ -6,6 +6,7 @@ import { Servers } from "$lib/db/schema";
 import { eq } from "drizzle-orm";
 import { syncServerEmojis } from "$lib/emoji-sync";
 import { syncServerStickers } from "$lib/sticker-sync";
+import { notifyServerChanged } from "$lib/indexnow";
 import { awardSelfListing, awardServerBounty } from "$lib/db/queries/referrals";
 import type { DoubleCreditResult } from "$lib/db/queries/referrals";
 import { Referrals } from "$lib/db/schema";
@@ -234,6 +235,9 @@ export const POST: RequestHandler = async ({ request }) => {
 					);
 				});
 		}
+
+		// Notify IndexNow that a server page was created or updated (fire-and-forget).
+		notifyServerChanged(guildId);
 
 		return json(
 			{

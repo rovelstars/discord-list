@@ -40,6 +40,7 @@ import { getDb } from "$lib/db";
 import { Servers, Users } from "$lib/db/schema";
 import { eq, or, and, ne } from "drizzle-orm";
 import SendLog from "@/bot/log";
+import { notifyServerChanged } from "$lib/indexnow";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -216,6 +217,9 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 	} catch {
 		// Logging is non-fatal
 	}
+
+	// Notify IndexNow that the server page was updated (fire-and-forget).
+	notifyServerChanged(slug ?? server.id);
 
 	return json({ success: true, slug: slug ?? server.id }, { status: 200 });
 };

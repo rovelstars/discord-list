@@ -8,6 +8,7 @@ import { formSchema as BotFormSchema } from "$lib/components/bot-form-schema";
 import isValidHttpUrl from "$lib/functions/valid-url";
 import UserAccountFetch from "$lib/functions/user-bot";
 import SendLog from "@/bot/log";
+import { notifyBotChanged } from "$lib/indexnow";
 import { assignBotdevRole } from "$lib/assign-guild-role";
 import { env } from "$env/dynamic/private";
 
@@ -220,6 +221,9 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 		} catch {
 			// non-fatal if logging fails
 		}
+
+		// Notify IndexNow that a new bot page exists (fire-and-forget).
+		notifyBotChanged(body.slug ? String(body.slug).toLowerCase() : id);
 
 		// Assign the "botdev" role to every owner who is already in the guild.
 		// Non-fatal: 404 = owner not in server yet (fine), other errors are

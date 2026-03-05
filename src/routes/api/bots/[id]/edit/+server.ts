@@ -6,6 +6,7 @@ import { getDb } from "$lib/db";
 import { Bots, Users } from "$lib/db/schema";
 import { eq, or } from "drizzle-orm";
 import SendLog from "@/bot/log";
+import { notifyBotChanged } from "$lib/indexnow";
 import { formSchema as BotFormSchema } from "$lib/components/bot-form-schema";
 import isValidHttpUrl from "$lib/functions/valid-url";
 import UserAccountFetch from "$lib/functions/user-bot";
@@ -285,6 +286,9 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		} catch {
 			// Logging is non-fatal
 		}
+
+		// Notify IndexNow that the bot page was updated (fire-and-forget).
+		notifyBotChanged(updateValues.slug ?? bot.slug ?? bot.id);
 
 		return json({ success: true }, { status: 200 });
 	} catch (err) {
