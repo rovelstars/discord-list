@@ -4,7 +4,7 @@ import { resolveStickerTagsBulk } from "$lib/resolve-sticker-tags";
 
 const PAGE_SIZE = 48;
 
-export const load: PageServerLoad = async ({ url, setHeaders, parent }) => {
+export const load: PageServerLoad = async ({ url, setHeaders }) => {
 	const q = url.searchParams.get("q")?.trim() || null;
 	const animatedParam = url.searchParams.get("animated");
 	const animated = animatedParam === "true" ? true : animatedParam === "false" ? false : null;
@@ -12,8 +12,6 @@ export const load: PageServerLoad = async ({ url, setHeaders, parent }) => {
 	const sort = (url.searchParams.get("sort") ?? "newest") as "newest" | "popular" | "az";
 	const page = Math.max(1, parseInt(url.searchParams.get("page") ?? "1", 10));
 	const offset = (page - 1) * PAGE_SIZE;
-
-	const layoutData = await parent();
 
 	const [stickers, total] = await Promise.all([
 		listStickers({ q, animated, guildId, offset, limit: PAGE_SIZE, sort }),
@@ -37,7 +35,7 @@ export const load: PageServerLoad = async ({ url, setHeaders, parent }) => {
 	}));
 
 	setHeaders({
-		"cache-control": "public, max-age=60, stale-while-revalidate=300"
+		"cache-control": "public, max-age=180, s-maxage=600, stale-while-revalidate=600"
 	});
 
 	return {
@@ -48,7 +46,6 @@ export const load: PageServerLoad = async ({ url, setHeaders, parent }) => {
 		q,
 		animated,
 		guildId,
-		sort,
-		user: layoutData.user ?? null
+		sort
 	};
 };

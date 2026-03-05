@@ -4,15 +4,11 @@ import { getStickerById, getRandomStickers } from "$lib/db/queries/stickers";
 import { getServerByIdOrSlug } from "$lib/db/queries";
 import { resolveStickerTags, resolveStickerTagsBulk } from "$lib/resolve-sticker-tags";
 
-export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	const { id } = params;
 	if (!id) throw redirect(302, "/stickers");
 
-	const [sticker, related, layoutData] = await Promise.all([
-		getStickerById(id),
-		getRandomStickers(12),
-		parent()
-	]);
+	const [sticker, related] = await Promise.all([getStickerById(id), getRandomStickers(12)]);
 
 	if (!sticker) throw redirect(302, "/stickers");
 
@@ -56,13 +52,12 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 	}));
 
 	setHeaders({
-		"cache-control": "public, max-age=120, stale-while-revalidate=600"
+		"cache-control": "public, max-age=300, s-maxage=900, stale-while-revalidate=1200"
 	});
 
 	return {
 		sticker,
 		related: relatedWithTags,
-		user: layoutData.user ?? null,
 		guildInfo,
 		resolvedTags
 	};

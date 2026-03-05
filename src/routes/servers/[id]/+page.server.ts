@@ -23,7 +23,7 @@ const marked = new Marked(
 /** How old synced_at must be before we fire a background refresh (10 minutes). */
 const SYNC_STALE_MS = 10 * 60 * 1000;
 
-export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	const idOrSlug = params.id;
 	if (!idOrSlug) {
 		throw redirect(302, "/404");
@@ -33,8 +33,6 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 	if (!server) {
 		throw redirect(302, "/404");
 	}
-
-	const layoutData = await parent();
 
 	const [randomServers, relatedBots] = await Promise.all([
 		getRandomServers(6),
@@ -96,8 +94,8 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 	}
 
 	setHeaders({
-		"cache-control": "public, max-age=120, stale-while-revalidate=1200",
-		"netlify-vary": "query=key|slug,cookie=key|code,header=user-agent"
+		"cache-control": "public, max-age=300, s-maxage=900, stale-while-revalidate=1200",
+		"netlify-vary": "query=key|slug,cookie=code,header=user-agent"
 	});
 
 	return {
@@ -108,7 +106,6 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 		emojis,
 		emojiCount,
 		stickers,
-		stickerCount,
-		user: layoutData.user ?? null
+		stickerCount
 	};
 };

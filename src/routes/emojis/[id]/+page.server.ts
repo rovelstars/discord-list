@@ -4,15 +4,11 @@ import { getEmojiById } from "$lib/db/queries/emojis";
 import { getRandomEmojis } from "$lib/db/queries/emojis";
 import { getServerByIdOrSlug } from "$lib/db/queries";
 
-export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	const { id } = params;
 	if (!id) throw redirect(302, "/emojis");
 
-	const [emoji, related, layoutData] = await Promise.all([
-		getEmojiById(id),
-		getRandomEmojis(12),
-		parent()
-	]);
+	const [emoji, related] = await Promise.all([getEmojiById(id), getRandomEmojis(12)]);
 
 	if (!emoji) throw redirect(302, "/emojis");
 
@@ -42,13 +38,12 @@ export const load: PageServerLoad = async ({ params, setHeaders, parent }) => {
 	}
 
 	setHeaders({
-		"cache-control": "public, max-age=120, stale-while-revalidate=600"
+		"cache-control": "public, max-age=300, s-maxage=900, stale-while-revalidate=1200"
 	});
 
 	return {
 		emoji,
 		related: related.filter((e) => e.id !== emoji.id).slice(0, 11),
-		user: layoutData.user ?? null,
 		guildInfo
 	};
 };

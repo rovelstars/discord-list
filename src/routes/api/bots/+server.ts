@@ -36,7 +36,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		return json(bots, {
 			status: 200,
 			headers: {
-				"Cache-Control": "public, max-age=600, stale-while-revalidate=1200",
+				"Cache-Control": "public, max-age=900, s-maxage=1800, stale-while-revalidate=1800",
 				"Content-Type": "application/json"
 			}
 		});

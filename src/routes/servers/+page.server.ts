@@ -22,9 +22,9 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 
 	setHeaders({
 		"cache-control": isSearching
-			? "public, max-age=60, stale-while-revalidate=120"
-			: "public, max-age=300, stale-while-revalidate=600",
-		"netlify-vary": "query=q|limit|offset|new|trending,cookie=key|code,header=user-agent"
+			? "public, max-age=120, s-maxage=300, stale-while-revalidate=600"
+			: "public, max-age=600, s-maxage=1800, stale-while-revalidate=1800",
+		"netlify-vary": "query=q|limit|offset|new|trending,cookie=code,header=user-agent"
 	});
 
 	return {

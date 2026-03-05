@@ -7,6 +7,7 @@
 
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
 	import StickerCard from "$lib/components/StickerCard.svelte";
+	import { authUser } from "$lib/auth";
 
 	export let data: {
 		server: {
@@ -41,7 +42,6 @@
 			invite: string | null;
 			bg: string | null;
 		}>;
-		user: any | null;
 		emojis: Array<{
 			id: string;
 			code: string;
@@ -66,17 +66,11 @@
 		stickerCount: number;
 	};
 
-	$: ({
-		server,
-		descHtml,
-		randomServers,
-		relatedBots,
-		user,
-		emojis,
-		emojiCount,
-		stickers,
-		stickerCount
-	} = data);
+	$: ({ server, descHtml, randomServers, relatedBots, emojis, emojiCount, stickers, stickerCount } =
+		data);
+
+	// User comes from the client-side auth store instead of server data
+	$: user = $authUser ?? null;
 
 	// Emoji display limit on server page (show first N, link to full list)
 	const EMOJI_PAGE_LIMIT = 32;

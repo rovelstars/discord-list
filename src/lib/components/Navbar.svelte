@@ -3,7 +3,8 @@
 	import ThemeSelector from "$lib/components/ThemeSelector.svelte";
 	import approx from "$lib/approx-num";
 	import getAvatarURL from "$lib/get-avatar-url";
-	import { goto, invalidateAll } from "$app/navigation";
+	import { goto } from "$app/navigation";
+	import { clearAuth } from "$lib/auth";
 	import LogoNavbar from "$lib/components/LogoNavbar.svelte";
 	import {
 		Bot,
@@ -27,6 +28,9 @@
 		bal: number;
 	} | null = null;
 
+	/** Whether the client-side auth check is still in-flight. */
+	export let loading: boolean = false;
+
 	let mobileOpen = false;
 	let moreOpen = false;
 
@@ -40,7 +44,7 @@
 
 	async function logout() {
 		await fetch("/logout", { method: "POST" });
-		await invalidateAll();
+		clearAuth();
 		await goto("/");
 	}
 
@@ -145,7 +149,16 @@
 		<div class="flex items-center gap-1.5 shrink-0">
 			<ThemeSelector />
 
-			{#if user}
+			{#if loading}
+				<!-- Skeleton placeholders while auth resolves -->
+				<div
+					class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-muted/50 animate-pulse w-16 h-7"
+				></div>
+				<div
+					class="hidden md:inline-flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-muted/50 animate-pulse w-28 h-8"
+				></div>
+				<div class="md:hidden shrink-0 w-7 h-7 rounded-full bg-muted/50 animate-pulse"></div>
+			{:else if user}
 				<!-- Coin balance pill -->
 				<span
 					class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent text-xs font-semibold text-foreground border border-border"
@@ -219,7 +232,17 @@
 	>
 		<div class="px-3 py-4 flex flex-col gap-0.5">
 			<!-- User info strip (when logged in) -->
-			{#if user}
+			{#if loading}
+				<div
+					class="flex items-center gap-3 px-3 py-3 mb-2 rounded-xl bg-card border border-border animate-pulse"
+				>
+					<div class="w-9 h-9 rounded-full bg-muted/50 shrink-0"></div>
+					<div class="flex-1 min-w-0">
+						<div class="h-4 w-24 bg-muted/50 rounded mb-1.5"></div>
+						<div class="h-3 w-16 bg-muted/50 rounded"></div>
+					</div>
+				</div>
+			{:else if user}
 				<div class="flex items-center gap-3 px-3 py-3 mb-2 rounded-xl bg-card border border-border">
 					<img
 						src={avatarSrc}
@@ -258,7 +281,11 @@
 			<div class="h-px bg-border my-2"></div>
 
 			<!-- Logout / Login -->
-			{#if user}
+			{#if loading}
+				<div class="px-3 py-2.5">
+					<div class="h-5 w-20 bg-muted/50 rounded animate-pulse"></div>
+				</div>
+			{:else if user}
 				<button
 					on:click={() => {
 						mobileOpen = false;

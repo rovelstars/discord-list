@@ -30,7 +30,6 @@
 		animated: boolean | null;
 		guildId: string | null;
 		sort: "newest" | "popular" | "az";
-		user: any | null;
 	};
 
 	$: ({ stickers, total, page: currentPage, totalPages, q, animated, guildId, sort } = data);

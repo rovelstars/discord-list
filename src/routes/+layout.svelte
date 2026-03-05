@@ -2,12 +2,13 @@
 	import "../styles/global.css";
 	import Navbar from "$lib/components/Navbar.svelte";
 	import Footer from "$lib/components/Footer.svelte";
-	import { afterNavigate, invalidateAll, replaceState } from "$app/navigation";
+	import { afterNavigate, replaceState } from "$app/navigation";
 	import { navigating } from "$app/stores";
 	import { onMount } from "svelte";
 	import { page } from "$app/stores";
 	import { browser } from "$app/environment";
 	import { getFingerprint } from "$lib/fingerprint/collect";
+	import { initAuth, refreshAuth, clearAuth, authUser, authLoading, authResolved } from "$lib/auth";
 
 	// Stamp data-loaded on every <img> once it finishes loading so the global
 	// CSS fade-in in global.css can trigger. A single delegated listener on
@@ -133,15 +134,18 @@
 	$: isHomepage = $page.url.pathname === "/";
 
 	export let data: {
-		user: {
-			id: string;
-			username: string;
-			tag: string;
-			discriminator: string;
-			avatar: string | null;
-			bal: number;
-		} | null;
+		hasAuthCookie: boolean;
 	};
+
+	// ── Client-side auth initialization ───────────────────────────────────────
+	// Instead of resolving the user on every server-side page load (which
+	// blocks the response and prevents CDN caching), we defer auth to the
+	// client. The server only tells us whether a `key` cookie exists.
+	// If it does, we fire a single fetch to /api/auth/me to resolve the user.
+	// If it doesn't, we skip the fetch entirely and render as logged-out.
+	onMount(() => {
+		initAuth(data.hasAuthCookie);
+	});
 
 	// ── Fingerprint + visit tracking ──────────────────────────────────────────
 	// Runs once per session (guarded by sessionStorage) after the user is
@@ -202,49 +206,54 @@
 		}
 	}
 
-	// Re-run layout server load after coming back from logout so the
-	// navbar updates immediately without requiring a manual refresh.
+	// Re-run auth after coming back from logout so the navbar updates
+	// immediately without requiring a manual refresh.
 	afterNavigate(({ from }) => {
 		const prev = from?.url?.pathname ?? "";
-		if (prev.startsWith("/logout") || prev.startsWith("/login")) {
-			invalidateAll();
+		if (prev.startsWith("/logout")) {
+			clearAuth();
+		} else if (prev.startsWith("/login")) {
+			refreshAuth();
 		}
 	});
 
 	// After a successful login Discord redirects back with ?auth=1.
-	// Detect it on mount, re-run all load functions, then strip the param
-	// so it doesn't linger in the address bar.
+	// Detect it on mount, refresh auth, then strip the param so it
+	// doesn't linger in the address bar.
 	onMount(() => {
 		const cleanupFadeIn = initImageFadeIn();
 
 		if ($page.url.searchParams.get("auth") === "1") {
-			invalidateAll().then(() => {
+			refreshAuth().then(() => {
 				const clean = new URL($page.url);
 				clean.searchParams.delete("auth");
 				replaceState(clean.pathname + (clean.search || ""), {});
 			});
 		}
 
-		// Fire fingerprint + visit tracking for authenticated users.
-		// Deferred with setTimeout(0) so it never delays first paint.
-		if (data.user) {
-			const uid = data.user.id;
-			setTimeout(() => {
-				sendFingerprintIfNeeded(uid);
-				sendVisitIfNeeded(uid);
-			}, 0);
-		}
-
 		return cleanupFadeIn;
 	});
+
+	// Fire fingerprint + visit tracking once auth resolves to a logged-in user.
+	// Uses a reactive statement so it fires whenever $authUser changes from
+	// null to a user object (initial load, or after login redirect).
+	let _lastTrackedUserId: string | null = null;
+	$: if (browser && $authResolved && $authUser && $authUser.id !== _lastTrackedUserId) {
+		const uid = $authUser.id;
+		_lastTrackedUserId = uid;
+		setTimeout(() => {
+			sendFingerprintIfNeeded(uid);
+			sendVisitIfNeeded(uid);
+		}, 0);
+	}
 
 	// Re-fire visit tracking whenever the user navigates to a new page within
 	// the same session (SvelteKit client-side routing) and they are logged in.
 	// The session-key guard in sendVisitIfNeeded ensures we only record one
 	// visit per calendar day regardless of how many pages they browse.
 	afterNavigate(() => {
-		if (browser && data.user) {
-			sendVisitIfNeeded(data.user.id);
+		if (browser && $authUser) {
+			sendVisitIfNeeded($authUser.id);
 		}
 	});
 </script>
@@ -269,6 +278,6 @@
 	</div>
 {/if}
 
-<Navbar user={data.user} />
+<Navbar user={$authUser} loading={$authLoading} />
 <main class={isHomepage ? "" : "mt-24"}><slot></slot></main>
 <Footer />

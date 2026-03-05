@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { buttonVariants } from "$lib/components/ui/button.js";
 	import SEO from "$lib/components/SEO.svelte";
+	import { authUser, authLoading } from "$lib/auth";
 
 	export let data: {
 		server: {
@@ -10,14 +11,12 @@
 			icon: string | null;
 			votes: number;
 		};
-		user: {
-			id: string;
-			username: string;
-			avatar: string | null;
-		} | null;
 	};
 
-	const { server, user } = data;
+	const { server } = data;
+
+	// User comes from the client-side auth store instead of server data.
+	$: user = $authUser ?? null;
 
 	$: iconUrl = (() => {
 		if (!server.icon || server.icon === "") return null;
@@ -117,7 +116,13 @@
 
 	<!-- Vote area -->
 	<div class="mt-8 flex flex-col items-center gap-4">
-		{#if user}
+		{#if $authLoading}
+			<!-- Skeleton while auth resolves -->
+			<div class="flex flex-col items-center gap-4 mt-2 w-full max-w-xs animate-pulse">
+				<div class="h-10 w-full bg-muted/50 rounded-md"></div>
+				<div class="h-10 w-full bg-muted/50 rounded-md"></div>
+			</div>
+		{:else if user}
 			<div class="w-full max-w-xs flex flex-col gap-3">
 				<!-- Vote button -->
 				<button

@@ -33,8 +33,8 @@ export const GET: RequestHandler = async ({ params }) => {
 			{
 				status: 200,
 				headers: {
-					// Keep a short public cache and allow SWR on the edge
-					"Cache-Control": "public, max-age=120, stale-while-revalidate=1200",
+					// Public cache – no per-user variance since auth is client-side
+					"Cache-Control": "public, max-age=300, s-maxage=900, stale-while-revalidate=1200",
 					"Content-Type": "application/json"
 				}
 			}

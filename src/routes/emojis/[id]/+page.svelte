@@ -26,7 +26,6 @@
 			guild: string | null;
 			submitter: string | null;
 		}>;
-		user: any | null;
 		guildInfo: {
 			id: string;
 			name: string;
@@ -36,7 +35,7 @@
 		} | null;
 	};
 
-	$: ({ emoji, related, user, guildInfo } = data);
+	$: ({ emoji, related, guildInfo } = data);
 
 	$: guildIconUrl = (() => {
 		if (!guildInfo?.icon || guildInfo.icon === "") return null;
@@ -637,8 +636,8 @@
 						<em>across other servers</em> you need
 						<strong class="text-foreground">Discord Nitro</strong>.
 					{:else}
-						No, animated emojis require <strong class="text-foreground">Discord Nitro</strong> to use even within their home server.
-            They can be used across servers with Nitro as well.
+						No, animated emojis require <strong class="text-foreground">Discord Nitro</strong> to use
+						even within their home server. They can be used across servers with Nitro as well.
 					{/if}
 				</dd>
 			</div>
@@ -662,7 +661,8 @@
 				<dd class="text-sm text-muted-foreground leading-relaxed">
 					{#if emoji.a}
 						Yes - it's an <strong class="text-foreground">animated GIF</strong> that loops in chat.
-						Both Cross-server and Home-server use requires <strong class="text-foreground">Nitro</strong>.
+						Both Cross-server and Home-server use requires
+						<strong class="text-foreground">Nitro</strong>.
 					{:else}
 						No - it's a <strong class="text-foreground">static PNG</strong>, usable in any server
 						it's uploaded to without Nitro.

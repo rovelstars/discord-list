@@ -1,12 +1,10 @@
 import type { PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import { getDb } from "$lib/db";
-import { Bots, Users } from "$lib/schema";
+import { Bots } from "$lib/schema";
 import { eq, or } from "drizzle-orm";
-import DiscordOauth2 from "discord-oauth2";
-import { env } from "$env/dynamic/private";
 
-export const load: PageServerLoad = async ({ params, cookies, setHeaders }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	const idOrSlug = params.id;
 	if (!idOrSlug) throw redirect(302, "/404");
 
@@ -37,43 +35,11 @@ export const load: PageServerLoad = async ({ params, cookies, setHeaders }) => {
 		opted_coins: boolean | number | null;
 	};
 
-	// Resolve user from cookie (same pattern as layout server load)
-	const key = cookies.get("key");
-	let user: { id: string; username: string; avatar: string | null; bal: number } | null = null;
-
-	if (key) {
-		try {
-			const oauth = new DiscordOauth2({
-				clientId: env.DISCORD_BOT_ID!,
-				clientSecret: env.DISCORD_SECRET!,
-				redirectUri: (env.DOMAIN ?? "http://localhost:5173") + "/api/auth"
-			});
-
-			const userData = await oauth.getUser(key);
-
-			const userRows = await db
-				.select({ bal: Users.bal })
-				.from(Users)
-				.where(eq(Users.id, userData.id))
-				.limit(1);
-
-			const bal = userRows.length > 0 ? Number((userRows[0] as any).bal) || 0 : 0;
-
-			user = {
-				id: userData.id,
-				username: (userData.global_name ?? userData.username) as string,
-				avatar: userData.avatar ?? null,
-				bal
-			};
-		} catch {
-			// Invalid / expired token - treat as logged out, don't crash the page
-			user = null;
-		}
-	}
-
+	// User resolution is now handled client-side via the auth store.
+	// This page can be cached publicly since it no longer varies by cookie.
 	setHeaders({
-		"cache-control": "private, max-age=0",
-		"netlify-vary": "cookie=key|code,header=user-agent"
+		"cache-control": "public, max-age=300, s-maxage=600, stale-while-revalidate=1200",
+		"netlify-vary": "query=key|slug|code,header=user-agent"
 	});
 
 	return {
@@ -84,7 +50,6 @@ export const load: PageServerLoad = async ({ params, cookies, setHeaders }) => {
 			discriminator: bot.discriminator,
 			avatar: bot.avatar,
 			opted_coins: Boolean(bot.opted_coins)
-		},
-		user
+		}
 	};
 };

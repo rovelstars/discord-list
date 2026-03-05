@@ -39,7 +39,6 @@
 			guild: string | null;
 			resolvedTags: ResolvedTag[];
 		}>;
-		user: any | null;
 		guildInfo: {
 			id: string;
 			name: string;
@@ -50,7 +49,7 @@
 		resolvedTags: ResolvedTag[];
 	};
 
-	$: ({ sticker, related, user, guildInfo, resolvedTags } = data);
+	$: ({ sticker, related, guildInfo, resolvedTags } = data);
 
 	$: guildIconUrl = (() => {
 		if (!guildInfo?.icon || guildInfo.icon === "") return null;

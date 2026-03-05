@@ -7,6 +7,7 @@
 	import TwemojiText from "$lib/components/TwemojiText.svelte";
 	import SEO from "$lib/components/SEO.svelte";
 	import BotComments from "$lib/components/BotComments.svelte";
+	import { authUser } from "$lib/auth";
 
 	export let data: {
 		bot: {
@@ -49,17 +50,21 @@
 			added_at: string | null;
 			member_count?: number | null;
 		}>;
-		user: {
-			id: string;
-			username: string;
-			avatar: string | null;
-			discriminator?: string;
-		} | null;
 	};
 
 	// Reactive destructuring - re-runs whenever SvelteKit replaces `data` after
 	// a client-side navigation to a different bot ID.
-	$: ({ bot, randombots, comments, relatedServers, user } = data);
+	$: ({ bot, randombots, comments, relatedServers } = data);
+
+	// User comes from the client-side auth store instead of server data
+	$: user = $authUser
+		? {
+				id: $authUser.id,
+				username: $authUser.username,
+				avatar: $authUser.avatar,
+				discriminator: $authUser.discriminator
+			}
+		: null;
 
 	// ── iframe sandboxing ─────────────────────────────────────────────────────
 

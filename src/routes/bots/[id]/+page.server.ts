@@ -21,7 +21,7 @@ const marked = new Marked(
 	})
 );
 
-export const load: PageServerLoad = async ({ params, setHeaders, locals, parent }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	const idOrSlug = params.id;
 	if (!idOrSlug) {
 		throw redirect(302, "/404");
@@ -32,12 +32,9 @@ export const load: PageServerLoad = async ({ params, setHeaders, locals, parent 
 		throw redirect(302, "/404");
 	}
 
-	const layoutData = await parent();
-	const currentUserId = layoutData.user?.id ?? undefined;
-
 	const [randombots, comments, relatedServers] = await Promise.all([
 		getRandomBots(10),
-		getCommentsByBotId(bot.id, currentUserId),
+		getCommentsByBotId(bot.id),
 		getServersByBotId(bot.id, 8)
 	]);
 
@@ -54,8 +51,8 @@ export const load: PageServerLoad = async ({ params, setHeaders, locals, parent 
 	}
 
 	setHeaders({
-		"cache-control": "public, max-age=120, stale-while-revalidate=1200",
-		"netlify-vary": "query=key|slug|code,cookie=key|code,header=user-agent"
+		"cache-control": "public, max-age=300, s-maxage=900, stale-while-revalidate=1200",
+		"netlify-vary": "query=key|slug|code,cookie=code,header=user-agent"
 	});
 
 	return {
@@ -63,7 +60,6 @@ export const load: PageServerLoad = async ({ params, setHeaders, locals, parent 
 		descHtml,
 		randombots,
 		comments,
-		relatedServers,
-		user: layoutData.user ?? null
+		relatedServers
 	};
 };

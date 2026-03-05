@@ -48,10 +48,10 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 
 	setHeaders({
 		"cache-control": isFiltered
-			? "public, max-age=60, stale-while-revalidate=120"
-			: "public, max-age=600, stale-while-revalidate=1200",
+			? "public, max-age=120, s-maxage=300, stale-while-revalidate=600"
+			: "public, max-age=900, s-maxage=1800, stale-while-revalidate=1800",
 		"netlify-vary":
-			"query=key|slug|code|q|limit|offset|new|trending|lucky|category,cookie=key|code,header=user-agent"
+			"query=key|slug|code|q|limit|offset|new|trending|lucky|category,cookie=code,header=user-agent"
 	});
 
 	return {

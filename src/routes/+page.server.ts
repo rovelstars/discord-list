@@ -41,8 +41,8 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 		}
 
 		setHeaders({
-			"cache-control": "public, max-age=600, stale-while-revalidate=1200",
-			"netlify-vary": "query=key|slug|code,cookie=key|code,header=user-agent"
+			"cache-control": "public, max-age=900, s-maxage=1800, stale-while-revalidate=1800",
+			"netlify-vary": "query=key|slug|code,cookie=code,header=user-agent"
 		});
 
 		return {
@@ -56,8 +56,8 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 		};
 	} catch {
 		setHeaders({
-			"cache-control": "public, max-age=60, stale-while-revalidate=120",
-			"netlify-vary": "query=key|slug|code,cookie=key|code,header=user-agent"
+			"cache-control": "public, max-age=120, s-maxage=300, stale-while-revalidate=600",
+			"netlify-vary": "query=key|slug|code,cookie=code,header=user-agent"
 		});
 
 		return {

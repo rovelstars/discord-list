@@ -2,6 +2,7 @@
 	import getAvatarURL from "$lib/get-avatar-url";
 	import { buttonVariants } from "$lib/components/ui/button.js";
 	import SEO from "$lib/components/SEO.svelte";
+	import { authUser, authLoading } from "$lib/auth";
 
 	export let data: {
 		bot: {
@@ -12,18 +13,14 @@
 			avatar: string | null;
 			opted_coins: boolean;
 		};
-		user: {
-			id: string;
-			username: string;
-			avatar: string | null;
-			bal: number;
-		} | null;
 	};
 
 	const { bot } = data;
+
+	// User comes from the client-side auth store instead of server data.
 	// Coerce bal to a number - libSQL can return INTEGER columns as strings
 	// depending on the driver version, so we normalise it here once.
-	const user = data.user ? { ...data.user, bal: Number(data.user.bal) || 0 } : null;
+	$: user = $authUser ? { ...$authUser, bal: Number($authUser.bal) || 0 } : null;
 
 	$: avatarSrc = bot.avatar
 		? getAvatarURL(bot.id, bot.avatar, 128)
@@ -102,7 +99,13 @@
 
 	<!-- Vote area -->
 	<div class="mt-8 flex flex-col items-center gap-4">
-		{#if user}
+		{#if $authLoading}
+			<!-- Skeleton while auth resolves -->
+			<div class="flex flex-col items-center gap-4 mt-2 w-full max-w-xs animate-pulse">
+				<div class="h-10 w-full bg-muted/50 rounded-md"></div>
+				<div class="h-10 w-full bg-muted/50 rounded-md"></div>
+			</div>
+		{:else if user}
 			<!-- Coin input - only when the bot opted in to coin-based votes -->
 			{#if bot.opted_coins}
 				<div class="w-full max-w-xs flex flex-col gap-1">

@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	const bots = await getBotsByCategory(meta.keyword, 48);
 
 	setHeaders({
-		"cache-control": "public, max-age=600, stale-while-revalidate=1800"
+		"cache-control": "public, max-age=900, s-maxage=3600, stale-while-revalidate=3600"
 	});
 
 	return {

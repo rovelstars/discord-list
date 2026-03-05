@@ -23,7 +23,6 @@
 		animated: boolean | null;
 		guildId: string | null;
 		sort: "newest" | "popular" | "az";
-		user: any | null;
 	};
 
 	$: ({ emojis, total, page: currentPage, totalPages, q, animated, guildId, sort } = data);

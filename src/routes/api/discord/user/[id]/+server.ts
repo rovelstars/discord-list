@@ -66,8 +66,8 @@ export const GET: RequestHandler = async ({ params }) => {
 			{
 				status: 200,
 				headers: {
-					// Short cache - bot profiles rarely change, but don't stale forever
-					"Cache-Control": "public, max-age=60, stale-while-revalidate=300"
+					// Public cache – no per-user variance since auth is client-side
+					"Cache-Control": "public, max-age=300, s-maxage=600, stale-while-revalidate=600"
 				}
 			}
 		);
