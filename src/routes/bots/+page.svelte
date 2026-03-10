@@ -130,9 +130,34 @@
 		if (data.lucky) return "Feeling Lucky?";
 		return null; // landing - no sub-heading needed
 	})();
+
+	$: canonicalUrl = (() => {
+		const url = new URL($page.url.origin + $page.url.pathname);
+		const newSearchParams = new URLSearchParams();
+
+		for (const [key, value] of $page.url.searchParams.entries()) {
+			if (key === "lucky") {
+				// If 'lucky' parameter exists, add it without its value to the canonical URL
+				newSearchParams.set("lucky", "");
+			} else {
+				// For all other parameters, add them as they are
+				newSearchParams.set(key, value);
+			}
+		}
+
+		const queryString = newSearchParams.toString();
+		return queryString
+			? `${url.origin}${url.pathname}?${queryString}`
+			: `${url.origin}${url.pathname}`;
+	})();
 </script>
 
-<SEO title={seoTitle} description={seoDesc} imageSmall="/assets/img/bot/logo-512.png" />
+<SEO
+	title={seoTitle}
+	description={seoDesc}
+	imageSmall="/assets/img/bot/logo-512.png"
+	canonical={canonicalUrl}
+/>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
      HERO - always visible
