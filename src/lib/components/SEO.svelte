@@ -10,8 +10,11 @@
 	  canonical    – canonical URL (pass $page.url.href from each page)
 	  noSuffix     – when true, title is used verbatim (home page already has full title)
 	  noindex      – when true, emit <meta name="robots" content="noindex, nofollow">
+	  jsonLd       – schema.org structured-data object or array of objects (see $lib/jsonld)
 -->
 <script lang="ts">
+	import { serializeJsonLd } from "$lib/jsonld";
+
 	const SITE_NAME = "Rovel Discord List";
 	const SITE_URL = "https://discord.rovelstars.com";
 	const DEFAULT_IMAGE = "/assets/img/bot/logo-512.png";
@@ -26,6 +29,9 @@
 	export let canonical: string | null = null;
 	export let noSuffix: boolean = false;
 	export let noindex: boolean = false;
+	export let jsonLd: Record<string, unknown> | Record<string, unknown>[] | null = null;
+
+	$: jsonLdList = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
 	$: fullTitle = noSuffix ? title : title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
 
@@ -89,4 +95,9 @@
 	<meta name="twitter:title" content={fullTitle} />
 	<meta name="twitter:description" content={description} />
 	<meta name="twitter:image" content={ogImage} />
+
+	<!-- schema.org JSON-LD structured data for rich SERP results -->
+	{#each jsonLdList as ld}
+		{@html `<script type="application/ld+json">${serializeJsonLd(ld)}</` + `script>`}
+	{/each}
 </svelte:head>

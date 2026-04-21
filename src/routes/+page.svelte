@@ -5,6 +5,7 @@
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
 	import StickerCard from "$lib/components/StickerCard.svelte";
 	import SEO from "$lib/components/SEO.svelte";
+	import { websiteSchema } from "$lib/jsonld";
 
 	export let data: any;
 
@@ -129,6 +130,7 @@
 	description="Discover the next Discord bot, server, sticker, emoji, or friend right here. The best Discord discovery platform."
 	imageSmall="/assets/img/bot/logo-512.png"
 	noSuffix={true}
+	jsonLd={websiteSchema()}
 />
 
 <!-- ── Root: fills viewport, clips overflow ──────────────────────────────── -->

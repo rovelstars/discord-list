@@ -8,6 +8,11 @@
 	import SEO from "$lib/components/SEO.svelte";
 	import BotComments from "$lib/components/BotComments.svelte";
 	import { authUser } from "$lib/auth";
+	import {
+		SITE_URL as JSONLD_SITE_URL,
+		softwareApplicationSchema,
+		breadcrumbSchema
+	} from "$lib/jsonld";
 
 	export let data: {
 		bot: {
@@ -394,6 +399,19 @@
 	).toUpperCase()} servers. Add it today! {bot.short}"
 	image={bgUrl}
 	imageSmall={avatarSrc}
+	canonical="{JSONLD_SITE_URL}/bots/{bot.slug ?? bot.id}"
+	jsonLd={[
+		softwareApplicationSchema(
+			bot,
+			`${JSONLD_SITE_URL}/bots/${bot.slug ?? bot.id}`,
+			avatarSrc.startsWith("http") ? avatarSrc : `${JSONLD_SITE_URL}${avatarSrc}`
+		),
+		breadcrumbSchema([
+			{ name: "Home", url: "/" },
+			{ name: "Bots", url: "/bots" },
+			{ name: bot.username, url: `/bots/${bot.slug ?? bot.id}` }
+		])
+	]}
 />
 
 <!--
