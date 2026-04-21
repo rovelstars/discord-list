@@ -11,6 +11,16 @@
  *
  * Search engines (and Googlebot) fetch this to discover all indexable URLs.
  * Cached for 12 hours so it doesn't hit the DB on every crawl request.
+ *
+ * `<lastmod>` policy:
+ *   - Dynamic entity pages use that entity's `added_at`.
+ *   - Listing pages (/, /bots, /servers, /emojis, /stickers, /top, /new,
+ *     /categories, /categories/*) use the newest `added_at` across the
+ *     relevant entity set — so the date actually reflects when the listing
+ *     last changed.
+ *   - Truly static-content pages (/about, /privacy, /terms, /docs, docs
+ *     hash anchors) omit `<lastmod>` entirely. Google penalises sitemaps
+ *     that stamp every URL with "today", so omitting is better than lying.
  */
 
 import type { RequestHandler } from "@sveltejs/kit";
@@ -22,9 +32,27 @@ import { docs } from "virtual:docs";
 const SITE_URL = "https://discord.rovelstars.com";
 
 /** Format a JS Date, epoch-ms number, or ISO string as YYYY-MM-DD for lastmod */
-function toDateStr(ts: number | string | null | undefined): string {
-	if (!ts) return new Date().toISOString().slice(0, 10);
-	return new Date(typeof ts === "string" ? ts : ts).toISOString().slice(0, 10);
+function toDateStr(ts: number | string | null | undefined): string | undefined {
+	if (ts == null || ts === "") return undefined;
+	const d = new Date(typeof ts === "string" ? ts : ts);
+	if (Number.isNaN(d.getTime())) return undefined;
+	return d.toISOString().slice(0, 10);
+}
+
+/** Pick the newest timestamp from an array of entity rows. Returns a
+ *  YYYY-MM-DD string or undefined if the set is empty / all nullish. */
+function newestDate<T>(
+	rows: T[],
+	getTs: (row: T) => number | string | null | undefined
+): string | undefined {
+	let maxMs = 0;
+	for (const r of rows) {
+		const v = getTs(r);
+		if (v == null || v === "") continue;
+		const t = typeof v === "string" ? Date.parse(v) : Number(v);
+		if (Number.isFinite(t) && t > maxMs) maxMs = t;
+	}
+	return maxMs > 0 ? toDateStr(maxMs) : undefined;
 }
 
 /** Escape XML special characters in URL strings */
@@ -61,291 +89,284 @@ function urlEntry({
 }
 
 export const GET: RequestHandler = async () => {
-	const today = new Date().toISOString().slice(0, 10);
+	// ── Fetch dynamic entity lists first so static listings can derive an
+	// accurate <lastmod> from them. Each fetch is independent and non-fatal:
+	// if any single query fails we log and continue with an empty array,
+	// which just suppresses the corresponding <lastmod>.
+	const [botSlugs, serverSlugs, emojiIds, stickerIds] = await Promise.all([
+		getAllBotSlugs().catch((err) => {
+			console.error("[sitemap.xml] Failed to fetch bot slugs:", err);
+			return [] as Awaited<ReturnType<typeof getAllBotSlugs>>;
+		}),
+		getAllServerSlugs().catch((err) => {
+			console.error("[sitemap.xml] Failed to fetch server slugs:", err);
+			return [] as Awaited<ReturnType<typeof getAllServerSlugs>>;
+		}),
+		getAllEmojiIds().catch((err) => {
+			console.error("[sitemap.xml] Failed to fetch emoji ids:", err);
+			return [] as Awaited<ReturnType<typeof getAllEmojiIds>>;
+		}),
+		getAllStickerIds().catch((err) => {
+			console.error("[sitemap.xml] Failed to fetch sticker ids:", err);
+			return [] as Awaited<ReturnType<typeof getAllStickerIds>>;
+		})
+	]);
+
+	// ── Derived listing-page lastmod values ──────────────────────────────────
+	const newestBotDate = newestDate(botSlugs, (b) => b.added_at);
+	const newestServerDate = newestDate(serverSlugs, (s) => s.added_at);
+	const newestEmojiDate = newestDate(emojiIds, (e) => e.added_at);
+	const newestStickerDate = newestDate(stickerIds, (s) => s.added_at);
+	// Homepage reflects "anything new on the site" — use the max of all four.
+	const siteNewestDate = [newestBotDate, newestServerDate, newestEmojiDate, newestStickerDate]
+		.filter((d): d is string => !!d)
+		.sort()
+		.pop();
 
 	// ── Static pages ──────────────────────────────────────────────────────────
 	const staticEntries = [
-		// Home page - highest priority, changes frequently
-		urlEntry({ loc: SITE_URL + "/", lastmod: today, changefreq: "daily", priority: "1.0" }),
+		// Home page — lastmod = any entity added anywhere on the site
+		urlEntry({
+			loc: SITE_URL + "/",
+			lastmod: siteNewestDate,
+			changefreq: "daily",
+			priority: "1.0"
+		}),
 
-		// Bot listing pages
+		// Bot listing pages — lastmod = newest bot added
 		urlEntry({
 			loc: SITE_URL + "/bots",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "hourly",
 			priority: "0.9"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/bots?new",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "hourly",
 			priority: "0.8"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/bots?trending",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "daily",
 			priority: "0.8"
 		}),
 
-		// Server listing pages
+		// Server listing pages — lastmod = newest server added
 		urlEntry({
 			loc: SITE_URL + "/servers",
-			lastmod: today,
+			lastmod: newestServerDate,
 			changefreq: "hourly",
 			priority: "0.9"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/servers?new",
-			lastmod: today,
+			lastmod: newestServerDate,
 			changefreq: "hourly",
 			priority: "0.8"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/servers?trending",
-			lastmod: today,
+			lastmod: newestServerDate,
 			changefreq: "daily",
 			priority: "0.8"
 		}),
 
-		// Emoji listing pages
+		// Emoji listing pages — lastmod = newest emoji added
 		urlEntry({
 			loc: SITE_URL + "/emojis",
-			lastmod: today,
+			lastmod: newestEmojiDate,
 			changefreq: "hourly",
 			priority: "0.8"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/emojis?sort=newest",
-			lastmod: today,
+			lastmod: newestEmojiDate,
 			changefreq: "hourly",
 			priority: "0.7"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/emojis?sort=popular",
-			lastmod: today,
+			lastmod: newestEmojiDate,
 			changefreq: "daily",
 			priority: "0.7"
 		}),
 
-		// Sticker listing pages
+		// Sticker listing pages — lastmod = newest sticker added
 		urlEntry({
 			loc: SITE_URL + "/stickers",
-			lastmod: today,
+			lastmod: newestStickerDate,
 			changefreq: "hourly",
 			priority: "0.8"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/stickers?sort=newest",
-			lastmod: today,
+			lastmod: newestStickerDate,
 			changefreq: "hourly",
 			priority: "0.7"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/stickers?sort=popular",
-			lastmod: today,
+			lastmod: newestStickerDate,
 			changefreq: "daily",
 			priority: "0.7"
 		}),
 
-		// Docs - main page
-		urlEntry({
-			loc: SITE_URL + "/docs",
-			lastmod: today,
-			changefreq: "monthly",
-			priority: "0.7"
-		}),
+		// Docs — static content page; omit <lastmod> rather than lie with today.
+		urlEntry({ loc: SITE_URL + "/docs", changefreq: "monthly", priority: "0.7" }),
 
-		// Legal & informational pages
-		urlEntry({
-			loc: SITE_URL + "/about",
-			lastmod: today,
-			changefreq: "monthly",
-			priority: "0.6"
-		}),
-		urlEntry({
-			loc: SITE_URL + "/privacy",
-			lastmod: today,
-			changefreq: "monthly",
-			priority: "0.5"
-		}),
-		urlEntry({
-			loc: SITE_URL + "/terms",
-			lastmod: today,
-			changefreq: "monthly",
-			priority: "0.5"
-		}),
+		// Legal & informational pages — truly static, no reliable lastmod.
+		urlEntry({ loc: SITE_URL + "/about", changefreq: "monthly", priority: "0.6" }),
+		urlEntry({ loc: SITE_URL + "/privacy", changefreq: "monthly", priority: "0.5" }),
+		urlEntry({ loc: SITE_URL + "/terms", changefreq: "monthly", priority: "0.5" }),
 
-		// Dedicated feature pages
+		// Dedicated feature pages — reflect bot additions
 		urlEntry({
 			loc: SITE_URL + "/top",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "daily",
 			priority: "0.9"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/new",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "hourly",
 			priority: "0.8"
 		}),
 
-		// Category landing pages
+		// Category landing pages — populated by filtering bots, so they track the
+		// newest bot addition. Not perfect (a new bot may not match this category)
+		// but significantly more accurate than a daily-churning placeholder.
 		urlEntry({
 			loc: SITE_URL + "/categories",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.8"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/categories/music",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.8"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/categories/moderation",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.8"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/categories/gaming",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.8"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/categories/economy",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.7"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/categories/utility",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.7"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/categories/fun",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.7"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/categories/anime",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.7"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/categories/logging",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.6"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/categories/leveling",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.6"
 		}),
 		urlEntry({
 			loc: SITE_URL + "/categories/roleplay",
-			lastmod: today,
+			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.6"
 		})
 	];
 
 	// ── Docs sections (hash-anchored deep links) ──────────────────────────────
-	// The docs page is a single SPA with hash-based section navigation, so each
-	// section gets its own URL entry so crawlers can discover individual topics.
+	// Docs are compiled from source markdown; we don't track per-section
+	// timestamps, so omit <lastmod> rather than stamp every section with today.
 	const docsEntries = docs.map((section) =>
 		urlEntry({
 			loc: `${SITE_URL}/docs#${encodeURIComponent(section.slug)}`,
-			lastmod: today,
 			changefreq: "monthly",
 			priority: "0.6"
 		})
 	);
 
 	// ── Dynamic bot pages ─────────────────────────────────────────────────────
-	let botEntries: string[] = [];
-	try {
-		const slugs = await getAllBotSlugs();
-		botEntries = slugs
-			.filter((s) => s.slug && s.slug.trim() !== "")
-			.map((s) =>
-				urlEntry({
-					loc: `${SITE_URL}/bots/${encodeURIComponent(s.slug)}`,
-					lastmod: toDateStr(s.added_at ?? undefined),
-					changefreq: "weekly",
-					priority: "0.6"
-				})
-			);
-	} catch (err) {
-		// Non-fatal - serve static-only sitemap if DB is unavailable
-		console.error("[sitemap.xml] Failed to fetch bot slugs:", err);
-	}
+	const botEntries = botSlugs
+		.filter((s) => s.slug && s.slug.trim() !== "")
+		.map((s) =>
+			urlEntry({
+				loc: `${SITE_URL}/bots/${encodeURIComponent(s.slug)}`,
+				lastmod: toDateStr(s.added_at),
+				changefreq: "weekly",
+				priority: "0.6"
+			})
+		);
 
 	// ── Dynamic server pages ──────────────────────────────────────────────────
-	let serverEntries: string[] = [];
-	try {
-		const servers = await getAllServerSlugs();
-		serverEntries = servers
-			.filter((s) => s.id && s.id.trim() !== "")
-			.map((s) => {
-				// Prefer the human-readable slug when available, fall back to the
-				// numeric Discord snowflake id so every server is always reachable.
-				const segment = s.slug && s.slug.trim() !== "" ? s.slug : s.id;
-				return urlEntry({
-					loc: `${SITE_URL}/servers/${encodeURIComponent(segment)}`,
-					lastmod: toDateStr(s.added_at ?? undefined),
-					changefreq: "weekly",
-					priority: "0.6"
-				});
+	const serverEntries = serverSlugs
+		.filter((s) => s.id && s.id.trim() !== "")
+		.map((s) => {
+			// Prefer the human-readable slug when available, fall back to the
+			// numeric Discord snowflake id so every server is always reachable.
+			const segment = s.slug && s.slug.trim() !== "" ? s.slug : s.id;
+			return urlEntry({
+				loc: `${SITE_URL}/servers/${encodeURIComponent(segment)}`,
+				lastmod: toDateStr(s.added_at),
+				changefreq: "weekly",
+				priority: "0.6"
 			});
-	} catch (err) {
-		console.error("[sitemap.xml] Failed to fetch server slugs:", err);
-	}
+		});
 
 	// ── Dynamic emoji pages ───────────────────────────────────────────────────
-	let emojiEntries: string[] = [];
-	try {
-		const emojis = await getAllEmojiIds();
-		emojiEntries = emojis
-			.filter((e) => e.id && e.id.trim() !== "")
-			.map((e) =>
-				urlEntry({
-					loc: `${SITE_URL}/emojis/${encodeURIComponent(e.id)}`,
-					lastmod: toDateStr(e.added_at ?? undefined),
-					changefreq: "monthly",
-					priority: "0.5"
-				})
-			);
-	} catch (err) {
-		console.error("[sitemap.xml] Failed to fetch emoji ids:", err);
-	}
+	const emojiEntries = emojiIds
+		.filter((e) => e.id && e.id.trim() !== "")
+		.map((e) =>
+			urlEntry({
+				loc: `${SITE_URL}/emojis/${encodeURIComponent(e.id)}`,
+				lastmod: toDateStr(e.added_at),
+				changefreq: "monthly",
+				priority: "0.5"
+			})
+		);
 
 	// ── Dynamic sticker pages ─────────────────────────────────────────────────
-	let stickerEntries: string[] = [];
-	try {
-		const stickers = await getAllStickerIds();
-		stickerEntries = stickers
-			.filter((s) => s.id && s.id.trim() !== "")
-			.map((s) =>
-				urlEntry({
-					loc: `${SITE_URL}/stickers/${encodeURIComponent(s.id)}`,
-					lastmod: toDateStr(s.added_at ?? undefined),
-					changefreq: "monthly",
-					priority: "0.5"
-				})
-			);
-	} catch (err) {
-		console.error("[sitemap.xml] Failed to fetch sticker ids:", err);
-	}
+	const stickerEntries = stickerIds
+		.filter((s) => s.id && s.id.trim() !== "")
+		.map((s) =>
+			urlEntry({
+				loc: `${SITE_URL}/stickers/${encodeURIComponent(s.id)}`,
+				lastmod: toDateStr(s.added_at),
+				changefreq: "monthly",
+				priority: "0.5"
+			})
+		);
 
 	const xml = [
 		'<?xml version="1.0" encoding="UTF-8"?>',
