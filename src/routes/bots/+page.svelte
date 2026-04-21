@@ -67,10 +67,12 @@
 		if (Number(base.offset) > 0) params.set("offset", String(base.offset));
 		if (base.new) params.set("new", "");
 		if (base.trending) params.set("trending", "");
-		if (base.lucky) params.set("lucky", "");
 		if (base.category) params.set("category", String(base.category));
 		const qs = params.toString();
-		return "/bots" + (qs ? "?" + qs : "");
+		// Emit `lucky` as a bare presence flag (no trailing `=`) so we don't
+		// collide with the `?lucky=<value>` redirect rule in hooks.server.ts.
+		const luckyFlag = base.lucky ? (qs ? "&lucky" : "?lucky") : "";
+		return "/bots" + (qs ? "?" + qs : "") + luckyFlag;
 	}
 
 	function handleSearch(e: SubmitEvent) {
@@ -131,24 +133,20 @@
 		return null; // landing - no sub-heading needed
 	})();
 
+	// Canonical URL: "lucky" is emitted as a bare presence flag (no `=`) so
+	// the robots.txt `Disallow: /*?lucky` rule and the server-side redirect in
+	// hooks.server.ts (which fires on any `lucky=<value>`) don't clash with
+	// our own canonical tag.
 	$: canonicalUrl = (() => {
-		const url = new URL($page.url.origin + $page.url.pathname);
-		const newSearchParams = new URLSearchParams();
-
+		const hasLucky = $page.url.searchParams.has("lucky");
+		const preserved = new URLSearchParams();
 		for (const [key, value] of $page.url.searchParams.entries()) {
-			if (key === "lucky") {
-				// If 'lucky' parameter exists, add it without its value to the canonical URL
-				newSearchParams.set("lucky", "");
-			} else {
-				// For all other parameters, add them as they are
-				newSearchParams.set(key, value);
-			}
+			if (key !== "lucky") preserved.set(key, value);
 		}
-
-		const queryString = newSearchParams.toString();
-		return queryString
-			? `${url.origin}${url.pathname}?${queryString}`
-			: `${url.origin}${url.pathname}`;
+		const qs = preserved.toString();
+		const base = `${$page.url.origin}${$page.url.pathname}`;
+		if (hasLucky) return qs ? `${base}?${qs}&lucky` : `${base}?lucky`;
+		return qs ? `${base}?${qs}` : base;
 	})();
 </script>
 
@@ -157,6 +155,7 @@
 	description={seoDesc}
 	imageSmall="/assets/img/bot/logo-512.png"
 	canonical={canonicalUrl}
+	noindex={data.lucky}
 />
 
 <!-- ═══════════════════════════════════════════════════════════════════════

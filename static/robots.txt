@@ -3,6 +3,7 @@ Disallow: /api/
 Disallow: /dashboard/
 Disallow: /login
 Disallow: /logout
+Disallow: /*?lucky
 
 Allow: /
 

@@ -2,6 +2,33 @@ import type { Handle } from "@sveltejs/kit";
 import { parseMode, parseAccent, resolveMode } from "$lib/theme";
 
 export const handle: Handle = async ({ event, resolve }) => {
+	// ── SEO: consolidate historical ?lucky=<random-hash> variants ────────────
+	// Pre-March 2026 the /bots "Feeling Lucky" feature minted a unique URL per
+	// click (e.g. /bots?lucky=ru2) to bypass caching, which Google crawled as
+	// thousands of separate pages and penalised the whole site. The canonical
+	// form is now a bare presence flag: /bots?lucky (no `=`). Any incoming
+	// request with `lucky=<value>` is permanently redirected to consolidate
+	// link equity into the canonical URL.
+	if (/[?&]lucky=/.test(event.url.search)) {
+		const preserved = new URLSearchParams();
+		for (const [k, v] of event.url.searchParams.entries()) {
+			if (k !== "lucky") preserved.set(k, v);
+		}
+		const qs = preserved.toString();
+		const path = event.url.pathname;
+		// Only the /bots listing treats `lucky` as a meaningful flag; elsewhere
+		// the param was never valid, so strip it entirely.
+		const target =
+			path === "/bots"
+				? qs
+					? `${path}?${qs}&lucky`
+					: `${path}?lucky`
+				: qs
+					? `${path}?${qs}`
+					: path;
+		return new Response(null, { status: 301, headers: { Location: target } });
+	}
+
 	const rawMode = event.cookies.get("theme-mode");
 	const rawAccent = event.cookies.get("theme-accent");
 

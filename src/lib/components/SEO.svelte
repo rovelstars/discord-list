@@ -9,6 +9,7 @@
 	  imageSmall   – small square image (avatar / logo) used when no large image
 	  canonical    – canonical URL (pass $page.url.href from each page)
 	  noSuffix     – when true, title is used verbatim (home page already has full title)
+	  noindex      – when true, emit <meta name="robots" content="noindex, nofollow">
 -->
 <script lang="ts">
 	const SITE_NAME = "Rovel Discord List";
@@ -24,6 +25,7 @@
 	export let imageSmall: string | null = null;
 	export let canonical: string | null = null;
 	export let noSuffix: boolean = false;
+	export let noindex: boolean = false;
 
 	$: fullTitle = noSuffix ? title : title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
 
@@ -44,6 +46,9 @@
 	<!-- Primary -->
 	<title>{fullTitle}</title>
 	<meta name="description" content={description} />
+	{#if noindex}
+		<meta name="robots" content="noindex, nofollow" />
+	{/if}
 	{#if canonical}
 		<link rel="canonical" href={canonical} />
 		<meta property="og:url" content={canonical} />
