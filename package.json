@@ -43,7 +43,7 @@
 		"discord-interactions": "^4.4.0",
 		"discord-oauth2": "^2.12.1",
 		"discord.js": "^14.25.1",
-		"drizzle-orm": "0.45.1",
+		"drizzle-orm": "0.45.2",
 		"highlight.js": "^11.11.1",
 		"marked": "^17.0.3",
 		"marked-highlight": "^2.2.3",
