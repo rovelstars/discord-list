@@ -5,6 +5,9 @@
 # Scheduled functions:
 #   scheduled-cdn-refresh - runs every 12 hours to refresh stale Discord CDN
 #   attachment URLs stored in the Bots.bg column of the database.
+#   settle-rewards        - runs daily at 02:00 UTC to pay out referral rewards.
+#   scheduled-reindex     - runs daily at 04:00 UTC; submits a rolling batch of
+#   canonical URLs to IndexNow to keep search engines re-crawling the site.
 #
 # Required environment variables (set in Netlify UI → Site → Environment vars):
 #   INTERNAL_SECRET   - shared secret used to authenticate calls from the
@@ -60,3 +63,10 @@
 # maximum and comfortably covers even large referral volumes.
 [functions."settle-rewards"]
   timeout = 900
+
+# Scheduled IndexNow re-submission. Daily run; endpoint picks a rolling
+# slice of the canonical URL catalog and POSTs it to the IndexNow API.
+# Usually finishes in well under a minute — the 300s ceiling is a safety
+# margin against IndexNow endpoint slowness on large catalogs.
+[functions."scheduled-reindex"]
+  timeout = 300
