@@ -1,8 +1,19 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { InteractionResponseType } from "discord-interactions";
+import { eq } from "drizzle-orm";
+import { withDb, type DrizzleDb } from "$lib/db";
+import { Servers, Users } from "$lib/db/schema";
+import { syncServerEmojis } from "$lib/emoji-sync";
+import { syncServerStickers } from "$lib/sticker-sync";
+import { notifyServerChanged } from "$lib/indexnow";
+import { reportError } from "$lib/error-reporter";
 
 /**
  * /register - Register the current Discord server on the listing site.
+ *
+ * Talks to the database in-process (no HTTP roundtrip) - the bot runs in the
+ * same SvelteKit server as the listing app, so going out over the network just
+ * to come back to ourselves is wasteful and trips Cloudflare's bot challenge.
  *
  * Requirements:
  *  1. The invoking member must have "Manage Guild" (0x20) or "Administrator"
@@ -11,19 +22,6 @@ import { InteractionResponseType } from "discord-interactions";
  *     in the Users table keyed by their Discord user id).
  *  3. On success the server is upserted into the Servers table with the
  *     invoking user recorded as owner.
- *
- * Response strategy:
- *  - All synchronous pre-flight checks (guild-only, permissions, missing config)
- *    return an immediate ephemeral CHANNEL_MESSAGE_WITH_SOURCE so Discord never
- *    times out waiting for us.
- *  - Once we know we need to do async work (network calls) we return
- *    DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE (ephemeral) immediately - Discord shows
- *    "Bot is thinking…" - and kick off a background IIFE that edits the original
- *    deferred message when it's done.
- *
- * This function NEVER throws - every code path returns a valid Discord
- * interaction response object so the caller never has to worry about
- * unhandled rejections causing "application did not respond" errors.
  */
 
 const DISCORD_API = "https://discord.com/api/v10";
@@ -31,7 +29,7 @@ const DISCORD_API = "https://discord.com/api/v10";
 const MANAGE_GUILD = BigInt(0x20);
 const ADMINISTRATOR = BigInt(0x8);
 
-/** Timeout for every outbound fetch (ms). */
+/** Timeout for outbound Discord API calls (ms). */
 const FETCH_TIMEOUT_MS = 8_000;
 
 function hasRequiredPermission(permissionsString: string | null | undefined): boolean {
@@ -84,8 +82,8 @@ async function editFollowup(
 }
 
 /**
- * fetch() with an AbortController timeout so a slow/unreachable upstream
- * never hangs the background task indefinitely.
+ * fetch() with an AbortController timeout so a slow/unreachable Discord
+ * upstream never hangs the background task indefinitely.
  */
 async function fetchWithTimeout(
 	url: string,
@@ -99,6 +97,63 @@ async function fetchWithTimeout(
 	} finally {
 		clearTimeout(timer);
 	}
+}
+
+/** True iff a user with this Discord id has a row in the Users table. */
+async function userExists(discordUserId: string): Promise<boolean> {
+	const rows = await withDb((db: DrizzleDb) =>
+		db.select({ id: Users.id }).from(Users).where(eq(Users.id, discordUserId)).limit(1)
+	);
+	return Array.isArray(rows) && rows.length > 0;
+}
+
+/**
+ * Upsert a server row. On insert, returns `created: true` and seeds default
+ * customisation fields. On update, only identity fields (name/icon/owner) are
+ * touched so dashboard customisations (short, desc, slug, badges, votes) are
+ * preserved.
+ */
+async function upsertServer(opts: {
+	guildId: string;
+	name: string;
+	icon: string | null;
+	ownerId: string;
+}): Promise<{ created: boolean }> {
+	const { guildId, name, icon, ownerId } = opts;
+
+	const existing = await withDb((db: DrizzleDb) =>
+		db.select({ id: Servers.id }).from(Servers).where(eq(Servers.id, guildId)).limit(1)
+	);
+
+	const isNew = !Array.isArray(existing) || existing.length === 0;
+
+	if (isNew) {
+		const now = new Date().toISOString();
+		await withDb((db: DrizzleDb) =>
+			db.insert(Servers).values({
+				id: guildId,
+				name,
+				short: "Short description is not Updated.",
+				desc: "Description is not updated.",
+				icon: icon ?? "",
+				owner: ownerId,
+				slug: "",
+				added_at: now,
+				votes: 0,
+				promoted: false,
+				badges: JSON.stringify([])
+			})
+		);
+	} else {
+		await withDb((db: DrizzleDb) =>
+			db
+				.update(Servers)
+				.set({ name, icon: icon ?? "", owner: ownerId })
+				.where(eq(Servers.id, guildId))
+		);
+	}
+
+	return { created: isNew };
 }
 
 export default {
@@ -132,55 +187,26 @@ export default {
 		const appId: string = env?.DISCORD_BOT_ID ?? "";
 		const interactionToken: string = interaction.token;
 		const domain: string = (env?.DOMAIN ?? "http://localhost:5173").replace(/\/$/, "");
-		const internalSecret: string = env?.INTERNAL_SECRET ?? "";
 		const botToken: string = env?.DISCORD_TOKEN ?? "";
-
-		if (!internalSecret) {
-			console.error("[register] INTERNAL_SECRET is not configured.");
-			return reply(
-				"⚙️ The bot is not configured correctly (missing internal secret). Please contact the server admin."
-			);
-		}
 
 		// ── All synchronous checks passed - defer and do the rest async ───────
 		(async () => {
 			try {
-				// ── 5. Verify the user has a site account ─────────────────────
-				let userExists = false;
+				// ── 5. Verify the user has a site account (in-process DB) ────
+				let userIsRegistered = false;
 				try {
-					const res = await fetchWithTimeout(
-						`${domain}/api/internals/user-exists?id=${encodeURIComponent(discordUserId)}`,
-						{ headers: { "x-internal-secret": internalSecret } }
-					);
-
-					if (res.ok) {
-						const body = await res.json().catch(() => null);
-						userExists = body?.exists === true;
-					} else {
-						const text = await res.text().catch(() => `HTTP ${res.status}`);
-						console.error(`[register] user-exists check failed (${res.status}):`, text);
-						await editFollowup(
-							appId,
-							interactionToken,
-							`⚠️ Could not verify your account status (HTTP ${res.status}). Please try again in a moment.`
-						);
-						return;
-					}
+					userIsRegistered = await userExists(discordUserId);
 				} catch (err) {
-					const msg = err instanceof Error ? err.message : String(err);
-					const isTimeout = msg.includes("abort") || msg.includes("timed out");
-					console.error("[register] user-exists fetch error:", err);
+					await reportError("[register] user-exists DB error", err);
 					await editFollowup(
 						appId,
 						interactionToken,
-						isTimeout
-							? "⏱️ The listing service timed out while checking your account. Please try again in a moment."
-							: `⚠️ Could not reach the listing service: \`${msg}\`. Please try again later.`
+						"⚠️ Could not verify your account status right now. Please try again in a moment."
 					);
 					return;
 				}
 
-				if (!userExists) {
+				if (!userIsRegistered) {
 					const loginUrl = `${domain}/login`;
 					await editFollowup(
 						appId,
@@ -228,54 +254,24 @@ export default {
 					}
 				}
 
-				// ── 7. Register / update the server via the internal API ──────
-				let regResBody: any = null;
-				let regResOk = false;
-				let regResStatus = 0;
-
+				// ── 7. Upsert the server row (in-process DB) ──────────────────
+				let isNew = false;
 				try {
-					const regRes = await fetchWithTimeout(`${domain}/api/internals/register-server`, {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							"x-internal-secret": internalSecret
-						},
-						body: JSON.stringify({
-							id: guildId,
-							name: guildName,
-							icon: guildIcon,
-							owner: discordUserId
-						})
+					const result = await upsertServer({
+						guildId,
+						name: guildName.trim() || guildId,
+						icon: guildIcon,
+						ownerId: discordUserId
 					});
-
-					regResOk = regRes.ok;
-					regResStatus = regRes.status;
-					regResBody = await regRes.json().catch(() => null);
+					isNew = result.created;
 				} catch (err) {
 					const msg = err instanceof Error ? err.message : String(err);
-					const isTimeout = msg.includes("abort") || msg.includes("timed out");
-					console.error("[register] register-server fetch error:", err);
-					await editFollowup(
-						appId,
-						interactionToken,
-						isTimeout
-							? "⏱️ The registration request timed out. Please try again in a moment."
-							: `⚠️ Could not complete registration: \`${msg}\`. Please try again later.`
-					);
-					return;
-				}
-
-				if (!regResOk) {
-					const errDetail = regResBody?.error ?? regResBody?.message ?? `HTTP ${regResStatus}`;
-					console.error(
-						`[register] register-server API returned ${regResStatus} for guild ${guildId}:`,
-						regResBody
-					);
+					await reportError(`[register] DB upsert failed for guild ${guildId}`, err);
 					await editFollowup(
 						appId,
 						interactionToken,
 						[
-							`❌ Registration failed (${errDetail}).`,
+							`❌ Registration failed (\`${msg}\`).`,
 							"",
 							"This usually means a database constraint wasn't met. Please contact the bot developer with this error code so they can investigate."
 						].join("\n")
@@ -283,7 +279,55 @@ export default {
 					return;
 				}
 
-				const isNew: boolean = regResBody?.created === true;
+				// ── 8. Background side effects (fire-and-forget) ──────────────
+				// Emoji + sticker sync run independently so a failure in one never
+				// blocks the other - and neither blocks the user-facing reply.
+				if (botToken) {
+					syncServerEmojis(guildId, botToken)
+						.then((result) => {
+							if (result.error) {
+								console.warn(
+									`[register] Emoji sync for guild ${guildId} encountered an error: ${result.error}`
+								);
+							} else {
+								console.info(
+									`[register] Emoji sync complete for guild ${guildId}: ` +
+										`+${result.created} new, ~${result.updated} updated (${result.total} total)`
+								);
+							}
+						})
+						.catch((err) => {
+							console.warn(
+								`[register] Background emoji sync threw unexpectedly for guild ${guildId}:`,
+								err
+							);
+						});
+
+					syncServerStickers(guildId, botToken)
+						.then((result) => {
+							if (result.error) {
+								console.warn(
+									`[register] Sticker sync for guild ${guildId} encountered an error: ${result.error}`
+								);
+							} else {
+								console.info(
+									`[register] Sticker sync complete for guild ${guildId}: ` +
+										`+${result.created} new, ~${result.updated} updated (${result.total} total)`
+								);
+							}
+						})
+						.catch((err) => {
+							console.warn(
+								`[register] Background sticker sync threw unexpectedly for guild ${guildId}:`,
+								err
+							);
+						});
+				}
+
+				// Notify IndexNow that a server page was created or updated.
+				notifyServerChanged(guildId);
+
+				// ── 9. Final user-facing reply ────────────────────────────────
 				const serverUrl = `${domain}/servers/${encodeURIComponent(guildId)}`;
 
 				await editFollowup(
@@ -306,7 +350,7 @@ export default {
 			} catch (fatalErr) {
 				// Absolute last-resort - something totally unexpected slipped through.
 				const msg = fatalErr instanceof Error ? fatalErr.message : String(fatalErr);
-				console.error("[register] Fatal unhandled error in background task:", fatalErr);
+				await reportError("[register] Fatal unhandled error in background task", fatalErr);
 				await editFollowup(
 					appId,
 					interactionToken,

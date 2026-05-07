@@ -1,27 +1,30 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { InteractionResponseType } from "discord-interactions";
+import { eq } from "drizzle-orm";
+import { withDb, type DrizzleDb } from "$lib/db";
+import { Servers } from "$lib/db/schema";
+import { syncServerEmojis, type SyncResult } from "$lib/emoji-sync";
+import { syncServerStickers } from "$lib/sticker-sync";
+import { reportError } from "$lib/error-reporter";
 
 /**
  * /sync - Force-sync all custom emojis AND stickers from the current server
  * into the listing.
  *
+ * Talks to the database in-process (no HTTP roundtrip) - the bot runs in the
+ * same SvelteKit server as the listing app, so going out over the network
+ * just to come back to ourselves is wasteful and trips Cloudflare's bot
+ * challenge in front of the public origin.
+ *
  * Requirements:
  *  1. Must be run inside a server (no DMs).
  *  2. Invoking member must have "Manage Guild" (0x20) or "Administrator" (0x8).
  *  3. The server must already be registered on the listing site.
- *
- * Response strategy:
- *  - Synchronous pre-flight checks return an immediate ephemeral reply.
- *  - Actual sync work is deferred (DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE) so
- *    Discord never times out while we hit the internal API.
- *  - Both emoji and sticker syncs run in parallel via Promise.allSettled so a
- *    sticker failure never blocks emoji results (and vice-versa).
  */
 
 const DISCORD_API = "https://discord.com/api/v10";
 const MANAGE_GUILD = BigInt(0x20);
 const ADMINISTRATOR = BigInt(0x8);
-const FETCH_TIMEOUT_MS = 15_000;
 
 function hasRequiredPermission(permissionsString: string | null | undefined): boolean {
 	if (!permissionsString) return false;
@@ -45,20 +48,6 @@ const DEFERRED_EPHEMERAL = {
 	data: { flags: 64 }
 };
 
-async function fetchWithTimeout(
-	url: string,
-	options: RequestInit = {},
-	timeoutMs = FETCH_TIMEOUT_MS
-): Promise<Response> {
-	const controller = new AbortController();
-	const timer = setTimeout(() => controller.abort(), timeoutMs);
-	try {
-		return await fetch(url, { ...options, signal: controller.signal });
-	} finally {
-		clearTimeout(timer);
-	}
-}
-
 async function editFollowup(
 	appId: string,
 	interactionToken: string,
@@ -80,33 +69,68 @@ async function editFollowup(
 	}
 }
 
-/**
- * Call one of the internal sync endpoints.
- *
- * Returns the parsed JSON body on success, or an object with `_fetchError` set
- * if the request itself threw (timeout, network error, etc.).
- */
-async function callSyncEndpoint(
-	domain: string,
-	path: string,
-	internalSecret: string,
-	guildId: string
-): Promise<{ ok: boolean; status: number; body: any; _fetchError?: string }> {
-	try {
-		const res = await fetchWithTimeout(`${domain}${path}`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"x-internal-secret": internalSecret
-			},
-			body: JSON.stringify({ guildId })
-		});
+/** Outcome of a single (emoji or sticker) sync run. */
+type SyncOutcome = {
+	/** True if the sync completed without error. */
+	ok: boolean;
+	/** True if the server isn't in the Servers table at all. */
+	notRegistered: boolean;
+	/** The full sync result, when one was produced (counts come from here). */
+	result: SyncResult | null;
+	/** A short error code when ok is false, e.g. "db_error" / "discord_fetch_failed". */
+	errorCode: string | null;
+};
 
-		const body = await res.json().catch(() => null);
-		return { ok: res.ok, status: res.status, body };
+/**
+ * Run an emoji or sticker sync directly against the DB - no HTTP hop.
+ *
+ * Mirrors the response semantics of the old /api/internals/sync-{emojis,stickers}
+ * endpoints: returns `notRegistered` when the guild isn't in our Servers table,
+ * surfaces the helper's own `result.error` when Discord/DB sync fails.
+ */
+async function runSync(
+	kind: "emojis" | "stickers",
+	guildId: string,
+	botToken: string
+): Promise<SyncOutcome> {
+	// 1. Verify the server is registered.
+	try {
+		const existing = await withDb((db: DrizzleDb) =>
+			db.select({ id: Servers.id }).from(Servers).where(eq(Servers.id, guildId)).limit(1)
+		);
+		if (!Array.isArray(existing) || existing.length === 0) {
+			return { ok: true, notRegistered: true, result: null, errorCode: null };
+		}
 	} catch (err) {
-		const msg = err instanceof Error ? err.message : String(err);
-		return { ok: false, status: 0, body: null, _fetchError: msg };
+		await reportError(`[sync:${kind}] DB server-check error for guild ${guildId}`, err);
+		return { ok: false, notRegistered: false, result: null, errorCode: "db_error" };
+	}
+
+	if (!botToken) {
+		return { ok: false, notRegistered: false, result: null, errorCode: "bot_token_missing" };
+	}
+
+	// 2. Run the sync helper (these never throw under normal operation, but
+	// guard anyway so a bad migration / unexpected condition can't take the
+	// command down.)
+	try {
+		const result =
+			kind === "emojis"
+				? await syncServerEmojis(guildId, botToken)
+				: await syncServerStickers(guildId, botToken);
+
+		if (result.error) {
+			return {
+				ok: false,
+				notRegistered: false,
+				result,
+				errorCode: result.error
+			};
+		}
+		return { ok: true, notRegistered: false, result, errorCode: null };
+	} catch (err) {
+		await reportError(`[sync:${kind}] Unexpected throw syncing guild ${guildId}`, err);
+		return { ok: false, notRegistered: false, result: null, errorCode: "sync_threw" };
 	}
 }
 
@@ -135,12 +159,12 @@ export default {
 		const appId: string = env?.DISCORD_BOT_ID ?? "";
 		const interactionToken: string = interaction.token;
 		const domain: string = (env?.DOMAIN ?? "http://localhost:5173").replace(/\/$/, "");
-		const internalSecret: string = env?.INTERNAL_SECRET ?? "";
+		const botToken: string = env?.DISCORD_TOKEN ?? "";
 
-		if (!internalSecret) {
-			console.error("[sync] INTERNAL_SECRET is not configured.");
+		if (!botToken) {
+			console.error("[sync] DISCORD_TOKEN is not configured.");
 			return reply(
-				"⚙️ The bot is not configured correctly (missing internal secret). Please contact the server admin."
+				"⚙️ The bot is not configured correctly (missing bot token). Please contact the server admin."
 			);
 		}
 
@@ -148,44 +172,15 @@ export default {
 		(async () => {
 			try {
 				// ── 4. Run emoji + sticker syncs in parallel ───────────────────
-				const [emojiSettled, stickerSettled] = await Promise.allSettled([
-					callSyncEndpoint(domain, "/api/internals/sync-emojis", internalSecret, guildId),
-					callSyncEndpoint(domain, "/api/internals/sync-stickers", internalSecret, guildId)
+				const [emojiRes, stickerRes] = await Promise.all([
+					runSync("emojis", guildId, botToken),
+					runSync("stickers", guildId, botToken)
 				]);
 
-				// Unwrap settled results - a rejection here would be a programming
-				// error since callSyncEndpoint never throws (it catches internally).
-				const emojiRes = emojiSettled.status === "fulfilled" ? emojiSettled.value : null;
-				const stickerRes = stickerSettled.status === "fulfilled" ? stickerSettled.value : null;
-
-				// ── 5. Handle hard fetch failures (timeout / network error) ────
-				// If emojis failed with a fetch error we can't continue meaningfully
-				// because a 404 on either is our "not registered" signal.
-				const emojiFetchErr = emojiRes?._fetchError;
-				const stickerFetchErr = stickerRes?._fetchError;
-
-				if (emojiFetchErr && stickerFetchErr) {
-					const isTimeout = emojiFetchErr.includes("abort") || emojiFetchErr.includes("timed out");
-					console.error("[sync] Both sync requests failed:", emojiFetchErr, stickerFetchErr);
-					await editFollowup(
-						appId,
-						interactionToken,
-						isTimeout
-							? "⏱️ Both sync requests timed out. Please try again in a moment."
-							: `⚠️ Could not reach the listing service: \`${emojiFetchErr}\`. Please try again later.`
-					);
-					return;
-				}
-
-				// ── 6. Check for "server not registered" (404 on either) ──────
-				// A 404 from either endpoint means the server isn't in the listing
-				// at all - both checks would return 404 simultaneously, so testing
-				// either is sufficient.
-				const notRegistered =
-					(emojiRes && !emojiRes._fetchError && emojiRes.status === 404) ||
-					(stickerRes && !stickerRes._fetchError && stickerRes.status === 404);
-
-				if (notRegistered) {
+				// ── 5. "Server not registered" short-circuit ──────────────────
+				// Both syncs hit the same Servers row, so they return notRegistered
+				// in lockstep - testing either is sufficient.
+				if (emojiRes.notRegistered || stickerRes.notRegistered) {
 					await editFollowup(
 						appId,
 						interactionToken,
@@ -198,47 +193,10 @@ export default {
 					return;
 				}
 
-				// ── 7. Extract per-type results ────────────────────────────────
-				// A fetch error for stickers alone is non-fatal - we still report
-				// emoji results and note the sticker issue separately.
-				const emojiOk = emojiRes?.ok ?? false;
-				const stickerOk = stickerRes?.ok ?? false;
-
-				const emojiCreated: number = emojiRes?.body?.created ?? 0;
-				const emojiUpdated: number = emojiRes?.body?.updated ?? 0;
-				const emojiTotal: number = emojiRes?.body?.total ?? 0;
-
-				const stickerCreated: number = stickerRes?.body?.created ?? 0;
-				const stickerUpdated: number = stickerRes?.body?.updated ?? 0;
-				const stickerTotal: number = stickerRes?.body?.total ?? 0;
-
-				// ── 8. Build the response message ──────────────────────────────
-				const guildName = interaction.guild?.name ?? guildId;
-				const lines: string[] = [];
-
-				// Overall status line
-				if (emojiOk && stickerOk) {
-					lines.push(`✅ Sync complete for **${guildName}**!`);
-				} else if (emojiOk && !stickerOk) {
-					lines.push(
-						`⚠️ Partial sync complete for **${guildName}** - emojis synced, stickers failed.`
-					);
-				} else if (!emojiOk && stickerOk) {
-					lines.push(
-						`⚠️ Partial sync complete for **${guildName}** - stickers synced, emojis failed.`
-					);
-				} else {
-					// Both failed but we already handled the 404/fetch-error cases above,
-					// so this is a genuine server-side error on both.
-					const emojiErr =
-						emojiRes?.body?.error ?? emojiRes?.body?.message ?? `HTTP ${emojiRes?.status ?? "?"}`;
-					const stickerErr =
-						stickerRes?.body?.error ??
-						stickerRes?.body?.message ??
-						`HTTP ${stickerRes?.status ?? "?"}`;
-					console.error(
-						`[sync] Both syncs failed for guild ${guildId}: emoji=${emojiErr} sticker=${stickerErr}`
-					);
+				// ── 6. Both fully failed (e.g. DB down) ───────────────────────
+				if (!emojiRes.ok && !stickerRes.ok) {
+					const emojiErr = emojiRes.errorCode ?? "unknown";
+					const stickerErr = stickerRes.errorCode ?? "unknown";
 					await editFollowup(
 						appId,
 						interactionToken,
@@ -247,46 +205,58 @@ export default {
 					return;
 				}
 
+				// ── 7. Build the response message ──────────────────────────────
+				const guildName = interaction.guild?.name ?? guildId;
+				const lines: string[] = [];
+
+				if (emojiRes.ok && stickerRes.ok) {
+					lines.push(`✅ Sync complete for **${guildName}**!`);
+				} else if (emojiRes.ok && !stickerRes.ok) {
+					lines.push(
+						`⚠️ Partial sync complete for **${guildName}** - emojis synced, stickers failed.`
+					);
+				} else {
+					lines.push(
+						`⚠️ Partial sync complete for **${guildName}** - stickers synced, emojis failed.`
+					);
+				}
+
 				lines.push("");
 
 				// Emoji results
-				if (emojiOk) {
-					if (emojiTotal === 0) {
+				if (emojiRes.ok) {
+					const r = emojiRes.result!;
+					if (r.total === 0) {
 						lines.push("😶 **Emojis:** No custom emojis found in this server.");
 					} else {
 						lines.push(
-							`😄 **Emojis:** ${emojiTotal} total - 🆕 ${emojiCreated} new, 🔄 ${emojiUpdated} updated`
+							`😄 **Emojis:** ${r.total} total - 🆕 ${r.created} new, 🔄 ${r.updated} updated`
 						);
 					}
 				} else {
-					const errMsg = emojiRes?._fetchError
-						? `fetch error: ${emojiRes._fetchError}`
-						: (emojiRes?.body?.error ?? `HTTP ${emojiRes?.status ?? "?"}`);
-					lines.push(`😶 **Emojis:** Sync failed (${errMsg})`);
+					lines.push(`😶 **Emojis:** Sync failed (${emojiRes.errorCode ?? "unknown"})`);
 				}
 
 				// Sticker results
-				if (stickerOk) {
-					if (stickerTotal === 0) {
+				if (stickerRes.ok) {
+					const r = stickerRes.result!;
+					if (r.total === 0) {
 						lines.push("🪄 **Stickers:** No custom stickers found in this server.");
 					} else {
 						lines.push(
-							`🪄 **Stickers:** ${stickerTotal} total - 🆕 ${stickerCreated} new, 🔄 ${stickerUpdated} updated`
+							`🪄 **Stickers:** ${r.total} total - 🆕 ${r.created} new, 🔄 ${r.updated} updated`
 						);
 					}
 				} else {
-					const errMsg = stickerRes?._fetchError
-						? `fetch error: ${stickerRes._fetchError}`
-						: (stickerRes?.body?.error ?? `HTTP ${stickerRes?.status ?? "?"}`);
-					lines.push(`🪄 **Stickers:** Sync failed (${errMsg})`);
+					lines.push(`🪄 **Stickers:** Sync failed (${stickerRes.errorCode ?? "unknown"})`);
 				}
 
 				// Browse links - only add for types that actually have content
 				const browseLines: string[] = [];
-				if (emojiOk && emojiTotal > 0) {
+				if (emojiRes.ok && (emojiRes.result?.total ?? 0) > 0) {
 					browseLines.push(`😄 Emojis: ${domain}/emojis?guild=${encodeURIComponent(guildId)}`);
 				}
-				if (stickerOk && stickerTotal > 0) {
+				if (stickerRes.ok && (stickerRes.result?.total ?? 0) > 0) {
 					browseLines.push(`🪄 Stickers: ${domain}/stickers?guild=${encodeURIComponent(guildId)}`);
 				}
 				if (browseLines.length > 0) {
@@ -297,7 +267,7 @@ export default {
 				await editFollowup(appId, interactionToken, lines.join("\n"));
 			} catch (fatalErr) {
 				const msg = fatalErr instanceof Error ? fatalErr.message : String(fatalErr);
-				console.error("[sync] Fatal unhandled error in background task:", fatalErr);
+				await reportError("[sync] Fatal unhandled error in background task", fatalErr);
 				await editFollowup(
 					appId,
 					interactionToken,

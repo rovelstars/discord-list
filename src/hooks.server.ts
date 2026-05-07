@@ -1,5 +1,18 @@
-import type { Handle } from "@sveltejs/kit";
+import type { Handle, HandleServerError } from "@sveltejs/kit";
 import { parseMode, parseAccent, resolveMode } from "$lib/theme";
+import { reportError } from "$lib/error-reporter";
+
+/**
+ * Forward 5xx errors to the Discord webhook (configured via
+ * DISCORD_ERROR_WEBHOOK_URL). 4xx errors are user-attributable and noisy, so
+ * we skip them. SvelteKit's default behavior (returning App.Error to the
+ * client) is preserved by returning `undefined`.
+ */
+export const handleError: HandleServerError = async ({ error, event, status }) => {
+	if (status < 500) return;
+	const tag = `[${event.request.method} ${event.url.pathname}] HTTP ${status}`;
+	await reportError(tag, error);
+};
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// ── SEO: consolidate historical ?lucky=<random-hash> variants ────────────

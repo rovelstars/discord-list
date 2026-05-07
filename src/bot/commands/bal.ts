@@ -3,6 +3,7 @@ import { InteractionResponseType } from "discord-interactions";
 import { withDb, type DrizzleDb } from "$lib/db";
 import { Users } from "$lib/db/schema";
 import { eq } from "drizzle-orm";
+import { reportError } from "$lib/error-reporter";
 
 const DISCORD_API = "https://discord.com/api/v10";
 
@@ -134,7 +135,7 @@ export default {
 						: `${RC} **${targetName}** has a balance of **${result.bal.toLocaleString()} ${RC}**.`
 				);
 			} catch (err) {
-				console.error("[bal] Background task failed:", err);
+				await reportError("[bal] Background task failed", err);
 				await editFollowup(
 					appId,
 					interactionToken,

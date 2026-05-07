@@ -2,6 +2,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { env } from "$env/dynamic/private";
 import { InteractionResponseType, InteractionType, verifyKey } from "discord-interactions";
 import { commands, runs } from "@/bot/register";
+import { reportError } from "$lib/error-reporter";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -159,8 +160,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			} catch (handlerErr) {
 				// The handler itself threw - surface a clear message.
 				const msg = handlerErr instanceof Error ? handlerErr.message : String(handlerErr);
-				console.error(
-					`[discord/bot] Handler for "/${incomingName}" threw an exception:`,
+				await reportError(
+					`[discord/bot] Handler for "/${incomingName}" threw an exception`,
 					handlerErr
 				);
 				return ephemeralReply(
@@ -190,7 +191,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			// Absolute last-resort catch - something went badly wrong outside the
 			// handler itself (e.g. command lookup, env construction, etc.).
 			const msg = outerErr instanceof Error ? outerErr.message : String(outerErr);
-			console.error("[discord/bot] Unexpected error in command dispatch:", outerErr);
+			await reportError("[discord/bot] Unexpected error in command dispatch", outerErr);
 			return ephemeralReply(
 				`💥 An unexpected error occurred while processing your command:\n\`\`\`\n${msg}\n\`\`\`\n` +
 					"Please try again in a moment."

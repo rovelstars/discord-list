@@ -1,5 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { InteractionResponseType } from "discord-interactions";
+import { eq } from "drizzle-orm";
+import { withDb, type DrizzleDb } from "$lib/db";
+import { Users } from "$lib/db/schema";
+import { reportError } from "$lib/error-reporter";
 
 const DISCORD_API = "https://discord.com/api/v10";
 
@@ -27,6 +31,83 @@ async function editFollowup(
 	}
 }
 
+/** Discriminated outcome of a balance transfer. */
+type TransferResult =
+	| { ok: true; fromBal: number; toBal: number }
+	| {
+			ok: false;
+			error:
+				| "sender_not_found"
+				| "recipient_not_found"
+				| "insufficient_balance"
+				| "db_error";
+			have?: number;
+	  };
+
+/**
+ * Atomically* move R$ from one user to another, in-process.
+ *
+ * (* Not a true SQL transaction - libSQL via Drizzle doesn't expose interactive
+ * transactions here - but the read-then-write order with a balance check
+ * ensures we never go negative. Same guarantee the old HTTP endpoint provided.)
+ */
+async function transferBalance(
+	fromId: string,
+	toId: string,
+	amount: number
+): Promise<TransferResult> {
+	try {
+		const [senderRows, recipientRows] = await Promise.all([
+			withDb((db: DrizzleDb) =>
+				db
+					.select({ id: Users.id, bal: Users.bal })
+					.from(Users)
+					.where(eq(Users.id, fromId))
+					.limit(1)
+			),
+			withDb((db: DrizzleDb) =>
+				db
+					.select({ id: Users.id, bal: Users.bal })
+					.from(Users)
+					.where(eq(Users.id, toId))
+					.limit(1)
+			)
+		]);
+
+		const sender = Array.isArray(senderRows) && senderRows.length > 0 ? senderRows[0] : null;
+		const recipient =
+			Array.isArray(recipientRows) && recipientRows.length > 0 ? recipientRows[0] : null;
+
+		if (!sender) return { ok: false, error: "sender_not_found" };
+		if (!recipient) return { ok: false, error: "recipient_not_found" };
+
+		const senderBal = typeof sender.bal === "number" ? sender.bal : Number(sender.bal) || 0;
+		const recipientBal =
+			typeof recipient.bal === "number" ? recipient.bal : Number(recipient.bal) || 0;
+
+		if (senderBal < amount) {
+			return { ok: false, error: "insufficient_balance", have: senderBal };
+		}
+
+		const newSenderBal = senderBal - amount;
+		const newRecipientBal = recipientBal + amount;
+
+		await Promise.all([
+			withDb((db: DrizzleDb) =>
+				db.update(Users).set({ bal: newSenderBal }).where(eq(Users.id, fromId))
+			),
+			withDb((db: DrizzleDb) =>
+				db.update(Users).set({ bal: newRecipientBal }).where(eq(Users.id, toId))
+			)
+		]);
+
+		return { ok: true, fromBal: newSenderBal, toBal: newRecipientBal };
+	} catch (err) {
+		await reportError(`[transfer] DB error transferring R$${amount} ${fromId} → ${toId}`, err);
+		return { ok: false, error: "db_error" };
+	}
+}
+
 export default {
 	data: new SlashCommandBuilder()
 		.setName("transfer")
@@ -46,7 +127,6 @@ export default {
 		const appId = env?.DISCORD_BOT_ID ?? "";
 		const interactionToken: string = interaction.token;
 		const domain = (env?.DOMAIN ?? "http://localhost:5173").replace(/\/$/, "");
-		const internalSecret = env?.INTERNAL_SECRET ?? "";
 
 		const senderId: string | undefined = interaction.member?.user?.id ?? interaction.user?.id;
 		const senderName: string =
@@ -102,8 +182,6 @@ export default {
 			};
 		}
 
-		// Enforce integer - Discord's addIntegerOption already prevents floats
-		// from the client side, but guard server-side too.
 		const amount = Math.floor(rawAmount);
 		if (amount <= 0 || !Number.isFinite(amount)) {
 			return {
@@ -112,49 +190,22 @@ export default {
 			};
 		}
 
-		if (!internalSecret) {
-			console.error("[transfer] INTERNAL_SECRET is not configured.");
-			return {
-				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-				data: {
-					content: `⚙️ The bot isn't configured correctly. Please contact the server admin.`
-				}
-			};
-		}
-
 		// ── Kick off the async work - no await so we return immediately ───────
 		(async () => {
 			try {
-				const res = await fetch(`${domain}/api/internals/transfer-bal`, {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						"x-internal-secret": internalSecret
-					},
-					body: JSON.stringify({
-						from: senderId,
-						to: targetUserId,
-						amount
-					})
-				});
+				const result = await transferBalance(senderId, targetUserId, amount);
 
-				const data = await res.json().catch(() => null);
-
-				if (!res.ok || !data?.success) {
-					const errKey = data?.error ?? "";
+				if (!result.ok) {
 					const errMap: Record<string, string> = {
 						sender_not_found: `👋 Hey **${senderName}**, looks like you don't have a Rovel Discord List account yet!\n\n👉 Head over to ${domain}/login to sign in with Discord - you'll receive **50 ${RC}** just for joining!`,
 						recipient_not_found: `❌ **${targetName}** doesn't have a Rovel Discord List account yet, so the transfer couldn't go through.`,
-						insufficient_balance: `❌ Not enough ${RC}, **${senderName}**! You only have **${data?.have ?? "?"} ${RC}** but tried to send **${amount} ${RC}**.`,
-						same_user: `❌ You can't send ${RC} to yourself, **${senderName}**!`,
-						invalid_amount: `❌ The amount must be a positive whole number.`,
-						db_error: `⚠️ Something went wrong on our end while processing the transfer. Please try again in a moment!`,
-						Unauthorized: `⚙️ Internal auth error. Please contact the server admin.`
+						insufficient_balance: `❌ Not enough ${RC}, **${senderName}**! You only have **${result.have ?? "?"} ${RC}** but tried to send **${amount} ${RC}**.`,
+						db_error: `⚠️ Something went wrong on our end while processing the transfer. Please try again in a moment!`
 					};
 
 					const msg =
-						errMap[errKey] ??
-						`⚠️ Transfer failed: \`${errKey || "unknown error"}\` - please try again.`;
+						errMap[result.error] ??
+						`⚠️ Transfer failed: \`${result.error}\` - please try again.`;
 					await editFollowup(appId, interactionToken, msg);
 					return;
 				}
@@ -165,11 +216,11 @@ export default {
 					[
 						`${RC} **${senderName}** just sent **R$ ${amount}** to **${targetName}**!`,
 						``,
-						`> 💸 **${senderName}**'s new balance: **R$ ${data.fromBal}**`
+						`> 💸 **${senderName}**'s new balance: **R$ ${result.fromBal}**`
 					].join("\n")
 				);
 			} catch (err) {
-				console.error("[transfer] Background task failed:", err);
+				await reportError("[transfer] Background task failed", err);
 				const msg = err instanceof Error ? err.message : String(err);
 				await editFollowup(
 					appId,
@@ -179,8 +230,6 @@ export default {
 			}
 		})();
 
-		// Return deferred public response immediately - Discord shows "Bot is thinking…"
-		// while the transfer processes in the background.
 		return {
 			type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
 		};
