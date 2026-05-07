@@ -50,23 +50,40 @@ function resetSingletons() {
  * Heuristic: does this error look like a dropped/closed connection rather than
  * a real query error (syntax, constraint, etc.)?
  *
- * libsql surfaces these as generic Error objects whose message contains phrases
- * like "WebSocket", "closed", "CLOSED", "stream", "connection", "network", etc.
+ * libsql surfaces these as Error objects whose message contains phrases like
+ * "WebSocket", "closed", "stream", "connection", "network", etc. Drizzle
+ * wraps every query failure with `new Error("Failed query: ...", { cause })`,
+ * so we have to walk the Error.cause chain too - otherwise the heuristic
+ * never matches a Drizzle-wrapped libsql error and the retry never fires.
  */
 function isConnectionError(err: unknown): boolean {
-	if (!(err instanceof Error)) return false;
-	const msg = err.message.toLowerCase();
-	return (
-		msg.includes("websocket") ||
-		msg.includes("closed") ||
-		msg.includes("connection") ||
-		msg.includes("network") ||
-		msg.includes("stream") ||
-		msg.includes("econnreset") ||
-		msg.includes("socket hang up") ||
-		msg.includes("failed to fetch") ||
-		msg.includes("transport")
-	);
+	const seen = new Set<unknown>();
+	let cur: unknown = err;
+	while (cur && !seen.has(cur)) {
+		seen.add(cur);
+		if (cur instanceof Error) {
+			const msg = cur.message.toLowerCase();
+			if (
+				msg.includes("websocket") ||
+				msg.includes("closed") ||
+				msg.includes("connection") ||
+				msg.includes("network") ||
+				msg.includes("stream") ||
+				msg.includes("econnreset") ||
+				msg.includes("socket hang up") ||
+				msg.includes("failed to fetch") ||
+				msg.includes("transport") ||
+				msg.includes("timed out") ||
+				msg.includes("hyper")
+			) {
+				return true;
+			}
+			cur = (cur as Error & { cause?: unknown }).cause;
+		} else {
+			break;
+		}
+	}
+	return false;
 }
 
 /**

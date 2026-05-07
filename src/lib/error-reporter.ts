@@ -37,6 +37,33 @@ function fingerprint(tag: string, err: unknown): string {
 }
 
 /**
+ * Walk the Error.cause chain (up to maxDepth links) and return a flat string
+ * with one block per level. Drizzle wraps libsql errors as
+ * `new Error("Failed query: ...", { cause: realError })`, so without this we
+ * only ever see the generic wrapper and never the actual network/auth/timeout
+ * reason underneath.
+ */
+function formatErrorChain(err: unknown, maxDepth = 4): string {
+	const blocks: string[] = [];
+	let cur: unknown = err;
+	let depth = 0;
+	const seen = new Set<unknown>();
+
+	while (cur && depth < maxDepth && !seen.has(cur)) {
+		seen.add(cur);
+		const isErr = cur instanceof Error;
+		const label = depth === 0 ? "" : `\n— caused by —\n`;
+		const msg = isErr ? (cur as Error).message : String(cur);
+		const stack = isErr && (cur as Error).stack ? `\n${(cur as Error).stack}` : "";
+		blocks.push(`${label}${msg}${stack}`);
+		cur = isErr ? (cur as Error & { cause?: unknown }).cause : undefined;
+		depth++;
+	}
+
+	return blocks.join("");
+}
+
+/**
  * Report an error: log locally, then (if configured) post a single Discord
  * message. `tag` should be a short, fingerprintable label - it's what the
  * dedup key is built from, so dynamic values (request ids, timestamps) inside
@@ -74,9 +101,9 @@ export async function reportError(tag: string, err: unknown): Promise<void> {
 	countInWindow++;
 
 	const msg = err instanceof Error ? err.message : String(err);
-	const stack = err instanceof Error && err.stack ? err.stack : "";
+	const chain = formatErrorChain(err);
 
-	let content = `🔥 **${tag}** — ${msg}\n\`\`\`\n${stack}\n\`\`\``;
+	let content = `🔥 **${tag}** — ${msg}\n\`\`\`\n${chain}\n\`\`\``;
 	if (content.length > MAX_CONTENT_LEN) {
 		content = content.slice(0, MAX_CONTENT_LEN - 5) + "…\n```";
 	}
