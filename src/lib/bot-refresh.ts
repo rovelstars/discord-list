@@ -241,7 +241,13 @@ export async function refreshBot(
 			updates.avatar = newAvatar;
 			result.changes.push(`avatar: "${dbBot.avatar}" → "${newAvatar}"`);
 		}
-		if (newBg !== dbBot.bg) {
+		// Only treat bg as changed when Discord actually returned a banner
+		// AND it differs from the stored value. Otherwise newBg can be
+		// `undefined` (banner null + dbBot.bg null), which both falsifies
+		// the diff log ("null → undefined") and, more importantly, causes
+		// Drizzle's mapUpdateSet to throw "No values to set" because it
+		// strips `undefined` fields from the .set() payload.
+		if (newBg !== undefined && newBg !== dbBot.bg) {
 			updates.bg = newBg;
 			result.changes.push(`bg: "${dbBot.bg}" → "${newBg}"`);
 		}

@@ -2,6 +2,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 import { env } from "$env/dynamic/private";
 import { refreshBot, NotFoundError } from "$lib/bot-refresh";
+import { reportError } from "$lib/error-reporter";
 
 // ---------------------------------------------------------------------------
 // Auth helper
@@ -93,7 +94,7 @@ export const POST: RequestHandler = async ({ request, url, params }) => {
 			return json({ success: false, error: "bot_not_found_in_db" }, { status: 404 });
 		}
 		const msg = err instanceof Error ? err.message : String(err);
-		console.error(`[refresh-bot/internal] Unexpected error for bot ${botId}:`, err);
+		await reportError(`[refresh-bot/internal] Unexpected error for bot ${botId}`, err);
 		return json({ success: false, error: msg }, { status: 500 });
 	}
 };

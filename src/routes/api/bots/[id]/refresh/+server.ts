@@ -2,6 +2,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 import { env } from "$env/dynamic/private";
 import { refreshBot, NotFoundError } from "$lib/bot-refresh";
+import { reportError } from "$lib/error-reporter";
 
 // ---------------------------------------------------------------------------
 // Simple in-memory rate limiter
@@ -104,7 +105,7 @@ export const POST: RequestHandler = async ({ params }) => {
 			return json({ success: false, error: "bot_not_found" }, { status: 404 });
 		}
 		const msg = err instanceof Error ? err.message : String(err);
-		console.error(`[refresh-bot/public] Unexpected error for bot ${botId}:`, err);
+		await reportError(`[refresh-bot/public] Unexpected error for bot ${botId}`, err);
 		return json({ success: false, error: msg }, { status: 500 });
 	}
 };
