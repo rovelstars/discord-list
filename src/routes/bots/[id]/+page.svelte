@@ -7,6 +7,7 @@
 	import TwemojiText from "$lib/components/TwemojiText.svelte";
 	import SEO from "$lib/components/SEO.svelte";
 	import BotComments from "$lib/components/BotComments.svelte";
+	import AdUnit from "$lib/components/AdUnit.svelte";
 	import { authUser } from "$lib/auth";
 	import {
 		SITE_URL as JSONLD_SITE_URL,
@@ -1218,10 +1219,12 @@
 	</div>
 
 	<!-- ── RIGHT: sticky recommendations sidebar (desktop only) ─── -->
-	{#if randombots && randombots.length > 0}
-		<aside
-			class="hidden xl:flex flex-col gap-4 w-104 shrink-0 sticky top-28 self-start max-h-[calc(100vh-8rem)] overflow-y-auto pb-4 pr-1"
-		>
+	<aside
+		class="hidden xl:flex flex-col gap-4 w-104 shrink-0 sticky top-28 self-start max-h-[calc(100vh-8rem)] overflow-y-auto pb-4 pr-1"
+	>
+		<AdUnit />
+
+		{#if randombots && randombots.length > 0}
 			<div class="flex items-center gap-2 px-1">
 				<img alt="" src="/assets/img/mostvote.svg" class="w-7 h-7 shrink-0" />
 				<h3 class="font-heading text-xl font-bold leading-tight">You Might Also Like</h3>
@@ -1233,6 +1236,6 @@
 			{#each randombots as rbot}
 				<BotCard bot={rbot} edit={false} />
 			{/each}
-		</aside>
-	{/if}
+		{/if}
+	</aside>
 </div>

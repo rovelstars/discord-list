@@ -175,29 +175,39 @@
 	></div>
 
 	<!-- ── Hero content ───────────────────────────────────────────────────── -->
-	<div class="relative z-20 flex flex-col items-center justify-center min-h-screen hero-content">
-		<!-- Frosted glass panel around all hero text + CTAs -->
-		<div
-			class="px-5 py-8 sm:px-12 sm:py-10 md:px-24 md:py-12 rounded-2xl sm:rounded-3xl bg-card/50 border border-border backdrop-blur-2xl mx-3 sm:mx-0"
-		>
+	<div class="relative z-20 flex min-h-svh flex-col items-center justify-center px-4 hero-content">
+
+		<!-- Ambient glow behind panel -->
+		<div class="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
+			<div class="h-96 w-[36rem] rounded-full bg-primary/20 blur-3xl opacity-60"></div>
+		</div>
+
+		<!-- Frosted glass panel -->
+		<div class="relative w-full max-w-2xl rounded-3xl border border-white/10 bg-background/55 px-6 py-10 shadow-2xl backdrop-blur-3xl sm:px-14 sm:py-14 dark:border-white/5">
+
+			<!-- Inner top-edge highlight -->
+			<div
+				class="pointer-events-none absolute inset-x-0 top-0 h-px rounded-t-3xl bg-gradient-to-r from-transparent via-white/25 to-transparent"
+				aria-hidden="true"
+			></div>
+
 			<!-- Logo -->
 			<img
 				src="/assets/img/bot/logo-512.png"
-				class="mx-auto w-14 h-14 sm:w-20 sm:h-20 mb-5 sm:mb-8 drop-shadow-2xl"
+				class="mx-auto mb-6 h-16 w-16 drop-shadow-2xl sm:mb-8 sm:h-20 sm:w-20"
 				alt="Rovel Discord List"
 				loading="eager"
 			/>
+
 			<!-- Headline -->
-			<h1
-				class="font-heading text-3xl sm:text-5xl md:text-7xl font-extrabold text-center leading-tight mb-2"
-			>
-				Find the next
+			<h1 class="mb-2 text-center font-heading font-extrabold leading-none sm:mb-3">
+				<span class="block text-3xl sm:text-5xl md:text-6xl">Find the next</span>
 			</h1>
 
 			<!-- Animated cycling word -->
 			<div
-				class="relative flex items-end justify-center font-heading text-3xl sm:text-5xl md:text-7xl font-extrabold text-primary mb-4"
-				style="min-height: 1.25em; min-width: 6ch;"
+				class="relative mb-2 flex items-center justify-center font-heading text-4xl font-extrabold text-primary sm:text-6xl md:text-7xl sm:mb-3"
+				style="min-height: 1.2em; min-width: 8ch; text-shadow: 0 0 60px color-mix(in srgb, var(--color-primary) 40%, transparent);"
 				aria-live="polite"
 				aria-label={currentWord}
 			>
@@ -208,111 +218,77 @@
 						class:falling-in={letter.state === "falling-in"}
 						style="--delay: {letter.delay}ms;"
 					>
-						{letter.char === " " ? "\u00A0" : letter.char}
+						{letter.char === " " ? " " : letter.char}
 					</span>
 				{/each}
 			</div>
 
-			<!-- Subtitle -->
-			<p
-				class="font-heading text-2xl sm:text-4xl md:text-6xl font-extrabold text-center leading-tight mb-6 sm:mb-8"
-			>
+			<p class="mb-6 text-center font-heading text-3xl font-extrabold leading-none sm:text-5xl md:text-6xl sm:mb-8">
 				here.
 			</p>
 
-			<p
-				class="text-foreground/70 text-base sm:text-lg md:text-xl font-semibold text-center max-w-xl mb-8 sm:mb-12"
-			>
-				The ultimate Discord discovery platform - bots, servers, stickers, emojis, and communities,
+			<!-- Subtitle -->
+			<p class="mx-auto mb-8 max-w-md text-center text-sm leading-relaxed text-muted-foreground sm:mb-10 sm:text-base">
+				The ultimate Discord discovery platform — bots, servers, stickers, emojis, and communities,
 				all in one place.
 			</p>
 
 			<!-- CTA buttons -->
-			<div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center">
+			<div class="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:justify-center">
 				<a
 					href="/bots"
-					class="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-primary text-white font-bold text-base sm:text-lg shadow-lg shadow-primary/30 hover:bg-primary/90 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all duration-200"
+					class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/40 sm:px-8 sm:py-3.5 sm:text-lg"
 				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="w-5 h-5"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<rect width="18" height="11" x="3" y="8" rx="2" />
-						<path d="M8 8V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3" />
-						<circle cx="12" cy="13" r="1" fill="currentColor" />
-					</svg>
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="8" rx="2"/><path d="M8 8V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><circle cx="12" cy="13" r="1" fill="currentColor"/></svg>
 					Explore Bots
 				</a>
-				<a
-					href="/bots?trending"
-					class="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-3 sm:py-3.5 rounded-xl border-2 border-primary text-primary font-bold text-base sm:text-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-200"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="w-5 h-5"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
+				<div class="flex gap-3">
+					<a
+						href="/bots?trending"
+						class="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-primary px-5 py-3 text-base font-bold text-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/10 sm:px-6 sm:py-3.5 sm:text-lg"
 					>
-						<path
-							d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
-						/>
-					</svg>
-					Trending
-				</a>
-				<a
-					href="/bots?new"
-					class="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-3 sm:py-3.5 rounded-xl border border-border bg-background/80 backdrop-blur font-bold text-base sm:text-lg hover:bg-accent hover:-translate-y-0.5 transition-all duration-200"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="w-5 h-5"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+						Trending
+					</a>
+					<a
+						href="/bots?new"
+						class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-background/80 px-5 py-3 text-base font-bold backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent sm:px-6 sm:py-3.5 sm:text-lg"
 					>
-						<path
-							d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"
-						/>
-					</svg>
-					New Arrivals
-				</a>
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+						New
+					</a>
+				</div>
+			</div>
+
+			<!-- Trust signals -->
+			<div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-border/60 pt-6 text-xs text-muted-foreground">
+				<span class="flex items-center gap-1.5">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="8" rx="2"/><path d="M8 8V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><circle cx="12" cy="13" r="1" fill="currentColor"/></svg>
+					500+ Bots
+				</span>
+				<span class="opacity-30">·</span>
+				<span class="flex items-center gap-1.5">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+					5k+ Users
+				</span>
+				<span class="opacity-30">·</span>
+				<span class="flex items-center gap-1.5">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+					Free Forever
+				</span>
 			</div>
 		</div>
-		<!-- end hero-glass -->
 
 		<!-- Scroll hint -->
-		<div
-			class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-50 animate-bounce"
-		>
-			<span class="text-xs font-semibold tracking-widest uppercase">Scroll</span>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				class="w-5 h-5"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			>
+		<div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-0 sm:bottom-10">
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 animate-bounce opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+				<path d="m6 9 6 6 6-6" />
+			</svg>
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 -mt-4 animate-bounce opacity-40" style="animation-delay: 150ms;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 				<path d="m6 9 6 6 6-6" />
 			</svg>
 		</div>
 	</div>
-
 	<!-- ── Below-fold: featured sections ──────────────────────────────────── -->
 	<div class="relative z-20 pb-24 bg-background">
 		<!-- Section: Featured Bots -->

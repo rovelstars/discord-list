@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SEO from "$lib/components/SEO.svelte";
 
-	const lastUpdated = "June 23, 2025";
+	const lastUpdated = "May 27, 2026";
 	const email = "support@rovelstars.com";
 	const siteName = "Rovel Discord List";
 	const siteUrl = "https://discord.rovelstars.com";
@@ -154,7 +154,7 @@
 					</p>
 				</div>
 				<nav class="p-2" use:smoothScroll>
-					{#each [["#who-we-are", "Who We Are"], ["#data-we-collect", "Data We Collect"], ["#how-we-use-data", "How We Use It"], ["#data-sharing", "Data Sharing"], ["#cookies", "Cookies"], ["#data-retention", "Data Retention"], ["#your-rights", "Your Rights"], ["#childrens-privacy", "Children's Privacy"], ["#changes", "Policy Changes"], ["#contact", "Contact Us"]] as [href, label]}
+					{#each [["#who-we-are", "Who We Are"], ["#data-we-collect", "Data We Collect"], ["#how-we-use-data", "How We Use It"], ["#data-sharing", "Data Sharing"], ["#cookies", "Cookies"], ["#advertising", "Advertising"], ["#data-retention", "Data Retention"], ["#your-rights", "Your Rights"], ["#childrens-privacy", "Children's Privacy"], ["#changes", "Policy Changes"], ["#contact", "Contact Us"]] as [href, label]}
 						<a
 							{href}
 							class="block px-3 py-2 rounded-xl text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
@@ -323,8 +323,10 @@
 						{/each}
 					</ul>
 					<p class="mt-3">
-						We do <strong class="text-foreground">not</strong> use your data for advertising profiling,
-						machine learning training, or any purpose beyond what's listed above.
+						We do <strong class="text-foreground">not</strong> use your personal data for advertising
+						profiling or machine learning training. We display third-party advertisements (see
+						<a href="#advertising" class="text-primary hover:underline">Advertising</a> below) that
+						are served without personal tracking.
 					</p>
 				</div>
 			</div>
@@ -393,6 +395,26 @@
 							</p>
 						</div>
 						<div class="bg-card border border-border rounded-xl p-4">
+							<p class="font-semibold text-foreground text-sm mb-1">
+								Advertising — A-Ads (acceptable.a-ads.com)
+							</p>
+							<p>
+								We display advertisements served by A-Ads via their Acceptable Ads programme
+								(<code
+									class="font-mono bg-background border border-border rounded px-1 py-0.5 text-xs"
+									>acceptable.a-ads.com</code
+								>). A-Ads does not use cookies, pixels, or any personal data to serve ads. No
+								information about you is sent to A-Ads. Ad impressions are counted anonymously by
+								the ad network. See A-Ads'
+								<a
+									href="https://aads.com/privacy-policy/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="text-primary hover:underline">Privacy Policy</a
+								> for details.
+							</p>
+						</div>
+						<div class="bg-card border border-border rounded-xl p-4">
 							<p class="font-semibold text-foreground text-sm mb-1">Legal Obligations</p>
 							<p>
 								We may disclose information if required to do so by law, court order, or
@@ -450,7 +472,67 @@
 						</ul>
 					</div>
 					<p>
-						We do not use advertising cookies, tracking pixels, or third-party analytics cookies.
+						We do not use advertising cookies, tracking pixels, or third-party analytics cookies. The
+						ad network we use (A-Ads, Acceptable Ads) does not set cookies in your browser.
+					</p>
+				</div>
+			</div>
+
+			<hr class="border-border" />
+
+			<!-- 5b. Advertising -->
+			<div id="advertising" class="scroll-mt-28">
+				<div class="flex items-center gap-3 mb-4">
+					<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-4 h-4 text-primary"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path
+								d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"
+							/>
+						</svg>
+					</div>
+					<h2 class="text-xl font-bold font-heading">Advertising</h2>
+				</div>
+				<div class="text-muted-foreground leading-relaxed space-y-3 text-sm">
+					<p>
+						To help keep the service free, we display advertisements on some pages via
+						<strong class="text-foreground">A-Ads</strong> (
+						<a
+							href="https://aads.com"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-primary hover:underline">aads.com</a
+						>), served through their Acceptable Ads programme at
+						<code class="font-mono bg-background border border-border rounded px-1 py-0.5 text-xs"
+							>acceptable.a-ads.com</code
+						>.
+					</p>
+					<div class="bg-card border border-border rounded-2xl overflow-hidden">
+						<ul class="divide-y divide-border">
+							{#each [["No cookies", "A-Ads does not place any cookies in your browser."], ["No personal data", "Your user ID, email, IP address, or any other personal data is never sent to A-Ads."], ["No fingerprinting", "A-Ads does not fingerprint or profile individual visitors."], ["Anonymous impressions only", "Ad impressions are counted anonymously by the ad network to pay publishers."]] as [feature, desc]}
+								<li class="px-5 py-3 flex items-start gap-3 text-xs">
+									<span class="font-semibold text-foreground shrink-0 w-36">{feature}</span>
+									<span>{desc}</span>
+								</li>
+							{/each}
+						</ul>
+					</div>
+					<p>
+						For full details on how A-Ads handles data, see their
+						<a
+							href="https://aads.com/privacy-policy/"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-primary hover:underline">Privacy Policy</a
+						>.
 					</p>
 				</div>
 			</div>

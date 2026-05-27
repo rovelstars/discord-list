@@ -130,33 +130,33 @@ pre code.hljs {
      In v4 these are registered as utility-generatable tokens
      under their semantic names (bg-background, text-primary, etc.)
   ─────────────────────────────────────────────────────── */
-	--color-background: hsl(0 0% 100%);
-	--color-foreground: hsl(216 7% 14%);
+	--color-background: hsl(0 0% 100%);           /* #FFFFFF */
+	--color-foreground: hsl(228 6% 20%);           /* #313338 Discord text */
 
-	--color-card: hsl(210 11% 93%);
-	--color-card-foreground: hsl(216 7% 14%);
+	--color-card: hsl(216 11% 95%);               /* #F2F3F5 Discord sidebar surface */
+	--color-card-foreground: hsl(228 6% 20%);
 
 	--color-popover: hsl(0 0% 100%);
-	--color-popover-foreground: hsl(216 7% 14%);
+	--color-popover-foreground: hsl(228 6% 20%);
 
-	--color-primary: hsl(235 86% 65%);
+	--color-primary: hsl(235 86% 65%);            /* #5865F2 blurple */
 	--color-primary-foreground: hsl(210 40% 98%);
 
 	--color-secondary: hsl(51 99% 68%);
 	--color-secondary-foreground: hsl(222.2 47.4% 11.2%);
 
-	--color-muted: hsl(228 6% 33%);
-	--color-muted-foreground: hsl(215.4 16.3% 46.9%);
+	--color-muted: hsl(216 10% 90%);              /* #E3E5E8 Discord divider/border */
+	--color-muted-foreground: hsl(218 6% 52%);    /* #80848E Discord channel text */
 
-	--color-accent: hsl(210 11% 93%);
-	--color-accent-foreground: hsl(222.2 47.4% 11.2%);
+	--color-accent: hsl(216 11% 95%);
+	--color-accent-foreground: hsl(228 6% 20%);
 
 	--color-destructive: hsl(359 83% 59%);
 	--color-destructive-foreground: hsl(210 40% 98%);
 
-	--color-border: hsl(210 11% 93%);
-	--color-input: hsl(214.3 31.8% 91.4%);
-	--color-ring: hsl(216 7% 14%);
+	--color-border: hsl(216 10% 90%);             /* #E3E5E8 */
+	--color-input: hsl(216 10% 90%);
+	--color-ring: hsl(235 86% 65%);               /* blurple focus ring */
 }
 
 /* ── Dark-mode overrides ────────────────────────────────
@@ -175,33 +175,33 @@ pre code.hljs {
 .dark {
 	color-scheme: dark;
 
-	--color-background: hsl(214 7% 19%);
-	--color-foreground: hsl(210 40% 98%);
+	--color-background: hsl(228 6% 20%);          /* #313338 Discord chat background */
+	--color-foreground: hsl(216 7% 88%);           /* #DBDEE1 Discord primary text */
 
-	--color-card: hsl(220 8% 7%);
-	--color-card-foreground: hsl(210 40% 98%);
+	--color-card: hsl(228 7% 23%);                 /* #383A40 Discord elevated surface */
+	--color-card-foreground: hsl(216 7% 88%);
 
-	--color-popover: hsl(216 7% 14%);
-	--color-popover-foreground: hsl(210 40% 98%);
+	--color-popover: hsl(228 8% 17%);              /* #282B30 Discord deeper layer */
+	--color-popover-foreground: hsl(216 7% 88%);
 
-	--color-primary: hsl(235 86% 65%);
+	--color-primary: hsl(235 86% 65%);             /* #5865F2 blurple */
 	--color-primary-foreground: hsl(210 40% 98%);
 
 	--color-secondary: hsl(51 99% 68%);
 	--color-secondary-foreground: hsl(222.2 47.4% 11.2%);
 
-	--color-muted: hsl(0 0% 33%);
-	--color-muted-foreground: hsl(215 20.2% 65.1%);
+	--color-muted: hsl(228 8% 17%);                /* deep surface, same as popover */
+	--color-muted-foreground: hsl(218 6% 52%);     /* #80848E Discord muted/channel text */
 
-	--color-accent: hsl(0 0% 33%);
-	--color-accent-foreground: hsl(210 40% 98%);
+	--color-accent: hsl(228 6% 28%);               /* #424549 hover surface */
+	--color-accent-foreground: hsl(216 7% 88%);
 
 	--color-destructive: hsl(359 83% 59%);
 	--color-destructive-foreground: hsl(210 40% 98%);
 
-	--color-border: hsl(216 7% 14%);
-	--color-input: hsl(0 0% 33%);
-	--color-ring: hsl(212.7 26.8% 83.9%);
+	--color-border: hsl(228 6% 28%);               /* #404349 Discord divider */
+	--color-input: hsl(228 8% 12%);                /* #1E1F22 Discord input background */
+	--color-ring: hsl(235 86% 65%);                /* blurple focus ring */
 }
 
 /* ── Base layer ─────────────────────────────────────────

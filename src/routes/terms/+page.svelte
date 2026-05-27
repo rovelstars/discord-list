@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SEO from "$lib/components/SEO.svelte";
 
-	const lastUpdated = "June 23, 2025";
+	const lastUpdated = "May 27, 2026";
 	const email = "support@rovelstars.com";
 	const siteName = "Rovel Discord List";
 	const siteUrl = "https://discord.rovelstars.com";
@@ -756,6 +756,17 @@
 							rel="noopener noreferrer"
 							class="text-primary hover:underline">Privacy Policy</a
 						>.
+					</p>
+					<p>
+						The Service displays advertisements served by
+						<a
+							href="https://aads.com"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-primary hover:underline">A-Ads</a
+						> via their Acceptable Ads programme. A-Ads does not use cookies or collect personal data.
+						Your use of advertised third-party products or services is subject to those parties' own
+						terms and policies. We are not responsible for the content or conduct of any advertiser.
 					</p>
 					<p>
 						The Service may contain links to external websites or services. We are not responsible
