@@ -245,61 +245,61 @@ export const GET: RequestHandler = async () => {
 			priority: "0.8"
 		}),
 		urlEntry({
-			loc: SITE_URL + "/categories/music",
+			loc: SITE_URL + "/bots/category/music",
 			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.8"
 		}),
 		urlEntry({
-			loc: SITE_URL + "/categories/moderation",
+			loc: SITE_URL + "/bots/category/moderation",
 			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.8"
 		}),
 		urlEntry({
-			loc: SITE_URL + "/categories/gaming",
+			loc: SITE_URL + "/bots/category/gaming",
 			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.8"
 		}),
 		urlEntry({
-			loc: SITE_URL + "/categories/economy",
+			loc: SITE_URL + "/bots/category/economy",
 			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.7"
 		}),
 		urlEntry({
-			loc: SITE_URL + "/categories/utility",
+			loc: SITE_URL + "/bots/category/utility",
 			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.7"
 		}),
 		urlEntry({
-			loc: SITE_URL + "/categories/fun",
+			loc: SITE_URL + "/bots/category/fun",
 			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.7"
 		}),
 		urlEntry({
-			loc: SITE_URL + "/categories/anime",
+			loc: SITE_URL + "/bots/category/anime",
 			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.7"
 		}),
 		urlEntry({
-			loc: SITE_URL + "/categories/logging",
+			loc: SITE_URL + "/bots/category/logging",
 			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.6"
 		}),
 		urlEntry({
-			loc: SITE_URL + "/categories/leveling",
+			loc: SITE_URL + "/bots/category/leveling",
 			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.6"
 		}),
 		urlEntry({
-			loc: SITE_URL + "/categories/roleplay",
+			loc: SITE_URL + "/bots/category/roleplay",
 			lastmod: newestBotDate,
 			changefreq: "weekly",
 			priority: "0.6"

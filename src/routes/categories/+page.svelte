@@ -156,7 +156,7 @@
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 			{#each categories as cat}
 				<a
-					href="/categories/{cat.slug}"
+					href="/bots/category/{cat.slug}"
 					class="group flex flex-col gap-3 bg-card border border-border rounded-xl p-5 hover:border-primary/60 hover:shadow-md hover:-translate-y-1 transition-all duration-200"
 				>
 					<!-- Icon + emoji row -->

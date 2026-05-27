@@ -1,7 +1,11 @@
+import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { listBots, getTopBots, getMusicBots, getGameBots, getModBots } from "$lib/db/queries";
 
 export const load: PageServerLoad = async ({ url, setHeaders }) => {
+	const categoryParam = url.searchParams.get("category");
+	if (categoryParam) throw redirect(301, `/bots/category/${categoryParam}`);
+
 	const q = url.searchParams.get("q") ?? null;
 	const limit = Math.min(parseInt(url.searchParams.get("limit") ?? "20", 10), 50);
 	const offset = Math.max(parseInt(url.searchParams.get("offset") ?? "0", 10), 0);

@@ -100,10 +100,7 @@
 	}
 
 	function toggleCategory(slug: string) {
-		const next = data.category === slug ? null : slug;
-		goto(
-			buildHref({ category: next, q: null, offset: 0, new: false, trending: false, lucky: false })
-		);
+		goto(`/bots/category/${slug}`);
 	}
 
 	// ── SEO title / description ────────────────────────────────────────────
@@ -342,18 +339,13 @@
 		{#each FEATURED_CATEGORIES as slug}
 			{@const meta = CATEGORIES[slug]}
 			{#if meta}
-				<button
-					type="button"
-					on:click={() => toggleCategory(slug)}
-					class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors cursor-pointer select-none
-						{data.category === slug
-						? 'bg-primary text-primary-foreground border-primary'
-						: 'bg-card border-border text-muted-foreground hover:border-primary/60 hover:text-foreground'}"
-					aria-pressed={data.category === slug}
+				<a
+					href="/bots/category/{slug}"
+					class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors select-none bg-card border-border text-muted-foreground hover:border-primary/60 hover:text-foreground"
 				>
 					<span class="text-base leading-none" aria-hidden="true">{meta.emoji}</span>
 					{meta.name.replace(/ Bots$/, "").replace(/ & .*$/, "")}
-				</button>
+				</a>
 			{/if}
 		{/each}
 	</div>
@@ -610,9 +602,8 @@
 						Bring the music to your community - seamless playback from YouTube, Spotify and beyond.
 					</p>
 				</div>
-				<button
-					type="button"
-					on:click={() => toggleCategory("music")}
+				<a
+					href="/bots/category/music"
 					class="shrink-0 hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
 				>
 					See all music bots
@@ -627,7 +618,7 @@
 						stroke-linejoin="round"
 						aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg
 					>
-				</button>
+				</a>
 			</div>
 
 			{#if data.musicBots && data.musicBots.length > 0}
@@ -656,9 +647,8 @@
 						Get the competitive edge - tournament bots, stat trackers and in-chat mini-games.
 					</p>
 				</div>
-				<button
-					type="button"
-					on:click={() => toggleCategory("gaming")}
+				<a
+					href="/bots/category/gaming"
 					class="shrink-0 hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
 				>
 					See all gaming bots
@@ -673,7 +663,7 @@
 						stroke-linejoin="round"
 						aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg
 					>
-				</button>
+				</a>
 			</div>
 
 			{#if data.gameBots && data.gameBots.length > 0}
@@ -709,9 +699,8 @@
 						Keep your server safe - auto-mod, anti-spam, logging and raid protection.
 					</p>
 				</div>
-				<button
-					type="button"
-					on:click={() => toggleCategory("moderation")}
+				<a
+					href="/bots/category/moderation"
 					class="shrink-0 hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
 				>
 					See all moderation bots
@@ -726,7 +715,7 @@
 						stroke-linejoin="round"
 						aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg
 					>
-				</button>
+				</a>
 			</div>
 
 			{#if data.modBots && data.modBots.length > 0}
@@ -758,13 +747,11 @@
 				{#each FEATURED_CATEGORIES as slug}
 					{@const meta = CATEGORIES[slug]}
 					{#if meta}
-						<button
-							type="button"
-							on:click={() => toggleCategory(slug)}
+						<a
+							href="/bots/category/{slug}"
 							class="group flex flex-col items-center gap-2 p-4 rounded-xl border text-center
 							       bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700
-							       hover:border-primary hover:shadow-md hover:-translate-y-0.5 transition-all
-							       cursor-pointer"
+							       hover:border-primary hover:shadow-md hover:-translate-y-0.5 transition-all"
 							aria-label="Browse {meta.name}"
 						>
 							<span class="text-3xl leading-none" aria-hidden="true">{meta.emoji}</span>
@@ -773,7 +760,7 @@
 							>
 								{meta.name.replace(/ & .*$/, "")}
 							</span>
-						</button>
+						</a>
 					{/if}
 				{/each}
 			</div>

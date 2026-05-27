@@ -2,6 +2,8 @@
 	import SEO from "$lib/components/SEO.svelte";
 	import BotCard from "$lib/components/BotCard.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
+	import AdCardUnit from "$lib/components/AdCardUnit.svelte";
+	import { pickAdSlots } from "$lib/pick-ad-slots";
 
 	export let data: {
 		slug: string;
@@ -28,6 +30,8 @@
 	const { meta, bots, relatedCategories } = data;
 
 	const currentYear = new Date().getFullYear();
+
+	$: botAdSlots = pickAdSlots(bots.length, 8);
 
 	// JSON-LD: FAQPage
 	const faqSchema = {
@@ -96,6 +100,8 @@
 	>
 		<a href="/" class="hover:text-primary transition-colors">Home</a>
 		<span aria-hidden="true">›</span>
+		<a href="/bots" class="hover:text-primary transition-colors">Bots</a>
+		<span aria-hidden="true">›</span>
 		<a href="/categories" class="hover:text-primary transition-colors">Categories</a>
 		<span aria-hidden="true">›</span>
 		<span class="text-foreground font-medium">{meta.name}</span>
@@ -124,8 +130,11 @@
 
 	{#if bots.length > 0}
 		<div class="flex flex-wrap justify-center gap-4 px-4">
-			{#each bots as bot (bot.id)}
+			{#each bots as bot, i (bot.id)}
 				<BotCard {bot} edit={false} />
+				{#if botAdSlots.has(i)}
+					<AdCardUnit />
+				{/if}
 			{/each}
 		</div>
 	{:else}
