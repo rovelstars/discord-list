@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SEO from "$lib/components/SEO.svelte";
 	import BotCard from "$lib/components/BotCard.svelte";
+	import AdUnit from "$lib/components/AdUnit.svelte";
 
 	export let data: {
 		slug: string;
@@ -150,6 +151,11 @@
 		</div>
 	{/if}
 </section>
+
+<!-- Ad unit -->
+<div class="max-w-3xl mx-auto px-4 pb-10">
+	<AdUnit />
+</div>
 
 <!-- ── Stats bar (when bots exist) ───────────────────────────────────────── -->
 {#if bots.length > 0}

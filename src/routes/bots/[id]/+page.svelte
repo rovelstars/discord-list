@@ -1199,6 +1199,11 @@
 			</div>
 		{/if}
 
+		<!-- Ad unit - mobile only (xl sidebar already has one) -->
+		<div class="mt-10 xl:hidden">
+			<AdUnit />
+		</div>
+
 		<!-- You Might Also Like - mobile only (below the card, visible only on < xl) -->
 		{#if randombots && randombots.length > 0}
 			<div class="mt-10 xl:hidden">

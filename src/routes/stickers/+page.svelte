@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SEO from "$lib/components/SEO.svelte";
 	import StickerCard from "$lib/components/StickerCard.svelte";
+	import AdUnit from "$lib/components/AdUnit.svelte";
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
 
@@ -250,6 +251,11 @@
 			{#each stickers as sticker (sticker.id)}
 				<StickerCard {sticker} resolvedTags={sticker.resolvedTags} />
 			{/each}
+		</div>
+
+		<!-- Ad unit -->
+		<div class="max-w-3xl mx-auto mt-8">
+			<AdUnit />
 		</div>
 
 		<!-- Pagination -->

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SEO from "$lib/components/SEO.svelte";
 	import BotCard from "$lib/components/BotCard.svelte";
+	import AdUnit from "$lib/components/AdUnit.svelte";
 	import getAvatarURL from "$lib/get-avatar-url";
 
 	export let data: {
@@ -303,6 +304,11 @@
 		</div>
 	</section>
 {/if}
+
+<!-- Ad unit -->
+<div class="max-w-3xl mx-auto px-4 pb-10">
+	<AdUnit />
+</div>
 
 <!-- ── SEO editorial copy ─────────────────────────────────────────────────── -->
 <section class="max-w-3xl mx-auto px-4 pb-16 prose prose-base dark:prose-invert">

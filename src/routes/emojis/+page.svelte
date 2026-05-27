@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SEO from "$lib/components/SEO.svelte";
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
+	import AdUnit from "$lib/components/AdUnit.svelte";
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
 
@@ -243,6 +244,11 @@
 			{#each emojis as emoji (emoji.id)}
 				<EmojiCard {emoji} />
 			{/each}
+		</div>
+
+		<!-- Ad unit -->
+		<div class="max-w-3xl mx-auto mt-8">
+			<AdUnit />
 		</div>
 
 		<!-- Pagination -->

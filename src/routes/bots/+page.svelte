@@ -1,6 +1,7 @@
 <script lang="ts">
 	import BotCard from "$lib/components/BotCard.svelte";
 	import SEO from "$lib/components/SEO.svelte";
+	import AdUnit from "$lib/components/AdUnit.svelte";
 	import { CATEGORIES } from "$lib/categories";
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
@@ -561,6 +562,13 @@
 				<p class="text-center text-gray-400 py-10">No bots here yet - check back soon!</p>
 			{/if}
 		</section>
+
+		<!-- Ad unit -->
+		<div class="mt-12 px-4">
+			<div class="max-w-3xl mx-auto">
+				<AdUnit />
+			</div>
+		</div>
 
 		<!-- ── Featured Music Bots ────────────────────────────────────── -->
 		<section class="mt-14 px-4">

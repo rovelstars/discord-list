@@ -7,6 +7,7 @@
 
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
 	import StickerCard from "$lib/components/StickerCard.svelte";
+	import AdUnit from "$lib/components/AdUnit.svelte";
 	import { authUser } from "$lib/auth";
 
 	export let data: {
@@ -1112,6 +1113,11 @@
 			</div>
 		{/if}
 
+		<!-- Ad unit - mobile only (xl sidebar already has one) -->
+		<div class="mt-10 xl:hidden">
+			<AdUnit />
+		</div>
+
 		<!-- Random servers - shown below on smaller screens -->
 		{#if randomServers && randomServers.length > 0}
 			<div class="mt-10 xl:hidden">
@@ -1144,12 +1150,14 @@
 		{/if}
 	</div>
 
-	<!-- ── Sidebar: random servers - xl screens only ──────────────────────── -->
-	{#if randomServers && randomServers.length > 0}
-		<aside
-			class="hidden xl:flex xl:flex-col gap-4 w-80 shrink-0 sticky top-28 self-start"
-			aria-label="Other servers"
-		>
+	<!-- ── Sidebar: ad + random servers - xl screens only ──────────────────── -->
+	<aside
+		class="hidden xl:flex xl:flex-col gap-4 w-80 shrink-0 sticky top-28 self-start"
+		aria-label="Other servers"
+	>
+		<AdUnit />
+
+		{#if randomServers && randomServers.length > 0}
 			<div class="flex items-center gap-2 px-1">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -1173,6 +1181,6 @@
 			{#each randomServers as s}
 				<ServerCard server={s} edit={false} />
 			{/each}
-		</aside>
-	{/if}
+		{/if}
+	</aside>
 </div>

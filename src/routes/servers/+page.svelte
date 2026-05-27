@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SEO from "$lib/components/SEO.svelte";
 	import ServerCard from "$lib/components/ServerCard.svelte";
+	import AdUnit from "$lib/components/AdUnit.svelte";
 	import { page } from "$app/stores";
 	import { goto } from "$app/navigation";
 
@@ -464,6 +465,13 @@
 				</div>
 			{/if}
 		</section>
+
+		<!-- Ad unit -->
+		<div class="mt-12 px-4">
+			<div class="max-w-3xl mx-auto">
+				<AdUnit />
+			</div>
+		</div>
 
 		<!-- How to add section -->
 		<section class="mt-20 px-4 max-w-4xl mx-auto">
