@@ -2,6 +2,7 @@
 	import BotCard from "$lib/components/BotCard.svelte";
 	import SEO from "$lib/components/SEO.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
+	import AdCardUnit from "$lib/components/AdCardUnit.svelte";
 	import { CATEGORIES } from "$lib/categories";
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
@@ -455,8 +456,11 @@
 			</div>
 		{:else}
 			<div class="flex flex-wrap justify-center gap-4 pt-2">
-				{#each bots as bot}
+				{#each bots as bot, i}
 					<BotCard {bot} edit={false} />
+					{#if (i + 1) % 8 === 0 && i < bots.length - 1}
+						<AdCardUnit />
+					{/if}
 				{/each}
 			</div>
 
@@ -554,8 +558,11 @@
 
 			{#if data.topBots && data.topBots.length > 0}
 				<div class="flex flex-wrap justify-center gap-4 pt-2">
-					{#each data.topBots as bot}
+					{#each data.topBots as bot, i}
 						<BotCard {bot} edit={false} />
+						{#if (i + 1) % 8 === 0 && i < data.topBots.length - 1}
+							<AdCardUnit />
+						{/if}
 					{/each}
 				</div>
 			{:else}
@@ -618,8 +625,11 @@
 
 			{#if data.musicBots && data.musicBots.length > 0}
 				<div class="flex flex-wrap justify-center gap-4 pt-2">
-					{#each data.musicBots as bot}
+					{#each data.musicBots as bot, i}
 						<BotCard {bot} edit={false} />
+						{#if (i + 1) % 8 === 0 && i < data.musicBots.length - 1}
+							<AdCardUnit />
+						{/if}
 					{/each}
 				</div>
 			{:else}
@@ -661,14 +671,24 @@
 
 			{#if data.gameBots && data.gameBots.length > 0}
 				<div class="flex flex-wrap justify-center gap-4 pt-2">
-					{#each data.gameBots as bot}
+					{#each data.gameBots as bot, i}
 						<BotCard {bot} edit={false} />
+						{#if (i + 1) % 8 === 0 && i < data.gameBots.length - 1}
+							<AdCardUnit />
+						{/if}
 					{/each}
 				</div>
 			{:else}
 				<p class="text-center text-gray-400 py-10">No gaming bots found - check back soon!</p>
 			{/if}
 		</section>
+
+		<!-- Ad unit -->
+		<div class="mt-12 px-4">
+			<div class="max-w-3xl mx-auto">
+				<AdUnit />
+			</div>
+		</div>
 
 		<!-- ── Community Care / Moderation ──────────────────────────── -->
 		<section class="mt-14 px-4">
@@ -704,8 +724,11 @@
 
 			{#if data.modBots && data.modBots.length > 0}
 				<div class="flex flex-wrap justify-center gap-4 pt-2">
-					{#each data.modBots as bot}
+					{#each data.modBots as bot, i}
 						<BotCard {bot} edit={false} />
+						{#if (i + 1) % 8 === 0 && i < data.modBots.length - 1}
+							<AdCardUnit />
+						{/if}
 					{/each}
 				</div>
 			{:else}

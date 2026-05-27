@@ -2,6 +2,7 @@
 	import SEO from "$lib/components/SEO.svelte";
 	import ServerCard from "$lib/components/ServerCard.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
+	import AdCardUnit from "$lib/components/AdCardUnit.svelte";
 	import { page } from "$app/stores";
 	import { goto } from "$app/navigation";
 
@@ -335,8 +336,11 @@
 			</div>
 		{:else}
 			<div class="flex flex-wrap justify-center gap-4 pt-2">
-				{#each servers as server}
+				{#each servers as server, i}
 					<ServerCard {server} edit={false} />
+					{#if (i + 1) % 8 === 0 && i < servers.length - 1}
+						<AdCardUnit />
+					{/if}
 				{/each}
 			</div>
 
@@ -449,8 +453,11 @@
 
 			{#if topServers && topServers.length > 0}
 				<div class="flex flex-wrap justify-center gap-4 pt-2">
-					{#each topServers as server}
+					{#each topServers as server, i}
 						<ServerCard {server} edit={false} />
+						{#if (i + 1) % 8 === 0 && i < topServers.length - 1}
+							<AdCardUnit />
+						{/if}
 					{/each}
 				</div>
 			{:else}

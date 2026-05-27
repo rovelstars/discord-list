@@ -2,6 +2,7 @@
 	import SEO from "$lib/components/SEO.svelte";
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
+	import AdCardUnit from "$lib/components/AdCardUnit.svelte";
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
 
@@ -241,8 +242,13 @@
 		</div>
 	{:else}
 		<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
-			{#each emojis as emoji (emoji.id)}
+			{#each emojis as emoji, i (emoji.id)}
 				<EmojiCard {emoji} />
+				{#if (i + 1) % 16 === 0 && i < emojis.length - 1}
+					<div class="col-span-full">
+						<AdUnit label={false} />
+					</div>
+				{/if}
 			{/each}
 		</div>
 
