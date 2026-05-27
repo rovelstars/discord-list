@@ -5,6 +5,7 @@
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
 	import StickerCard from "$lib/components/StickerCard.svelte";
 	import SEO from "$lib/components/SEO.svelte";
+	import AdUnit from "$lib/components/AdUnit.svelte";
 	import { websiteSchema } from "$lib/jsonld";
 
 	export let data: any;
@@ -329,6 +330,13 @@
 				</div>
 			</section>
 		{/if}
+
+		<!-- Ad unit — visible on all screen sizes -->
+		<div class="pt-12 px-4">
+			<div class="max-w-3xl mx-auto">
+				<AdUnit />
+			</div>
+		</div>
 
 		<!-- Section: Featured Servers -->
 		{#if topServersData && topServersData.length > 0}

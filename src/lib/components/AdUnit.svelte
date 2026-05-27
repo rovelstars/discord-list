@@ -25,7 +25,7 @@
 			src="//acceptable.a-ads.com/2439223/?size=Adaptive&background_color=transparent"
 			style="border:0;padding:0;width:100%;height:auto;overflow:hidden;display:block;min-height:50px;"
 			title="Advertisement"
-			loading="lazy"
+			loading="eager"
 			sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
 		></iframe>
 		<a
