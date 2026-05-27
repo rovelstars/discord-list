@@ -885,6 +885,11 @@
 			</div>
 		</div>
 
+		<!-- Ad unit - mobile only (xl sidebar already has one) -->
+		<div class="mt-6 xl:hidden">
+			<AdUnit />
+		</div>
+
 		<!-- ── Server Emojis Section ─────────────────────────────────────────── -->
 		{#if emojis && emojis.length > 0}
 			<div class="mt-8 bg-card rounded-lg overflow-hidden border border-border">
@@ -1112,11 +1117,6 @@
 				</div>
 			</div>
 		{/if}
-
-		<!-- Ad unit - mobile only (xl sidebar already has one) -->
-		<div class="mt-10 xl:hidden">
-			<AdUnit />
-		</div>
 
 		<!-- Random servers - shown below on smaller screens -->
 		{#if randomServers && randomServers.length > 0}

@@ -1157,6 +1157,11 @@
 			</div>
 		</div>
 
+		<!-- Ad unit - mobile only (xl sidebar already has one) -->
+		<div class="mt-6 xl:hidden">
+			<AdUnit />
+		</div>
+
 		<!-- ── Reviews & Comments ─────────────────────────────────────────────── -->
 		<div class="mt-6 bg-card rounded-lg px-6 py-2 shadow-sm">
 			<BotComments {comments} {user} botId={bot.id} owners={bot.owners ?? []} />
@@ -1198,11 +1203,6 @@
 				</div>
 			</div>
 		{/if}
-
-		<!-- Ad unit - mobile only (xl sidebar already has one) -->
-		<div class="mt-10 xl:hidden">
-			<AdUnit />
-		</div>
 
 		<!-- You Might Also Like - mobile only (below the card, visible only on < xl) -->
 		{#if randombots && randombots.length > 0}

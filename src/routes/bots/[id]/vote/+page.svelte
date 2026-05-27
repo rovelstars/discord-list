@@ -2,6 +2,7 @@
 	import getAvatarURL from "$lib/get-avatar-url";
 	import { buttonVariants } from "$lib/components/ui/button.js";
 	import SEO from "$lib/components/SEO.svelte";
+	import AdUnit from "$lib/components/AdUnit.svelte";
 	import { authUser, authLoading } from "$lib/auth";
 
 	export let data: {
@@ -283,5 +284,9 @@
 				</div>
 			</div>
 		{/if}
+	</div>
+
+	<div class="mt-10 w-full">
+		<AdUnit />
 	</div>
 </div>
