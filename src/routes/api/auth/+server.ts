@@ -3,7 +3,7 @@ import { json } from "@sveltejs/kit";
 import { redirect } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
 import { env } from "$env/dynamic/private";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Users } from "$lib/schema";
 import { eq } from "drizzle-orm";
 // SendLog is copied into src/bot/log.ts previously
@@ -66,17 +66,18 @@ export const GET: RequestHandler = async (event) => {
 		const userData = await oauth.getUser(tokenData.access_token);
 
 		// Use Drizzle to query/insert/update user record
-		const db = getDb();
 
 		// Try finding existing user
-		const existing = await db
-			.select({
-				id: Users.id,
-				keys: Users.keys
-			})
-			.from(Users)
-			.where(eq(Users.id, userData.id))
-			.limit(1);
+		const existing = await withDb((db) =>
+			db
+				.select({
+					id: Users.id,
+					keys: Users.keys
+				})
+				.from(Users)
+				.where(eq(Users.id, userData.id))
+				.limit(1)
+		);
 
 		// Helper to normalize keys array
 		function normalizeKeys(k: any): any[] {
@@ -124,10 +125,12 @@ export const GET: RequestHandler = async (event) => {
 				keys.push(currentKey);
 			}
 
-			await db
-				.update(Users)
-				.set({ keys: JSON.stringify(keys) })
-				.where(eq(Users.id, userData.id));
+			await withDb((db) =>
+				db
+					.update(Users)
+					.set({ keys: JSON.stringify(keys) })
+					.where(eq(Users.id, userData.id))
+			);
 		} else {
 			// Insert new user
 			const newUser = {
@@ -149,7 +152,7 @@ export const GET: RequestHandler = async (event) => {
 				last_login: new Date().toISOString(),
 				nitro: (userData as any).premium_type ?? 0
 			};
-			await db.insert(Users).values(newUser);
+			await withDb((db) => db.insert(Users).values(newUser));
 
 			// ── Referral processing (new users only) ─────────────────────────────
 			// The referral code is stored in the "ref" cookie by the login page
@@ -213,10 +216,12 @@ export const GET: RequestHandler = async (event) => {
 
 		// Update last_login timestamp
 		try {
-			await db
-				.update(Users)
-				.set({ last_login: new Date().toISOString() })
-				.where(eq(Users.id, userData.id));
+			await withDb((db) =>
+				db
+					.update(Users)
+					.set({ last_login: new Date().toISOString() })
+					.where(eq(Users.id, userData.id))
+			);
 		} catch {
 			// ignore update errors (non-fatal)
 		}

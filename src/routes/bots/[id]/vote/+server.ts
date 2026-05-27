@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Users, Bots } from "$lib/schema";
 import { eq } from "drizzle-orm";
 import SendLog from "@/bot/log";
@@ -22,8 +22,6 @@ import { env } from "$env/dynamic/private";
  *  - Sends webhook to bot.webhook when configured (best-effort)
  */
 export const POST: RequestHandler = async ({ request, params, cookies }) => {
-	const db = getDb();
-
 	try {
 		const url = new URL(request.url);
 		const paramKey = url.searchParams.get("key");
@@ -58,11 +56,9 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 		}
 
 		// Fetch user record from DB
-		const userRows = await db
-			.select({ bal: Users.bal, votes: Users.votes })
-			.from(Users)
-			.where(eq(Users.id, userData.id))
-			.limit(1);
+		const userRows = await withDb((db) =>
+			db.select({ bal: Users.bal, votes: Users.votes }).from(Users).where(eq(Users.id, userData.id)).limit(1)
+		);
 
 		if (!userRows || userRows.length === 0) {
 			return json({ err: "invalid_key" }, { status: 400 });
@@ -81,19 +77,21 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 		if (!Array.isArray(votesArr)) votesArr = [];
 
 		// Fetch bot record
-		const botRows = await db
-			.select({
-				votes: Bots.votes,
-				opted_coins: Bots.opted_coins,
-				webhook: Bots.webhook,
-				code: Bots.code,
-				username: Bots.username,
-				avatar: Bots.avatar,
-				owners: Bots.owners
-			})
-			.from(Bots)
-			.where(eq(Bots.id, id))
-			.limit(1);
+		const botRows = await withDb((db) =>
+			db
+				.select({
+					votes: Bots.votes,
+					opted_coins: Bots.opted_coins,
+					webhook: Bots.webhook,
+					code: Bots.code,
+					username: Bots.username,
+					avatar: Bots.avatar,
+					owners: Bots.owners
+				})
+				.from(Bots)
+				.where(eq(Bots.id, id))
+				.limit(1)
+		);
 
 		if (!botRows || botRows.length === 0) {
 			return json({ err: "no_bot_found" }, { status: 400 });
@@ -161,11 +159,13 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 		// Persist user and bot updates (best-effort)
 		try {
 			// Users.votes is stored as TEXT JSON in our portable schema; stringify on write.
-			await db
-				.update(Users)
-				.set({ bal: user.bal ?? 0, votes: JSON.stringify(votesArr) })
-				.where(eq(Users.id, userData.id));
-			await db.update(Bots).set({ votes: newBotVotes }).where(eq(Bots.id, id));
+			await withDb((db) =>
+				db
+					.update(Users)
+					.set({ bal: user.bal ?? 0, votes: JSON.stringify(votesArr) })
+					.where(eq(Users.id, userData.id))
+			);
+			await withDb((db) => db.update(Bots).set({ votes: newBotVotes }).where(eq(Bots.id, id)));
 		} catch (e) {
 			console.error("DB update error in vote endpoint:", e);
 			return json({ err: "db_update_failed" }, { status: 500 });

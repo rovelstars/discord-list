@@ -2,7 +2,7 @@ import type { PageServerLoad } from "./$types";
 import { redirect, error } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
 import { env } from "$env/dynamic/private";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Bots } from "$lib/db/schema";
 import { eq, or } from "drizzle-orm";
 import { isAdmin } from "$lib/is-admin";
@@ -37,33 +37,33 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 		throw error(400, "Missing bot ID");
 	}
 
-	const db = getDb();
-
-	const rows = await db
-		.select({
-			id: Bots.id,
-			slug: Bots.slug,
-			username: Bots.username,
-			discriminator: Bots.discriminator,
-			avatar: Bots.avatar,
-			short: Bots.short,
-			desc: Bots.desc,
-			prefix: Bots.prefix,
-			lib: Bots.lib,
-			invite: Bots.invite,
-			bg: Bots.bg,
-			support: Bots.support,
-			source_repo: Bots.source_repo,
-			website: Bots.website,
-			webhook: Bots.webhook,
-			donate: Bots.donate,
-			owners: Bots.owners,
-			code: Bots.code,
-			opted_coins: Bots.opted_coins
-		})
-		.from(Bots)
-		.where(or(eq(Bots.id, idOrSlug), eq(Bots.slug, idOrSlug)))
-		.limit(1);
+	const rows = await withDb((db) =>
+		db
+			.select({
+				id: Bots.id,
+				slug: Bots.slug,
+				username: Bots.username,
+				discriminator: Bots.discriminator,
+				avatar: Bots.avatar,
+				short: Bots.short,
+				desc: Bots.desc,
+				prefix: Bots.prefix,
+				lib: Bots.lib,
+				invite: Bots.invite,
+				bg: Bots.bg,
+				support: Bots.support,
+				source_repo: Bots.source_repo,
+				website: Bots.website,
+				webhook: Bots.webhook,
+				donate: Bots.donate,
+				owners: Bots.owners,
+				code: Bots.code,
+				opted_coins: Bots.opted_coins
+			})
+			.from(Bots)
+			.where(or(eq(Bots.id, idOrSlug), eq(Bots.slug, idOrSlug)))
+			.limit(1)
+	);
 
 	const bot = rows && rows.length > 0 ? rows[0] : null;
 

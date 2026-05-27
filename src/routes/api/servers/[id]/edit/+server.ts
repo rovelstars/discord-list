@@ -36,7 +36,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
 import { env } from "$env/dynamic/private";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Servers, Users } from "$lib/db/schema";
 import { eq, or, and, ne } from "drizzle-orm";
 import SendLog from "@/bot/log";
@@ -98,32 +98,30 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		return json({ err: "invalid_key" }, { status: 400 });
 	}
 
-	const db = getDb();
-
 	// User row must exist
-	const userRows = await db
-		.select({ id: Users.id })
-		.from(Users)
-		.where(eq(Users.id, userData.id))
-		.limit(1);
+	const userRows = await withDb((db) =>
+		db.select({ id: Users.id }).from(Users).where(eq(Users.id, userData.id)).limit(1)
+	);
 	if (!userRows || userRows.length === 0) {
 		return json({ err: "invalid_key" }, { status: 400 });
 	}
 
 	// ── Fetch server row ──────────────────────────────────────────────────────
-	const serverRows = await db
-		.select({
-			id: Servers.id,
-			name: Servers.name,
-			icon: Servers.icon,
-			owner: Servers.owner,
-			short: Servers.short,
-			desc: Servers.desc,
-			slug: Servers.slug
-		})
-		.from(Servers)
-		.where(or(eq(Servers.id, idOrSlug), eq(Servers.slug, idOrSlug)))
-		.limit(1);
+	const serverRows = await withDb((db) =>
+		db
+			.select({
+				id: Servers.id,
+				name: Servers.name,
+				icon: Servers.icon,
+				owner: Servers.owner,
+				short: Servers.short,
+				desc: Servers.desc,
+				slug: Servers.slug
+			})
+			.from(Servers)
+			.where(or(eq(Servers.id, idOrSlug), eq(Servers.slug, idOrSlug)))
+			.limit(1)
+	);
 
 	const server = serverRows && serverRows.length > 0 ? (serverRows[0] as any) : null;
 	if (!server) {
@@ -167,11 +165,13 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 				return json({ err: "slug_invalid" }, { status: 400 });
 			}
 			// Uniqueness - exclude the server being edited
-			const taken = await db
-				.select({ id: Servers.id })
-				.from(Servers)
-				.where(and(eq(Servers.slug, rawSlug), ne(Servers.id, server.id)))
-				.limit(1);
+			const taken = await withDb((db) =>
+				db
+					.select({ id: Servers.id })
+					.from(Servers)
+					.where(and(eq(Servers.slug, rawSlug), ne(Servers.id, server.id)))
+					.limit(1)
+			);
 			if (taken && taken.length > 0) {
 				return json({ err: "slug_taken" }, { status: 400 });
 			}
@@ -181,14 +181,16 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 
 	// ── Write ─────────────────────────────────────────────────────────────────
 	try {
-		await db
-			.update(Servers)
-			.set({
-				short,
-				desc,
-				slug: slug ?? ""
-			})
-			.where(eq(Servers.id, server.id));
+		await withDb((db) =>
+			db
+				.update(Servers)
+				.set({
+					short,
+					desc,
+					slug: slug ?? ""
+				})
+				.where(eq(Servers.id, server.id))
+		);
 	} catch (err) {
 		console.error("[api/servers/[id]/edit] DB update error:", err);
 		return json({ err: "db_update_failed" }, { status: 500 });

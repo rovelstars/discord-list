@@ -507,6 +507,21 @@ const SCHEMA = [
 			{ name: "entity_type", type: "TEXT" },
 			{ name: "created_at", type: "TEXT", notNull: true, default: NOW_EXPR }
 		]
+	},
+	// Queue of URLs to submit to IndexNow on the next scheduled cron run.
+	// URL is the PRIMARY KEY — editing the same page multiple times before the
+	// cron fires produces exactly one submission (natural dedup).
+	{
+		name: "PendingReindex",
+		sql: `
+      CREATE TABLE IF NOT EXISTS "PendingReindex" (
+        "url"       TEXT NOT NULL PRIMARY KEY,
+        "queued_at" TEXT NOT NULL DEFAULT ${NOW_EXPR}
+      )
+    `,
+		columns: [
+			{ name: "queued_at", type: "TEXT", notNull: true, default: NOW_EXPR }
+		]
 	}
 ];
 

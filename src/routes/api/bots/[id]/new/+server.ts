@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Bots, Users } from "$lib/schema";
 import { eq } from "drizzle-orm";
 import { formSchema as BotFormSchema } from "$lib/components/bot-form-schema";
@@ -27,7 +27,6 @@ import { env } from "$env/dynamic/private";
  */
 export const POST: RequestHandler = async ({ request, params, cookies }) => {
 	try {
-		const db = getDb();
 		const url = new URL(request.url);
 
 		const paramKey = url.searchParams.get("key");
@@ -62,11 +61,9 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 		}
 
 		// Ensure the user record exists (parity with legacy flow)
-		const userRows = await db
-			.select({ bal: Users.bal, votes: Users.votes })
-			.from(Users)
-			.where(eq(Users.id, userData.id))
-			.limit(1);
+		const userRows = await withDb((db) =>
+			db.select({ bal: Users.bal, votes: Users.votes }).from(Users).where(eq(Users.id, userData.id)).limit(1)
+		);
 		if (!userRows || userRows.length === 0) {
 			return json({ err: "invalid_key" }, { status: 400 });
 		}
@@ -89,11 +86,9 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 
 		// Slug uniqueness check
 		if (body.slug) {
-			const existing = await db
-				.select({ id: Bots.id })
-				.from(Bots)
-				.where(eq(Bots.slug, String(body.slug)))
-				.limit(1);
+			const existing = await withDb((db) =>
+				db.select({ id: Bots.id }).from(Bots).where(eq(Bots.slug, String(body.slug))).limit(1)
+			);
 			if (existing && existing.length > 0) {
 				return json({ err: "slug_taken" }, { status: 400 });
 			}
@@ -167,32 +162,34 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 
 		// Insert new bot row
 		try {
-			await db.insert(Bots).values({
-				id: id,
-				slug: body.slug ? String(body.slug).toLowerCase() : id,
-				owners: JSON.stringify(body.owners),
-				username: botInfo.bot.username,
-				discriminator: botInfo.bot.discriminator,
-				avatar: botInfo.bot.avatar || "0",
-				servers: botInfo.bot.approximate_guild_count ?? 0,
-				tags: JSON.stringify(body.tags ?? []),
-				invite: body.invite ?? "",
-				desc: body.desc ?? "",
-				source_repo: body.source_repo ?? "",
-				support: body.support ?? "",
-				website: body.website ?? "",
-				webhook: body.webhook ?? "",
-				donate: body.donate ?? "",
-				bg: body.bg ?? "",
-				lib: body.lib ?? "",
-				prefix: body.prefix ?? "",
-				short: body.short ?? "",
-				votes: 0,
-				approved: false,
-				badges: JSON.stringify([]),
-				promoted: false,
-				opted_coins: body.opted_coins ?? false
-			});
+			await withDb((db) =>
+				db.insert(Bots).values({
+					id: id,
+					slug: body.slug ? String(body.slug).toLowerCase() : id,
+					owners: JSON.stringify(body.owners),
+					username: botInfo.bot.username,
+					discriminator: botInfo.bot.discriminator,
+					avatar: botInfo.bot.avatar || "0",
+					servers: botInfo.bot.approximate_guild_count ?? 0,
+					tags: JSON.stringify(body.tags ?? []),
+					invite: body.invite ?? "",
+					desc: body.desc ?? "",
+					source_repo: body.source_repo ?? "",
+					support: body.support ?? "",
+					website: body.website ?? "",
+					webhook: body.webhook ?? "",
+					donate: body.donate ?? "",
+					bg: body.bg ?? "",
+					lib: body.lib ?? "",
+					prefix: body.prefix ?? "",
+					short: body.short ?? "",
+					votes: 0,
+					approved: false,
+					badges: JSON.stringify([]),
+					promoted: false,
+					opted_coins: body.opted_coins ?? false
+				})
+			);
 		} catch (e) {
 			console.error("/api/bots/[id]/new DB insert error:", e);
 			return json({ err: "db_insert_failed" }, { status: 500 });

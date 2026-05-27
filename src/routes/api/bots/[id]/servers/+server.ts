@@ -1,6 +1,6 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Bots } from "$lib/schema";
 import { eq, and } from "drizzle-orm";
 
@@ -35,14 +35,14 @@ export const POST: RequestHandler = async ({ params, request }) => {
 			return json({ err: "no_code" }, { status: 400 });
 		}
 
-		const db = getDb();
-
 		// Verify bot exists and code matches
-		const rows = await db
-			.select({ votes: Bots.votes })
-			.from(Bots)
-			.where(and(eq(Bots.code, code), eq(Bots.id, id)))
-			.limit(1);
+		const rows = await withDb((db) =>
+			db
+				.select({ votes: Bots.votes })
+				.from(Bots)
+				.where(and(eq(Bots.code, code), eq(Bots.id, id)))
+				.limit(1)
+		);
 
 		if (!rows || rows.length === 0) {
 			return json({ err: "invalid_code" }, { status: 400 });
@@ -61,10 +61,12 @@ export const POST: RequestHandler = async ({ params, request }) => {
 		}
 
 		// Persist servers count
-		await db
-			.update(Bots)
-			.set({ servers: body.count })
-			.where(and(eq(Bots.code, code), eq(Bots.id, id)));
+		await withDb((db) =>
+			db
+				.update(Bots)
+				.set({ servers: body.count })
+				.where(and(eq(Bots.code, code), eq(Bots.id, id)))
+		);
 
 		return json({ success: true }, { status: 200 });
 	} catch (err) {

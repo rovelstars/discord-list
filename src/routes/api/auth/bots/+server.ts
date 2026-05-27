@@ -2,7 +2,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
 import { env } from "$env/dynamic/private";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Bots } from "$lib/schema";
 import { inArray } from "drizzle-orm";
 
@@ -46,18 +46,18 @@ export const GET: RequestHandler = async ({ request, cookies }) => {
 		// in the original endpoint; this primarily serves to verify the token is valid.
 		await oauth.getUser(String(key));
 
-		const db = getDb();
-
 		// The old implementation searched owners for a fixed id in the example.
 		// To preserve original parity we default to that id when no owner param is supplied.
 		const ownerParam = url.searchParams.get("owner");
 		const ownersToSearch = ownerParam ? [ownerParam] : ["189759562910400512"];
 
 		// Query bots where the owners JSON array contains one of the provided owner ids.
-		const bots = await db
-			.select({ id: Bots.id, username: Bots.username })
-			.from(Bots)
-			.where(inArray(Bots.owners, ownersToSearch));
+		const bots = await withDb((db) =>
+			db
+				.select({ id: Bots.id, username: Bots.username })
+				.from(Bots)
+				.where(inArray(Bots.owners, ownersToSearch))
+		);
 
 		return json(bots, { status: 200 });
 	} catch (e) {

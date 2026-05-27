@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Bots } from "$lib/db/schema";
 import { eq, or } from "drizzle-orm";
 import SendLog from "@/bot/log";
@@ -82,19 +82,19 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		// ------------------------------------------------------------------
 		// Load the bot row - need owners + identity for the log message
 		// ------------------------------------------------------------------
-		const db = getDb();
-
-		const rows = await db
-			.select({
-				id: Bots.id,
-				username: Bots.username,
-				discriminator: Bots.discriminator,
-				avatar: Bots.avatar,
-				owners: Bots.owners
-			})
-			.from(Bots)
-			.where(or(eq(Bots.id, botId), eq(Bots.slug, botId)))
-			.limit(1);
+		const rows = await withDb((db) =>
+			db
+				.select({
+					id: Bots.id,
+					username: Bots.username,
+					discriminator: Bots.discriminator,
+					avatar: Bots.avatar,
+					owners: Bots.owners
+				})
+				.from(Bots)
+				.where(or(eq(Bots.id, botId), eq(Bots.slug, botId)))
+				.limit(1)
+		);
 
 		if (!rows || rows.length === 0) {
 			return json({ err: "no_bot_found" }, { status: 404 });
@@ -125,7 +125,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		const newCode = crypto.randomUUID();
 
 		try {
-			await db.update(Bots).set({ code: newCode }).where(eq(Bots.id, bot.id));
+			await withDb((db) => db.update(Bots).set({ code: newCode }).where(eq(Bots.id, bot.id)));
 		} catch (err) {
 			console.error("[regenerate-code] DB update failed for bot", bot.id, err);
 			return json({ err: "db_update_failed" }, { status: 500 });

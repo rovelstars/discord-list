@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Users, Servers } from "$lib/schema";
 import { eq } from "drizzle-orm";
 import SendLog from "@/bot/log";
@@ -22,8 +22,6 @@ import { recordVote } from "$lib/db/queries/referrals";
  *  - Sends a best-effort Discord log via SendLog.
  */
 export const POST: RequestHandler = async ({ request, params, cookies }) => {
-	const db = getDb();
-
 	try {
 		const url = new URL(request.url);
 		const paramKey = url.searchParams.get("key");
@@ -58,11 +56,9 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 		}
 
 		// Fetch user record
-		const userRows = await db
-			.select({ bal: Users.bal, votes: Users.votes })
-			.from(Users)
-			.where(eq(Users.id, userData.id))
-			.limit(1);
+		const userRows = await withDb((db) =>
+			db.select({ bal: Users.bal, votes: Users.votes }).from(Users).where(eq(Users.id, userData.id)).limit(1)
+		);
 
 		if (!userRows || userRows.length === 0) {
 			return json({ err: "invalid_key" }, { status: 400 });
@@ -82,18 +78,20 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 		if (!Array.isArray(votesArr)) votesArr = [];
 
 		// Fetch server record
-		const serverRows = await db
-			.select({
-				id: Servers.id,
-				name: Servers.name,
-				icon: Servers.icon,
-				slug: Servers.slug,
-				votes: Servers.votes,
-				owner: Servers.owner
-			})
-			.from(Servers)
-			.where(eq(Servers.id, id))
-			.limit(1);
+		const serverRows = await withDb((db) =>
+			db
+				.select({
+					id: Servers.id,
+					name: Servers.name,
+					icon: Servers.icon,
+					slug: Servers.slug,
+					votes: Servers.votes,
+					owner: Servers.owner
+				})
+				.from(Servers)
+				.where(eq(Servers.id, id))
+				.limit(1)
+		);
 
 		if (!serverRows || serverRows.length === 0) {
 			return json({ err: "no_server_found" }, { status: 400 });
@@ -118,11 +116,15 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 
 		// Persist
 		try {
-			await db
-				.update(Users)
-				.set({ votes: JSON.stringify(votesArr) })
-				.where(eq(Users.id, userData.id));
-			await db.update(Servers).set({ votes: newServerVotes }).where(eq(Servers.id, id));
+			await withDb((db) =>
+				db
+					.update(Users)
+					.set({ votes: JSON.stringify(votesArr) })
+					.where(eq(Users.id, userData.id))
+			);
+			await withDb((db) =>
+				db.update(Servers).set({ votes: newServerVotes }).where(eq(Servers.id, id))
+			);
 		} catch (e) {
 			console.error("[server-vote] DB update error:", e);
 			return json({ err: "db_update_failed" }, { status: 500 });

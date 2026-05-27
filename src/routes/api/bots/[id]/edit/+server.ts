@@ -2,7 +2,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Bots, Users } from "$lib/db/schema";
 import { eq, or } from "drizzle-orm";
 import SendLog from "@/bot/log";
@@ -33,8 +33,6 @@ import { env } from "$env/dynamic/private";
  *  - Sends a best-effort SendLog on successful update.
  */
 export const POST: RequestHandler = async ({ params, request, cookies }) => {
-	const db = getDb();
-
 	try {
 		const url = new URL(request.url);
 		const paramKey = url.searchParams.get("key");
@@ -69,40 +67,40 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		}
 
 		// Ensure user exists in Users table (basic parity with old behavior)
-		const userRows = await db
-			.select({ bal: Users.bal, votes: Users.votes })
-			.from(Users)
-			.where(eq(Users.id, userData.id))
-			.limit(1);
+		const userRows = await withDb((db) =>
+			db.select({ bal: Users.bal, votes: Users.votes }).from(Users).where(eq(Users.id, userData.id)).limit(1)
+		);
 
 		if (!userRows || userRows.length === 0) {
 			return json({ err: "invalid_key" }, { status: 400 });
 		}
 
 		// Fetch current bot snapshot
-		const botRows = await db
-			.select({
-				id: Bots.id,
-				slug: Bots.slug,
-				avatar: Bots.avatar,
-				username: Bots.username,
-				discriminator: Bots.discriminator,
-				short: Bots.short,
-				invite: Bots.invite,
-				bg: Bots.bg,
-				owners: Bots.owners,
-				lib: Bots.lib,
-				prefix: Bots.prefix,
-				desc: Bots.desc,
-				source_repo: Bots.source_repo,
-				support: Bots.support,
-				website: Bots.website,
-				webhook: Bots.webhook,
-				donate: Bots.donate
-			})
-			.from(Bots)
-			.where(or(eq(Bots.id, id), eq(Bots.slug, id)))
-			.limit(1);
+		const botRows = await withDb((db) =>
+			db
+				.select({
+					id: Bots.id,
+					slug: Bots.slug,
+					avatar: Bots.avatar,
+					username: Bots.username,
+					discriminator: Bots.discriminator,
+					short: Bots.short,
+					invite: Bots.invite,
+					bg: Bots.bg,
+					owners: Bots.owners,
+					lib: Bots.lib,
+					prefix: Bots.prefix,
+					desc: Bots.desc,
+					source_repo: Bots.source_repo,
+					support: Bots.support,
+					website: Bots.website,
+					webhook: Bots.webhook,
+					donate: Bots.donate
+				})
+				.from(Bots)
+				.where(or(eq(Bots.id, id), eq(Bots.slug, id)))
+				.limit(1)
+		);
 
 		const bot = botRows && botRows.length > 0 ? (botRows[0] as any) : null;
 		if (!bot) {
@@ -157,11 +155,9 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 
 		// Slug uniqueness check (if changed)
 		if (body.slug && body.slug !== bot.slug) {
-			const existing = await db
-				.select({ id: Bots.id })
-				.from(Bots)
-				.where(eq(Bots.slug, body.slug))
-				.limit(1);
+			const existing = await withDb((db) =>
+				db.select({ id: Bots.id }).from(Bots).where(eq(Bots.slug, body.slug)).limit(1)
+			);
 			if (existing && existing.length > 0) {
 				return json({ err: "slug_taken" }, { status: 400 });
 			}
@@ -241,7 +237,7 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 		};
 
 		try {
-			await db.update(Bots).set(updateValues).where(eq(Bots.id, bot.id));
+			await withDb((db) => db.update(Bots).set(updateValues).where(eq(Bots.id, bot.id)));
 		} catch (e) {
 			console.error("DB update error in /api/bots/[id]/edit:", e);
 			return json({ err: "db_update_failed" }, { status: 500 });

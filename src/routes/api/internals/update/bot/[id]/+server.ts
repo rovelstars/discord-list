@@ -1,6 +1,6 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import SendLog from "@/bot/log";
 import UserAccountFetch from "$lib/functions/user-bot";
 import getAvatarURL from "$lib/get-avatar-url";
@@ -20,7 +20,6 @@ import { env } from "$env/dynamic/private";
  */
 export const GET: RequestHandler = async ({ params }) => {
 	try {
-		const db = getDb();
 		const id = params.id;
 		if (!id) {
 			return json({ success: false, error: "missing_id" }, { status: 400 });
@@ -43,16 +42,18 @@ export const GET: RequestHandler = async ({ params }) => {
 		const removalCodes = [50010, 10002, 10013, 20026];
 		if (removalCodes.includes(Number(data.code))) {
 			// Retrieve bot info from DB to notify owners before deletion
-			const botRow = await db
-				.select({
-					id: Bots.id,
-					username: Bots.username,
-					discriminator: Bots.discriminator,
-					owners: Bots.owners
-				})
-				.from(Bots)
-				.where(eq(Bots.id, id))
-				.limit(1);
+			const botRow = await withDb((db) =>
+				db
+					.select({
+						id: Bots.id,
+						username: Bots.username,
+						discriminator: Bots.discriminator,
+						owners: Bots.owners
+					})
+					.from(Bots)
+					.where(eq(Bots.id, id))
+					.limit(1)
+			);
 
 			const bot = botRow && botRow.length > 0 ? botRow[0] : null;
 
@@ -81,7 +82,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
 			// Delete the bot record from DB (legacy behavior)
 			try {
-				await db.delete(Bots).where(eq(Bots.id, id));
+				await withDb((db) => db.delete(Bots).where(eq(Bots.id, id)));
 			} catch (e) {
 				console.error("DB delete error in internals update route:", e);
 			}
@@ -90,17 +91,19 @@ export const GET: RequestHandler = async ({ params }) => {
 		}
 
 		// Fetch current DB row for comparison
-		const botDBRows = await db
-			.select({
-				username: Bots.username,
-				discriminator: Bots.discriminator,
-				avatar: Bots.avatar,
-				servers: Bots.servers,
-				tags: Bots.tags
-			})
-			.from(Bots)
-			.where(eq(Bots.id, id))
-			.limit(1);
+		const botDBRows = await withDb((db) =>
+			db
+				.select({
+					username: Bots.username,
+					discriminator: Bots.discriminator,
+					avatar: Bots.avatar,
+					servers: Bots.servers,
+					tags: Bots.tags
+				})
+				.from(Bots)
+				.where(eq(Bots.id, id))
+				.limit(1)
+		);
 
 		const botDBData = botDBRows && botDBRows.length > 0 ? botDBRows[0] : null;
 		if (!botDBData) {
@@ -115,14 +118,16 @@ export const GET: RequestHandler = async ({ params }) => {
 
 		if (botUsernameChanged || botDiscrChanged || botAvatarChanged || modifiedBy) {
 			try {
-				await db
-					.update(Bots)
-					.set({
-						username: data.bot.username,
-						discriminator: data.bot.discriminator,
-						avatar: data.bot.avatar || "0"
-					})
-					.where(eq(Bots.id, id));
+				await withDb((db) =>
+					db
+						.update(Bots)
+						.set({
+							username: data.bot.username,
+							discriminator: data.bot.discriminator,
+							avatar: data.bot.avatar || "0"
+						})
+						.where(eq(Bots.id, id))
+				);
 			} catch (e) {
 				console.error("DB update error when syncing bot identity:", e);
 			}
@@ -152,10 +157,12 @@ export const GET: RequestHandler = async ({ params }) => {
 		// Sync servers count if changed
 		if (botDBData.servers !== data.bot.approximate_guild_count) {
 			try {
-				await db
-					.update(Bots)
-					.set({ servers: data.bot.approximate_guild_count })
-					.where(eq(Bots.id, id));
+				await withDb((db) =>
+					db
+						.update(Bots)
+						.set({ servers: data.bot.approximate_guild_count })
+						.where(eq(Bots.id, id))
+				);
 			} catch (e) {
 				console.error("DB update error when syncing servers count:", e);
 			}
@@ -166,10 +173,12 @@ export const GET: RequestHandler = async ({ params }) => {
 		if (JSON.stringify(botDBData.tags) !== JSON.stringify(data.application?.tags)) {
 			try {
 				// Store tags as serialized JSON TEXT in the portable schema.
-				await db
-					.update(Bots)
-					.set({ tags: JSON.stringify(data.application?.tags || []) })
-					.where(eq(Bots.id, id));
+				await withDb((db) =>
+					db
+						.update(Bots)
+						.set({ tags: JSON.stringify(data.application?.tags || []) })
+						.where(eq(Bots.id, id))
+				);
 			} catch (e) {
 				console.error("DB update error when syncing tags:", e);
 			}

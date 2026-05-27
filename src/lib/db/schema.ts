@@ -648,6 +648,22 @@ export const UserFingerprints = sqliteTable(
  *     The unique index key is (user_id, event_type, entity_id) for vote events.
  *     The scheduled function queries COUNT(DISTINCT entity_id) WHERE event_type='vote'.
  */
+/**
+ * PendingReindex table
+ *
+ * Queue of URLs waiting to be submitted to the IndexNow API.
+ * Populated whenever a bot, server, or emoji is created or updated.
+ * The daily scheduled reindex job flushes all rows, submits them to IndexNow,
+ * and deletes them. Using `url` as the primary key provides natural dedup:
+ * editing the same page multiple times before the cron runs produces one submission.
+ */
+export const PendingReindex = sqliteTable("PendingReindex", {
+	/** Full canonical URL, e.g. "https://discord.rovelstars.com/bots/my-bot". PK = dedup. */
+	url: text("url").primaryKey(),
+	/** ISO 8601 timestamp when the URL was first queued (for debugging/auditing). */
+	queued_at: text("queued_at").notNull()
+});
+
 export const UserActivityLog = sqliteTable("UserActivityLog", {
 	id: text("id").primaryKey(),
 	user_id: text("user_id").notNull(),

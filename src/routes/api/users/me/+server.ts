@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Users } from "$lib/db/schema";
 import { eq } from "drizzle-orm";
 import { env } from "$env/dynamic/private";
@@ -116,13 +116,9 @@ export const PATCH: RequestHandler = async ({ request, cookies }) => {
 		// ------------------------------------------------------------------
 		// Confirm user row exists
 		// ------------------------------------------------------------------
-		const db = getDb();
-
-		const rows = await db
-			.select({ id: Users.id })
-			.from(Users)
-			.where(eq(Users.id, userData.id))
-			.limit(1);
+		const rows = await withDb((db) =>
+			db.select({ id: Users.id }).from(Users).where(eq(Users.id, userData.id)).limit(1)
+		);
 
 		if (!rows || rows.length === 0) {
 			return json({ err: "user_not_found" }, { status: 404 });
@@ -132,7 +128,7 @@ export const PATCH: RequestHandler = async ({ request, cookies }) => {
 		// Write changes
 		// ------------------------------------------------------------------
 		try {
-			await db.update(Users).set(updates).where(eq(Users.id, userData.id));
+			await withDb((db) => db.update(Users).set(updates).where(eq(Users.id, userData.id)));
 		} catch (err) {
 			console.error("[PATCH /api/users/me] DB update failed:", err);
 			return json({ err: "db_update_failed" }, { status: 500 });

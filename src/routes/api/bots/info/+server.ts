@@ -1,6 +1,6 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Bots } from "$lib/schema";
 import { eq } from "drizzle-orm";
 
@@ -36,20 +36,20 @@ export const GET: RequestHandler = async ({ request, url }) => {
 			code = code.slice(7).trim();
 		}
 
-		const db = getDb();
-
-		const botRows = await db
-			.select({
-				id: Bots.id,
-				username: Bots.username,
-				short: Bots.short,
-				avatar: Bots.avatar,
-				votes: Bots.votes,
-				servers: Bots.servers,
-				added_at: Bots.added_at
-			})
-			.from(Bots)
-			.where(eq(Bots.code, String(code)));
+		const botRows = await withDb((db) =>
+			db
+				.select({
+					id: Bots.id,
+					username: Bots.username,
+					short: Bots.short,
+					avatar: Bots.avatar,
+					votes: Bots.votes,
+					servers: Bots.servers,
+					added_at: Bots.added_at
+				})
+				.from(Bots)
+				.where(eq(Bots.code, String(code)))
+		);
 
 		return json(botRows, {
 			status: 200,

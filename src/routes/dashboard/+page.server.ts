@@ -2,7 +2,6 @@ import type { PageServerLoad, Actions } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
 import { env } from "$env/dynamic/private";
-import { getDb } from "$lib/db";
 import { Users, Bots, Servers } from "$lib/db/schema";
 import { eq, and, sql, inArray, like } from "drizzle-orm";
 
@@ -46,27 +45,27 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		throw redirect(302, "/login");
 	}
 
-	const db = getDb();
-
 	// ── User row ─────────────────────────────────────────────────────────────
-	const userRows = await db
-		.select({
-			id: Users.id,
-			username: Users.username,
-			discriminator: Users.discriminator,
-			avatar: Users.avatar,
-			bio: Users.bio,
-			banner: Users.banner,
-			bal: Users.bal,
-			added_at: Users.added_at,
-			votes: Users.votes,
-			badges: Users.badges,
-			nitro: Users.nitro,
-			globalname: Users.globalname
-		})
-		.from(Users)
-		.where(eq(Users.id, discordUser.id))
-		.limit(1);
+	const userRows = await withDb((db) =>
+		db
+			.select({
+				id: Users.id,
+				username: Users.username,
+				discriminator: Users.discriminator,
+				avatar: Users.avatar,
+				bio: Users.bio,
+				banner: Users.banner,
+				bal: Users.bal,
+				added_at: Users.added_at,
+				votes: Users.votes,
+				badges: Users.badges,
+				nitro: Users.nitro,
+				globalname: Users.globalname
+			})
+			.from(Users)
+			.where(eq(Users.id, discordUser.id))
+			.limit(1)
+	);
 
 	if (!userRows || userRows.length === 0) {
 		cookies.delete("key", { path: "/" });
@@ -91,22 +90,24 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	}> = [];
 
 	try {
-		const botRows = await db
-			.select({
-				id: Bots.id,
-				slug: Bots.slug,
-				username: Bots.username,
-				discriminator: Bots.discriminator,
-				avatar: Bots.avatar,
-				short: Bots.short,
-				votes: Bots.votes,
-				servers: Bots.servers,
-				invite: Bots.invite,
-				bg: Bots.bg
-			})
-			.from(Bots)
-			.where(like(Bots.owners, `%${discordUser.id}%`))
-			.limit(50);
+		const botRows = await withDb((db) =>
+			db
+				.select({
+					id: Bots.id,
+					slug: Bots.slug,
+					username: Bots.username,
+					discriminator: Bots.discriminator,
+					avatar: Bots.avatar,
+					short: Bots.short,
+					votes: Bots.votes,
+					servers: Bots.servers,
+					invite: Bots.invite,
+					bg: Bots.bg
+				})
+				.from(Bots)
+				.where(like(Bots.owners, `%${discordUser.id}%`))
+				.limit(50)
+		);
 
 		ownedBots = botRows.map((b) => ({
 			id: String(b.id),
@@ -155,10 +156,12 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		// Persist the pruned list back to the DB if anything was removed
 		if (expiredCount > 0) {
 			try {
-				await db
-					.update(Users)
-					.set({ votes: JSON.stringify(voteHistory) as any })
-					.where(eq(Users.id, discordUser.id));
+				await withDb((db) =>
+					db
+						.update(Users)
+						.set({ votes: JSON.stringify(voteHistory) as any })
+						.where(eq(Users.id, discordUser.id))
+				);
 			} catch {
 				// non-fatal - stale votes will just be pruned again next load
 			}
@@ -183,15 +186,17 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		botVoteIds.length > 0
 			? (async () => {
 					try {
-						const botRows = await db
-							.select({
-								id: Bots.id,
-								username: Bots.username,
-								slug: Bots.slug,
-								avatar: Bots.avatar
-							})
-							.from(Bots)
-							.where(inArray(Bots.id, botVoteIds));
+						const botRows = await withDb((db) =>
+							db
+								.select({
+									id: Bots.id,
+									username: Bots.username,
+									slug: Bots.slug,
+									avatar: Bots.avatar
+								})
+								.from(Bots)
+								.where(inArray(Bots.id, botVoteIds))
+						);
 						for (const b of botRows) {
 							votedBotNames[b.id] = {
 								username: b.username,
@@ -208,15 +213,17 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		serverVoteIds.length > 0
 			? (async () => {
 					try {
-						const serverRows = await db
-							.select({
-								id: Servers.id,
-								name: Servers.name,
-								slug: Servers.slug,
-								icon: Servers.icon
-							})
-							.from(Servers)
-							.where(inArray(Servers.id, serverVoteIds));
+						const serverRows = await withDb((db) =>
+							db
+								.select({
+									id: Servers.id,
+									name: Servers.name,
+									slug: Servers.slug,
+									icon: Servers.icon
+								})
+								.from(Servers)
+								.where(inArray(Servers.id, serverVoteIds))
+						);
 						for (const s of serverRows) {
 							votedServerNames[s.id] = {
 								name: s.name,
@@ -422,10 +429,12 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		if (wasReferredBy) profileIds.add(wasReferredBy.referrer_id);
 
 		if (profileIds.size > 0) {
-			const profileRows = await db
-				.select({ id: Users.id, username: Users.username, avatar: Users.avatar })
-				.from(Users)
-				.where(inArray(Users.id, [...profileIds]));
+			const profileRows = await withDb((db) =>
+				db
+					.select({ id: Users.id, username: Users.username, avatar: Users.avatar })
+					.from(Users)
+					.where(inArray(Users.id, [...profileIds]))
+			);
 
 			const profileMap = new Map<string, UserProfile>();
 			for (const row of profileRows) {

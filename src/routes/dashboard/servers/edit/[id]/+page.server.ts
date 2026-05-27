@@ -2,7 +2,7 @@ import type { PageServerLoad } from "./$types";
 import { redirect, error } from "@sveltejs/kit";
 import DiscordOauth2 from "discord-oauth2";
 import { env } from "$env/dynamic/private";
-import { getDb } from "$lib/db";
+import { withDb } from "$lib/db";
 import { Servers } from "$lib/db/schema";
 import { eq, or } from "drizzle-orm";
 
@@ -36,24 +36,24 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 		throw error(400, "Missing server ID");
 	}
 
-	const db = getDb();
-
-	const rows = await db
-		.select({
-			id: Servers.id,
-			name: Servers.name,
-			short: Servers.short,
-			desc: Servers.desc,
-			icon: Servers.icon,
-			owner: Servers.owner,
-			slug: Servers.slug,
-			member_count: Servers.member_count,
-			votes: Servers.votes,
-			added_at: Servers.added_at
-		})
-		.from(Servers)
-		.where(or(eq(Servers.id, idOrSlug), eq(Servers.slug, idOrSlug)))
-		.limit(1);
+	const rows = await withDb((db) =>
+		db
+			.select({
+				id: Servers.id,
+				name: Servers.name,
+				short: Servers.short,
+				desc: Servers.desc,
+				icon: Servers.icon,
+				owner: Servers.owner,
+				slug: Servers.slug,
+				member_count: Servers.member_count,
+				votes: Servers.votes,
+				added_at: Servers.added_at
+			})
+			.from(Servers)
+			.where(or(eq(Servers.id, idOrSlug), eq(Servers.slug, idOrSlug)))
+			.limit(1)
+	);
 
 	const server = rows && rows.length > 0 ? rows[0] : null;
 
