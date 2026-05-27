@@ -3,6 +3,7 @@
 	import SEO from "$lib/components/SEO.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
 	import AdCardUnit from "$lib/components/AdCardUnit.svelte";
+	import { pickAdSlots } from "$lib/pick-ad-slots";
 	import { CATEGORIES } from "$lib/categories";
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
@@ -26,6 +27,12 @@
 	// Read directly from `data` so every reactive expression sees the latest
 	// server payload after client-side navigations - no stale local copies.
 	$: ({ bots, q, limit, offset, newFlag, trending, lucky, category, isSearching } = data);
+
+	$: botAdSlots = pickAdSlots(bots.length, 8);
+	$: topBotAdSlots = pickAdSlots((data.topBots ?? []).length, 8);
+	$: musicBotAdSlots = pickAdSlots((data.musicBots ?? []).length, 8);
+	$: gameBotAdSlots = pickAdSlots((data.gameBots ?? []).length, 8);
+	$: modBotAdSlots = pickAdSlots((data.modBots ?? []).length, 8);
 
 	$: prevOffset = Math.max(0, offset - limit);
 	$: nextOffset = offset + limit;
@@ -458,7 +465,7 @@
 			<div class="flex flex-wrap justify-center gap-4 pt-2">
 				{#each bots as bot, i}
 					<BotCard {bot} edit={false} />
-					{#if (i + 1) % 8 === 0 && i < bots.length - 1}
+					{#if botAdSlots.has(i)}
 						<AdCardUnit />
 					{/if}
 				{/each}
@@ -560,7 +567,7 @@
 				<div class="flex flex-wrap justify-center gap-4 pt-2">
 					{#each data.topBots as bot, i}
 						<BotCard {bot} edit={false} />
-						{#if (i + 1) % 8 === 0 && i < data.topBots.length - 1}
+						{#if topBotAdSlots.has(i)}
 							<AdCardUnit />
 						{/if}
 					{/each}
@@ -627,7 +634,7 @@
 				<div class="flex flex-wrap justify-center gap-4 pt-2">
 					{#each data.musicBots as bot, i}
 						<BotCard {bot} edit={false} />
-						{#if (i + 1) % 8 === 0 && i < data.musicBots.length - 1}
+						{#if musicBotAdSlots.has(i)}
 							<AdCardUnit />
 						{/if}
 					{/each}
@@ -673,7 +680,7 @@
 				<div class="flex flex-wrap justify-center gap-4 pt-2">
 					{#each data.gameBots as bot, i}
 						<BotCard {bot} edit={false} />
-						{#if (i + 1) % 8 === 0 && i < data.gameBots.length - 1}
+						{#if gameBotAdSlots.has(i)}
 							<AdCardUnit />
 						{/if}
 					{/each}
@@ -726,7 +733,7 @@
 				<div class="flex flex-wrap justify-center gap-4 pt-2">
 					{#each data.modBots as bot, i}
 						<BotCard {bot} edit={false} />
-						{#if (i + 1) % 8 === 0 && i < data.modBots.length - 1}
+						{#if modBotAdSlots.has(i)}
 							<AdCardUnit />
 						{/if}
 					{/each}

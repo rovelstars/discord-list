@@ -2,7 +2,7 @@
 	import SEO from "$lib/components/SEO.svelte";
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
-	import AdCardUnit from "$lib/components/AdCardUnit.svelte";
+	import { pickAdSlots } from "$lib/pick-ad-slots";
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
 
@@ -28,6 +28,8 @@
 	};
 
 	$: ({ emojis, total, page: currentPage, totalPages, q, animated, guildId, sort } = data);
+
+	$: emojiAdSlots = pickAdSlots(emojis.length, 16);
 
 	// Local filter state (mirrors URL params)
 	let searchInput = q ?? "";
@@ -244,7 +246,7 @@
 		<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
 			{#each emojis as emoji, i (emoji.id)}
 				<EmojiCard {emoji} />
-				{#if (i + 1) % 16 === 0 && i < emojis.length - 1}
+				{#if emojiAdSlots.has(i)}
 					<div class="col-span-full">
 						<AdUnit label={false} />
 					</div>

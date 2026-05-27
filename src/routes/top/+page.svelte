@@ -2,6 +2,7 @@
 	import SEO from "$lib/components/SEO.svelte";
 	import BotCard from "$lib/components/BotCard.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
+	import { pickAdSlots } from "$lib/pick-ad-slots";
 	import getAvatarURL from "$lib/get-avatar-url";
 
 	export let data: {
@@ -24,6 +25,7 @@
 
 	// Reactive - stays fresh after client-side navigations
 	$: ({ bots } = data);
+	$: topAdSlots = pickAdSlots(bots.length, 10);
 
 	const currentYear = new Date().getFullYear();
 
@@ -135,7 +137,7 @@
 			</div>
 
 			<!-- ── Rows ── -->
-			{#each bots as bot (bot.id)}
+			{#each bots as bot, i (bot.id)}
 				<!--
 					Desktop: 5-column grid  (sm+)
 					Mobile:  2-column grid - rank+avatar+name left, stats+action right
@@ -271,6 +273,11 @@
 						</a>
 					</div>
 				</div>
+				{#if topAdSlots.has(i)}
+					<div class="border-b border-border px-4 py-3">
+						<AdUnit label={false} />
+					</div>
+				{/if}
 			{/each}
 		</div>
 

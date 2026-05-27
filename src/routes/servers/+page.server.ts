@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 
 	let topServersPromise: Promise<any[]> = Promise.resolve([]);
 	if (!isSearching) {
-		topServersPromise = getTopServers(12);
+		topServersPromise = getTopServers(11);
 	}
 
 	const [servers, topServers] = await Promise.all([serversPromise, topServersPromise]);

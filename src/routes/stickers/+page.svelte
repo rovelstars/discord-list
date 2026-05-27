@@ -2,7 +2,7 @@
 	import SEO from "$lib/components/SEO.svelte";
 	import StickerCard from "$lib/components/StickerCard.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
-	import AdCardUnit from "$lib/components/AdCardUnit.svelte";
+	import { pickAdSlots } from "$lib/pick-ad-slots";
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
 
@@ -35,6 +35,8 @@
 	};
 
 	$: ({ stickers, total, page: currentPage, totalPages, q, animated, guildId, sort } = data);
+
+	$: stickerAdSlots = pickAdSlots(stickers.length, 16);
 
 	let searchInput = q ?? "";
 	let animatedFilter: "all" | "animated" | "static" =
@@ -251,7 +253,7 @@
 		<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
 			{#each stickers as sticker, i (sticker.id)}
 				<StickerCard {sticker} resolvedTags={sticker.resolvedTags} />
-				{#if (i + 1) % 16 === 0 && i < stickers.length - 1}
+				{#if stickerAdSlots.has(i)}
 					<div class="col-span-full">
 						<AdUnit label={false} />
 					</div>

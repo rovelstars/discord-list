@@ -30,10 +30,10 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 	let modBotsPromise: Promise<any[]> = Promise.resolve([]);
 
 	if (!isSearching) {
-		topBotsPromise = getTopBots(10);
-		musicBotsPromise = getMusicBots(10);
-		gameBotsPromise = getGameBots(10);
-		modBotsPromise = getModBots(10);
+		topBotsPromise = getTopBots(9);
+		musicBotsPromise = getMusicBots(9);
+		gameBotsPromise = getGameBots(9);
+		modBotsPromise = getModBots(9);
 	}
 
 	const [bots, topBots, musicBots, gameBots, modBots] = await Promise.all([
