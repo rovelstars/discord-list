@@ -15,8 +15,8 @@
  * Keep this file minimal - implementation details live in their own modules.
  */
 
-import { getClient, getDb, ping, withDb } from "./index";
-export { getClient, getDb, ping, withDb } from "./index";
+import { getClient, getDb, ping, withDb, isTransientError } from "./index";
+export { getClient, getDb, ping, withDb, isTransientError } from "./index";
 export type { DrizzleDb } from "./index";
 export * from "./schema";
 export * from "./queries/helpers";

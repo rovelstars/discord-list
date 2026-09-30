@@ -44,6 +44,7 @@
 </script>
 
 <script lang="ts">
+	import { onMount, onDestroy } from "svelte";
 	import getAvatarURL from "$lib/get-avatar-url";
 	// ── Reaction emoji display map ────────────────────────────────────────────
 
@@ -203,6 +204,46 @@
 		const rest = tree.filter((c) => !isOwner(c.user_id));
 		return [...pinned, ...rest];
 	})();
+
+	// ── Progressive rendering ─────────────────────────────────────────────
+	// Only the first page of roots renders up front; an IntersectionObserver
+	// on the sentinel below grows the window as the user scrolls. Parity-safe:
+	// SSR and the first client paint render the same initial slice.
+	const ROOTS_PER_PAGE = 20;
+	let shownRoots = ROOTS_PER_PAGE;
+	$: visibleRoots = sortedTree.slice(0, shownRoots);
+
+	// Replies render collapsed past 3 per thread; expanding is per-comment.
+	let expandedReplies = new Set<string>();
+	function visibleRepliesFor(c: Comment): Comment[] {
+		const replies = c.replies ?? [];
+		if (expandedReplies.has(c.id) || replies.length <= 3) return replies;
+		return replies.slice(0, 3);
+	}
+	function toggleReplies(id: string) {
+		const next = new Set(expandedReplies);
+		if (next.has(id)) next.delete(id);
+		else next.add(id);
+		expandedReplies = next;
+	}
+
+	let sentinel: HTMLElement | null = null;
+	let observer: IntersectionObserver | null = null;
+	onMount(() => {
+		if (!sentinel || typeof IntersectionObserver === "undefined") return;
+		observer = new IntersectionObserver(
+			(entries) => {
+				for (const e of entries) {
+					if (e.isIntersecting) {
+						shownRoots = Math.min(shownRoots + ROOTS_PER_PAGE, sortedTree.length);
+					}
+				}
+			},
+			{ rootMargin: "600px 0px" }
+		);
+		observer.observe(sentinel);
+	});
+	onDestroy(() => observer?.disconnect());
 
 	// ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -749,7 +790,7 @@
 		</div>
 	{:else}
 		<ol class="space-y-5 list-none" aria-label="Reviews list">
-			{#each sortedTree as comment (comment.id)}
+			{#each visibleRoots as comment (comment.id)}
 				<li>
 					<!-- ── Top-level comment card ──────────────────────────────── -->
 					<div
@@ -1163,7 +1204,7 @@
 								<!-- Existing replies -->
 								{#if comment.replies && comment.replies.length > 0}
 									<ol class="list-none flex flex-col gap-2 p-3" aria-label="Replies">
-										{#each comment.replies as reply (reply.id)}
+										{#each visibleRepliesFor(comment) as reply (reply.id)}
 											<li
 												class="flex items-start gap-3 px-3 py-3 rounded-lg bg-muted/30 border-l-2
 												{isOwner(reply.user_id) ? 'border-primary/60 bg-primary/5' : 'border-border/60'}"
@@ -1442,6 +1483,18 @@
 											</li>
 										{/each}
 									</ol>
+									{#if (comment.replies?.length ?? 0) > 3}
+										<div class="px-3 pb-2">
+											<button
+												on:click={() => toggleReplies(comment.id)}
+												class="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+											>
+												{expandedReplies.has(comment.id)
+													? "Show fewer replies"
+													: `Show ${(comment.replies?.length ?? 0) - 3} more ${(comment.replies?.length ?? 0) - 3 === 1 ? "reply" : "replies"}`}
+											</button>
+										</div>
+									{/if}
 								{/if}
 
 								<!-- Reply input box -->
@@ -1640,5 +1693,17 @@
 				</li>
 			{/each}
 		</ol>
+		<!-- IntersectionObserver sentinel: auto-grows the rendered root window
+		     as the user scrolls; the button covers no-JS / no-IO fallback. -->
+		<div bind:this={sentinel} class="pt-4 text-center">
+			{#if shownRoots < sortedTree.length}
+				<button
+					on:click={() => (shownRoots = Math.min(shownRoots + ROOTS_PER_PAGE, sortedTree.length))}
+					class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+				>
+					Show more reviews ({sortedTree.length - shownRoots} remaining)
+				</button>
+			{/if}
+		</div>
 	{/if}
 </section>

@@ -8,6 +8,7 @@
 	import SEO from "$lib/components/SEO.svelte";
 	import BotComments from "$lib/components/BotComments.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
+	import SponsoredSlot from "$lib/components/SponsoredSlot.svelte";
 	import { authUser } from "$lib/auth";
 	import {
 		SITE_URL as JSONLD_SITE_URL,
@@ -43,6 +44,7 @@
 		descHtml: string | null;
 		randombots: Array<any>;
 		comments: Array<any>;
+		promotedBots: Array<any>;
 		relatedServers: Array<{
 			id: string;
 			name: string;
@@ -75,7 +77,7 @@
 
 	// Reactive destructuring - re-runs whenever SvelteKit replaces `data` after
 	// a client-side navigation to a different bot ID.
-	$: ({ bot, randombots, comments, relatedServers, owners, supportServer } = data);
+	$: ({ bot, randombots, comments, relatedServers, owners, supportServer, promotedBots } = data);
 
 	// Build the support server's icon URL (Discord CDN) for the card.
 	$: supportIconUrl = (() => {
@@ -489,7 +491,8 @@
 					<img
 						use:avatarColorThiefAction
 						src={avatarSrc}
-						loading="lazy"
+						loading="eager"
+						fetchpriority="high"
 						crossorigin="anonymous"
 						class="w-36 h-36 rounded-full bg-card border-card border-8 mt-[-5.3rem] mb-4 shadow-xl z-10"
 						alt="{bot.username}'s Avatar"
@@ -1402,6 +1405,15 @@
 		{/if}
 
 		<!-- You Might Also Like - mobile only (below the card, visible only on < xl) -->
+		{#if promotedBots && promotedBots.length > 0}
+			<div class="mt-10 xl:hidden">
+				<SponsoredSlot>
+					{#each promotedBots as rbot (rbot.id)}
+						<BotCard bot={rbot} edit={false} />
+					{/each}
+				</SponsoredSlot>
+			</div>
+		{/if}
 		{#if randombots && randombots.length > 0}
 			<div class="mt-10 xl:hidden">
 				<h3 class="font-heading text-3xl font-bold mb-2 flex items-center gap-2">
@@ -1425,6 +1437,14 @@
 		class="hidden xl:flex flex-col gap-4 w-104 shrink-0 sticky top-28 self-start max-h-[calc(100vh-8rem)] overflow-y-auto pb-4 pr-1"
 	>
 		<AdUnit />
+
+		{#if promotedBots && promotedBots.length > 0}
+			<SponsoredSlot>
+				{#each promotedBots as rbot (rbot.id)}
+					<BotCard bot={rbot} edit={false} />
+				{/each}
+			</SponsoredSlot>
+		{/if}
 
 		{#if randombots && randombots.length > 0}
 			<div class="flex items-center gap-2 px-1">

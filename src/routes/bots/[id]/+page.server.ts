@@ -6,6 +6,7 @@ import {
 	getCommentsByBotId,
 	getServersByBotId,
 	getServerByIdOrSlug,
+	getPromotedBots,
 	setBotSupportGuildId
 } from "$lib/db/queries";
 import { resolveOwners } from "$lib/server/resolve-owners";
@@ -41,11 +42,15 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 		throw redirect(302, "/404");
 	}
 
-	const [randombots, comments, relatedServers, owners] = await Promise.all([
+	const [randombots, comments, relatedServers, owners, promotedBots] = await Promise.all([
 		getRandomBots(10),
 		getCommentsByBotId(bot.id),
 		getServersByBotId(bot.id, 8),
-		resolveOwners(bot.owners ?? [])
+		resolveOwners(bot.owners ?? []),
+		// Sponsored sidebar slot (v1, manual). Never the bot being viewed.
+		getPromotedBots(2)
+			.then((list) => list.filter((b) => b.id !== bot.id).slice(0, 1))
+			.catch(() => [])
 	]);
 
 	// ── Support-server integration ──────────────────────────────────────────
@@ -134,6 +139,7 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 		comments,
 		relatedServers,
 		owners,
-		supportServer
+		supportServer,
+		promotedBots
 	};
 };

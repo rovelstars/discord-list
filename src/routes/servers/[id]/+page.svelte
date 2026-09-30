@@ -10,6 +10,7 @@
 	import AdUnit from "$lib/components/AdUnit.svelte";
 	import getAvatarURL from "$lib/get-avatar-url";
 	import { authUser } from "$lib/auth";
+	import { page } from "$app/stores";
 
 	export let data: {
 		server: {
@@ -106,6 +107,9 @@
 	// Emoji display limit on server page (show first N, link to full list)
 	const EMOJI_PAGE_LIMIT = 32;
 	$: visibleEmojis = emojis.slice(0, EMOJI_PAGE_LIMIT);
+	// Hoisted so the template doesn't re-run .filter() 6× per render.
+	$: staticEmojis = visibleEmojis.filter((e) => !e.a);
+	$: animatedEmojis = visibleEmojis.filter((e) => e.a);
 
 	// Sticker display limit on server page
 	const STICKER_PAGE_LIMIT = 32;
@@ -362,7 +366,13 @@
 	});
 </script>
 
-<SEO title={seoTitle} description={seoDescription} image={iconUrl} imageSmall={iconUrl} />
+<SEO
+	title={seoTitle}
+	description={seoDescription}
+	image={iconUrl}
+	imageSmall={iconUrl}
+	canonical={`${$page.url.origin}${$page.url.pathname}`}
+/>
 
 <div class="flex flex-col xl:flex-row xl:items-start gap-6 p-4">
 	<!-- ── Main content column ─────────────────────────────────────────── -->
@@ -1107,30 +1117,30 @@
 
 				<div class="p-4">
 					<!-- Animated / Static split tabs - computed in script -->
-					{#if visibleEmojis.filter((e) => e.a).length > 0 && visibleEmojis.filter((e) => !e.a).length > 0}
+					{#if animatedEmojis.length > 0 && staticEmojis.length > 0}
 						<!-- Mixed: show both sections -->
 						<p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-							Static ({visibleEmojis.filter((e) => !e.a).length}{emojiCount > EMOJI_PAGE_LIMIT
+							Static ({staticEmojis.length}{emojiCount > EMOJI_PAGE_LIMIT
 								? "+"
 								: ""})
 						</p>
 						<div
 							class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-8 gap-2 mb-5"
 						>
-							{#each visibleEmojis.filter((e) => !e.a) as emoji (emoji.id)}
+							{#each staticEmojis as emoji (emoji.id)}
 								<EmojiCard {emoji} />
 							{/each}
 						</div>
 
 						<p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-							Animated ({visibleEmojis.filter((e) => e.a).length}{emojiCount > EMOJI_PAGE_LIMIT
+							Animated ({animatedEmojis.length}{emojiCount > EMOJI_PAGE_LIMIT
 								? "+"
 								: ""})
 						</p>
 						<div
 							class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-8 gap-2"
 						>
-							{#each visibleEmojis.filter((e) => e.a) as emoji (emoji.id)}
+							{#each animatedEmojis as emoji (emoji.id)}
 								<EmojiCard {emoji} />
 							{/each}
 						</div>

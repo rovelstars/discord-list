@@ -80,9 +80,15 @@
 			: "Discord Emojis · Rovel Discord List";
 
 	$: seoDescription = `Browse ${total.toLocaleString()} custom Discord emojis${q ? ` matching "${q}"` : ""}. Download high-quality animated and static emojis for your Discord server.`;
+
+	// Canonical: clean listing path. Search (?q), facet (?animated / ?guild /
+	// ?sort) and paginated (?page) views consolidate here and are noindexed.
+	$: canonicalUrl = `${$page.url.origin}${$page.url.pathname}`;
+	$: noindexPage =
+		!!q || animated !== null || !!guildId || sort !== "newest" || currentPage > 1;
 </script>
 
-<SEO title={seoTitle} description={seoDescription} />
+<SEO title={seoTitle} description={seoDescription} canonical={canonicalUrl} noindex={noindexPage} />
 
 <div class="max-w-7xl mx-auto px-4 py-8">
 	<!-- Header -->

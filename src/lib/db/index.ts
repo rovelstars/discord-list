@@ -64,7 +64,7 @@ function resetSingletons() {
  * { cause })`, so we walk the Error.cause chain. HttpServerError also carries
  * a numeric `.status`, which we check directly (429 + 5xx = transient).
  */
-function isTransientError(err: unknown): boolean {
+export function isTransientError(err: unknown): boolean {
 	const seen = new Set<unknown>();
 	let cur: unknown = err;
 	while (cur && !seen.has(cur)) {

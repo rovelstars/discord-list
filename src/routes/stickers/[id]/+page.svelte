@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SEO from "$lib/components/SEO.svelte";
 	import StickerCard from "$lib/components/StickerCard.svelte";
+	import { page } from "$app/stores";
 
 	import {
 		getStickerUrl,
@@ -199,7 +200,13 @@
 		: `Download the "${sticker.name}" ${formatLabel} Discord custom sticker. Downloaded ${sticker.dc.toLocaleString()} times.`;
 </script>
 
-<SEO title={seoTitle} description={seoDescription} image={previewUrl} imageSmall={previewUrl} />
+<SEO
+	title={seoTitle}
+	description={seoDescription}
+	image={previewUrl}
+	imageSmall={previewUrl}
+	canonical={`${$page.url.origin}${$page.url.pathname}`}
+/>
 
 <div class="max-w-5xl mx-auto px-4 py-8">
 	<!-- Breadcrumb -->

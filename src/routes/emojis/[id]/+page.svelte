@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SEO from "$lib/components/SEO.svelte";
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
+	import { page } from "$app/stores";
 
 	export let data: {
 		emoji: {
@@ -167,7 +168,13 @@
 		: `Download the "${emoji.name}" (${emoji.code}) ${emoji.a ? "animated GIF" : "PNG"} Discord custom emoji. Downloaded ${emoji.dc.toLocaleString()} times.`;
 </script>
 
-<SEO title={seoTitle} description={seoDescription} image={previewUrl} imageSmall={previewUrl} />
+<SEO
+	title={seoTitle}
+	description={seoDescription}
+	image={previewUrl}
+	imageSmall={previewUrl}
+	canonical={`${$page.url.origin}${$page.url.pathname}`}
+/>
 
 <div class="max-w-5xl mx-auto px-4 py-8">
 	<!-- Breadcrumb -->

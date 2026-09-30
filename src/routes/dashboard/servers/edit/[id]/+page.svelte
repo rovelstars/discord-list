@@ -1,8 +1,32 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
+	import { onDestroy } from "svelte";
 	import { Marked } from "marked";
 	import { markedHighlight } from "marked-highlight";
-	import hljs from "highlight.js";
+	import hljs from "highlight.js/lib/core";
+	import javascript from "highlight.js/lib/languages/javascript";
+	import typescript from "highlight.js/lib/languages/typescript";
+	import python from "highlight.js/lib/languages/python";
+	import java from "highlight.js/lib/languages/java";
+	import bash from "highlight.js/lib/languages/bash";
+	import json from "highlight.js/lib/languages/json";
+	import xml from "highlight.js/lib/languages/xml";
+	import plaintext from "highlight.js/lib/languages/plaintext";
+
+	// Register only the languages we highlight (keeps the ~1MB full bundle
+	// out of the dashboard edit-page chunk).
+	for (const [name, lang] of Object.entries({
+		javascript,
+		typescript,
+		python,
+		java,
+		bash,
+		json,
+		xml,
+		plaintext
+	} as Record<string, any>)) {
+		hljs.registerLanguage(name, lang);
+	}
 	import Input from "$lib/components/ui/Input.svelte";
 	import Label from "$lib/components/ui/Label.svelte";
 	import Textarea from "$lib/components/ui/textarea/Textarea.svelte";
@@ -161,8 +185,32 @@
 		return `https://cdn.discordapp.com/icons/${server.id}/${server.icon}.webp?size=256`;
 	})();
 
-	// ── Live preview ───────────────────────────────────────────────────────────
-	$: descHtml = renderMarkdown(desc);
+	// ── Live preview: re-render markdown only on the preview tab, debounced ──
+	// Previously `$: descHtml = renderMarkdown(desc)` re-parsed + re-highlighted
+	// on every keystroke while typing. Now the expensive render only runs when
+	// the preview tab is visible, 220ms after the last edit.
+	let descHtml = "";
+	let descTimer: ReturnType<typeof setTimeout> | null = null;
+	$: {
+		const _desc = desc;
+		const _tab = activeTab;
+		if (_tab !== "preview") {
+			if (descTimer) {
+				clearTimeout(descTimer);
+				descTimer = null;
+			}
+		} else {
+			if (descTimer) clearTimeout(descTimer);
+			descTimer = setTimeout(() => {
+				descHtml = renderMarkdown(_desc);
+				descTimer = null;
+			}, 220);
+		}
+	}
+
+	onDestroy(() => {
+		if (descTimer) clearTimeout(descTimer);
+	});
 
 	// ── Character counters ─────────────────────────────────────────────────────
 	$: shortLen = short.length;

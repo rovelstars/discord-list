@@ -249,6 +249,7 @@ export const GET: RequestHandler = async (event) => {
 			await joinServer({
 				oauth,
 				token: tokenData.access_token,
+				userId: userData.id,
 				env: {
 					DISCORD_GUILD_ID: DISCORD_GUILD_ID || "",
 					DISCORD_BOT_ID: DISCORD_BOT_ID || "",

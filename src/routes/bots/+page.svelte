@@ -3,6 +3,7 @@
 	import SEO from "$lib/components/SEO.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
 	import AdCardUnit from "$lib/components/AdCardUnit.svelte";
+	import SponsoredSlot from "$lib/components/SponsoredSlot.svelte";
 	import { pickAdSlots } from "$lib/pick-ad-slots";
 	import { CATEGORIES } from "$lib/categories";
 	import { goto } from "$app/navigation";
@@ -22,6 +23,7 @@
 		musicBots: Array<any>;
 		gameBots: Array<any>;
 		modBots: Array<any>;
+		promotedBots: Array<any>;
 	};
 
 	// Read directly from `data` so every reactive expression sees the latest
@@ -139,21 +141,15 @@
 		return null; // landing - no sub-heading needed
 	})();
 
-	// Canonical URL: "lucky" is emitted as a bare presence flag (no `=`) so
-	// the robots.txt `Disallow: /*?lucky` rule and the server-side redirect in
-	// hooks.server.ts (which fires on any `lucky=<value>`) don't clash with
-	// our own canonical tag.
-	$: canonicalUrl = (() => {
-		const hasLucky = $page.url.searchParams.has("lucky");
-		const preserved = new URLSearchParams();
-		for (const [key, value] of $page.url.searchParams.entries()) {
-			if (key !== "lucky") preserved.set(key, value);
-		}
-		const qs = preserved.toString();
-		const base = `${$page.url.origin}${$page.url.pathname}`;
-		if (hasLucky) return qs ? `${base}?${qs}&lucky` : `${base}?lucky`;
-		return qs ? `${base}?${qs}` : base;
-	})();
+	// Canonical URL: always the clean listing path (origin + pathname).
+	// Filtered (?q), faceted (?new / ?trending / ?category / ?lucky),
+	// paginated (?offset) and non-default ?limit views all consolidate
+	// on the bare /bots URL and are marked noindex below.
+	$: canonicalUrl = `${$page.url.origin}${$page.url.pathname}`;
+
+	// Anything but the bare landing view stays out of the index.
+	$: noindexPage =
+		data.lucky || data.isSearching || data.offset > 0 || data.limit !== 20;
 </script>
 
 <SEO
@@ -161,7 +157,7 @@
 	description={seoDesc}
 	imageSmall="/assets/img/bot/logo-512.png"
 	canonical={canonicalUrl}
-	noindex={data.lucky}
+	noindex={noindexPage}
 />
 
 <!-- ═══════════════════════════════════════════════════════════════════════
@@ -429,6 +425,15 @@
 ════════════════════════════════════════════════════════════════════════ -->
 {#if data.isSearching}
 	<section class="px-4 pb-16">
+		{#if data.promotedBots && data.promotedBots.length > 0}
+			<div class="max-w-5xl mx-auto pt-2 pb-6">
+				<SponsoredSlot>
+					{#each data.promotedBots.slice(0, 2) as bot (bot.id)}
+						<BotCard {bot} edit={false} />
+					{/each}
+				</SponsoredSlot>
+			</div>
+		{/if}
 		{#if bots.length === 0}
 			<div class="py-20 text-center">
 				<div class="text-5xl mb-4" aria-hidden="true">🤖</div>
@@ -523,6 +528,17 @@
 ════════════════════════════════════════════════════════════════════════ -->
 {:else}
 	<div class="pb-16">
+		{#if data.promotedBots && data.promotedBots.length > 0}
+			<div class="mt-10 px-4">
+				<div class="max-w-5xl mx-auto">
+					<SponsoredSlot>
+						{#each data.promotedBots.slice(0, 2) as bot (bot.id)}
+							<BotCard {bot} edit={false} />
+						{/each}
+					</SponsoredSlot>
+				</div>
+			</div>
+		{/if}
 		<!-- ── Best Bots of the Month ─────────────────────────────────── -->
 		<section class="mt-10 px-4">
 			<!-- topBots read directly from data to stay reactive after client-side nav -->

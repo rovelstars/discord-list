@@ -6,7 +6,9 @@
 	import StickerCard from "$lib/components/StickerCard.svelte";
 	import SEO from "$lib/components/SEO.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
+	import SponsoredSlot from "$lib/components/SponsoredSlot.svelte";
 	import { websiteSchema } from "$lib/jsonld";
+	import { page } from "$app/stores";
 
 	export let data: any;
 
@@ -14,6 +16,8 @@
 		topbotsdata,
 		allBotsForBg,
 		topServersData,
+		promotedBots = [],
+		promotedServers = [],
 		topEmojis = [],
 		newestEmojis = [],
 		topStickers = [],
@@ -118,6 +122,10 @@
 
 	onMount(() => {
 		letters = buildLetters(currentWord, "idle");
+		// Respect reduced-motion: keep the first word static, no cycling timer.
+		if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+			return;
+		}
 		intervalId = setInterval(cycleWord, 2800);
 	});
 
@@ -131,6 +139,7 @@
 	description="Discover the next Discord bot, server, sticker, emoji, or friend right here. The best Discord discovery platform."
 	imageSmall="/assets/img/bot/logo-512.png"
 	noSuffix={true}
+	canonical="{$page.url.origin}{$page.url.pathname}"
 	jsonLd={websiteSchema()}
 />
 
@@ -292,6 +301,20 @@
 	</div>
 	<!-- ── Below-fold: featured sections ──────────────────────────────────── -->
 	<div class="relative z-20 pb-24 bg-background">
+		{#if (promotedBots && promotedBots.length > 0) || (promotedServers && promotedServers.length > 0)}
+			<section class="pt-16 px-4" aria-label="Sponsored">
+				<div class="max-w-7xl mx-auto">
+					<SponsoredSlot>
+						{#each (promotedBots ?? []).slice(0, 1) as bot (bot.id)}
+							<BotCard {bot} edit={false} />
+						{/each}
+						{#each (promotedServers ?? []).slice(0, 1) as server (server.id)}
+							<ServerCard {server} edit={false} />
+						{/each}
+					</SponsoredSlot>
+				</div>
+			</section>
+		{/if}
 		<!-- Section: Featured Bots -->
 		{#if topbotsdata && topbotsdata.length > 0}
 			<section class="pt-16 px-4">
@@ -1050,5 +1073,25 @@
 	.letter-char.falling-in {
 		animation: fall-in 300ms cubic-bezier(0, 0, 0.2, 1) both;
 		animation-delay: var(--delay);
+	}
+
+	/* ── Reduced motion: static background + static headline ─────────────── */
+	@media (prefers-reduced-motion: reduce) {
+		.row-scroll-left,
+		.row-scroll-right {
+			animation: none;
+			will-change: auto;
+		}
+
+		.bg-row {
+			will-change: auto;
+		}
+
+		.letter-char,
+		.letter-char.falling-out,
+		.letter-char.falling-in {
+			animation: none;
+			will-change: auto;
+		}
 	}
 </style>

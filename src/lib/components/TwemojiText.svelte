@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { ensureTwemoji, containsEmoji } from "$lib/twemoji-parse";
 
 	/**
 	 * TwemojiText
@@ -27,10 +28,15 @@
 		if (!container) return;
 
 		try {
-			// Dynamic import so SSR doesn't try to require twemoji
-			const mod = await import("twemoji");
-			// twemoji exports as default in ESM builds, but keep fallback
-			const twemoji = (mod && (mod as any).default) || mod;
+			// Skip the parse entirely when there is no emoji to replace -
+			// most card descriptions are plain text.
+			const text = container.textContent ?? "";
+			if (!containsEmoji(text)) return;
+
+			// Shared cached import so SSR never loads twemoji and every
+			// instance on the page reuses the same module.
+			const twemoji = await ensureTwemoji();
+			if (!twemoji) return;
 
 			// Build the className used on generated <img> tags
 			const imgClass =

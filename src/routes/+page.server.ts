@@ -1,15 +1,18 @@
 import type { PageServerLoad } from "./$types";
-import { getTopBots, listBots, getTopServers } from "$lib/db/queries";
+import { getTopBots, listBots, getTopServers, getPromotedBots, getPromotedServers } from "$lib/db/queries";
 import { getTopEmojis, getNewestEmojis } from "$lib/db/queries/emojis";
 import { getTopStickers, getNewestStickers } from "$lib/db/queries/stickers";
 
 export const load: PageServerLoad = async ({ setHeaders }) => {
 	try {
-		const [topBotsVotes, topBotsServers, topServersData] = await Promise.all([
-			getTopBots(30),
-			listBots({ limit: 30, offset: 0, trending: true }),
-			getTopServers(6)
-		]);
+		const [topBotsVotes, topBotsServers, topServersData, promotedBots, promotedServers] =
+			await Promise.all([
+				getTopBots(30),
+				listBots({ limit: 30, offset: 0, trending: true }),
+				getTopServers(6),
+				getPromotedBots(2).catch(() => []),
+				getPromotedServers(2).catch(() => [])
+			]);
 
 		// Merge and deduplicate by id, preferring the votes list ordering
 		const seen = new Set<string>();
@@ -49,6 +52,8 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			topbotsdata: topBotsVotes,
 			allBotsForBg: allBots,
 			topServersData,
+			promotedBots,
+			promotedServers,
 			topEmojis,
 			newestEmojis,
 			topStickers,
@@ -64,6 +69,8 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			topbotsdata: [],
 			allBotsForBg: [],
 			topServersData: [],
+			promotedBots: [],
+			promotedServers: [],
 			topEmojis: [],
 			newestEmojis: [],
 			topStickers: [],

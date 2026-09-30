@@ -3,6 +3,7 @@
 	import ServerCard from "$lib/components/ServerCard.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
 	import AdCardUnit from "$lib/components/AdCardUnit.svelte";
+	import SponsoredSlot from "$lib/components/SponsoredSlot.svelte";
 	import { pickAdSlots } from "$lib/pick-ad-slots";
 	import { page } from "$app/stores";
 	import { goto } from "$app/navigation";
@@ -10,6 +11,7 @@
 	export let data: {
 		servers: any[];
 		topServers: any[];
+		promotedServers: any[];
 		q: string | null;
 		limit: number;
 		offset: number;
@@ -40,6 +42,12 @@
 	$: hasPrev = offset > 0;
 	$: hasNext = servers.length >= limit;
 	$: currentPage = Math.floor(offset / limit) + 1;
+
+	// Canonical: clean listing path. Filtered (?q / ?new / ?trending),
+	// paginated (?offset) and non-default ?limit views consolidate here
+	// and are marked noindex.
+	$: canonicalUrl = `${$page.url.origin}${$page.url.pathname}`;
+	$: noindexPage = isSearching || offset > 0 || limit !== 20;
 
 	function buildHref(overrides: Record<string, any>): string {
 		const params = new URLSearchParams();
@@ -81,7 +89,7 @@
 	}
 </script>
 
-<SEO title={seoTitle} description={seoDesc} />
+<SEO title={seoTitle} description={seoDesc} canonical={canonicalUrl} noindex={noindexPage} />
 
 <!-- Hero / search header -->
 <section class="relative overflow-hidden -mt-24 pt-28 pb-6 px-4">
@@ -320,6 +328,15 @@
 {#if isSearching}
 	<!-- ── Filtered results ── -->
 	<section class="px-4 pb-16 max-w-5xl mx-auto">
+		{#if data.promotedServers && data.promotedServers.length > 0}
+			<div class="pt-2 pb-6">
+				<SponsoredSlot>
+					{#each data.promotedServers.slice(0, 2) as server (server.id)}
+						<ServerCard {server} edit={false} />
+					{/each}
+				</SponsoredSlot>
+			</div>
+		{/if}
 		{#if servers.length === 0}
 			<div class="py-20 text-center">
 				<div class="text-5xl mb-4" aria-hidden="true">🏘️</div>
@@ -405,6 +422,15 @@
 {:else}
 	<!-- ── Landing view ── -->
 	<div class="pb-16">
+		{#if data.promotedServers && data.promotedServers.length > 0}
+			<div class="mt-10 px-4 max-w-5xl mx-auto">
+				<SponsoredSlot>
+					{#each data.promotedServers.slice(0, 2) as server (server.id)}
+						<ServerCard {server} edit={false} />
+					{/each}
+				</SponsoredSlot>
+			</div>
+		{/if}
 		<!-- Top servers -->
 		<section class="mt-10 px-4 max-w-5xl mx-auto">
 			<div class="flex items-end justify-between mb-4 md:mx-4 flex-wrap gap-2">

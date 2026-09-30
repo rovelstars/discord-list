@@ -2,6 +2,7 @@
 	import { Eye, ChevronUp, Server } from "@lucide/svelte";
 	import { onMount } from "svelte";
 	import approx from "$lib/approx-num";
+	import { getColorThief } from "$lib/colorthief-singleton";
 	import Tag from "$lib/components/ui/Tag.svelte";
 	import TwemojiText from "$lib/components/TwemojiText.svelte";
 	import { buttonVariants } from "$lib/components/ui/button.js";
@@ -25,16 +26,14 @@
 
 	onMount(async () => {
 		try {
-			const { default: ColorThief } = await import("colorthief");
-			const CT = ColorThief as unknown as new () => {
-				getColor: (img: HTMLImageElement) => number[];
-			};
-			const colorThief = new CT();
+			const colorThief = await getColorThief();
+			if (!colorThief) return;
+			const ct = colorThief as { getColor: (img: HTMLImageElement) => number[] };
 
 			function trySetColor() {
 				try {
 					if (imageRef) {
-						const c = colorThief.getColor(imageRef);
+						const c = ct.getColor(imageRef);
 						if (Array.isArray(c)) bgColor = c;
 					}
 				} catch {

@@ -138,9 +138,12 @@
 					<img
 						src={stickerUrl}
 						alt={sticker.name}
-						class="w-20 h-20 object-contain select-none pointer-events-none"
+						class="w-20 h-20 aspect-square object-contain select-none pointer-events-none"
 						draggable="false"
 						loading="lazy"
+						decoding="async"
+						width="80"
+						height="80"
 						on:contextmenu={preventContextMenu}
 					/>
 				{/if}
@@ -170,9 +173,12 @@
 			<img
 				src={stickerUrl}
 				alt={sticker.name}
-				class="w-20 h-20 object-contain select-none pointer-events-none"
+				class="w-20 h-20 aspect-square object-contain select-none pointer-events-none"
 				draggable="false"
 				loading="lazy"
+				decoding="async"
+				width="80"
+				height="80"
 				on:contextmenu={preventContextMenu}
 			/>
 		{/if}
@@ -287,8 +293,11 @@
 									? 'gif'
 									: 'webp'}?size=32"
 								alt=":{tag.emoji.code}:"
-								class="w-3.5 h-3.5 object-contain"
+								class="w-3.5 h-3.5 aspect-square object-contain"
 								loading="lazy"
+								decoding="async"
+								width="14"
+								height="14"
 							/>
 							<span class="text-[10px] text-muted-foreground font-mono truncate max-w-13">
 								:{tag.emoji.code}:

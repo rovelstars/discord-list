@@ -4,6 +4,7 @@
 	import AdUnit from "$lib/components/AdUnit.svelte";
 	import { pickAdSlots } from "$lib/pick-ad-slots";
 	import getAvatarURL from "$lib/get-avatar-url";
+	import { page } from "$app/stores";
 
 	export let data: {
 		bots: Array<{
@@ -85,12 +86,15 @@
 			url: `https://discord.rovelstars.com/bots/${bot.slug}`
 		}))
 	};
+
+	$: canonicalUrl = `${$page.url.origin}${$page.url.pathname}`;
 </script>
 
 <SEO
 	title="Top 100 Discord Bots {currentYear} - Leaderboard"
 	description="The definitive ranking of the best Discord bots in {currentYear}, voted by real users. See which music, moderation, utility and fun bots top the charts this month."
 	imageSmall="/assets/img/bot/logo-512.png"
+	canonical={canonicalUrl}
 />
 
 <svelte:head>

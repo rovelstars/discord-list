@@ -1,6 +1,13 @@
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { listBots, getTopBots, getMusicBots, getGameBots, getModBots } from "$lib/db/queries";
+import {
+	listBots,
+	getTopBots,
+	getMusicBots,
+	getGameBots,
+	getModBots,
+	getPromotedBots
+} from "$lib/db/queries";
 
 export const load: PageServerLoad = async ({ url, setHeaders }) => {
 	const categoryParam = url.searchParams.get("category");
@@ -40,15 +47,21 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 		modBotsPromise = getModBots(9);
 	}
 
-	const [bots, topBots, musicBots, gameBots, modBots] = await Promise.all([
+	const [bots, topBots, musicBots, gameBots, modBots, promotedBots] = await Promise.all([
 		botsPromise,
 		topBotsPromise,
 		musicBotsPromise,
 		gameBotsPromise,
-		modBotsPromise
+		modBotsPromise,
+		getPromotedBots(2).catch(() => [])
 	]);
 
 	const isFiltered = isSearching;
+
+	// De-dupe: a sponsored bot pinned atop never repeats in the grids below.
+	const sponsoredIds = new Set(promotedBots.map((b) => b.id));
+	const withoutSponsored = <T extends { id: string }>(list: T[]): T[] =>
+		sponsoredIds.size ? list.filter((b) => !sponsoredIds.has(b.id)) : list;
 
 	setHeaders({
 		"cache-control": isFiltered
@@ -59,7 +72,7 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 	});
 
 	return {
-		bots,
+		bots: withoutSponsored(bots),
 		q,
 		limit,
 		offset,
@@ -68,9 +81,10 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 		lucky,
 		category,
 		isSearching,
-		topBots,
-		musicBots,
-		gameBots,
-		modBots
+		topBots: withoutSponsored(topBots),
+		musicBots: withoutSponsored(musicBots),
+		gameBots: withoutSponsored(gameBots),
+		modBots: withoutSponsored(modBots),
+		promotedBots
 	};
 };

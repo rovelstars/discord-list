@@ -39,13 +39,20 @@
 	// the small square image, then the default logo.
 	$: ogImage = image || imageSmall || DEFAULT_IMAGE;
 	$: isLargeImage = !!image;
-	$: imageType = ogImage.endsWith(".gif")
+	$: cleanImageUrl = ogImage.split(/[?#]/)[0].toLowerCase();
+	$: imageType = cleanImageUrl.endsWith(".gif")
 		? "image/gif"
-		: ogImage.endsWith(".png")
+		: cleanImageUrl.endsWith(".png")
 			? "image/png"
-			: ogImage.endsWith(".svg")
-				? "image/svg+xml"
-				: "image/jpeg";
+			: cleanImageUrl.endsWith(".webp")
+				? "image/webp"
+				: cleanImageUrl.endsWith(".svg")
+					? "image/svg+xml"
+					: cleanImageUrl.endsWith(".avif")
+						? "image/avif"
+						: cleanImageUrl.endsWith(".apng")
+							? "image/apng"
+							: "image/jpeg";
 </script>
 
 <svelte:head>
@@ -82,10 +89,6 @@
 		<!-- Wide banner image - Discord renders this as a large preview embed -->
 		<meta property="og:image:width" content="1920" />
 		<meta property="og:image:height" content="1080" />
-	{:else}
-		<!-- Square logo / avatar -->
-		<meta property="og:image:width" content="512" />
-		<meta property="og:image:height" content="512" />
 	{/if}
 
 	<!-- Twitter Card (also used by some Discord clients) -->

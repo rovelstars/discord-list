@@ -101,9 +101,12 @@
 				<img
 					src={emojiUrl}
 					alt={emoji.name}
-					class="w-16 h-16 object-contain select-none pointer-events-none"
+					class="w-16 h-16 aspect-square object-contain select-none pointer-events-none"
 					draggable="false"
 					loading="lazy"
+					decoding="async"
+					width="64"
+					height="64"
 					on:contextmenu={preventContextMenu}
 				/>
 			</a>
@@ -111,9 +114,12 @@
 			<img
 				src={emojiUrl}
 				alt={emoji.name}
-				class="w-16 h-16 object-contain select-none pointer-events-none"
+				class="w-16 h-16 aspect-square object-contain select-none pointer-events-none"
 				draggable="false"
 				loading="lazy"
+				decoding="async"
+				width="64"
+				height="64"
 				on:contextmenu={preventContextMenu}
 			/>
 		{/if}

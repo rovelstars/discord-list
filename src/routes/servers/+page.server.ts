@@ -1,5 +1,5 @@
 import type { PageServerLoad } from "./$types";
-import { listServers, getTopServers } from "$lib/db/queries";
+import { listServers, getTopServers, getPromotedServers } from "$lib/db/queries";
 import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async ({ url, setHeaders }) => {
@@ -18,7 +18,16 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 		topServersPromise = getTopServers(11);
 	}
 
-	const [servers, topServers] = await Promise.all([serversPromise, topServersPromise]);
+	const [servers, topServers, promotedServers] = await Promise.all([
+		serversPromise,
+		topServersPromise,
+		getPromotedServers(2).catch(() => [])
+	]);
+
+	// De-dupe: a sponsored server pinned atop never repeats in the grids below.
+	const sponsoredIds = new Set(promotedServers.map((s) => s.id));
+	const withoutSponsored = <T extends { id: string }>(list: T[]): T[] =>
+		sponsoredIds.size ? list.filter((s) => !sponsoredIds.has(s.id)) : list;
 
 	setHeaders({
 		"cache-control": isSearching
@@ -28,8 +37,9 @@ export const load: PageServerLoad = async ({ url, setHeaders }) => {
 	});
 
 	return {
-		servers,
-		topServers,
+		servers: withoutSponsored(servers),
+		topServers: withoutSponsored(topServers),
+		promotedServers,
 		q,
 		limit,
 		offset,

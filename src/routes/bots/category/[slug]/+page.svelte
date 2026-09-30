@@ -3,6 +3,7 @@
 	import BotCard from "$lib/components/BotCard.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
 	import AdCardUnit from "$lib/components/AdCardUnit.svelte";
+	import SponsoredSlot from "$lib/components/SponsoredSlot.svelte";
 	import { pickAdSlots } from "$lib/pick-ad-slots";
 
 	export let data: {
@@ -19,6 +20,7 @@
 			relatedSlugs: string[];
 		};
 		bots: Array<any>;
+		promotedBots: Array<any>;
 		relatedCategories: Array<{
 			slug: string;
 			name: string;
@@ -110,6 +112,15 @@
 
 <!-- ── Bot grid ───────────────────────────────────────────────────────────── -->
 <section class="pb-16">
+	{#if data.promotedBots && data.promotedBots.length > 0}
+		<div class="max-w-5xl mx-auto px-4 pt-12">
+			<SponsoredSlot>
+				{#each data.promotedBots.slice(0, 2) as bot (bot.id)}
+					<BotCard {bot} edit={false} />
+				{/each}
+			</SponsoredSlot>
+		</div>
+	{/if}
 	<h2 class="font-heading text-4xl font-bold mb-4 md:text-left mt-12 md:mx-32 mx-4 text-center">
 		<img
 			alt=""

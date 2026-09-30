@@ -260,15 +260,39 @@ function mapUser(row: RawRow): User {
 
 /** Query implementations ------------------------------------------------ */
 
-/** Return top bots by votes (descending) */
+/** Return top bots by votes (descending).
+ * Sponsored (promoted) bots are always excluded so vote order stays pure -
+ * they render in a separate pinned "Sponsored" slot instead. */
 export async function getTopBots(limit = 10): Promise<BotSummary[]> {
 	const rows = (await withDb((d: DrizzleDb) =>
 		d
 			.select(BOT_SUMMARY_SELECTION)
 			.from(Bots)
-			.where(eq(Bots.blacklisted, false))
+			.where(
+				and(
+					eq(Bots.blacklisted, false),
+					or(eq(Bots.promoted, false), isNull(Bots.promoted))
+				)
+			)
 			.orderBy(desc(Bots.votes))
 			.limit(limit)
+	)) as any[];
+	return rows.map(mapBotSummary);
+}
+
+/**
+ * Sponsored slot v1 (manual): up to `limit` promoted, non-blacklisted bots.
+ * Fulfillment is manual - an admin flips `Bots.promoted` (see docs#sponsored).
+ * Ordered by votes so the strongest sponsor shows first when capped at 1-2.
+ */
+export async function getPromotedBots(limit = 2): Promise<BotSummary[]> {
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select(BOT_SUMMARY_SELECTION)
+			.from(Bots)
+			.where(and(eq(Bots.promoted, true), eq(Bots.blacklisted, false)))
+			.orderBy(desc(Bots.votes))
+			.limit(Math.max(1, Math.min(limit, 2)))
 	)) as any[];
 	return rows.map(mapBotSummary);
 }
@@ -701,7 +725,8 @@ export async function getAllBotSlugs(): Promise<BotSlugEntry[]> {
  */
 export async function getCommentsByBotId(
 	botId: string,
-	currentUserId?: string
+	currentUserId?: string,
+	rootLimit: number = 50
 ): Promise<Comment[]> {
 	const rows = (await withDb((d: DrizzleDb) =>
 		d
@@ -722,6 +747,8 @@ export async function getCommentsByBotId(
 			.leftJoin(Users, eq(Comments.user_id, Users.id))
 			.where(eq(Comments.bot_id, botId))
 			.orderBy(asc(Comments.created_at))
+			// Safety cap so a single bot can never pull an unbounded row set.
+			.limit(2000)
 	)) as any[];
 
 	// Map rows to Comment objects
@@ -762,7 +789,8 @@ export async function getCommentsByBotId(
 		}
 	}
 
-	return roots;
+	// Bound the initial payload - the client lazy-loads the rest.
+	return roots.slice(0, Math.max(1, rootLimit));
 }
 
 /**
@@ -900,7 +928,8 @@ export async function deleteComment(id: string): Promise<void> {
 
 /**
  * Top bots with rank position, lib, and prefix - used on the /top leaderboard page.
- * Ordered by votes descending.
+ * Ordered by votes descending. Sponsored (promoted) bots are excluded - the
+ * leaderboard is votes-only and never pay-to-win.
  */
 export async function getTopBotsFull(limit = 100): Promise<BotRanked[]> {
 	const rows = (await withDb((d: DrizzleDb) =>
@@ -911,7 +940,12 @@ export async function getTopBotsFull(limit = 100): Promise<BotRanked[]> {
 				prefix: Bots.prefix
 			})
 			.from(Bots)
-			.where(eq(Bots.blacklisted, false))
+			.where(
+				and(
+					eq(Bots.blacklisted, false),
+					or(eq(Bots.promoted, false), isNull(Bots.promoted))
+				)
+			)
 			.orderBy(desc(Bots.votes))
 			.limit(limit)
 	)) as any[];
@@ -1137,8 +1171,37 @@ export async function getTopServers(limit = 10): Promise<ServerSummary[]> {
 				added_at: Servers.added_at
 			})
 			.from(Servers)
+			.where(or(eq(Servers.promoted, false), isNull(Servers.promoted)))
 			.orderBy(desc(Servers.votes))
 			.limit(limit)
+	)) as any[];
+	return rows.map(mapServerSummary);
+}
+
+/**
+ * Sponsored slot v1 (manual): up to `limit` promoted servers.
+ * Fulfillment is manual - an admin flips `Servers.promoted` (see docs#sponsored).
+ * Ordered by votes so the strongest sponsor shows first when capped at 1-2.
+ */
+export async function getPromotedServers(limit = 2): Promise<ServerSummary[]> {
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select({
+				id: Servers.id,
+				name: Servers.name,
+				short: Servers.short,
+				icon: Servers.icon,
+				votes: Servers.votes,
+				owner: Servers.owner,
+				slug: Servers.slug,
+				promoted: Servers.promoted,
+				badges: Servers.badges,
+				added_at: Servers.added_at
+			})
+			.from(Servers)
+			.where(eq(Servers.promoted, true))
+			.orderBy(desc(Servers.votes))
+			.limit(Math.max(1, Math.min(limit, 2)))
 	)) as any[];
 	return rows.map(mapServerSummary);
 }
