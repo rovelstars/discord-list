@@ -111,7 +111,7 @@
 			{#if bot.opted_coins}
 				<div class="w-full max-w-xs flex flex-col gap-1">
 					<label for="coins" class="text-sm font-medium text-muted-foreground">
-						Coins to spend <span class="text-foreground font-semibold">(10 coins = 1 vote)</span>
+						Coins to spend <span class="text-foreground font-semibold">(support only)</span>
 					</label>
 					<div class="relative">
 						<span class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -127,7 +127,10 @@
 							class="w-full pl-9 pr-3 py-2 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
 						/>
 					</div>
-					<p class="text-xs text-muted-foreground">Must be a multiple of 10.</p>
+					<p class="text-xs text-muted-foreground">
+						Must be a multiple of 10. Coin support notifies the owner but never affects
+						rankings.
+					</p>
 				</div>
 			{/if}
 

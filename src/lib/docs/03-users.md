@@ -106,11 +106,15 @@ Every user account starts with **50 <:Rcoin:948896802298548224> Rcoins** (R$) on
 ### How to Earn Rcoins
 
 - **Sign up** - 50 R$ granted automatically when you create your account.
-- **Vote for bots** - some bots may reward voters (bot-owner configured).
+- **Daily check-in** - R$ 5 base + R$ 1 per streak day (max R$ 10/day), settled daily.
+- **Vote-to-earn** - R$ 2 per cooldown vote (max 5 paid votes/day). Coin-support votes never earn.
+- **Bounties** - one-time R$ 25 for completing your profile (bio + banner), R$ 50 for your first bot listing.
+- **Referrals** - R$ 100+ via the referral programme (see your dashboard).
 
 ### How to Spend Rcoins
 
-- **Coin-based voting** - spend **10 R$ per vote** on bots that have opted into this system.
+- **Coin support** - spend R$ (multiples of 10) on bots that have opted into this system. Coin support notifies the owner but never affects vote counts or rankings.
+- **Cosmetics** - gold profile border (R$ 100), listing accent (R$ 150), Rising badge (R$ 200) via the dashboard R$ Rewards tab. Cosmetic only.
 - **Transfer** - send Rcoins to another user via the `/transfer` Discord bot command.
 
 > Your current balance is always included in the `GET /api/users/me` response as the `bal` field.

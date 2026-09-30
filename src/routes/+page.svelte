@@ -4,6 +4,7 @@
 	import ServerCard from "$lib/components/ServerCard.svelte";
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
 	import StickerCard from "$lib/components/StickerCard.svelte";
+	import HeroBgCard from "$lib/components/HeroBgCard.svelte";
 	import SEO from "$lib/components/SEO.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
 	import SponsoredSlot from "$lib/components/SponsoredSlot.svelte";
@@ -75,10 +76,14 @@
 	}
 
 	// ── Background rows ───────────────────────────────────────────────────────
-	// 6 rows of 10 cards each, cycling bots → servers → stickers → emojis.
-	// Each row is tripled in the DOM so the -33.333% scroll loop is seamless.
+	// 6 rows of 8 lightweight HeroBgCard nodes each (bots → servers → stickers → emojis).
+	// Each row is doubled in the DOM so the -50% scroll loop is seamless.
+	// Full BotCard/ServerCard/EmojiCard/StickerCard instances are intentionally NOT
+	// used here — they run onMount (ColorThief, Twemoji) per instance. HeroBgCard
+	// is pure static markup + at most one lazy image. No extra DB queries: all
+	// pools below reuse arrays already returned by +page.server.ts.
 	const NUM_ROWS = 6;
-	const CARDS_PER_ROW = 10;
+	const CARDS_PER_ROW = 8;
 
 	$: backgroundRows = (() => {
 		const botSrc = (allBotsForBg && allBotsForBg.length > 0 ? allBotsForBg : topbotsdata) as any[];
@@ -112,15 +117,23 @@
 			// Fall back to bots if pool is empty
 			const src = pool.length > 0 ? pool : bots;
 			const row: BgItem[] = [];
+			// Offset each row so rows sharing a pool don't show identical cards
+			const offset = r * 4;
 			for (let c = 0; c < CARDS_PER_ROW; c++) {
-				row.push(src[c % src.length]);
+				row.push(src[(c + offset) % src.length]);
 			}
 			rows.push(row);
 		}
 		return rows;
 	})();
 
+	// Defer the (client-only) hero marquee until after hydration so the heavy
+	// background DOM + image requests never block first paint. SSR/no-JS gets a
+	// CSS-only skeleton fallback (same footprint, no layout shift).
+	let mounted = false;
+
 	onMount(() => {
+		mounted = true;
 		letters = buildLetters(currentWord, "idle");
 		// Respect reduced-motion: keep the first word static, no cycling timer.
 		if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
@@ -153,26 +166,30 @@
 	-->
 	<div class="bg-stage blur-xs" aria-hidden="true">
 		<div class="bg-tilt">
-			{#each backgroundRows as row, rowIndex}
-				<div
-					class="bg-row {rowIndex % 2 === 0 ? 'row-scroll-left' : 'row-scroll-right'}"
-					style="animation-duration: {50 + rowIndex * 10}s;"
-				>
-					{#each [...row, ...row, ...row] as item}
-						<div class="bg-transparent">
-							{#if item._type === "server"}
-								<ServerCard server={item} edit={false} />
-							{:else if item._type === "sticker"}
-								<StickerCard sticker={item as any} resolvedTags={item.resolvedTags ?? []} />
-							{:else if item._type === "emoji"}
-								<EmojiCard emoji={item as any} />
-							{:else}
-								<BotCard bot={item} edit={false} />
-							{/if}
-						</div>
-					{/each}
-				</div>
-			{/each}
+			{#if mounted}
+				{#each backgroundRows as row, rowIndex}
+					<div
+						class="bg-row {rowIndex % 2 === 0 ? 'row-scroll-left' : 'row-scroll-right'}"
+						style="animation-duration: {45 + rowIndex * 6}s;"
+					>
+						{#each [...row, ...row] as item}
+							<HeroBgCard {item} />
+						{/each}
+					</div>
+				{/each}
+			{:else}
+				<!-- SSR / no-JS fallback: pure CSS skeleton strips, same footprint -->
+				{#each Array(NUM_ROWS) as _, rowIndex}
+					<div
+						class="bg-row {rowIndex % 2 === 0 ? 'row-scroll-left' : 'row-scroll-right'}"
+						style="animation-duration: {45 + rowIndex * 6}s;"
+					>
+						{#each Array(CARDS_PER_ROW * 2) as _}
+							<div class="hero-bg-fallback"></div>
+						{/each}
+					</div>
+				{/each}
+			{/if}
 		</div>
 	</div>
 
@@ -1004,7 +1021,7 @@
 
 	/* ── Row scroll animations ─────────────────────────────────────────────── */
 	/*
-	 * Each row contains 3× the card set. We animate from 0 → -33.333% so that
+	 * Each row contains 2× the card set. We animate from 0 → -50% so that
 	 * when we've scrolled exactly one full set width the transform resets to 0
 	 * and the loop is invisible.
 	 */
@@ -1013,13 +1030,13 @@
 			transform: translateX(0);
 		}
 		100% {
-			transform: translateX(-33.333%);
+			transform: translateX(-50%);
 		}
 	}
 
 	@keyframes scroll-right {
 		0% {
-			transform: translateX(-33.333%);
+			transform: translateX(-50%);
 		}
 		100% {
 			transform: translateX(0);
@@ -1034,6 +1051,21 @@
 	.row-scroll-right {
 		animation: scroll-right linear infinite;
 		will-change: transform;
+	}
+
+	/* SSR / no-JS fallback tile: same w-80 footprint as HeroBgCard, CSS only */
+	.hero-bg-fallback {
+		width: 20rem;
+		height: 430px;
+		flex-shrink: 0;
+		border-radius: 0.5rem;
+		border: 1px solid hsl(var(--border));
+		background: linear-gradient(
+			160deg,
+			hsl(var(--primary) / 0.22),
+			hsl(var(--popover)) 55%,
+			hsl(var(--muted) / 0.5)
+		);
 	}
 
 	/* ── Letter fall animations ────────────────────────────────────────────── */

@@ -7,6 +7,7 @@
 	import Textarea from "$lib/components/ui/textarea/Textarea.svelte";
 	import getAvatarURL from "$lib/get-avatar-url";
 	import SEO from "$lib/components/SEO.svelte";
+	import { ECONOMY } from "$lib/economy";
 
 	// ── Referral milestone type helpers ──────────────────────────────────────
 	type MilestoneType =
@@ -17,7 +18,13 @@
 		| "server_bounty"
 		| "server_bounty_referred"
 		| "self_listing_100"
-		| "self_listing_500";
+		| "self_listing_500"
+		| "checkin_daily"
+		| "vote_earn"
+		| "profile_bounty"
+		| "listing_bounty"
+		| "spend_cosmetic"
+		| "spend_premium";
 	type MilestoneStatus = "pending" | "paid" | "flagged";
 	type RewardStatus = "pending" | "payable" | "paid" | "flagged" | "rejected";
 
@@ -83,6 +90,8 @@
 			status: string;
 			blacklisted: boolean;
 			blacklisted_at: string | null;
+			promoted: boolean;
+			promoted_until: string | null;
 		}>;
 		servers: Array<{
 			id: string;
@@ -92,6 +101,8 @@
 			votes: number;
 			owner: string;
 			slug: string | null;
+			promoted: boolean;
+			promoted_until: string | null;
 		}>;
 		recentVotes: Array<
 			| { type: "bot"; id: string; at: number; name: string; slug: string; avatar: string | null }
@@ -145,13 +156,33 @@
 			paid_at: string | null;
 		}>;
 		totalEarnedAsReferred: number;
+		wallet: {
+			streak: number;
+			checkinPaidToday: boolean;
+			checkinNext: number;
+			voteEarnToday: number;
+			voteEarnMax: number;
+			profileBountyPaid: boolean;
+			listingBountyPaid: boolean;
+			ownedCosmetics: string[];
+		};
+		walletHistory: Array<{
+			id: string;
+			referral_id: string | null;
+			milestone_type: MilestoneType;
+			reward_amount: number;
+			status: MilestoneStatus;
+			meta: Record<string, unknown>;
+			created_at: string;
+			paid_at: string | null;
+		}>;
 	};
 
 	const {
 		user,
 		discordUser,
-		bots = [],
-		servers = [],
+		bots: _bots = [],
+		servers: _servers = [],
 		submittedEmojis = [],
 		recentVotes,
 		totalVotesCast,
@@ -161,8 +192,181 @@
 		referralStats,
 		wasReferredBy,
 		earnedAsReferred = [],
-		totalEarnedAsReferred = 0
+		totalEarnedAsReferred = 0,
+		wallet = {
+			streak: 0,
+			checkinPaidToday: false,
+			checkinNext: 5,
+			voteEarnToday: 0,
+			voteEarnMax: 5,
+			profileBountyPaid: false,
+			listingBountyPaid: false,
+			ownedCosmetics: []
+		},
+		walletHistory = []
 	} = data;
+
+	// Reactive R$ balance (updated in-place after cosmetic purchases so the
+	// hero stat and wallet card stay in sync without a reload).
+	let balance = user.bal;
+
+	// ── R$ Rewards (earn / spend) ──────────────────────────────────────────
+	const SPEND_ITEMS = [
+		{
+			kind: "profile_border",
+			name: "Gold profile border",
+			desc: "A gold ring on your avatar across your profile and dashboard.",
+			cost: ECONOMY.SPENDS.profile_border
+		},
+		{
+			kind: "listing_accent",
+			name: "Listing accent",
+			desc: "A gold accent ring on your own bot cards in your dashboard.",
+			cost: ECONOMY.SPENDS.listing_accent
+		},
+		{
+			kind: "rising_slot",
+			name: "Rising badge",
+			desc: "A “Rising” badge on your dashboard listings. Cosmetic only — never affects rankings.",
+			cost: ECONOMY.SPENDS.rising_slot
+		}
+	];
+
+	let spendPending: string | null = null;
+	let spendMsg = "";
+	let spendOk = false;
+
+	// ── Premium (self-serve Sponsored pin, R$1000 = 1 week) ──────────────
+	const PREMIUM_COST = ECONOMY.PREMIUM_WEEK_COST;
+	let premiumPending: string | null = null;
+	let premiumMsg = "";
+	let premiumOk = false;
+
+	function isPremiumActive(promoted: boolean, until: string | null): boolean {
+		if (!promoted) return false;
+		if (!until) return true; // legacy permanent manual pin
+		const t = new Date(until).getTime();
+		return !isNaN(t) && t > Date.now();
+	}
+
+	function fmtUntil(iso: string | null): string {
+		if (!iso) return "pinned";
+		const d = new Date(iso);
+		if (isNaN(d.getTime())) return iso;
+		return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+	}
+
+	// Reactive copies of owned listings (mutated in place after Premium buys).
+	let bots = [..._bots];
+	let servers = [..._servers];
+
+	async function buyPremium(kind: "bot" | "server", id: string) {
+		premiumMsg = "";
+		premiumOk = false;
+		premiumPending = `${kind}:${id}`;
+		try {
+			const res = await fetch("/api/premium/activate", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ kind, id })
+			});
+			const resData = await res.json();
+			if (!res.ok || resData.err) {
+				const errMap: Record<string, string> = {
+					invalid_kind: "Unknown listing type.",
+					missing_id: "Missing listing ID.",
+					not_found: "Listing not found.",
+					not_owner: "Only the owner can buy Premium for this listing.",
+					insufficient_funds: `Not enough R$ — Premium costs R$ ${PREMIUM_COST}/week.`,
+					user_not_found: "User not found. Please log in again.",
+					not_logged_in: "You must be logged in."
+				};
+				premiumMsg = errMap[resData.err] ?? resData.err ?? "Premium purchase failed.";
+			} else {
+				premiumOk = true;
+				premiumMsg = `Premium active until ${fmtUntil(resData.promoted_until)}!`;
+				balance = resData.newBalance ?? balance;
+				const until = resData.promoted_until as string;
+				if (kind === "bot") {
+					const b = bots.find((x) => x.id === id);
+					if (b) {
+						b.promoted = true;
+						b.promoted_until = until;
+					}
+					bots = [...bots];
+				} else {
+					const s = servers.find((x) => x.id === id);
+					if (s) {
+						s.promoted = true;
+						s.promoted_until = until;
+					}
+					servers = [...servers];
+				}
+			}
+		} catch {
+			premiumMsg = "Network error - please try again.";
+		} finally {
+			premiumPending = null;
+			if (premiumOk) setTimeout(() => (premiumMsg = ""), 5000);
+		}
+	}
+
+	function ownsCosmetic(kind: string): boolean {
+		return wallet.ownedCosmetics.includes(`cosmetic:${kind}`);
+	}
+
+	function walletLabel(type: MilestoneType, meta: Record<string, unknown>): string {
+		switch (type) {
+			case "checkin_daily":
+				return `Daily check-in${(meta as any).streak ? ` (🔥 ${ (meta as any).streak }-day streak)` : ""}`;
+			case "vote_earn":
+				return "Vote-to-earn";
+			case "profile_bounty":
+				return "Profile completeness bounty";
+			case "listing_bounty":
+				return "First-listing bounty";
+			case "spend_cosmetic":
+				return `Cosmetic: ${String((meta as any).kind ?? "unknown").replace(/_/g, " ")}`;
+			case "spend_premium":
+				return `Premium: ${(meta as any).kind ?? "listing"} ${(meta as any).id ?? ""} (1 week)`;
+			default:
+				return milestoneLabel(type, meta);
+		}
+	}
+
+	async function buyCosmetic(kind: string) {
+		spendMsg = "";
+		spendOk = false;
+		spendPending = kind;
+		try {
+			const res = await fetch("/api/economy/spend", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ kind })
+			});
+			const resData = await res.json();
+			if (!res.ok || resData.err) {
+				const errMap: Record<string, string> = {
+					invalid_kind: "Unknown cosmetic item.",
+					already_owned: "You already own this cosmetic.",
+					insufficient_funds: "Not enough R$ — earn more first.",
+					user_not_found: "User not found. Please log in again.",
+					not_logged_in: "You must be logged in."
+				};
+				spendMsg = errMap[resData.err] ?? resData.err ?? "Purchase failed.";
+			} else {
+				spendOk = true;
+				spendMsg = "Unlocked! It is now active on your profile.";
+				balance = resData.newBalance ?? balance;
+				if (!ownsCosmetic(kind)) wallet.ownedCosmetics = [...wallet.ownedCosmetics, `cosmetic:${kind}`];
+			}
+		} catch {
+			spendMsg = "Network error - please try again.";
+		} finally {
+			spendPending = null;
+			if (spendOk) setTimeout(() => (spendMsg = ""), 4000);
+		}
+	}
 
 	// ── Active section ────────────────────────────────────────────────────────
 	type Section =
@@ -173,6 +377,7 @@
 		| "account"
 		| "votes"
 		| "referrals"
+		| "rewards"
 		| "danger";
 	let activeSection: Section = "bots";
 
@@ -290,6 +495,7 @@
 		{ id: "account", label: "Account", icon: "shield" },
 		{ id: "votes", label: "Vote History", icon: "votes" },
 		{ id: "referrals", label: "Referrals", icon: "referrals" },
+		{ id: "rewards", label: "R$ Rewards", icon: "rewards" },
 		{ id: "danger", label: "Danger Zone", icon: "danger" }
 	];
 
@@ -536,7 +742,11 @@
 					<img
 						src={avatarSrc}
 						alt="Your avatar"
-						class="w-20 h-20 rounded-full border-4 border-background object-cover shadow-xl ring-2 ring-primary/30"
+						class="w-20 h-20 rounded-full border-4 object-cover shadow-xl {ownsCosmetic(
+							'profile_border'
+						)
+							? 'border-yellow-400 ring-2 ring-yellow-400/60'
+							: 'border-background ring-2 ring-primary/30'}"
 					/>
 					<span
 						class="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-green-500 border-2 border-background shadow"
@@ -624,7 +834,7 @@
 				<div
 					class="bg-background/60 backdrop-blur border border-border rounded-xl px-4 py-3 text-center"
 				>
-					<p class="text-xl font-extrabold">{user.bal.toLocaleString()}</p>
+					<p class="text-xl font-extrabold">{balance.toLocaleString()}</p>
 					<p class="text-xs text-muted-foreground mt-0.5 flex items-center justify-center gap-1">
 						<img src="/assets/img/bot/moneh.svg" alt="coins" class="w-3.5 h-3.5" />
 						Balance
@@ -781,6 +991,21 @@
 												<circle cx="9" cy="7" r="4" />
 												<path d="M22 21v-2a4 4 0 0 0-3-3.87" />
 												<path d="M16 3.13a4 4 0 0 1 0 7.75" />
+											</svg>
+										{:else if item.icon === "rewards"}
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="w-3.5 h-3.5"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<circle cx="12" cy="12" r="10" />
+												<path d="M9.5 9.5c.5-1 1.5-1.5 2.5-1.5 1.4 0 2.5.9 2.5 2s-1.1 2-2.5 2-2.5.9-2.5 2 1.1 2 2.5 2c1 0 2-.5 2.5-1.5" />
+												<path d="M12 6.5v11" />
 											</svg>
 										{:else if item.icon === "danger"}
 											<svg
@@ -956,7 +1181,18 @@
 							{:else}
 								<div class="flex flex-wrap gap-4">
 									{#each bots as bot}
-										<div class="relative">
+										<div
+											class="relative rounded-2xl {ownsCosmetic('listing_accent')
+												? 'ring-2 ring-yellow-400/70 shadow-lg shadow-yellow-400/10'
+												: ''}"
+										>
+											{#if ownsCosmetic("rising_slot")}
+												<div
+													class="absolute top-2 left-2 z-20 inline-flex items-center gap-1 rounded-full bg-yellow-400 text-black text-xs font-bold px-2.5 py-1 shadow-lg"
+												>
+													★ Rising
+												</div>
+											{/if}
 											{#if bot.blacklisted}
 												<!-- Pending-deletion overlay badge + restore hint -->
 												<div
@@ -1004,9 +1240,46 @@
 													edit={true}
 												/>
 											</div>
+											<!-- Premium row: active-until state or self-serve buy button -->
+											<div class="mt-2 flex items-center justify-between gap-2 px-1">
+												{#if isPremiumActive(bot.promoted, bot.promoted_until)}
+													<span
+														class="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 text-[11px] font-bold text-amber-600 dark:text-amber-400"
+													>
+														★ Premium until {fmtUntil(bot.promoted_until)}
+													</span>
+												{:else}
+													<span class="text-[11px] text-muted-foreground">
+														Premium: R$ {PREMIUM_COST}/week
+													</span>
+												{/if}
+												<button
+													on:click={() => buyPremium("bot", bot.id)}
+													disabled={premiumPending !== null || balance < PREMIUM_COST}
+													title={isPremiumActive(bot.promoted, bot.promoted_until)
+														? "Extend Premium by 1 week"
+														: "Buy Premium for 1 week"}
+													class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+												>
+													{premiumPending === `bot:${bot.id}`
+														? "Buying…"
+														: isPremiumActive(bot.promoted, bot.promoted_until)
+															? "+1 week"
+															: "Go Premium"}
+												</button>
+											</div>
 										</div>
 									{/each}
 								</div>
+								{#if premiumMsg && bots.length > 0}
+									<p
+										class="mt-4 text-xs font-medium {premiumOk
+											? 'text-green-600 dark:text-green-400'
+											: 'text-destructive'}"
+									>
+										{premiumMsg}
+									</p>
+								{/if}
 							{/if}
 						</div>
 					</div>
@@ -1116,20 +1389,58 @@
 							{:else}
 								<div class="flex flex-wrap gap-4">
 									{#each servers as srv}
-										<ServerCard
-											server={{
-												id: srv.id,
-												name: srv.name,
-												short: srv.short,
-												icon: srv.icon,
-												votes: srv.votes ?? 0,
-												owner: srv.owner,
-												slug: srv.slug
-											}}
-											edit={true}
-										/>
+										<div class="flex flex-col gap-1">
+											<ServerCard
+												server={{
+													id: srv.id,
+													name: srv.name,
+													short: srv.short,
+													icon: srv.icon,
+													votes: srv.votes ?? 0,
+													owner: srv.owner,
+													slug: srv.slug
+												}}
+												edit={true}
+											/>
+											<div class="flex items-center justify-between gap-2 px-1">
+												{#if isPremiumActive(srv.promoted, srv.promoted_until)}
+													<span
+														class="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 text-[11px] font-bold text-amber-600 dark:text-amber-400"
+													>
+														★ Premium until {fmtUntil(srv.promoted_until)}
+													</span>
+												{:else}
+													<span class="text-[11px] text-muted-foreground">
+														Premium: R$ {PREMIUM_COST}/week
+													</span>
+												{/if}
+												<button
+													on:click={() => buyPremium("server", srv.id)}
+													disabled={premiumPending !== null || balance < PREMIUM_COST}
+													title={isPremiumActive(srv.promoted, srv.promoted_until)
+														? "Extend Premium by 1 week"
+														: "Buy Premium for 1 week"}
+													class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+												>
+													{premiumPending === `server:${srv.id}`
+														? "Buying…"
+														: isPremiumActive(srv.promoted, srv.promoted_until)
+															? "+1 week"
+															: "Go Premium"}
+												</button>
+											</div>
+										</div>
 									{/each}
 								</div>
+								{#if premiumMsg && servers.length > 0}
+									<p
+										class="mt-4 text-xs font-medium {premiumOk
+											? 'text-green-600 dark:text-green-400'
+											: 'text-destructive'}"
+									>
+										{premiumMsg}
+									</p>
+								{/if}
 							{/if}
 						</div>
 					</div>
@@ -1739,7 +2050,7 @@
 									<img src="/assets/img/bot/moneh.svg" alt="coins" class="w-5 h-5" />
 								</div>
 								<div class="min-w-0">
-									<p class="font-extrabold text-lg leading-none">{user.bal.toLocaleString()}</p>
+									<p class="font-extrabold text-lg leading-none">{balance.toLocaleString()}</p>
 									<p class="text-xs text-muted-foreground mt-0.5">R$ Balance</p>
 								</div>
 							</div>
@@ -3028,6 +3339,258 @@
 							</div>
 						</div>
 					{/if}
+				{:else if activeSection === "rewards"}
+					<!-- Wallet card -->
+					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+						<div class="px-6 py-4 border-b border-border flex items-center justify-between gap-4">
+							<div class="flex items-center gap-2">
+								<div class="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+									<img src="/assets/img/bot/moneh.svg" alt="R$" class="w-4 h-4" />
+								</div>
+								<div>
+									<h2 class="text-base font-bold font-heading leading-none">R$ Wallet</h2>
+									<p class="text-xs text-muted-foreground mt-0.5">
+										Earn R$ daily, spend on cosmetics. Never buys votes or rank.
+									</p>
+								</div>
+							</div>
+							<span
+								class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/25 text-sm font-extrabold"
+							>
+								<img src="/assets/img/bot/moneh.svg" alt="" class="w-4 h-4" />
+								R$ {balance.toLocaleString()}
+							</span>
+						</div>
+						<div class="p-6 grid grid-cols-3 gap-3 text-center">
+							<div class="bg-background border border-border rounded-xl px-3 py-3">
+								<p class="text-xl font-extrabold">
+									🔥 {wallet.streak}
+								</p>
+								<p class="text-xs text-muted-foreground mt-0.5">Day streak</p>
+							</div>
+							<div class="bg-background border border-border rounded-xl px-3 py-3">
+								<p class="text-xl font-extrabold">
+									{wallet.voteEarnToday}/{wallet.voteEarnMax}
+								</p>
+								<p class="text-xs text-muted-foreground mt-0.5">Paid votes today</p>
+							</div>
+							<div class="bg-background border border-border rounded-xl px-3 py-3">
+								<p class="text-xl font-extrabold">R$ {wallet.checkinNext}</p>
+								<p class="text-xs text-muted-foreground mt-0.5">Next check-in</p>
+							</div>
+						</div>
+						<p class="px-6 pb-5 text-xs text-muted-foreground">
+							Check-ins and vote rewards settle once a day (~02:00 UTC). Visit daily to grow
+							your streak — shared-device or low-trust accounts are skipped.
+						</p>
+					</div>
+
+					<!-- Earn list -->
+					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+						<div class="px-6 py-4 border-b border-border">
+							<h2 class="text-base font-bold font-heading leading-none">Earn R$</h2>
+							<p class="text-xs text-muted-foreground mt-0.5">Small daily rewards, capped</p>
+						</div>
+						<ul class="divide-y divide-border">
+							<li class="px-6 py-4 flex items-center gap-3">
+								<span class="text-xl">📅</span>
+								<div class="flex-1 min-w-0">
+									<p class="text-sm font-semibold">Daily check-in</p>
+									<p class="text-xs text-muted-foreground">
+										R$ {ECONOMY.CHECKIN_BASE} base + R$ {ECONOMY.CHECKIN_STREAK_BONUS}/streak day
+										(max R$ {ECONOMY.CHECKIN_DAILY_CAP}/day)
+									</p>
+								</div>
+								{#if wallet.checkinPaidToday}
+									<span
+										class="text-xs font-bold px-2.5 py-1 rounded-full bg-green-500/15 text-green-600 dark:text-green-400 border border-green-500/25"
+										>Claimed</span
+									>
+								{:else}
+									<span
+										class="text-xs font-bold px-2.5 py-1 rounded-full bg-muted text-muted-foreground border border-border"
+										>Settles daily</span
+									>
+								{/if}
+							</li>
+							<li class="px-6 py-4 flex items-center gap-3">
+								<span class="text-xl">🗳️</span>
+								<div class="flex-1 min-w-0">
+									<p class="text-sm font-semibold">Vote-to-earn</p>
+									<p class="text-xs text-muted-foreground">
+										R$ {ECONOMY.VOTE_EARN} per cooldown vote (max {ECONOMY.VOTE_EARN_DAILY_MAX}/day).
+										Coin-support votes never earn.
+									</p>
+								</div>
+								<span class="text-xs font-mono font-bold text-muted-foreground">
+									{wallet.voteEarnToday}/{wallet.voteEarnMax}
+								</span>
+							</li>
+							<li class="px-6 py-4 flex items-center gap-3">
+								<span class="text-xl">👤</span>
+								<div class="flex-1 min-w-0">
+									<p class="text-sm font-semibold">Complete your profile</p>
+									<p class="text-xs text-muted-foreground">
+										One-time R$ {ECONOMY.PROFILE_BOUNTY} for setting a custom bio + banner
+									</p>
+								</div>
+								{#if wallet.profileBountyPaid}
+									<span
+										class="text-xs font-bold px-2.5 py-1 rounded-full bg-green-500/15 text-green-600 dark:text-green-400 border border-green-500/25"
+										>Claimed</span
+									>
+								{:else}
+									<button
+										on:click={() => (activeSection = "profile")}
+										class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+									>
+										Complete
+									</button>
+								{/if}
+							</li>
+							<li class="px-6 py-4 flex items-center gap-3">
+								<span class="text-xl">🤖</span>
+								<div class="flex-1 min-w-0">
+									<p class="text-sm font-semibold">List your first bot</p>
+									<p class="text-xs text-muted-foreground">
+										One-time R$ {ECONOMY.LISTING_BOUNTY} for your first bot listing
+									</p>
+								</div>
+								{#if wallet.listingBountyPaid}
+									<span
+										class="text-xs font-bold px-2.5 py-1 rounded-full bg-green-500/15 text-green-600 dark:text-green-400 border border-green-500/25"
+										>Claimed</span
+									>
+								{:else}
+									<a
+										href="/dashboard/bots/new"
+										class="text-xs font-semibold px-3 py-1.5 rounded-lg border border-input hover:bg-accent transition-colors"
+									>
+										List a bot
+									</a>
+								{/if}
+							</li>
+						</ul>
+					</div>
+
+					<!-- Spend list -->
+					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+						<div class="px-6 py-4 border-b border-border">
+							<h2 class="text-base font-bold font-heading leading-none">Spend R$</h2>
+							<p class="text-xs text-muted-foreground mt-0.5">
+								Cosmetics never buy votes or rank. Premium (R$ {ECONOMY.PREMIUM_WEEK_COST}/week)
+								buys a labeled Sponsored pin only — rankings stay 100% vote-driven.
+							</p>
+						</div>
+						<ul class="divide-y divide-border">
+							<li class="px-6 py-4 flex items-center gap-3 bg-amber-500/5">
+								<span class="text-xl">★</span>
+								<div class="flex-1 min-w-0">
+									<p class="text-sm font-semibold">Premium — Sponsored pin (1 week)</p>
+									<p class="text-xs text-muted-foreground">
+										Pins one of your bots/servers in the Sponsored slot. Buy from My
+										Bots / My Servers above — each purchase adds 1 week.
+									</p>
+								</div>
+								<span
+									class="shrink-0 inline-flex items-center gap-1 text-xs font-bold text-muted-foreground"
+								>
+									<img src="/assets/img/bot/moneh.svg" alt="" class="w-3.5 h-3.5" />
+									{ECONOMY.PREMIUM_WEEK_COST}
+								</span>
+								<button
+									on:click={() => (activeSection = "bots")}
+									class="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-lg border border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 transition-colors"
+								>
+									My Bots
+								</button>
+							</li>
+							{#each SPEND_ITEMS as item}
+								<li class="px-6 py-4 flex items-center gap-3">
+									<span class="text-xl">{item.kind === "profile_border" ? "🖼️" : item.kind === "listing_accent" ? "✨" : "🚀"}</span>
+									<div class="flex-1 min-w-0">
+										<p class="text-sm font-semibold">{item.name}</p>
+										<p class="text-xs text-muted-foreground">{item.desc}</p>
+									</div>
+									<span
+										class="shrink-0 inline-flex items-center gap-1 text-xs font-bold text-muted-foreground"
+									>
+										<img src="/assets/img/bot/moneh.svg" alt="" class="w-3.5 h-3.5" />
+										{item.cost}
+									</span>
+									{#if ownsCosmetic(item.kind)}
+										<span
+											class="shrink-0 text-xs font-bold px-2.5 py-1 rounded-full bg-green-500/15 text-green-600 dark:text-green-400 border border-green-500/25"
+											>Owned</span
+										>
+									{:else}
+										<button
+											on:click={() => buyCosmetic(item.kind)}
+											disabled={spendPending !== null || balance < item.cost}
+											class="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+										>
+											{spendPending === item.kind ? "Buying…" : "Buy"}
+										</button>
+									{/if}
+								</li>
+							{/each}
+						</ul>
+						{#if spendMsg}
+							<p
+								class="px-6 py-3 text-xs font-medium border-t border-border {spendOk
+									? 'text-green-600 dark:text-green-400'
+									: 'text-destructive'}"
+							>
+								{spendMsg}
+							</p>
+						{/if}
+					</div>
+
+					<!-- History -->
+					<div class="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+						<div class="px-6 py-4 border-b border-border">
+							<h2 class="text-base font-bold font-heading leading-none">R$ History</h2>
+							<p class="text-xs text-muted-foreground mt-0.5">
+								Daily earnings, cosmetic and Premium purchases (referral rewards live under
+								Referrals)
+							</p>
+						</div>
+						{#if walletHistory.length === 0}
+							<p class="px-6 py-8 text-sm text-muted-foreground text-center">
+								No R$ activity yet — check in daily and vote to start earning.
+							</p>
+						{:else}
+							<ul class="divide-y divide-border max-h-96 overflow-y-auto">
+								{#each walletHistory as h}
+									<li class="px-6 py-3 flex items-center gap-3">
+										<span
+											class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sm font-extrabold {h.reward_amount >=
+											0
+												? 'bg-green-500/10 text-green-600 dark:text-green-400'
+												: 'bg-red-500/10 text-red-500'}"
+										>
+											{h.reward_amount >= 0 ? "+" : "−"}
+										</span>
+										<div class="flex-1 min-w-0">
+											<p class="text-sm font-semibold truncate">
+												{walletLabel(h.milestone_type, h.meta)}
+											</p>
+											<p class="text-xs text-muted-foreground">{fmtDate(h.created_at)}</p>
+										</div>
+										<span
+											class="shrink-0 text-sm font-extrabold font-mono {h.reward_amount >= 0
+												? 'text-green-600 dark:text-green-400'
+												: 'text-red-500'}"
+										>
+											{h.reward_amount >= 0 ? "+" : "−"}R$ {Math.abs(
+												h.reward_amount
+											).toLocaleString()}
+										</span>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+					</div>
 				{:else if activeSection === "danger"}
 					<!-- Warning banner -->
 					<div

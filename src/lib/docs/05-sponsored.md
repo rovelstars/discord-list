@@ -1,6 +1,6 @@
 # Sponsored Slots
 
-A **Sponsored** slot is a clearly-labeled, pinned placement for a bot or server - not a vote boost. This is a manual v1: there is no checkout, billing UI, or expiry automation.
+A **Sponsored** slot is a clearly-labeled, pinned placement for a bot or server - not a vote boost.
 
 ## What you get
 
@@ -8,23 +8,26 @@ A **Sponsored** slot is a clearly-labeled, pinned placement for a bot or server 
 - Capped at **1–2 slots** per page so the listing stays useful.
 - Sponsored entries are **excluded from all vote-ordered rankings** (`/top`, trending, "Best Bots of the Month"). Rankings stay 100% vote-driven - placement is never pay-to-win on votes.
 - Links are normal on-site links. Any paid external link carries `rel="sponsored nofollow"`.
+- Premium pins **expire automatically**; expired listings drop out of the slot and return to normal rankings.
 
-## Price & trial
+## Price
 
-- **$15/mo** introductory price.
-- **2-week test** available for first-time sponsors before committing.
+- **R$ 1000 = 1 week** of Premium (Sponsored pin) per bot or server.
+- R$ is **free-earned only** (check-ins, votes, bounties, referrals) - no payments.
+- Each purchase adds 1 week: buying while Premium is active **extends** the current pin.
 
-## How to buy
+## How to buy (self-serve)
 
-There is no self-serve checkout yet. **DM the site admin** with your bot/server ID to start a test or a paid month.
+1. Earn R$ (see the **R$ Rewards** tab on your dashboard for your wallet and history).
+2. Go to **Dashboard → My Bots** (or **My Servers**).
+3. On the listing card, press **Go Premium** (R$ 1000/week). The card shows **★ Premium until <date>** while active.
+4. You can also buy/extend from the listing's **edit page** (Premium panel above the form).
+5. The purchase is logged in **R$ History** as `Premium: <bot|server> <id> (1 week)`.
 
-## Manual fulfillment (admin)
+## Notes for owners
 
-1. Confirm the order (who paid, which bot/server ID, start/end dates) in your own records.
-2. Set the flag in the database - no new columns, no migration:
-   - Bot: `UPDATE Bots SET promoted = 1 WHERE id = '<BOT_ID>';`
-   - Server: `UPDATE Servers SET promoted = 1 WHERE id = '<SERVER_ID>';`
-3. Verify the Sponsored card renders on `/bots` (or `/servers`) and the homepage.
-4. When the slot ends, flip it back: `UPDATE Bots SET promoted = 0 WHERE id = '<BOT_ID>';` (same for `Servers`).
+- Only the listing owner can buy (bot `owners` array / server `owner` field); others get `not_owner`.
+- Insufficient balance returns `insufficient_funds` - earn more R$ first.
+- Expired pins are swept by the daily settle-rewards run; getters also ignore expired rows.
 
-Success metric for v1: **1 paying bot**.
+Success metric for v1: **1 premium bot**.

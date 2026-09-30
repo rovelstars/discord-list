@@ -31,6 +31,7 @@
 	import Label from "$lib/components/ui/Label.svelte";
 	import Textarea from "$lib/components/ui/textarea/Textarea.svelte";
 	import SEO from "$lib/components/SEO.svelte";
+	import { ECONOMY } from "$lib/economy";
 
 	// ── Markdown renderer ──────────────────────────────────────────────────────
 	const marked = new Marked(
@@ -74,10 +75,53 @@
 			member_count: number | null;
 			votes: number;
 			added_at: string | null;
+			promoted: boolean;
+			promoted_until: string | null;
 		};
 	};
 
 	const { user, server } = data;
+
+	// ── Premium (self-serve Sponsored pin) ───────────────────────────────
+	let premiumPending = false;
+	let premiumMsg = "";
+	let premiumOk = false;
+	let premiumUntil: string | null = server.promoted_until ?? null;
+	let premiumOn: boolean = server.promoted ?? false;
+	function premiumActive(): boolean {
+		if (!premiumOn) return false;
+		if (!premiumUntil) return true;
+		const t = new Date(premiumUntil).getTime();
+		return !isNaN(t) && t > Date.now();
+	}
+	async function buyPremium() {
+		premiumMsg = "";
+		premiumOk = false;
+		premiumPending = true;
+		try {
+			const res = await fetch("/api/premium/activate", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ kind: "server", id: server.id })
+			});
+			const d = await res.json();
+			if (!res.ok || d.err) {
+				premiumMsg =
+					d.err === "insufficient_funds"
+						? `Not enough R$ — Premium costs R$ ${ECONOMY.PREMIUM_WEEK_COST}/week.`
+						: (d.err ?? "Premium purchase failed.");
+			} else {
+				premiumOk = true;
+				premiumOn = true;
+				premiumUntil = d.promoted_until;
+				premiumMsg = "Premium active! Your server is pinned in the Sponsored slot.";
+			}
+		} catch {
+			premiumMsg = "Network error - please try again.";
+		} finally {
+			premiumPending = false;
+		}
+	}
 
 	// ── Form state ─────────────────────────────────────────────────────────────
 	let short = server.short;
@@ -404,6 +448,35 @@
 							<p class="text-sm text-destructive">{fieldErrors.slug}</p>
 						{/if}
 					</div>
+				</div>
+
+				<!-- ── Premium — Sponsored pin ────────────────────────────────── -->
+				<div class="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5 space-y-3">
+					<h2 class="font-heading text-xl font-semibold">Premium — Sponsored pin</h2>
+					<p class="text-sm text-muted-foreground">
+						R$ {ECONOMY.PREMIUM_WEEK_COST} = 1 week pinned in the Sponsored slot. Rankings stay
+						100% vote-driven. Each purchase extends an active pin by a week.
+					</p>
+					{#if premiumActive()}
+						<p class="text-sm font-semibold text-amber-600 dark:text-amber-400">
+							★ Active{premiumUntil
+								? ` until ${new Date(premiumUntil).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
+								: " (pinned)"}
+						</p>
+					{/if}
+					{#if premiumMsg}
+						<p class="text-sm {premiumOk ? 'text-green-600 dark:text-green-400' : 'text-destructive'}">
+							{premiumMsg}
+						</p>
+					{/if}
+					<button
+						type="button"
+						on:click={buyPremium}
+						disabled={premiumPending}
+						class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-700 dark:text-amber-300 text-sm font-semibold hover:bg-amber-500/30 active:scale-95 transition-all disabled:opacity-50"
+					>
+						{premiumPending ? "Buying…" : premiumActive() ? "Extend +1 week" : "Go Premium"}
+					</button>
 				</div>
 
 				<!-- ── Error / success banners ────────────────────────────────── -->

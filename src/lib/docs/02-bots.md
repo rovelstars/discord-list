@@ -122,8 +122,8 @@ Submits a vote for a bot on behalf of the authenticated user. Requires authentic
 
 There are two voting modes depending on whether the bot has opted into coin-based voting:
 
-- **Time-based** (default) - one vote per user per 24 hours.
-- **Coin-based** - spend Rcoins instead of waiting. Only available when the bot has `opted_coins: true`. Every **10 Rcoins** equals **1 vote**. The `coins` parameter must be a positive multiple of 10.
+- **Time-based** (default) - one vote per user per 24 hours. Counts toward rankings and earns R$2 vote-to-earn (max 5 paid votes/day).
+- **Coin-based** - spend Rcoins to support a bot without waiting. Only available when the bot has `opted_coins: true`. The `coins` parameter must be a positive multiple of 10. Coin support notifies the owner via webhook but **never affects vote counts, rankings, or milestones** - votes stay 100% vote-driven.
 
 ### Query Parameters
 
@@ -166,10 +166,12 @@ If the bot owner has configured a webhook URL, the API will POST a payload to th
     "bal": 40
   },
   "coins": 20,
-  "votes": 2,
+  "votes": 1,
   "currentVotes": 44
 }
 ```
+
+For time-based votes `coins` is `null` and `votes` is `1`. For coin-support votes `votes` is `0` - the `coins` spent are reported, but no vote is added to the bot's count.
 
 The request also includes an `Authorization` header set to the bot's private code if one is configured.
 

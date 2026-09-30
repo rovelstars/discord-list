@@ -121,7 +121,17 @@ export {
 	// Dashboard / read queries
 	getReferralsByReferrer,
 	getMilestonesForReferral,
-	getMilestonesForUser
+	getMilestonesForUser,
+	// Engagement economy (check-in / vote-earn / bounties / spends)
+	earnMilestoneExists,
+	countEarnForDay,
+	creditEarn,
+	debitSpend,
+	debitPremium,
+	getVisitDays,
+	getVisitorsForDay,
+	getVoteCountsForDay,
+	userLooksFarmed
 } from "./queries/referrals";
 
 export type {
@@ -133,7 +143,8 @@ export type {
 	ReferralSummary,
 	PendingReferral,
 	RetentionProgress,
-	VotingProgress
+	VotingProgress,
+	EarnMilestoneType
 } from "./queries/referrals";
 
 // Default export provides the most commonly-used runtime helpers for convenience.

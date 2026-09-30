@@ -49,6 +49,15 @@
  *      remaining engagement days as earned (up to the 5-day cap) so the
  *      payout is issued in full.
  *
+ * Pass 3 - Daily check-in (R$5 base + R$1/streak day, capped at R$10)
+ *   Every user with a site_visit row today earns a small check-in credit.
+ *   Skipped when the fingerprint anti-farm signal fires (shared device or
+ *   low trust_score). Idempotent per (user, day).
+ *
+ * Pass 4 - Vote-to-earn (R$2 per time-based vote, max 5 votes/day)
+ *   Only cooldown votes count: coin-spend votes are never logged to
+ *   UserActivityLog and never earn. One earn row per payable vote.
+ *
  * ─── Auth ────────────────────────────────────────────────────────────────────
  * Protected by the X-Internal-Secret header. Only the Netlify scheduled
  * function (and local dev scripts) should call this endpoint.
@@ -64,6 +73,8 @@
  *   signupRewardsPaid:      number,   // "Welcome Handshake" pairs credited
  *   retentionDaysPaid:      number,   // individual daily bonus pairs credited
  *   serverBountiesPaid:     number,   // reserved - handled inline on listing
+ *   checkinsPaid:           number,   // daily check-in credits (Pass 3)
+ *   voteEarnPaid:           number,   // vote-earn rows credited (Pass 4)
  *   skipped:                number,
  *   errors:                 string[],
  *   durationMs:             number
@@ -84,8 +95,22 @@ import {
 	signupWelcomeBonusExists,
 	creditDoubleReward,
 	createMilestone,
-	creditReward
+	creditReward,
+	creditEarn,
+	earnMilestoneExists,
+	countEarnForDay,
+	getVisitDays,
+	getVisitorsForDay,
+	getVoteCountsForDay,
+	userLooksFarmed,
+	todayUtc
 } from "$lib/db/queries/referrals";
+import {
+	ECONOMY,
+	calcStreak,
+	checkinRewardForStreak,
+	payableVotesToday
+} from "$lib/economy";
 
 // ---------------------------------------------------------------------------
 // Auth helper
@@ -121,6 +146,13 @@ const RETENTION_DAILY_REFERRER = 50;
 const RETENTION_DAILY_REFERRED = 40;
 
 // ---------------------------------------------------------------------------
+// Engagement-economy passes (check-in + vote-earn) reuse the same run so no
+// new scheduler is needed. Both are idempotent via earnMilestoneExists /
+// countEarnForDay and bounded by daily caps (free-tier friendly: ~3 extra
+// writes per active user per day, all batched in this single daily run).
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
 // Handler
 // ---------------------------------------------------------------------------
 
@@ -137,6 +169,9 @@ export const POST: RequestHandler = async ({ request }) => {
 	let signupRewardsPaid = 0;
 	let retentionDaysPaid = 0;
 	const serverBountiesPaid = 0; // awarded inline during server listing, not here
+	let checkinsPaid = 0;
+	let voteEarnPaid = 0;
+	let premiumExpired = 0;
 	let skipped = 0;
 	const errors: string[] = [];
 
@@ -408,6 +443,101 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	// =========================================================================
+	// PASS 3 - Daily check-in (R$5 base + R$1/streak day, capped at R$10)
+	// =========================================================================
+	// Every user with a site_visit row today earns a small check-in. Streaks
+	// are derived from their recent visit days (pure calcStreak helper).
+	// Anti-farm: users whose fingerprint is shared with another account or
+	// whose trust_score is below threshold are skipped (no pay, no ban).
+	try {
+		const today = todayUtc();
+		const visitors = await getVisitorsForDay(today);
+		for (const userId of visitors) {
+			try {
+				if (await earnMilestoneExists(userId, "checkin_daily", today)) continue;
+				if (await userLooksFarmed(userId, ECONOMY.CHECKIN_MIN_TRUST)) {
+					skipped++;
+					continue;
+				}
+				const days = await getVisitDays(userId, 30);
+				const streak = calcStreak(days, today);
+				if (streak <= 0) continue;
+				const amount = checkinRewardForStreak(streak);
+				const newBal = await creditEarn(userId, "checkin_daily", amount, {
+					day: today,
+					streak,
+					recipient: "self"
+				});
+				if (newBal === null) {
+					errors.push(`checkin: user ${userId} not found`);
+				} else {
+					checkinsPaid++;
+				}
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : String(err);
+				errors.push(`checkin[${userId}]: ${msg}`);
+			}
+		}
+	} catch (err) {
+		const msg = err instanceof Error ? err.message : String(err);
+		console.error("[settle-rewards] Failed check-in pass:", msg);
+		errors.push(`fetch_checkin_visitors: ${msg}`);
+	}
+
+	// =========================================================================
+	// PASS 4 - Vote-to-earn (R$2 per time-based vote, max 5 votes/day)
+	// =========================================================================
+	// Only cooldown (time-based) votes are eligible: coin-spend votes are
+	// never written to UserActivityLog by the vote endpoints, so they can
+	// neither earn R$ nor affect /top rankings. One earn row per vote keeps
+	// the cap check a simple count (idempotent on retry).
+	try {
+		const today = todayUtc();
+		const voteCounts = await getVoteCountsForDay(today);
+		for (const [userId, votesCast] of voteCounts) {
+			try {
+				const alreadyPaid = await countEarnForDay(userId, "vote_earn", today);
+				const payable = payableVotesToday(votesCast, alreadyPaid);
+				if (payable <= 0) continue;
+				for (let i = 0; i < payable; i++) {
+					const amount = ECONOMY.VOTE_EARN;
+					const newBal = await creditEarn(userId, "vote_earn", amount, {
+						day: today,
+						seq: alreadyPaid + i + 1,
+						recipient: "self"
+					});
+					if (newBal === null) {
+						errors.push(`vote_earn: user ${userId} not found`);
+						break;
+					}
+					voteEarnPaid++;
+				}
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : String(err);
+				errors.push(`vote_earn[${userId}]: ${msg}`);
+			}
+		}
+	} catch (err) {
+		const msg = err instanceof Error ? err.message : String(err);
+		console.error("[settle-rewards] Failed vote-earn pass:", msg);
+		errors.push(`fetch_vote_counts: ${msg}`);
+	}
+
+	// =========================================================================
+	// PASS 5 - Premium expiry (self-serve Sponsored pins)
+	// =========================================================================
+	// Clear `promoted` on bots/servers whose `promoted_until` has passed.
+	// Getters also filter by expiry, so this is cleanup, not gating.
+	try {
+		const { expirePremiumListings } = await import("$lib/db/queries/index");
+		const r = await expirePremiumListings();
+		premiumExpired = (r.bots ? 1 : 0) + (r.servers ? 1 : 0);
+	} catch (err) {
+		const msg = err instanceof Error ? err.message : String(err);
+		errors.push(`premium_expiry: ${msg}`);
+	}
+
+	// =========================================================================
 	// Summary
 	// =========================================================================
 
@@ -418,6 +548,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		`[settle-rewards] Run complete. ` +
 			`Processed: ${processed}, Paid: ${totalPaid} ` +
 			`(welcome-handshake pairs: ${signupRewardsPaid}, engagement-sprint day pairs: ${retentionDaysPaid}), ` +
+			`Check-ins: ${checkinsPaid}, Vote-earn rows: ${voteEarnPaid}, ` +
 			`Skipped: ${skipped}, Errors: ${errors.length}. ` +
 			`Duration: ${durationMs}ms`
 	);
@@ -428,6 +559,9 @@ export const POST: RequestHandler = async ({ request }) => {
 			signupRewardsPaid,
 			retentionDaysPaid,
 			serverBountiesPaid,
+			checkinsPaid,
+			voteEarnPaid,
+			premiumExpired,
 			skipped,
 			errors,
 			durationMs

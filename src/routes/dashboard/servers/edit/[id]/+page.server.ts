@@ -36,26 +36,51 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 		throw error(400, "Missing server ID");
 	}
 
-	const rows = await withDb((db) =>
-		db
-			.select({
-				id: Servers.id,
-				name: Servers.name,
-				short: Servers.short,
-				desc: Servers.desc,
-				icon: Servers.icon,
-				owner: Servers.owner,
-				slug: Servers.slug,
-				member_count: Servers.member_count,
-				votes: Servers.votes,
-				added_at: Servers.added_at
-			})
-			.from(Servers)
-			.where(or(eq(Servers.id, idOrSlug), eq(Servers.slug, idOrSlug)))
-			.limit(1)
-	);
-
-	const server = rows && rows.length > 0 ? rows[0] : null;
+	let server: any = null;
+	try {
+		const rows = await withDb((db) =>
+			db
+				.select({
+					id: Servers.id,
+					name: Servers.name,
+					short: Servers.short,
+					desc: Servers.desc,
+					icon: Servers.icon,
+					owner: Servers.owner,
+					slug: Servers.slug,
+					member_count: Servers.member_count,
+					votes: Servers.votes,
+					added_at: Servers.added_at,
+					promoted: Servers.promoted,
+					promoted_until: Servers.promoted_until
+				})
+				.from(Servers)
+				.where(or(eq(Servers.id, idOrSlug), eq(Servers.slug, idOrSlug)))
+				.limit(1)
+		);
+		server = rows && rows.length > 0 ? rows[0] : null;
+	} catch {
+		// Pre-migration DB without premium columns: legacy select.
+		const rows = await withDb((db) =>
+			db
+				.select({
+					id: Servers.id,
+					name: Servers.name,
+					short: Servers.short,
+					desc: Servers.desc,
+					icon: Servers.icon,
+					owner: Servers.owner,
+					slug: Servers.slug,
+					member_count: Servers.member_count,
+					votes: Servers.votes,
+					added_at: Servers.added_at
+				})
+				.from(Servers)
+				.where(or(eq(Servers.id, idOrSlug), eq(Servers.slug, idOrSlug)))
+				.limit(1)
+		);
+		server = rows && rows.length > 0 ? rows[0] : null;
+	}
 
 	if (!server) {
 		throw error(404, "Server not found");
@@ -82,7 +107,9 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 			desc: server.desc ?? "",
 			member_count: server.member_count ?? null,
 			votes: typeof server.votes === "number" ? server.votes : Number(server.votes) || 0,
-			added_at: server.added_at ?? null
+			added_at: server.added_at ?? null,
+			promoted: Boolean((server as any).promoted),
+			promoted_until: ((server as any).promoted_until as string | null) ?? null
 		}
 	};
 };

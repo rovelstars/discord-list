@@ -27,10 +27,12 @@ RDL sends a `POST` request with `Content-Type: application/json`. The body is a 
     "bal": 30
   },
   "coins": 20,
-  "votes": 2,
+  "votes": 0,
   "currentVotes": 44
 }
 ```
+
+For time-based votes `coins` is `null` and `votes` is `1`.
 
 ### Fields
 
@@ -42,7 +44,7 @@ RDL sends a `POST` request with `Content-Type: application/json`. The body is a 
 | `user.avatar` | string \| null | Avatar hash - construct the URL as `https://cdn.discordapp.com/avatars/{id}/{avatar}.webp` |
 | `user.bal` | number | The voter's Rcoin balance **after** the vote was processed |
 | `coins` | number \| null | Rcoins the user spent on this vote, or `null` for a time-based vote |
-| `votes` | number | Number of votes added by this action (always `1` for time-based; `coins / 10` for coin-based) |
+| `votes` | number | Votes added by this action: `1` for time-based, `0` for coin support (coins never affect rankings) |
 | `currentVotes` | number | Your bot's **total** vote count after this vote was applied |
 
 ---

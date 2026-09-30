@@ -20,6 +20,10 @@ import { env } from "$env/dynamic/private";
  *  - Supports coin-based votes when bot.opted_coins is true (10 coins = 1 vote)
  *  - Updates Users.votes and Users.bal and Bots.votes accordingly
  *  - Sends webhook to bot.webhook when configured (best-effort)
+ *
+ * Votes stay pure: coin-spend votes NEVER change Bots.votes (no pay-to-win
+ * on /top or any vote-ordered ranking). They still debit R$ and fire the
+ * webhook as paid support.
  */
 export const POST: RequestHandler = async ({ request, params, cookies }) => {
 	try {
@@ -148,11 +152,11 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 			votesArr.push({ bot: id, at: Date.now() });
 		}
 
-		// Update bot votes
+		// Update bot votes - TIME-BASED VOTES ONLY. Coin-spend votes never
+		// touch Bots.votes so rankings stay 100% vote-driven (no pay-to-win).
+		const isCoinVote = bot.opted_coins && coins !== null;
 		let newBotVotes = bot.votes ?? 0;
-		if (bot.opted_coins && coins !== null) {
-			newBotVotes = newBotVotes + Math.floor(coins / 10);
-		} else if (!bot.opted_coins) {
+		if (!isCoinVote) {
 			newBotVotes = newBotVotes + 1;
 		}
 
@@ -182,7 +186,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 					bal: user.bal
 				},
 				coins: coins,
-				votes: bot.opted_coins ? Math.floor((coins ?? 0) / 10) : 1,
+				votes: isCoinVote ? 0 : 1,
 				currentVotes: newBotVotes
 			};
 

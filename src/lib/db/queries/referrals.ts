@@ -43,7 +43,13 @@ export type MilestoneType =
 	| "self_listing_500"
 	| "signup_welcome"
 	| "engagement_sprint_referred"
-	| "server_bounty_referred";
+	| "server_bounty_referred"
+	| "checkin_daily"
+	| "vote_earn"
+	| "profile_bounty"
+	| "listing_bounty"
+	| "spend_cosmetic"
+	| "spend_premium";
 
 /** Allowed values for ReferralMilestones.status */
 export type MilestoneStatus = "pending" | "paid" | "flagged";
@@ -1327,4 +1333,240 @@ export async function getMilestonesForUser(userId: string): Promise<
 			paid_at: (r.paid_at as string | null) ?? null
 		};
 	});
+}
+
+// ---------------------------------------------------------------------------
+// Engagement economy (check-in / vote-earn / bounties / cosmetic spends)
+// ---------------------------------------------------------------------------
+// All earn/spend events reuse ReferralMilestones (no new tables):
+//   earn rows: positive reward_amount, referral_id = "earn:<type>:<day-or-once>"
+//   spend rows: negative reward_amount, milestone_type = "spend_cosmetic"
+// History for the dashboard comes free via getMilestonesForUser().
+
+/** Earn-side milestone types owned by the engagement economy. */
+export type EarnMilestoneType =
+	| "checkin_daily"
+	| "vote_earn"
+	| "profile_bounty"
+	| "listing_bounty";
+
+/**
+ * Idempotency guard for earn milestones keyed on (user_id, type, meta.day).
+ * For one-time bounties pass dayKey = "once".
+ */
+export async function earnMilestoneExists(
+	userId: string,
+	milestoneType: EarnMilestoneType,
+	dayKey: string
+): Promise<boolean> {
+	const rows = await withDb((db: DrizzleDb) =>
+		db
+			.select({ id: ReferralMilestones.id })
+			.from(ReferralMilestones)
+			.where(
+				and(
+					eq(ReferralMilestones.user_id, userId),
+					eq(ReferralMilestones.milestone_type, milestoneType),
+					sql`json_extract(${ReferralMilestones.meta}, '$.day') = ${dayKey}`
+				)
+			)
+			.limit(1)
+	);
+	return Array.isArray(rows) && rows.length > 0;
+}
+
+/**
+ * Count how many earn rows of a type a user already has for a day key.
+ * Used for the vote-earn daily cap.
+ */
+export async function countEarnForDay(
+	userId: string,
+	milestoneType: EarnMilestoneType,
+	dayKey: string
+): Promise<number> {
+	const rows = await withDb((db: DrizzleDb) =>
+		db
+			.select({ id: ReferralMilestones.id })
+			.from(ReferralMilestones)
+			.where(
+				and(
+					eq(ReferralMilestones.user_id, userId),
+					eq(ReferralMilestones.milestone_type, milestoneType),
+					sql`json_extract(${ReferralMilestones.meta}, '$.day') = ${dayKey}`
+				)
+			)
+	);
+	return Array.isArray(rows) ? rows.length : 0;
+}
+
+/**
+ * Credit an engagement-economy earn reward (idempotent when the caller
+ * checks earnMilestoneExists / countEarnForDay first).
+ * Returns the new balance, or null when the user was not found.
+ */
+export async function creditEarn(
+	userId: string,
+	milestoneType: EarnMilestoneType,
+	amount: number,
+	meta: Record<string, unknown>
+): Promise<number | null> {
+	const milestoneId = await createMilestone({
+		referralId: `earn:${milestoneType}:${String((meta as any).day ?? "once")}`,
+		userId,
+		milestoneType,
+		rewardAmount: amount,
+		meta
+	});
+	return creditReward(userId, milestoneId, amount);
+}
+
+/**
+ * Debit a cosmetic spend: checks balance, subtracts cost, and writes a
+ * "spend_cosmetic" milestone row with a negative reward_amount so the
+ * dashboard history shows the purchase. One-time-cosmetic idempotency
+ * is enforced by the caller (badge check).
+ *
+ * Returns { newBalance } on success, or { error } when unaffordable /
+ * user missing. Never lets the balance go negative.
+ */
+export async function debitSpend(
+	userId: string,
+	kind: string,
+	cost: number,
+	meta: Record<string, unknown>
+): Promise<{ newBalance: number } | { error: "insufficient_funds" | "user_not_found" }> {
+	if (cost <= 0) return { error: "insufficient_funds" };
+	const userRows = await withDb((db: DrizzleDb) =>
+		db.select({ bal: Users.bal }).from(Users).where(eq(Users.id, userId)).limit(1)
+	);
+	if (!Array.isArray(userRows) || userRows.length === 0) return { error: "user_not_found" };
+	const raw = (userRows[0] as any).bal;
+	const currentBal = typeof raw === "number" ? raw : Number(raw) || 0;
+	if (currentBal < cost) return { error: "insufficient_funds" };
+	const milestoneId = await createMilestone({
+		referralId: `spend:${kind}`,
+		userId,
+		milestoneType: "spend_cosmetic",
+		rewardAmount: -cost,
+		meta: { ...meta, kind }
+	});
+	const newBalance = currentBal - cost;
+	await Promise.all([
+		withDb((db: DrizzleDb) => db.update(Users).set({ bal: newBalance }).where(eq(Users.id, userId))),
+		withDb((db: DrizzleDb) =>
+			db
+				.update(ReferralMilestones)
+				.set({ status: "paid", paid_at: new Date().toISOString() })
+				.where(eq(ReferralMilestones.id, milestoneId))
+		)
+	]);
+	return { newBalance };
+}
+
+/**
+ * Debit a Premium (Sponsored pin) purchase: balance check + debit + a
+ * negative-amount "spend_premium" ledger row (meta: { kind: bot|server, id }).
+ * Never lets the balance go negative. Returns { newBalance } or { error }.
+ */
+export async function debitPremium(
+	userId: string,
+	cost: number,
+	meta: Record<string, unknown>
+): Promise<{ newBalance: number } | { error: "insufficient_funds" | "user_not_found" }> {
+	if (cost <= 0) return { error: "insufficient_funds" };
+	const userRows = await withDb((db: DrizzleDb) =>
+		db.select({ bal: Users.bal }).from(Users).where(eq(Users.id, userId)).limit(1)
+	);
+	if (!Array.isArray(userRows) || userRows.length === 0) return { error: "user_not_found" };
+	const raw = (userRows[0] as any).bal;
+	const currentBal = typeof raw === "number" ? raw : Number(raw) || 0;
+	if (currentBal < cost) return { error: "insufficient_funds" };
+	const kind = String((meta as any)?.kind ?? "unknown");
+	const entityId = String((meta as any)?.id ?? "unknown");
+	const milestoneId = await createMilestone({
+		referralId: `spend:premium:${kind}:${entityId}`,
+		userId,
+		milestoneType: "spend_premium",
+		rewardAmount: -cost,
+		meta: { ...meta, recipient: "self" }
+	});
+	const newBalance = currentBal - cost;
+	await Promise.all([
+		withDb((db: DrizzleDb) => db.update(Users).set({ bal: newBalance }).where(eq(Users.id, userId))),
+		withDb((db: DrizzleDb) =>
+			db
+				.update(ReferralMilestones)
+				.set({ status: "paid", paid_at: new Date().toISOString() })
+				.where(eq(ReferralMilestones.id, milestoneId))
+		)
+	]);
+	return { newBalance };
+}
+
+/**
+ * Distinct site_visit day keys for a user (most recent first, capped).
+ * Used by settle-rewards to compute check-in streaks.
+ */
+export async function getVisitDays(userId: string, limit = 30): Promise<string[]> {
+	const rows = await withDb((db: DrizzleDb) =>
+		db
+			.select({ event_day: UserActivityLog.event_day })
+			.from(UserActivityLog)
+			.where(and(eq(UserActivityLog.user_id, userId), eq(UserActivityLog.event_type, "site_visit")))
+			.orderBy(desc(UserActivityLog.event_day))
+			.limit(limit)
+	);
+	return ((rows as any[]) ?? []).map((r: any) => r.event_day as string);
+}
+
+/**
+ * Distinct user IDs with a site_visit row for a given day key.
+ * Powers the batched check-in pass in settle-rewards (one scan/day).
+ */
+export async function getVisitorsForDay(dayKey: string): Promise<string[]> {
+	const rows = await withDb((db: DrizzleDb) =>
+		db
+			.select({ user_id: UserActivityLog.user_id })
+			.from(UserActivityLog)
+			.where(
+				and(eq(UserActivityLog.event_type, "site_visit"), eq(UserActivityLog.event_day, dayKey))
+			)
+	);
+	return [...new Set(((rows as any[]) ?? []).map((r: any) => r.user_id as string))];
+}
+
+/**
+ * Per-user count of time-based vote events for a given day key.
+ * Coin-spend votes are never logged via recordVote (callers only log
+ * cooldown votes), so this count is earn-eligible by construction.
+ */
+export async function getVoteCountsForDay(dayKey: string): Promise<Map<string, number>> {
+	const rows = await withDb((db: DrizzleDb) =>
+		db
+			.select({ user_id: UserActivityLog.user_id })
+			.from(UserActivityLog)
+			.where(and(eq(UserActivityLog.event_type, "vote"), eq(UserActivityLog.event_day, dayKey)))
+	);
+	const counts = new Map<string, number>();
+	for (const r of ((rows as any[]) ?? [])) {
+		const uid = r.user_id as string;
+		counts.set(uid, (counts.get(uid) ?? 0) + 1);
+	}
+	return counts;
+}
+
+/**
+ * Anti-farm signal: true when ANY of the user's fingerprints is shared
+ * with another account OR the user's lowest trust_score is below threshold.
+ * Check-in payout is skipped while this is true (no ban, just no pay).
+ */
+export async function userLooksFarmed(userId: string, minTrust: number): Promise<boolean> {
+	const fps = await getUserFingerprints(userId);
+	if (fps.length === 0) return false; // no device data yet - allow, caps still apply
+	for (const fp of fps) {
+		if ((fp.trust_score ?? 50) < minTrust) return true;
+		const others = await getUsersWithFingerprint(fp.fingerprint, userId);
+		if (others.length > 0) return true;
+	}
+	return false;
 }

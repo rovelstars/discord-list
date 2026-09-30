@@ -66,7 +66,7 @@ function buildDiscordVotePayload(opts: {
 
 	const isCoins = coins !== null;
 	const description = isCoins
-		? `**${voterUsername}** spent **${coins} Rcoins** to give **${votesAdded}** vote${votesAdded !== 1 ? "s" : ""}!`
+		? `**${voterUsername}** spent **${coins} Rcoins** to support your bot! (Coin support doesn't affect rankings.)`
 		: `**${voterUsername}** just voted for your bot!`;
 
 	return {
@@ -137,6 +137,11 @@ function buildDiscordVotePayload(opts: {
  *  - Supports coin-based votes when bot.opted_coins is true (10 coins = 1 vote)
  *  - Updates Users.votes and Users.bal and Bots.votes accordingly
  *  - Sends webhook to bot.webhook when configured (best-effort)
+ *
+ * Votes stay pure: coin-spend votes NEVER change Bots.votes (no pay-to-win
+ * on /top or any vote-ordered ranking) and are never logged to
+ * UserActivityLog (no referral or vote-earn credit). They still debit the
+ * voter's R$ balance and fire the bot's webhook as paid support.
  */
 export const POST: RequestHandler = async ({ request, params, cookies }) => {
 	try {
@@ -278,11 +283,13 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 			votesArr.push({ bot: id, at: Date.now() });
 		}
 
-		// Update bot votes
+		// Update bot votes - TIME-BASED VOTES ONLY. Coin-spend votes never
+		// touch Bots.votes so /top and every vote-ordered ranking stays
+		// 100% vote-driven (no pay-to-win). Coin votes still debit R$ and
+		// fire the webhook below as paid support.
+		const isCoinVote = bot.opted_coins && coins !== null;
 		let newBotVotes = bot.votes ?? 0;
-		if (bot.opted_coins && coins !== null) {
-			newBotVotes = newBotVotes + Math.floor(coins / 10);
-		} else if (!bot.opted_coins) {
+		if (!isCoinVote) {
 			newBotVotes = newBotVotes + 1;
 		}
 
@@ -301,18 +308,22 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 			return json({ err: "db_update_failed" }, { status: 500 });
 		}
 
-		// Record vote in the activity log for the referral vote-20 milestone.
+		// Record vote in the activity log for the referral vote-20 milestone
+		// and vote-to-earn. Time-based votes only - coin votes never earn
+		// and never count toward milestones.
 		// Fire-and-forget - never let this block or fail the vote response.
-		recordVote(userData.id, id, "bot").catch((err) => {
-			console.warn(
-				"[bot-vote] recordVote failed (non-fatal):",
-				err instanceof Error ? err.message : String(err)
-			);
-		});
+		if (!isCoinVote) {
+			recordVote(userData.id, id, "bot").catch((err) => {
+				console.warn(
+					"[bot-vote] recordVote failed (non-fatal):",
+					err instanceof Error ? err.message : String(err)
+				);
+			});
+		}
 
 		// If bot has a webhook configured, notify it (best-effort)
 		if (bot.webhook) {
-			const votesAdded = bot.opted_coins ? Math.floor((coins ?? 0) / 10) : 1;
+			const votesAdded = isCoinVote ? 0 : 1;
 			const domain = (env.DOMAIN ?? "https://discord.rovelstars.com").replace(/\/$/, "");
 
 			// When the configured URL is a Discord webhook, send a rich embed instead

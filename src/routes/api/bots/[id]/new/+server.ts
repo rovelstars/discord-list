@@ -235,6 +235,26 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 			)
 		);
 
+		// First-listing bounty (R$50, once per user): rewards submitting your
+		// first bot. Idempotent via the "once" day key; best-effort so it
+		// never fails the listing response.
+		try {
+			const { earnMilestoneExists, creditEarn } = await import("$lib/db/queries/referrals");
+			const { ECONOMY } = await import("$lib/economy");
+			if (!(await earnMilestoneExists(userData.id, "listing_bounty", "once"))) {
+				await creditEarn(userData.id, "listing_bounty", ECONOMY.LISTING_BOUNTY, {
+					day: "once",
+					bot_id: id,
+					recipient: "self"
+				});
+			}
+		} catch (err) {
+			console.warn(
+				"[bot-new] listing bounty failed (non-fatal):",
+				err instanceof Error ? err.message : String(err)
+			);
+		}
+
 		return json({ success: true }, { status: 200 });
 	} catch (err) {
 		console.error("/api/bots/[id]/new error:", err);

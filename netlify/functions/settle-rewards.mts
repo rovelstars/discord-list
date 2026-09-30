@@ -54,6 +54,8 @@ interface SettleResult {
 	retentionDaysPaid: number;
 	voteMilestonesPaid: number;
 	serverBountiesPaid: number;
+	checkinsPaid?: number;
+	voteEarnPaid?: number;
 	skipped: number;
 	errors: string[];
 }
@@ -156,6 +158,8 @@ export default async function handler(_req: Request, _ctx: Context): Promise<Res
 				retentionDaysPaid: result.retentionDaysPaid,
 				voteMilestonesPaid: result.voteMilestonesPaid,
 				serverBountiesPaid: result.serverBountiesPaid,
+				checkinsPaid: result.checkinsPaid ?? 0,
+				voteEarnPaid: result.voteEarnPaid ?? 0,
 				skipped: result.skipped,
 				errorCount: result.errors?.length ?? 0
 			})

@@ -66,6 +66,28 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 			.where(or(eq(Bots.id, idOrSlug), eq(Bots.slug, idOrSlug)))
 			.limit(1)
 	);
+	// Premium state lives outside the core select so pre-migration DBs keep working.
+	let premiumState: { promoted: boolean; promoted_until: string | null } = {
+		promoted: false,
+		promoted_until: null
+	};
+	try {
+		const pRows = (await withDb((db) =>
+			db
+				.select({ promoted: Bots.promoted, promoted_until: Bots.promoted_until })
+				.from(Bots)
+				.where(or(eq(Bots.id, idOrSlug), eq(Bots.slug, idOrSlug)))
+				.limit(1)
+		)) as any[];
+		if (pRows?.[0]) {
+			premiumState = {
+				promoted: Boolean(pRows[0].promoted),
+				promoted_until: (pRows[0].promoted_until as string | null) ?? null
+			};
+		}
+	} catch {
+		// pre-migration: no premium columns
+	}
 
 	const bot = rows && rows.length > 0 ? rows[0] : null;
 
@@ -124,7 +146,9 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 			code: bot.code ?? "",
 			opted_coins: Boolean(bot.opted_coins),
 			blacklisted: Boolean(bot.blacklisted),
-			blacklisted_at: bot.blacklisted_at ?? null
+			blacklisted_at: bot.blacklisted_at ?? null,
+			promoted: premiumState.promoted,
+			promoted_until: premiumState.promoted_until
 		}
 	};
 };

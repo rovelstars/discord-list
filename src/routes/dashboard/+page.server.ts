@@ -7,16 +7,35 @@ import { eq, and, sql, inArray, like } from "drizzle-orm";
 
 /** Minimal user profile shape used for referral display. */
 type UserProfile = { id: string; username: string; avatar: string | null };
+
+/** Parse the Users.badges JSON TEXT column into a string array. */
+function parseBadges(raw: unknown): string[] {
+	try {
+		if (!raw) return [];
+		if (Array.isArray(raw)) return raw.map(String);
+		if (typeof raw === "string") {
+			const parsed: unknown = JSON.parse(raw);
+			return Array.isArray(parsed) ? parsed.map(String) : [];
+		}
+		return [];
+	} catch {
+		return [];
+	}
+}
 import { getServersByOwner } from "$lib/db/queries";
 import { listEmojis } from "$lib/db/queries/emojis";
 import {
 	getReferralsByReferrer,
 	getMilestonesForReferral,
 	getMilestonesForUser,
+	earnMilestoneExists,
+	countEarnForDay,
+	getVisitDays,
 	type ReferralSummary,
 	type MilestoneType,
 	type MilestoneStatus
 } from "$lib/db/queries/referrals";
+import { calcStreak, toDayKey, ECONOMY } from "$lib/economy";
 import { Referrals } from "$lib/db/schema";
 import { withDb, type DrizzleDb } from "$lib/db";
 
@@ -90,29 +109,58 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		status: string;
 		blacklisted: boolean;
 		blacklisted_at: string | null;
+		promoted: boolean;
+		promoted_until: string | null;
 	}> = [];
 
 	try {
-		const botRows = await withDb((db) =>
-			db
-				.select({
-					id: Bots.id,
-					slug: Bots.slug,
-					username: Bots.username,
-					discriminator: Bots.discriminator,
-					avatar: Bots.avatar,
-					short: Bots.short,
-					votes: Bots.votes,
-					servers: Bots.servers,
-					invite: Bots.invite,
-					bg: Bots.bg,
-					blacklisted: Bots.blacklisted,
-					blacklisted_at: Bots.blacklisted_at
-				})
-				.from(Bots)
-				.where(like(Bots.owners, `%${discordUser.id}%`))
-				.limit(50)
-		);
+		let botRows: any[];
+		try {
+			botRows = (await withDb((db) =>
+				db
+					.select({
+						id: Bots.id,
+						slug: Bots.slug,
+						username: Bots.username,
+						discriminator: Bots.discriminator,
+						avatar: Bots.avatar,
+						short: Bots.short,
+						votes: Bots.votes,
+						servers: Bots.servers,
+						invite: Bots.invite,
+						bg: Bots.bg,
+						blacklisted: Bots.blacklisted,
+						blacklisted_at: Bots.blacklisted_at,
+						promoted: Bots.promoted,
+						promoted_until: Bots.promoted_until
+					})
+					.from(Bots)
+					.where(like(Bots.owners, `%${discordUser.id}%`))
+					.limit(50)
+			)) as any[];
+		} catch {
+			// Pre-migration DB without promoted_until: legacy select.
+			botRows = (await withDb((db) =>
+				db
+					.select({
+						id: Bots.id,
+						slug: Bots.slug,
+						username: Bots.username,
+						discriminator: Bots.discriminator,
+						avatar: Bots.avatar,
+						short: Bots.short,
+						votes: Bots.votes,
+						servers: Bots.servers,
+						invite: Bots.invite,
+						bg: Bots.bg,
+						blacklisted: Bots.blacklisted,
+						blacklisted_at: Bots.blacklisted_at
+					})
+					.from(Bots)
+					.where(like(Bots.owners, `%${discordUser.id}%`))
+					.limit(50)
+			)) as any[];
+		}
 
 		ownedBots = botRows.map((b) => ({
 			id: String(b.id),
@@ -127,7 +175,9 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			bg: b.bg ?? null,
 			status: "online",
 			blacklisted: Boolean(b.blacklisted),
-			blacklisted_at: b.blacklisted_at ?? null
+			blacklisted_at: b.blacklisted_at ?? null,
+			promoted: Boolean((b as any).promoted),
+			promoted_until: ((b as any).promoted_until as string | null) ?? null
 		}));
 	} catch {
 		// non-fatal - show empty bot list
@@ -254,10 +304,35 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		votes: number;
 		owner: string;
 		slug: string | null;
+		promoted: boolean;
+		promoted_until: string | null;
 	}> = [];
 
 	try {
-		ownedServers = await getServersByOwner(discordUser.id);
+		const base = await getServersByOwner(discordUser.id);
+		// Attach premium state (promoted_until lives outside ServerSummary).
+		let untilById = new Map<string, string | null>();
+		try {
+			const rows = (await withDb((db) =>
+				db
+					.select({ id: Servers.id, promoted: Servers.promoted, promoted_until: Servers.promoted_until })
+					.from(Servers)
+					.where(eq(Servers.owner, discordUser.id))
+					.limit(50)
+			)) as any[];
+			for (const r of rows ?? []) untilById.set(String(r.id), (r.promoted_until as string | null) ?? null);
+			// Merge promoted flag too (base rows already carry it, but keep in sync).
+			ownedServers = base.map((s) => {
+				const live = (rows ?? []).find((r: any) => String(r.id) === s.id);
+				return {
+					...s,
+					promoted: live ? Boolean(live.promoted) : (s as any).promoted ?? false,
+					promoted_until: untilById.get(s.id) ?? null
+				};
+			});
+		} catch {
+			ownedServers = base.map((s) => ({ ...s, promoted: (s as any).promoted ?? false, promoted_until: null }));
+		}
 	} catch {
 		// non-fatal
 	}
@@ -339,6 +414,28 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	}> = [];
 	let totalEarnedAsReferred = 0;
 
+	// 5. Engagement-economy wallet (check-in / vote-earn / bounties / spends)
+	let walletHistory: typeof earnedAsReferred = [];
+	let wallet: {
+		streak: number;
+		checkinPaidToday: boolean;
+		checkinNext: number;
+		voteEarnToday: number;
+		voteEarnMax: number;
+		profileBountyPaid: boolean;
+		listingBountyPaid: boolean;
+		ownedCosmetics: string[];
+	} = {
+		streak: 0,
+		checkinPaidToday: false,
+		checkinNext: ECONOMY.CHECKIN_BASE,
+		voteEarnToday: 0,
+		voteEarnMax: ECONOMY.VOTE_EARN_DAILY_MAX,
+		profileBountyPaid: false,
+		listingBountyPaid: false,
+		ownedCosmetics: [] as string[]
+	};
+
 	try {
 		// Rewards this user earned as the referred party (welcome bonus, engagement sprint, bounty)
 		const allUserMilestones = await getMilestonesForUser(discordUser.id);
@@ -351,8 +448,43 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		totalEarnedAsReferred = earnedAsReferred
 			.filter((m) => m.status === "paid")
 			.reduce((sum, m) => sum + m.reward_amount, 0);
+
+		// Engagement-economy history: earn rows + cosmetic + premium spends.
+		walletHistory = allUserMilestones.filter((m) =>
+			["checkin_daily", "vote_earn", "profile_bounty", "listing_bounty", "spend_cosmetic", "spend_premium"].includes(
+				m.milestone_type
+			)
+		);
 	} catch {
 		// non-fatal - show empty section
+	}
+
+	try {
+		// Wallet snapshot: streak, today's earn progress, bounty + cosmetic state.
+		const today = toDayKey(new Date());
+		const [visitDays, checkinPaid, votePaid, profilePaid, listingPaid] = await Promise.all([
+			getVisitDays(discordUser.id, 30).catch(() => [] as string[]),
+			earnMilestoneExists(discordUser.id, "checkin_daily", today).catch(() => false),
+			countEarnForDay(discordUser.id, "vote_earn", today).catch(() => 0),
+			earnMilestoneExists(discordUser.id, "profile_bounty", "once").catch(() => false),
+			earnMilestoneExists(discordUser.id, "listing_bounty", "once").catch(() => false)
+		]);
+		const streak = calcStreak(visitDays, today);
+		// Next check-in value: settled tomorrow for today's streak+1 when the
+		// user returns; shown as motivation, not a promise.
+		const { checkinRewardForStreak } = await import("$lib/economy");
+		wallet = {
+			streak,
+			checkinPaidToday: checkinPaid,
+			checkinNext: checkinRewardForStreak(streak + 1),
+			voteEarnToday: votePaid,
+			voteEarnMax: ECONOMY.VOTE_EARN_DAILY_MAX,
+			profileBountyPaid: profilePaid,
+			listingBountyPaid: listingPaid,
+			ownedCosmetics: parseBadges(dbUser.badges).filter((b) => b.startsWith("cosmetic:"))
+		};
+	} catch {
+		// non-fatal - wallet card degrades to balance-only
 	}
 
 	try {
@@ -536,6 +668,9 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		wasReferredBy,
 		// Rewards this user earned as the referred user
 		earnedAsReferred,
-		totalEarnedAsReferred
+		totalEarnedAsReferred,
+		// Engagement-economy wallet
+		wallet,
+		walletHistory
 	};
 };

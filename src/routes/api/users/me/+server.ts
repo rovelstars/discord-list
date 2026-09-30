@@ -141,6 +141,34 @@ export const PATCH: RequestHandler = async ({ request, cookies }) => {
 			return json({ err: "db_update_failed" }, { status: 500 });
 		}
 
+		// Profile-completeness bounty (R$25, once): custom bio + banner set.
+		// Best-effort and idempotent - never fails the profile save.
+		try {
+			const { earnMilestoneExists, creditEarn } = await import("$lib/db/queries/referrals");
+			const { ECONOMY, isProfileComplete } = await import("$lib/economy");
+			if (!(await earnMilestoneExists(userData.id, "profile_bounty", "once"))) {
+				const profileRows = await withDb((db) =>
+					db
+						.select({ bio: Users.bio, banner: Users.banner })
+						.from(Users)
+						.where(eq(Users.id, userData.id))
+						.limit(1)
+				);
+				const profile = Array.isArray(profileRows) ? (profileRows[0] as any) : null;
+				if (profile && isProfileComplete(profile.bio ?? null, profile.banner ?? null)) {
+					await creditEarn(userData.id, "profile_bounty", ECONOMY.PROFILE_BOUNTY, {
+						day: "once",
+						recipient: "self"
+					});
+				}
+			}
+		} catch (err) {
+			console.warn(
+				"[PATCH /api/users/me] profile bounty failed (non-fatal):",
+				err instanceof Error ? err.message : String(err)
+			);
+		}
+
 		return json({ success: true }, { status: 200 });
 	} catch (err) {
 		console.error("[PATCH /api/users/me] Unexpected error:", err);

@@ -17,6 +17,9 @@
 	$: avatarSrc = profile?.avatar
 		? getAvatarURL(profile.id, profile.avatar, 256)
 		: "/assets/img/bot/logo-144.png";
+	// Gold profile border cosmetic (R$ spend sink): badge "cosmetic:profile_border".
+	$: hasGoldBorder =
+		Array.isArray(profile?.badges) && profile.badges.includes("cosmetic:profile_border");
 
 	// Resolve the banner to a usable URL. `profile.banner` is either a custom URL
 	// the user set in their dashboard (starts with http) or a raw Discord banner
@@ -131,7 +134,9 @@
 					<img
 						src={avatarSrc}
 						alt={displayName}
-						class="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-card bg-card shadow-xl object-cover shrink-0"
+						class="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 bg-card shadow-xl object-cover shrink-0 {hasGoldBorder
+							? 'border-yellow-400 ring-2 ring-yellow-400/60'
+							: 'border-card'}"
 						loading="eager"
 					/>
 					<div class="flex-1 min-w-0 sm:pb-2">

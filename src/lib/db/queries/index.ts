@@ -281,20 +281,153 @@ export async function getTopBots(limit = 10): Promise<BotSummary[]> {
 }
 
 /**
- * Sponsored slot v1 (manual): up to `limit` promoted, non-blacklisted bots.
- * Fulfillment is manual - an admin flips `Bots.promoted` (see docs#sponsored).
- * Ordered by votes so the strongest sponsor shows first when capped at 1-2.
+ * Sponsored slot (self-serve Premium): up to `limit` promoted, non-blacklisted
+ * bots whose pin has not expired (`promoted_until` NULL = legacy permanent
+ * manual pin, otherwise must be in the future). Ordered by votes.
  */
 export async function getPromotedBots(limit = 2): Promise<BotSummary[]> {
-	const rows = (await withDb((d: DrizzleDb) =>
-		d
-			.select(BOT_SUMMARY_SELECTION)
-			.from(Bots)
-			.where(and(eq(Bots.promoted, true), eq(Bots.blacklisted, false)))
-			.orderBy(desc(Bots.votes))
-			.limit(Math.max(1, Math.min(limit, 2)))
-	)) as any[];
-	return rows.map(mapBotSummary);
+	const nowIso = new Date().toISOString();
+	try {
+		const rows = (await withDb((d: DrizzleDb) =>
+			d
+				.select(BOT_SUMMARY_SELECTION)
+				.from(Bots)
+				.where(
+					and(
+						eq(Bots.promoted, true),
+						eq(Bots.blacklisted, false),
+						or(isNull(Bots.promoted_until), sql`${Bots.promoted_until} > ${nowIso}`)
+					)
+				)
+				.orderBy(desc(Bots.votes))
+				.limit(Math.max(1, Math.min(limit, 2)))
+		)) as any[];
+		return rows.map(mapBotSummary);
+	} catch {
+		// Live DB predates the promoted_until migration — legacy behaviour.
+		const rows = (await withDb((d: DrizzleDb) =>
+			d
+				.select(BOT_SUMMARY_SELECTION)
+				.from(Bots)
+				.where(and(eq(Bots.promoted, true), eq(Bots.blacklisted, false)))
+				.orderBy(desc(Bots.votes))
+				.limit(Math.max(1, Math.min(limit, 2)))
+		)) as any[];
+		return rows.map(mapBotSummary);
+	}
+}
+
+/** Weeks are whole 7-day blocks starting now (or extending an active pin). */
+export type PremiumKind = "bot" | "server";
+
+/**
+ * Activate (or extend) Premium for one listing. Sets promoted=1 and
+ * promoted_until = max(now, current_until) + weeks×7d. Returns the new expiry.
+ */
+export async function activatePremium(
+	kind: PremiumKind,
+	id: string,
+	weeks = 1
+): Promise<string> {
+	const now = new Date();
+	const safeWeeks = Math.max(1, Math.floor(weeks) || 1);
+	if (kind === "bot") {
+		let current: string | null = null;
+		try {
+			const rows = (await withDb((d: DrizzleDb) =>
+				d.select({ promoted_until: Bots.promoted_until }).from(Bots).where(eq(Bots.id, id)).limit(1)
+			)) as any[];
+			current = rows?.[0]?.promoted_until ?? null;
+		} catch {
+			current = null; // column missing pre-migration
+		}
+		const base = current && !isNaN(new Date(current).getTime()) && new Date(current) > now
+			? new Date(current)
+			: now;
+		base.setUTCDate(base.getUTCDate() + 7 * safeWeeks);
+		const until = base.toISOString();
+		try {
+			await withDb((d: DrizzleDb) =>
+				d.update(Bots).set({ promoted: true, promoted_until: until }).where(eq(Bots.id, id))
+			);
+		} catch {
+			// Pre-migration DB: fall back to the bare boolean flag.
+			await withDb((d: DrizzleDb) =>
+				d.update(Bots).set({ promoted: true }).where(eq(Bots.id, id))
+			);
+		}
+		return until;
+	}
+	let current: string | null = null;
+	try {
+		const rows = (await withDb((d: DrizzleDb) =>
+			d.select({ promoted_until: Servers.promoted_until }).from(Servers).where(eq(Servers.id, id)).limit(1)
+		)) as any[];
+		current = rows?.[0]?.promoted_until ?? null;
+	} catch {
+		current = null;
+	}
+	const base = current && !isNaN(new Date(current).getTime()) && new Date(current) > now
+		? new Date(current)
+		: now;
+	base.setUTCDate(base.getUTCDate() + 7 * safeWeeks);
+	const until = base.toISOString();
+	try {
+		await withDb((d: DrizzleDb) =>
+			d.update(Servers).set({ promoted: true, promoted_until: until }).where(eq(Servers.id, id))
+		);
+	} catch {
+		await withDb((d: DrizzleDb) =>
+			d.update(Servers).set({ promoted: true }).where(eq(Servers.id, id))
+		);
+	}
+	return until;
+}
+
+/**
+ * Lazy expiry pass: clear `promoted` on rows whose `promoted_until` has
+ * passed. Called from the settle-rewards cron (no new scheduler). Safe to
+ * run repeatedly; returns counts. No-op on pre-migration DBs.
+ */
+export async function expirePremiumListings(): Promise<{ bots: number; servers: number }> {
+	const nowIso = new Date().toISOString();
+	let bots = 0;
+	let servers = 0;
+	try {
+		await withDb((d: DrizzleDb) =>
+			d
+				.update(Bots)
+				.set({ promoted: false })
+				.where(
+					and(
+						eq(Bots.promoted, true),
+						isNotNull(Bots.promoted_until),
+						sql`${Bots.promoted_until} <= ${nowIso}`
+					)
+				)
+		);
+		bots = 1; // rowcount unavailable via libSQL; 1 = pass ran
+	} catch {
+		bots = 0;
+	}
+	try {
+		await withDb((d: DrizzleDb) =>
+			d
+				.update(Servers)
+				.set({ promoted: false })
+				.where(
+					and(
+						eq(Servers.promoted, true),
+						isNotNull(Servers.promoted_until),
+						sql`${Servers.promoted_until} <= ${nowIso}`
+					)
+				)
+		);
+		servers = 1;
+	} catch {
+		servers = 0;
+	}
+	return { bots, servers };
 }
 
 /** Music bots - simple keyword match */
@@ -1179,31 +1312,60 @@ export async function getTopServers(limit = 10): Promise<ServerSummary[]> {
 }
 
 /**
- * Sponsored slot v1 (manual): up to `limit` promoted servers.
- * Fulfillment is manual - an admin flips `Servers.promoted` (see docs#sponsored).
+ * Sponsored slot (self-serve Premium): up to `limit` promoted servers whose
+ * pin has not expired (`promoted_until` NULL = legacy permanent manual pin).
  * Ordered by votes so the strongest sponsor shows first when capped at 1-2.
  */
 export async function getPromotedServers(limit = 2): Promise<ServerSummary[]> {
-	const rows = (await withDb((d: DrizzleDb) =>
-		d
-			.select({
-				id: Servers.id,
-				name: Servers.name,
-				short: Servers.short,
-				icon: Servers.icon,
-				votes: Servers.votes,
-				owner: Servers.owner,
-				slug: Servers.slug,
-				promoted: Servers.promoted,
-				badges: Servers.badges,
-				added_at: Servers.added_at
-			})
-			.from(Servers)
-			.where(eq(Servers.promoted, true))
-			.orderBy(desc(Servers.votes))
-			.limit(Math.max(1, Math.min(limit, 2)))
-	)) as any[];
-	return rows.map(mapServerSummary);
+	try {
+		const nowIso = new Date().toISOString();
+		const rows = (await withDb((d: DrizzleDb) =>
+			d
+				.select({
+					id: Servers.id,
+					name: Servers.name,
+					short: Servers.short,
+					icon: Servers.icon,
+					votes: Servers.votes,
+					owner: Servers.owner,
+					slug: Servers.slug,
+					promoted: Servers.promoted,
+					badges: Servers.badges,
+					added_at: Servers.added_at
+				})
+				.from(Servers)
+				.where(
+					and(
+						eq(Servers.promoted, true),
+						or(isNull(Servers.promoted_until), sql`${Servers.promoted_until} > ${nowIso}`)
+					)
+				)
+				.orderBy(desc(Servers.votes))
+				.limit(Math.max(1, Math.min(limit, 2)))
+		)) as any[];
+		return rows.map(mapServerSummary);
+	} catch {
+		const rows = (await withDb((d: DrizzleDb) =>
+			d
+				.select({
+					id: Servers.id,
+					name: Servers.name,
+					short: Servers.short,
+					icon: Servers.icon,
+					votes: Servers.votes,
+					owner: Servers.owner,
+					slug: Servers.slug,
+					promoted: Servers.promoted,
+					badges: Servers.badges,
+					added_at: Servers.added_at
+				})
+				.from(Servers)
+				.where(eq(Servers.promoted, true))
+				.orderBy(desc(Servers.votes))
+				.limit(Math.max(1, Math.min(limit, 2)))
+		)) as any[];
+		return rows.map(mapServerSummary);
+	}
 }
 
 export async function getRandomServers(limit = 10): Promise<ServerSummary[]> {

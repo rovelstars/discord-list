@@ -46,6 +46,8 @@ export const Bots = sqliteTable("Bots", {
 	// boolean flags as integers (0/1)
 	approved: integer("approved", { mode: "boolean" }).default(false),
 	promoted: integer("promoted", { mode: "boolean" }).default(false),
+	// ISO 8601 expiry of self-serve Premium (NULL = legacy permanent manual pin).
+	promoted_until: text("promoted_until"),
 	opted_coins: integer("opted_coins", { mode: "boolean" }).default(false),
 	// Soft-delete flag. When true the bot is hidden from every public listing and
 	// detail page (but still visible in its owner's dashboard so they can revert).
@@ -148,6 +150,8 @@ export const Servers = sqliteTable("Servers", {
 	owner: text("owner").notNull(),
 	icon: text("icon").default(""),
 	promoted: integer("promoted", { mode: "boolean" }).default(false),
+	// ISO 8601 expiry of self-serve Premium (NULL = legacy permanent manual pin).
+	promoted_until: text("promoted_until"),
 	badges: text("badges", { mode: "json" }).default([]),
 	slug: text("slug"),
 	//current time
