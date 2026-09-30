@@ -1,6 +1,12 @@
 import type { PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
-import { getServerByIdOrSlug, getRandomServers, getBotsByServerId } from "$lib/db/queries";
+import {
+	getServerByIdOrSlug,
+	getRandomServers,
+	getBotsByServerId,
+	getBotsBySupportGuild
+} from "$lib/db/queries";
+import { resolveOwners } from "$lib/server/resolve-owners";
 import { refreshServer } from "$lib/server-refresh";
 import { env } from "$env/dynamic/private";
 import { Marked } from "marked";
@@ -34,10 +40,14 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 		throw redirect(302, "/404");
 	}
 
-	const [randomServers, relatedBots] = await Promise.all([
+	const [randomServers, relatedBots, ownerList, supportedBots] = await Promise.all([
 		getRandomServers(6),
-		getBotsByServerId(server.id, 8)
+		getBotsByServerId(server.id, 8),
+		resolveOwners([server.owner]),
+		// Bots that list THIS guild as their support server (reverse of the bot page link).
+		getBotsBySupportGuild(server.id, 12)
 	]);
+	const owner = ownerList[0] ?? null;
 
 	let emojis: Awaited<ReturnType<typeof getEmojisByGuild>> = [];
 	let emojiCount = 0;
@@ -100,9 +110,11 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 
 	return {
 		server,
+		owner,
 		descHtml,
 		randomServers,
 		relatedBots,
+		supportedBots,
 		emojis,
 		emojiCount,
 		stickers,

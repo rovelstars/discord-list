@@ -8,6 +8,7 @@
 	import EmojiCard from "$lib/components/EmojiCard.svelte";
 	import StickerCard from "$lib/components/StickerCard.svelte";
 	import AdUnit from "$lib/components/AdUnit.svelte";
+	import getAvatarURL from "$lib/get-avatar-url";
 	import { authUser } from "$lib/auth";
 
 	export let data: {
@@ -43,6 +44,18 @@
 			invite: string | null;
 			bg: string | null;
 		}>;
+		supportedBots: Array<{
+			id: string;
+			slug: string;
+			username: string;
+			discriminator: string;
+			avatar: string | null;
+			short: string;
+			votes: number;
+			servers: number;
+			invite: string | null;
+			bg: string | null;
+		}>;
 		emojis: Array<{
 			id: string;
 			code: string;
@@ -65,10 +78,27 @@
 			guild: string | null;
 		}>;
 		stickerCount: number;
+		owner: {
+			id: string;
+			name: string;
+			avatar: string | null;
+			hasProfile: boolean;
+			private: boolean;
+		} | null;
 	};
 
-	$: ({ server, descHtml, randomServers, relatedBots, emojis, emojiCount, stickers, stickerCount } =
-		data);
+	$: ({
+		server,
+		owner,
+		descHtml,
+		randomServers,
+		relatedBots,
+		supportedBots,
+		emojis,
+		emojiCount,
+		stickers,
+		stickerCount
+	} = data);
 
 	// User comes from the client-side auth store instead of server data
 	$: user = $authUser ?? null;
@@ -88,6 +118,66 @@
 		if (server.icon.startsWith("http")) return server.icon;
 		return `https://cdn.discordapp.com/icons/${server.id}/${server.icon}.webp?size=256`;
 	})();
+
+	// Bots that use this server for support but aren't already shown in the
+	// "Bots in this server" grid (avoid showing the same card twice).
+	$: supportOnlyBots = (supportedBots ?? []).filter(
+		(b) => !(relatedBots ?? []).some((r) => r.id === b.id)
+	);
+
+	// ── Join flow ──────────────────────────────────────────────────────────────
+	// Hits /api/servers/[id]/join, which either adds the logged-in user directly
+	// (one-click) or returns a fresh one-time invite URL to redirect to.
+	let joining = false;
+	let joinError = "";
+	let joinedMessage = "";
+
+	async function joinServer() {
+		joining = true;
+		joinError = "";
+		joinedMessage = "";
+		try {
+			const res = await fetch(`/api/servers/${encodeURIComponent(server.id)}/join`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" }
+			});
+			const data = await res.json().catch(() => ({}));
+
+			if (data?.inviteUrl) {
+				// Fallback path: send them to the invite (new tab so they keep this page).
+				window.open(data.inviteUrl, "_blank", "noopener,noreferrer");
+				joinedMessage = "Opening your invite to " + server.name + "…";
+				return;
+			}
+			if (res.ok && data?.joined) {
+				joinedMessage = data.already
+					? "You're already a member of " + server.name + "."
+					: "Added you to " + server.name + "! Open Discord to start chatting.";
+				return;
+			}
+
+			// No invite available and we couldn't add them - the remaining path is a
+			// direct add, which needs them logged in (with server access). Send them
+			// to log in and come straight back here.
+			if (data?.err === "needs_login") {
+				const back = encodeURIComponent(window.location.pathname);
+				window.location.href = `/login?servers=true&redirect=${back}`;
+				return;
+			}
+
+			const errMap: Record<string, string> = {
+				server_not_found: "This server could not be found.",
+				cannot_join:
+					"We couldn't add you automatically - this server hasn't given our bot permission to invite. Try joining from inside Discord.",
+				missing_token: "Join is temporarily unavailable. Please try again later."
+			};
+			joinError = errMap[data?.err] ?? "Couldn't join right now. Please try again.";
+		} catch {
+			joinError = "Network error - please try again.";
+		} finally {
+			joining = false;
+		}
+	}
 
 	// ── Formatting helpers ───────────────────────────────────────────────────
 
@@ -463,14 +553,44 @@
 
 							<!-- Owner -->
 							<div class="rounded-xl bg-muted/30 border border-border px-4 py-3">
-								<dt class="font-semibold text-sm text-foreground mb-1">Owner ID</dt>
-								<dd class="text-sm text-muted-foreground font-mono leading-relaxed break-all">
-									<a
-										href="/users/{server.owner}"
-										class="text-primary hover:underline underline-offset-2"
-									>
-										{server.owner}
-									</a>
+								<dt class="font-semibold text-sm text-foreground mb-2">Owner</dt>
+								<dd class="text-sm leading-relaxed">
+									{#if owner}
+										{#if owner.hasProfile}
+											<a
+												href="/users/{owner.id}"
+												class="inline-flex items-center gap-2.5 group"
+											>
+												<img
+													src={getAvatarURL(owner.id, owner.avatar ?? "0", 64)}
+													alt={owner.name}
+													width="32"
+													height="32"
+													loading="lazy"
+													class="w-8 h-8 rounded-full bg-background shrink-0 object-cover"
+												/>
+												<span
+													class="font-medium text-foreground group-hover:text-primary transition-colors truncate"
+												>
+													{owner.name}
+												</span>
+											</a>
+										{:else}
+											<span class="inline-flex items-center gap-2.5">
+												<img
+													src={getAvatarURL(owner.id, owner.avatar ?? "0", 64)}
+													alt={owner.name}
+													width="32"
+													height="32"
+													loading="lazy"
+													class="w-8 h-8 rounded-full bg-background shrink-0 object-cover opacity-80"
+												/>
+												<span class="font-medium text-muted-foreground truncate">{owner.name}</span>
+											</span>
+										{/if}
+									{:else}
+										<span class="text-muted-foreground font-mono break-all">{server.owner}</span>
+									{/if}
 								</dd>
 							</div>
 
@@ -630,6 +750,58 @@
 						</div>
 					</div>
 
+					<!-- Join button (primary action) -->
+					<div class="flex flex-col gap-2">
+						<button
+							type="button"
+							on:click={joinServer}
+							disabled={joining}
+							class="flex items-center justify-center gap-2 rounded-xl bg-[#5865F2] hover:bg-[#4752c4] active:bg-[#3c45a5] transition-colors text-white font-bold px-4 py-3 text-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+						>
+							{#if joining}
+								<svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+									<circle
+										class="opacity-25"
+										cx="12"
+										cy="12"
+										r="10"
+										stroke="currentColor"
+										stroke-width="4"
+									/>
+									<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+								</svg>
+								Getting you in…
+							{:else}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="w-4 h-4"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2.5"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									aria-hidden="true"
+								>
+									<path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+								</svg>
+								Join {server.name}
+							{/if}
+						</button>
+						{#if joinedMessage}
+							<p
+								class="text-xs text-green-600 dark:text-green-400 font-medium text-center leading-relaxed"
+							>
+								{joinedMessage}
+							</p>
+						{/if}
+						{#if joinError}
+							<p class="text-xs text-destructive font-medium text-center leading-relaxed">
+								{joinError}
+							</p>
+						{/if}
+					</div>
+
 					<!-- Vote button -->
 					<div class="flex flex-col gap-2">
 						<a
@@ -674,8 +846,10 @@
 							How to Join
 						</h3>
 						<p class="text-sm text-muted-foreground leading-relaxed">
-							<strong class="text-foreground">{server.name}</strong> is a Discord community listed on
-							Rovel Discord List. Search for it on Discord or ask a member for an invite link.
+							Hit <strong class="text-foreground">Join {server.name}</strong> above to get in. If
+							you're logged in with server access, we'll add you to
+							<strong class="text-foreground">{server.name}</strong> instantly - otherwise we'll hand
+							you a fresh, single-use invite link.
 						</p>
 					</div>
 
@@ -1000,6 +1174,49 @@
 			</div>
 		{/if}
 
+		<!-- ── Support hub: bots that use this server for support ──────────────────── -->
+		{#if supportOnlyBots.length > 0}
+			<div class="mt-8 bg-card rounded-lg overflow-hidden border border-[#5865F2]/25">
+				<div class="px-5 py-4 border-b border-border flex items-center gap-3">
+					<div
+						class="w-8 h-8 rounded-lg bg-[#5865F2]/10 flex items-center justify-center shrink-0"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-4 h-4 text-[#5865F2]"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<circle cx="12" cy="12" r="10" />
+							<circle cx="12" cy="12" r="4" />
+							<line x1="4.93" x2="9.17" y1="4.93" y2="9.17" />
+							<line x1="14.83" x2="19.07" y1="14.83" y2="19.07" />
+							<line x1="14.83" x2="19.07" y1="9.17" y2="4.93" />
+							<line x1="4.93" x2="9.17" y1="19.07" y2="14.83" />
+						</svg>
+					</div>
+					<div>
+						<h2 class="text-base font-bold font-heading leading-none">Support hub</h2>
+						<p class="text-xs text-muted-foreground mt-0.5">
+							{server.name} is the official support server for {supportOnlyBots.length === 1
+								? "this bot"
+								: `these ${supportOnlyBots.length} bots`}
+						</p>
+					</div>
+				</div>
+				<div class="p-4 flex flex-wrap justify-center gap-4">
+					{#each supportOnlyBots as bot (bot.id)}
+						<BotCard {bot} edit={false} />
+					{/each}
+				</div>
+			</div>
+		{/if}
+
 		<!-- ── Bots in this server ───────────────────────────────────────────────── -->
 		{#if relatedBots && relatedBots.length > 0}
 			<div class="mt-8 bg-card rounded-lg overflow-hidden border border-border">
@@ -1026,7 +1243,7 @@
 							Bots in {server.name}
 						</h2>
 						<p class="text-xs text-muted-foreground mt-0.5">
-							Discord bots added by this server's owner, sorted by server count
+							Bots you'll find active in this community — most popular first
 						</p>
 					</div>
 				</div>

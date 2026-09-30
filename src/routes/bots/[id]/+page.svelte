@@ -56,11 +56,33 @@
 			added_at: string | null;
 			member_count?: number | null;
 		}>;
+		owners: Array<{
+			id: string;
+			name: string;
+			avatar: string | null;
+			hasProfile: boolean;
+			private: boolean;
+		}>;
+		supportServer: {
+			listed: boolean;
+			id: string;
+			slug: string | null;
+			name: string;
+			icon: string | null;
+			inviteUrl: string | null;
+		} | null;
 	};
 
 	// Reactive destructuring - re-runs whenever SvelteKit replaces `data` after
 	// a client-side navigation to a different bot ID.
-	$: ({ bot, randombots, comments, relatedServers } = data);
+	$: ({ bot, randombots, comments, relatedServers, owners, supportServer } = data);
+
+	// Build the support server's icon URL (Discord CDN) for the card.
+	$: supportIconUrl = (() => {
+		if (!supportServer?.icon) return null;
+		if (supportServer.icon.startsWith("http")) return supportServer.icon;
+		return `https://cdn.discordapp.com/icons/${supportServer.id}/${supportServer.icon}.webp?size=128`;
+	})();
 
 	// User comes from the client-side auth store instead of server data
 	$: user = $authUser
@@ -1090,39 +1112,214 @@
 							{/if}
 
 							{#if bot.support}
-								<a
-									href={supportUrl(bot.support)}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#5865F2]/10 hover:bg-[#5865F2]/20 border border-transparent hover:border-[#5865F2]/30 text-sm font-medium text-foreground transition-all group"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										class="w-4 h-4 text-[#5865F2] shrink-0"
-										viewBox="0 0 24 24"
-										fill="currentColor"
+								{#if supportServer}
+									<!-- Support-server card - matches the Website/GitHub link rows, with a
+									     server avatar + name. Listed → internal link + RDL star; not listed
+									     → external invite. -->
+									<a
+										href={supportServer.listed
+											? `/servers/${supportServer.slug}`
+											: (supportServer.inviteUrl ?? supportUrl(bot.support))}
+										target={supportServer.listed ? undefined : "_blank"}
+										rel={supportServer.listed ? undefined : "noopener noreferrer"}
+										class="flex items-center gap-3 px-3 py-2 rounded-lg bg-muted/40 hover:bg-muted border border-transparent hover:border-border transition-all group"
 									>
-										<path
-											d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.003.02.014.04.03.05a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"
-										/>
-									</svg>
-									Support Server
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										class="w-3 h-3 ml-auto text-[#5865F2]/40 group-hover:text-[#5865F2]/70 transition-colors"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
+										{#if supportIconUrl}
+											<img
+												src={supportIconUrl}
+												alt={supportServer.name}
+												width="28"
+												height="28"
+												loading="lazy"
+												class="w-7 h-7 rounded-md shrink-0 object-cover bg-background"
+											/>
+										{:else}
+											<div
+												class="w-7 h-7 rounded-md bg-[#5865F2]/15 grid place-items-center shrink-0"
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													class="w-4 h-4 text-[#5865F2]"
+													viewBox="0 0 24 24"
+													fill="currentColor"
+												>
+													<path
+														d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.003.02.014.04.03.05a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"
+													/>
+												</svg>
+											</div>
+										{/if}
+										<span class="flex flex-col min-w-0 flex-1 leading-tight">
+											<span class="flex items-center gap-1.5 min-w-0">
+												<span class="text-sm font-medium text-foreground truncate"
+													>{supportServer.name}</span
+												>
+												{#if supportServer.listed}
+													<span
+														title="Listed on Rovel Discord List"
+														class="inline-flex items-center gap-0.5 shrink-0 rounded bg-amber-400/15 text-amber-500 text-[9px] font-bold px-1 py-0.5 leading-none"
+													>
+														on RDL
+													</span>
+												{/if}
+											</span>
+											<span class="text-[11px] text-muted-foreground leading-none mt-0.5"
+												>Support server</span
+											>
+										</span>
+										{#if supportServer.listed}
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="w-4 h-4 ml-auto shrink-0 text-muted-foreground/50 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												aria-hidden="true"
+											>
+												<path d="m9 18 6-6-6-6" />
+											</svg>
+										{:else}
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="w-3 h-3 ml-auto shrink-0 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												aria-hidden="true"
+											>
+												<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline
+													points="15 3 21 3 21 9"
+												/><line x1="10" x2="21" y1="14" y2="3" />
+											</svg>
+										{/if}
+									</a>
+								{:else}
+									<!-- Couldn't resolve the guild (dead invite) → plain invite fallback -->
+									<a
+										href={supportUrl(bot.support)}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#5865F2]/10 hover:bg-[#5865F2]/20 border border-transparent hover:border-[#5865F2]/30 text-sm font-medium text-foreground transition-all group"
 									>
-										<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline
-											points="15 3 21 3 21 9"
-										/><line x1="10" x2="21" y1="14" y2="3" />
-									</svg>
-								</a>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-4 h-4 text-[#5865F2] shrink-0"
+											viewBox="0 0 24 24"
+											fill="currentColor"
+										>
+											<path
+												d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.003.02.014.04.03.05a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"
+											/>
+										</svg>
+										Support Server
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-3 h-3 ml-auto text-[#5865F2]/40 group-hover:text-[#5865F2]/70 transition-colors"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline
+												points="15 3 21 3 21 9"
+											/><line x1="10" x2="21" y1="14" y2="3" />
+										</svg>
+									</a>
+								{/if}
 							{/if}
+						</div>
+					{/if}
+
+					<!-- Developers / owners section -->
+					{#if owners && owners.length > 0}
+						<div class="flex flex-col gap-1 border-t border-border pt-4">
+							<p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+								{owners.length > 1 ? "Developers" : "Developer"}
+							</p>
+							{#each owners as owner (owner.id)}
+								{#if owner.hasProfile}
+									<a
+										href="/users/{owner.id}"
+										class="relative overflow-hidden flex items-center gap-3 px-3 py-2 rounded-lg bg-muted/40 hover:bg-muted border border-transparent hover:border-border transition-all group"
+									>
+										<!-- Ambient avatar backdrop: blurred, fading in from left to right -->
+										<div
+											aria-hidden="true"
+											class="absolute inset-0 pointer-events-none bg-cover bg-center blur-md scale-110 opacity-35 group-hover:opacity-50 transition-opacity duration-300"
+											style="background-image:url('{getAvatarURL(
+												owner.id,
+												owner.avatar ?? '0',
+												128
+											)}');-webkit-mask-image:linear-gradient(to right, transparent 12%, black 92%);mask-image:linear-gradient(to right, transparent 12%, black 92%);"
+										></div>
+										<img
+											src={getAvatarURL(owner.id, owner.avatar ?? "0", 64)}
+											alt={owner.name}
+											width="32"
+											height="32"
+											loading="lazy"
+											class="relative z-10 w-8 h-8 rounded-full bg-background shrink-0 object-cover ring-2 ring-card/60"
+										/>
+										<span
+											class="relative z-10 text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors [text-shadow:0_1px_2px_var(--color-card)]"
+										>
+											{owner.name}
+										</span>
+										<span
+											class="relative z-10 ml-auto shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-card/70 backdrop-blur-sm group-hover:bg-card transition-colors"
+										>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="w-3 h-3 text-foreground/70 group-hover:text-foreground group-hover:translate-x-0.5 transition-all"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2.5"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												aria-hidden="true"
+											>
+												<path d="m9 18 6-6-6-6" />
+											</svg>
+										</span>
+									</a>
+								{:else}
+									<div
+										class="relative overflow-hidden flex items-center gap-3 px-3 py-2 rounded-lg bg-muted/40 border border-transparent"
+									>
+										<div
+											aria-hidden="true"
+											class="absolute inset-0 pointer-events-none bg-cover bg-center blur-md scale-110 opacity-25"
+											style="background-image:url('{getAvatarURL(
+												owner.id,
+												owner.avatar ?? '0',
+												128
+											)}');-webkit-mask-image:linear-gradient(to right, transparent 12%, black 92%);mask-image:linear-gradient(to right, transparent 12%, black 92%);"
+										></div>
+										<img
+											src={getAvatarURL(owner.id, owner.avatar ?? "0", 64)}
+											alt={owner.name}
+											width="32"
+											height="32"
+											loading="lazy"
+											class="relative z-10 w-8 h-8 rounded-full bg-background shrink-0 object-cover ring-2 ring-card/60 opacity-90"
+										/>
+										<span
+											class="relative z-10 text-sm font-semibold text-muted-foreground truncate [text-shadow:0_1px_2px_var(--color-card)]"
+										>
+											{owner.name}
+										</span>
+									</div>
+								{/if}
+							{/each}
 						</div>
 					{/if}
 
@@ -1192,7 +1389,7 @@
 							{bot.username} is in these servers
 						</h2>
 						<p class="text-xs text-muted-foreground mt-0.5">
-							Servers managed by this bot's owners, sorted by member count
+							Communities that have added {bot.username} — biggest first
 						</p>
 					</div>
 				</div>

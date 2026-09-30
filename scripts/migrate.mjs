@@ -148,6 +148,8 @@ const SCHEMA = [
         "approved"      INTEGER NOT NULL DEFAULT 0,
         "promoted"      INTEGER NOT NULL DEFAULT 0,
         "opted_coins"   INTEGER NOT NULL DEFAULT 0,
+        "blacklisted"   INTEGER NOT NULL DEFAULT 0,
+        "blacklisted_at" TEXT,
         "servers"       INTEGER NOT NULL DEFAULT 0,
         "votes"         INTEGER NOT NULL DEFAULT 0,
         "username"      TEXT    NOT NULL,
@@ -160,6 +162,7 @@ const SCHEMA = [
         "code"          TEXT,
         "webhook"       TEXT,
         "support"       TEXT,
+        "support_guild_id" TEXT,
         "bg"            TEXT,
         "source_repo"   TEXT,
         "website"       TEXT,
@@ -178,6 +181,8 @@ const SCHEMA = [
 			{ name: "approved", type: "INTEGER", notNull: true, default: "0" },
 			{ name: "promoted", type: "INTEGER", notNull: true, default: "0" },
 			{ name: "opted_coins", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "blacklisted", type: "INTEGER", notNull: true, default: "0" },
+			{ name: "blacklisted_at", type: "TEXT" },
 			{ name: "servers", type: "INTEGER", notNull: true, default: "0" },
 			{ name: "votes", type: "INTEGER", notNull: true, default: "0" },
 			{ name: "username", type: "TEXT", notNull: true, default: "''" },
@@ -190,6 +195,7 @@ const SCHEMA = [
 			{ name: "code", type: "TEXT" },
 			{ name: "webhook", type: "TEXT" },
 			{ name: "support", type: "TEXT" },
+			{ name: "support_guild_id", type: "TEXT" },
 			{ name: "bg", type: "TEXT" },
 			{ name: "source_repo", type: "TEXT" },
 			{ name: "website", type: "TEXT" },
@@ -221,9 +227,11 @@ const SCHEMA = [
         "last_login"    TEXT    NOT NULL DEFAULT ${NOW_EXPR},
         "nitro"         INTEGER NOT NULL DEFAULT 0,
         "old"           INTEGER NOT NULL DEFAULT 1,
+        "private"       INTEGER NOT NULL DEFAULT 0,
         "votes"         TEXT    NOT NULL DEFAULT '[]',
         "added_at"      TEXT    NOT NULL DEFAULT ${NOW_EXPR},
-        "keys"          TEXT    NOT NULL DEFAULT '[]'
+        "keys"          TEXT    NOT NULL DEFAULT '[]',
+        "synced_at"     TEXT
       )
     `,
 		columns: [
@@ -241,9 +249,11 @@ const SCHEMA = [
 			{ name: "last_login", type: "TEXT", notNull: true, default: NOW_EXPR },
 			{ name: "nitro", type: "INTEGER", notNull: true, default: "0" },
 			{ name: "old", type: "INTEGER", notNull: true, default: "1" },
+			{ name: "private", type: "INTEGER", notNull: true, default: "0" },
 			{ name: "votes", type: "TEXT", notNull: true, default: "'[]'" },
 			{ name: "added_at", type: "TEXT", notNull: true, default: NOW_EXPR },
-			{ name: "keys", type: "TEXT", notNull: true, default: "'[]'" }
+			{ name: "keys", type: "TEXT", notNull: true, default: "'[]'" },
+			{ name: "synced_at", type: "TEXT" }
 		]
 	},
 

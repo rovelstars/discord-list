@@ -236,6 +236,12 @@ export const POST: RequestHandler = async ({ params, request, cookies }) => {
 				typeof body.opted_coins === "boolean" ? body.opted_coins : Boolean(bot.opted_coins)
 		};
 
+		// If the support invite changed, clear the cached support guild id so the
+		// bot page re-resolves it (and re-links to the support server) on next load.
+		if (body.support !== undefined && body.support !== bot.support) {
+			updateValues.support_guild_id = null;
+		}
+
 		try {
 			await withDb((db) => db.update(Bots).set(updateValues).where(eq(Bots.id, bot.id)));
 		} catch (e) {

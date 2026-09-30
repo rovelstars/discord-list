@@ -72,7 +72,8 @@ export const GET: RequestHandler = async (event) => {
 			db
 				.select({
 					id: Users.id,
-					keys: Users.keys
+					keys: Users.keys,
+					banner: Users.banner
 				})
 				.from(Users)
 				.where(eq(Users.id, userData.id))
@@ -95,7 +96,7 @@ export const GET: RequestHandler = async (event) => {
 
 		if (existing && existing.length > 0) {
 			// Update existing user's keys (merge/refresh logic)
-			let user = existing[0] as { id: string; keys: any };
+			let user = existing[0] as { id: string; keys: any; banner: any };
 			let keys = normalizeKeys(user.keys);
 
 			// Remove expired keys and keep keys with better scopes
@@ -125,10 +126,27 @@ export const GET: RequestHandler = async (event) => {
 				keys.push(currentKey);
 			}
 
+			// Refresh the user's Discord identity from their own token (/users/@me).
+			// This is the ONLY source that returns a user's banner + accent_color
+			// (a bot token always returns banner:null), so we capture them here on
+			// every login. A custom banner set in the dashboard (a full http URL) is
+			// preserved and never overwritten by the Discord banner hash.
+			const storedBanner: string | null = user.banner ?? null;
+			const isCustomBanner =
+				typeof storedBanner === "string" && /^https?:\/\//.test(storedBanner);
+
 			await withDb((db) =>
 				db
 					.update(Users)
-					.set({ keys: JSON.stringify(keys) })
+					.set({
+						keys: JSON.stringify(keys),
+						username: userData.username,
+						globalname: (userData as any).global_name ?? null,
+						avatar: userData.avatar ?? "0",
+						accent_color: (userData as any).accent_color ?? null,
+						banner: isCustomBanner ? storedBanner : ((userData as any).banner ?? null),
+						synced_at: new Date().toISOString()
+					})
 					.where(eq(Users.id, userData.id))
 			);
 		} else {

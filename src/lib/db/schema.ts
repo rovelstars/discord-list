@@ -47,6 +47,14 @@ export const Bots = sqliteTable("Bots", {
 	approved: integer("approved", { mode: "boolean" }).default(false),
 	promoted: integer("promoted", { mode: "boolean" }).default(false),
 	opted_coins: integer("opted_coins", { mode: "boolean" }).default(false),
+	// Soft-delete flag. When true the bot is hidden from every public listing and
+	// detail page (but still visible in its owner's dashboard so they can revert).
+	// A scheduled job permanently deletes blacklisted bots 7 days after
+	// `blacklisted_at`. Owner-initiated deletion sets these; "restore" clears them.
+	blacklisted: integer("blacklisted", { mode: "boolean" }).default(false),
+	// ISO 8601 timestamp marking when the bot was blacklisted (deletion requested).
+	// NULL when not blacklisted. The purge job removes rows older than 7 days.
+	blacklisted_at: text("blacklisted_at"),
 
 	// numeric counters
 	servers: integer("servers").default(0),
@@ -68,6 +76,11 @@ export const Bots = sqliteTable("Bots", {
 	code: text("code"),
 	webhook: text("webhook"),
 	support: text("support"),
+	// Resolved Discord guild id of the bot's support invite, when it points to a
+	// guild. Lets us link a bot to its support server's RDL page (and vice-versa)
+	// without re-resolving the invite on every page load. NULL = not resolved yet
+	// or the invite doesn't resolve to a guild. Cleared when `support` is edited.
+	support_guild_id: text("support_guild_id"),
 	bg: text("bg"),
 	source_repo: text("source_repo"),
 	website: text("website"),
@@ -109,9 +122,17 @@ export const Users = sqliteTable("Users", {
 	last_login: text("last_login").default(new Date().toISOString()), // default to current time in ISO format
 	nitro: integer("nitro").default(0),
 	old: integer("old", { mode: "boolean" }).default(true), // boolean-as-integer
+	// Profile visibility. 0 (false) = public profile, visible to anyone at /users/[id].
+	// 1 (true) = private, only the user themselves can view their own profile page.
+	// Defaults to public so dev profiles are discoverable out of the box.
+	private: integer("private", { mode: "boolean" }).default(false),
 	votes: text("votes", { mode: "json" }).default([]), // serialized array
 	added_at: text("added_at").default(new Date().toISOString()), // default to current time in ISO format
-	keys: text("keys", { mode: "json" }).default([]) // serialized array of key objects
+	keys: text("keys", { mode: "json" }).default([]), // serialized array of key objects
+	// ISO 8601 timestamp of the last time this user's Discord identity (username,
+	// globalname, discriminator, avatar) was re-synced from Discord. NULL = never
+	// synced since insert. Gates the lazy page-load refresh on /users/[id].
+	synced_at: text("synced_at")
 });
 
 /**

@@ -64,6 +64,7 @@ export type BotDetail = BotSummary & {
 	tags?: string[] | null;
 	source_repo?: string | null;
 	support?: string | null;
+	support_guild_id?: string | null;
 	website?: string | null;
 	owners: string[]; // parsed JSON
 	donate?: string | null;
@@ -231,6 +232,7 @@ function mapBotDetail(row: RawRow): BotDetail {
 		tags: parseJson<string[] | null>(row.tags, null),
 		source_repo: row.source_repo ?? null,
 		support: row.support ?? null,
+		support_guild_id: row.support_guild_id ?? null,
 		website: row.website ?? null,
 		owners: parseJson<string[]>(row.owners, []),
 		donate: row.donate ?? null,
@@ -261,7 +263,12 @@ function mapUser(row: RawRow): User {
 /** Return top bots by votes (descending) */
 export async function getTopBots(limit = 10): Promise<BotSummary[]> {
 	const rows = (await withDb((d: DrizzleDb) =>
-		d.select(BOT_SUMMARY_SELECTION).from(Bots).orderBy(desc(Bots.votes)).limit(limit)
+		d
+			.select(BOT_SUMMARY_SELECTION)
+			.from(Bots)
+			.where(eq(Bots.blacklisted, false))
+			.orderBy(desc(Bots.votes))
+			.limit(limit)
 	)) as any[];
 	return rows.map(mapBotSummary);
 }
@@ -275,7 +282,8 @@ export async function getMusicBots(limit = 10): Promise<BotSummary[]> {
 			.where(
 				and(
 					or(like(Bots.username, `%music%`), like(Bots.short, `%music%`)),
-					and(notInArray(Bots.avatar, ["0", "1", "2", "3", "4"] as any))
+					and(notInArray(Bots.avatar, ["0", "1", "2", "3", "4"] as any)),
+					eq(Bots.blacklisted, false)
 				)
 			)
 			.orderBy(desc(Bots.servers))
@@ -300,7 +308,8 @@ export async function getGameBots(limit = 10): Promise<BotSummary[]> {
 						like(Bots.username, `%gaming%`),
 						like(Bots.short, `%gaming%`)
 					),
-					and(notInArray(Bots.avatar, ["0", "1", "2", "3", "4"] as any))
+					and(notInArray(Bots.avatar, ["0", "1", "2", "3", "4"] as any)),
+					eq(Bots.blacklisted, false)
 				)
 			)
 			.orderBy(desc(Bots.servers))
@@ -318,7 +327,8 @@ export async function getModBots(limit = 10): Promise<BotSummary[]> {
 			.where(
 				and(
 					or(like(Bots.username, `%moder%`), like(Bots.short, `%moder%`)),
-					and(notInArray(Bots.avatar, ["0", "1", "2", "3", "4"] as any))
+					and(notInArray(Bots.avatar, ["0", "1", "2", "3", "4"] as any)),
+					eq(Bots.blacklisted, false)
 				)
 			)
 			.orderBy(desc(Bots.servers))
@@ -360,6 +370,9 @@ export async function listBots(
 		let builder: any = d.select(BOT_SUMMARY_SELECTION).from(Bots);
 
 		const conditions: any[] = [];
+
+		// Never surface blacklisted (pending-deletion) bots in public listings.
+		conditions.push(eq(Bots.blacklisted, false));
 
 		if (q) {
 			conditions.push(or(like(Bots.username, `%${q}%`), like(Bots.short, `%${q}%`)));
@@ -421,6 +434,7 @@ export async function getBotByIdOrSlug(idOrSlug: string): Promise<BotDetail | nu
 				tags: Bots.tags,
 				source_repo: Bots.source_repo,
 				support: Bots.support,
+				support_guild_id: Bots.support_guild_id,
 				website: Bots.website,
 				owners: Bots.owners,
 				donate: Bots.donate,
@@ -429,7 +443,7 @@ export async function getBotByIdOrSlug(idOrSlug: string): Promise<BotDetail | nu
 				added_at: Bots.added_at
 			})
 			.from(Bots)
-			.where(or(eq(Bots.slug, idOrSlug), eq(Bots.id, idOrSlug)))
+			.where(and(or(eq(Bots.slug, idOrSlug), eq(Bots.id, idOrSlug)), eq(Bots.blacklisted, false)))
 			.limit(1)
 	);
 
@@ -438,12 +452,48 @@ export async function getBotByIdOrSlug(idOrSlug: string): Promise<BotDetail | nu
 	return mapBotDetail((rows as any[])[0] as RawRow);
 }
 
+/**
+ * Persist a bot's resolved support guild id (from resolving its support invite).
+ * Pass null to clear it. Used to cache the bot↔support-server linkage so we don't
+ * re-resolve the invite on every page load.
+ */
+export async function setBotSupportGuildId(
+	botId: string,
+	guildId: string | null
+): Promise<void> {
+	await withDb((d: DrizzleDb) =>
+		d.update(Bots).set({ support_guild_id: guildId }).where(eq(Bots.id, botId))
+	);
+}
+
+/**
+ * Reverse link: bots whose support server is the given guild id (and which are
+ * not blacklisted). Used on the server page to show "this server is the support
+ * server for these bots".
+ */
+export async function getBotsBySupportGuild(
+	guildId: string,
+	limit = 12
+): Promise<BotSummary[]> {
+	if (!guildId) return [];
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select(BOT_SUMMARY_SELECTION)
+			.from(Bots)
+			.where(and(eq(Bots.support_guild_id, guildId), eq(Bots.blacklisted, false)))
+			.orderBy(desc(Bots.servers))
+			.limit(limit)
+	)) as any[];
+	return rows.map(mapBotSummary);
+}
+
 /** Get random bots using SQL RANDOM() */
 export async function getRandomBots(limit = 10): Promise<BotSummary[]> {
 	const rows = (await withDb((d: DrizzleDb) =>
 		d
 			.select(BOT_SUMMARY_SELECTION)
 			.from(Bots)
+			.where(eq(Bots.blacklisted, false))
 			.orderBy(sql`RANDOM()`)
 			.limit(limit)
 	)) as any[];
@@ -479,6 +529,113 @@ export async function getUserById(id: string): Promise<User | null> {
 	return mapUser(raw);
 }
 
+/** Rich public-profile shape for the /users/[id] page. */
+export type UserProfile = {
+	id: string;
+	username: string;
+	globalname: string | null;
+	discriminator: string;
+	avatar: string | null;
+	accent_color: string | null;
+	bio: string | null;
+	banner: string | null;
+	badges: string[];
+	added_at: string | null;
+	/** true = profile is private (only the owner may view it). */
+	private: boolean;
+	/** ISO 8601 of last Discord identity sync; NULL if never synced. */
+	synced_at: string | null;
+};
+
+/** Minimal user shape for resolving bot/server owners into display info + links. */
+export type UserMini = {
+	id: string;
+	username: string;
+	globalname: string | null;
+	discriminator: string;
+	avatar: string | null;
+	private: boolean;
+};
+
+/**
+ * Fetch a user's public profile by id. Returns the richer set of columns the
+ * /users/[id] page needs (display name, banner, badges, join date, visibility).
+ * Returns null when no such user exists.
+ */
+export async function getUserProfile(id: string): Promise<UserProfile | null> {
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select({
+				id: Users.id,
+				username: Users.username,
+				globalname: Users.globalname,
+				discriminator: Users.discriminator,
+				avatar: Users.avatar,
+				accent_color: Users.accent_color,
+				bio: Users.bio,
+				banner: Users.banner,
+				badges: Users.badges,
+				added_at: Users.added_at,
+				private: Users.private,
+				synced_at: Users.synced_at
+			})
+			.from(Users)
+			.where(eq(Users.id, id))
+			.limit(1)
+	)) as any[];
+
+	if (!rows || rows.length === 0) return null;
+	const raw = rows[0] as RawRow;
+	return {
+		id: String(raw.id),
+		username: String(raw.username ?? ""),
+		globalname: raw.globalname ?? null,
+		discriminator: String(raw.discriminator ?? "0"),
+		avatar: raw.avatar ?? null,
+		accent_color: raw.accent_color ?? null,
+		bio: raw.bio ?? null,
+		banner: raw.banner ?? null,
+		badges: parseJson<string[]>(raw.badges, []),
+		added_at: raw.added_at ?? null,
+		private: intToBool(raw.private),
+		synced_at: raw.synced_at ?? null
+	};
+}
+
+/**
+ * Resolve a list of user ids (e.g. a bot's `owners` array) into minimal display
+ * records from the local Users table. Ids without a matching row are simply
+ * omitted - the caller can fall back to a Discord lookup for those if needed.
+ * Order is not guaranteed; callers should re-order against the input if required.
+ */
+export async function getUsersByIds(ids: string[]): Promise<UserMini[]> {
+	const unique = Array.from(new Set(ids.filter(Boolean).map(String)));
+	if (unique.length === 0) return [];
+
+	const rows = (await withDb((d: DrizzleDb) =>
+		d
+			.select({
+				id: Users.id,
+				username: Users.username,
+				globalname: Users.globalname,
+				discriminator: Users.discriminator,
+				avatar: Users.avatar,
+				private: Users.private
+			})
+			.from(Users)
+			.where(inArray(Users.id, unique))
+	)) as any[];
+
+	return rows.map((raw) => ({
+		id: String(raw.id),
+		username: String(raw.username ?? ""),
+		globalname: raw.globalname ?? null,
+		discriminator: String(raw.discriminator ?? "0"),
+		avatar: raw.avatar ?? null,
+		private: intToBool(raw.private)
+	}));
+}
+
 /** Health-check: cheap read */
 export async function healthCheck(): Promise<boolean> {
 	try {
@@ -506,7 +663,7 @@ export async function getBotsByOwner(
 		d
 			.select(BOT_SUMMARY_SELECTION)
 			.from(Bots)
-			.where(like(Bots.owners, `%${ownerId}%`))
+			.where(and(like(Bots.owners, `%${ownerId}%`), eq(Bots.blacklisted, false)))
 			.limit(limit)
 			.offset(offset)
 	)) as any[];
@@ -519,7 +676,10 @@ export async function getBotsByOwner(
  */
 export async function getAllBotSlugs(): Promise<BotSlugEntry[]> {
 	const rows = (await withDb((d: DrizzleDb) =>
-		d.select({ slug: Bots.slug, added_at: Bots.added_at }).from(Bots)
+		d
+			.select({ slug: Bots.slug, added_at: Bots.added_at })
+			.from(Bots)
+			.where(eq(Bots.blacklisted, false))
 	)) as any[];
 	return rows.map((r) => ({
 		slug: String(r.slug ?? r.id ?? ""),
@@ -751,6 +911,7 @@ export async function getTopBotsFull(limit = 100): Promise<BotRanked[]> {
 				prefix: Bots.prefix
 			})
 			.from(Bots)
+			.where(eq(Bots.blacklisted, false))
 			.orderBy(desc(Bots.votes))
 			.limit(limit)
 	)) as any[];
@@ -771,6 +932,7 @@ export async function getNewestBots(limit = 50, offset = 0): Promise<BotSummary[
 		d
 			.select(BOT_SUMMARY_SELECTION)
 			.from(Bots)
+			.where(eq(Bots.blacklisted, false))
 			.orderBy(desc(Bots.added_at))
 			.limit(limit)
 			.offset(offset)
@@ -1196,7 +1358,7 @@ export async function getBotsByLibrary(lib: string, limit = 10): Promise<BotSumm
 		d
 			.select(BOT_SUMMARY_SELECTION)
 			.from(Bots)
-			.where(like(Bots.lib, `%${lib}%`))
+			.where(and(like(Bots.lib, `%${lib}%`), eq(Bots.blacklisted, false)))
 			.orderBy(desc(Bots.servers))
 			.limit(limit)
 	)) as any[];
@@ -1280,7 +1442,7 @@ export async function getBotsByServerId(serverId: string, limit = 8): Promise<Bo
 		d
 			.select(BOT_SUMMARY_SELECTION)
 			.from(Bots)
-			.where(inArray(Bots.id, ids))
+			.where(and(inArray(Bots.id, ids), eq(Bots.blacklisted, false)))
 			.orderBy(desc(Bots.servers))
 			.limit(limit)
 	)) as any[];
@@ -1326,7 +1488,9 @@ export async function getAllServerAndBotIds(): Promise<{
 		withDb((d: DrizzleDb) => d.select({ id: Servers.id }).from(Servers)) as Promise<
 			{ id: string }[]
 		>,
-		withDb((d: DrizzleDb) => d.select({ id: Bots.id }).from(Bots)) as Promise<{ id: string }[]>
+		withDb((d: DrizzleDb) =>
+			d.select({ id: Bots.id }).from(Bots).where(eq(Bots.blacklisted, false))
+		) as Promise<{ id: string }[]>
 	]);
 
 	return {
@@ -1348,7 +1512,8 @@ export async function getBotsByCategory(keyword: string, limit = 48): Promise<Bo
 						like(Bots.tags, `%${keyword}%`),
 						like(Bots.lib, `%${keyword}%`)
 					),
-					notInArray(Bots.avatar, ["0", "1", "2", "3", "4"])
+					notInArray(Bots.avatar, ["0", "1", "2", "3", "4"]),
+					eq(Bots.blacklisted, false)
 				)
 			)
 			.orderBy(desc(Bots.servers))

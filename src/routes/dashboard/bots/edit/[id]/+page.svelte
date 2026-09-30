@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
+	import { onDestroy } from "svelte";
 	import { Marked } from "marked";
 	import { markedHighlight } from "marked-highlight";
 	import hljs from "highlight.js";
@@ -70,6 +71,8 @@
 			owners: string[];
 			code: string;
 			opted_coins: boolean;
+			blacklisted: boolean;
+			blacklisted_at: string | null;
 		};
 	};
 
@@ -181,6 +184,116 @@
 			regenState = "idle";
 		}
 	}
+
+	// ── Delete / blacklist flow ────────────────────────────────────────────────
+	// Mirrors the regenerate-code confirmation pattern but adds a 10-second
+	// "read the rules" cooldown so deletion is deliberate, never a stray click.
+	//   'idle'      - danger zone collapsed to a single Delete button
+	//   'confirm'   - rules panel open, 10s countdown running, confirm disabled
+	//   'loading'   - blacklist request in flight
+	type DeleteState = "idle" | "confirm" | "loading";
+	let deleteState: DeleteState = "idle";
+	let deleteError = "";
+	let deleteCooldown = 0; // seconds remaining before confirm unlocks
+	let cooldownTimer: ReturnType<typeof setInterval> | null = null;
+
+	// Live blacklist status (updated in place after blacklist/restore succeeds).
+	let isBlacklisted = bot.blacklisted;
+	let blacklistedAt = bot.blacklisted_at;
+	let restoring = false;
+	let restoreError = "";
+
+	const GRACE_DAYS = 7;
+
+	$: daysLeft = (() => {
+		if (!blacklistedAt) return GRACE_DAYS;
+		const elapsedMs = Date.now() - new Date(blacklistedAt).getTime();
+		const left = GRACE_DAYS - Math.floor(elapsedMs / (24 * 60 * 60 * 1000));
+		return Math.max(0, left);
+	})();
+
+	function openDeleteConfirm() {
+		deleteError = "";
+		deleteState = "confirm";
+		deleteCooldown = 10;
+		if (cooldownTimer) clearInterval(cooldownTimer);
+		cooldownTimer = setInterval(() => {
+			deleteCooldown -= 1;
+			if (deleteCooldown <= 0 && cooldownTimer) {
+				clearInterval(cooldownTimer);
+				cooldownTimer = null;
+			}
+		}, 1000);
+	}
+
+	function cancelDelete() {
+		deleteState = "idle";
+		deleteError = "";
+		deleteCooldown = 0;
+		if (cooldownTimer) {
+			clearInterval(cooldownTimer);
+			cooldownTimer = null;
+		}
+	}
+
+	async function confirmDelete() {
+		if (deleteCooldown > 0) return; // still in the read-the-rules window
+		deleteState = "loading";
+		deleteError = "";
+		try {
+			const res = await fetch(`/api/bots/${encodeURIComponent(bot.id)}/delete`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ action: "blacklist" })
+			});
+			const result = await res.json();
+			if (!res.ok || result.err) {
+				const errMap: Record<string, string> = {
+					not_logged_in: "You must be logged in.",
+					invalid_key: "Your session is invalid. Please log in again.",
+					not_owner: "You are not an owner of this bot.",
+					no_bot_found: "Bot not found.",
+					db_update_failed: "Database error - please try again."
+				};
+				deleteError = errMap[result.err] ?? result.err ?? "Unknown error.";
+				deleteState = "confirm";
+				return;
+			}
+			isBlacklisted = true;
+			blacklistedAt = result.blacklisted_at ?? new Date().toISOString();
+			deleteState = "idle";
+		} catch {
+			deleteError = "Network error - please try again.";
+			deleteState = "confirm";
+		}
+	}
+
+	async function restoreBot() {
+		restoring = true;
+		restoreError = "";
+		try {
+			const res = await fetch(`/api/bots/${encodeURIComponent(bot.id)}/delete`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ action: "restore" })
+			});
+			const result = await res.json();
+			if (!res.ok || result.err) {
+				restoreError = result.err ?? "Could not restore - please try again.";
+				return;
+			}
+			isBlacklisted = false;
+			blacklistedAt = null;
+		} catch {
+			restoreError = "Network error - please try again.";
+		} finally {
+			restoring = false;
+		}
+	}
+
+	onDestroy(() => {
+		if (cooldownTimer) clearInterval(cooldownTimer);
+	});
 
 	// ── Field-level errors ─────────────────────────────────────────────────────
 	type FieldErrors = Partial<Record<string, string>>;
@@ -332,6 +445,63 @@
 			bot.
 		</div>
 	{/if}
+
+	<!-- ── Pending-deletion banner ───────────────────────────────────────────── -->
+	{#if isBlacklisted}
+		<div
+			class="mb-4 rounded-xl border border-destructive/40 bg-destructive/10 px-5 py-4 text-sm"
+		>
+			<div class="flex items-start gap-3">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="w-5 h-5 text-destructive shrink-0 mt-0.5"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+					<path d="M12 9v4" /><path d="M12 17h.01" />
+				</svg>
+				<div class="flex-1">
+					<p class="font-bold text-destructive">This bot is scheduled for deletion.</p>
+					<p class="text-muted-foreground mt-1 leading-relaxed">
+						It's now <strong>blacklisted</strong> - hidden from search, listings and its public
+						page. It will be <strong>permanently deleted in {daysLeft}
+							{daysLeft === 1 ? "day" : "days"}</strong>. Restore it before then to cancel.
+					</p>
+					{#if restoreError}
+						<p class="text-destructive text-xs mt-2">{restoreError}</p>
+					{/if}
+					<button
+						type="button"
+						on:click={restoreBot}
+						disabled={restoring}
+						class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 active:scale-95 transition-all disabled:opacity-50"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-4 h-4"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path d="M3 7v6h6" /><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+						</svg>
+						{restoring ? "Restoring…" : "Restore bot"}
+					</button>
+				</div>
+			</div>
+		</div>
+	{/if}
+
 	<!-- ── Tabs ──────────────────────────────────────────────────────────────── -->
 	<div class="bg-card rounded-2xl mb-6 overflow-hidden">
 		<div class="relative flex">
@@ -360,6 +530,29 @@
 	<!-- ── Edit tab ──────────────────────────────────────────────────────────── -->
 	{#if activeTab === "edit"}
 		<div class="bg-card p-6 rounded-xl space-y-8">
+			<!-- Caching notice -->
+			<div
+				class="flex items-start gap-2.5 rounded-lg border border-border bg-muted/40 px-4 py-3 text-xs text-muted-foreground"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="w-4 h-4 shrink-0 mt-0.5 text-primary"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
+				</svg>
+				<span>
+					Edits are saved instantly, but the public bot page is cached - your changes may take a
+					few minutes to appear for everyone while caches refresh.
+				</span>
+			</div>
+
 			<!-- Bot identity header -->
 			<div class="flex flex-col items-center gap-2">
 				<img
@@ -800,6 +993,105 @@
 					</a>
 				</div>
 			</form>
+
+			<!-- ── Danger Zone: delete bot ──────────────────────────────────────── -->
+			{#if !isBlacklisted}
+				<div class="mt-10 pt-8 border-t border-destructive/30">
+					<h3 class="text-lg font-bold text-destructive flex items-center gap-2 mb-1">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-5 h-5"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+							<path d="M12 9v4" /><path d="M12 17h.01" />
+						</svg>
+						Danger Zone
+					</h3>
+					<p class="text-sm text-muted-foreground mb-4">
+						Delete this bot from Rovel Discord List.
+					</p>
+
+					{#if deleteState === "idle"}
+						<button
+							type="button"
+							on:click={openDeleteConfirm}
+							class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-destructive/50 text-destructive text-sm font-semibold hover:bg-destructive/10 active:scale-95 transition-all"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-4 h-4"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+								<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+							</svg>
+							Delete this bot
+						</button>
+					{:else}
+						<!-- Rules + cooldown confirmation panel -->
+						<div class="rounded-xl border border-destructive/40 bg-destructive/5 p-5">
+							<p class="font-bold text-destructive mb-2">Before you delete - read this</p>
+							<ul class="text-sm text-muted-foreground space-y-1.5 list-disc pl-5 mb-4">
+								<li>
+									Your bot is <strong>blacklisted immediately</strong>: it disappears from search,
+									all listings, and its public page right away.
+								</li>
+								<li>
+									It stays recoverable for <strong>7 days</strong> - you can restore it from this
+									page anytime during that window.
+								</li>
+								<li>
+									After 7 days it is <strong>permanently deleted</strong>, along with its votes,
+									comments and bot code. This cannot be undone.
+								</li>
+								<li>Public changes are cache-backed and may take a few minutes to propagate.</li>
+							</ul>
+
+							{#if deleteError}
+								<p class="text-destructive text-sm mb-3">{deleteError}</p>
+							{/if}
+
+							<div class="flex flex-wrap items-center gap-3">
+								<button
+									type="button"
+									on:click={confirmDelete}
+									disabled={deleteCooldown > 0 || deleteState === "loading"}
+									class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-destructive text-white text-sm font-semibold hover:bg-destructive/90 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+								>
+									{#if deleteState === "loading"}
+										Deleting…
+									{:else if deleteCooldown > 0}
+										Read the rules… ({deleteCooldown}s)
+									{:else}
+										Yes, blacklist & schedule deletion
+									{/if}
+								</button>
+								<button
+									type="button"
+									on:click={cancelDelete}
+									disabled={deleteState === "loading"}
+									class="inline-flex items-center px-5 py-2.5 rounded-lg border border-input bg-background text-sm font-medium hover:bg-accent transition-colors disabled:opacity-50"
+								>
+									Keep my bot
+								</button>
+							</div>
+						</div>
+					{/if}
+				</div>
+			{/if}
 		</div>
 
 		<!-- ── Preview tab ───────────────────────────────────────────────────────── -->

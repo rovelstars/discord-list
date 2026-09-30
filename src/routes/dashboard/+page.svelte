@@ -59,6 +59,7 @@
 			added_at: string | null;
 			nitro: boolean;
 			globalname: string | null;
+			private: boolean;
 		};
 		discordUser: {
 			id: string;
@@ -80,6 +81,8 @@
 			invite: string | null;
 			bg: string | null;
 			status: string;
+			blacklisted: boolean;
+			blacklisted_at: string | null;
 		}>;
 		servers: Array<{
 			id: string;
@@ -199,6 +202,20 @@
 	// ── Profile form ──────────────────────────────────────────────────────────
 	let bio = user.bio === "The user doesn't have bio set!" ? "" : (user.bio ?? "");
 	let banner = user.banner ?? "";
+
+	// Resolve the hero banner to a usable URL: a custom dashboard banner is a full
+	// URL, but a Discord-synced banner is a raw hash that must be expanded to a CDN
+	// URL (mirrors the /users/[id] profile page). Animated banners (a_) are gifs.
+	$: bannerBgUrl = (() => {
+		const raw = banner?.trim();
+		if (!raw) return "/assets/img/bot/dashboard-banner-placeholder.jpg";
+		if (/^https?:\/\//.test(raw)) return raw;
+		const ext = raw.startsWith("a_") ? "gif" : "webp";
+		return `https://cdn.discordapp.com/banners/${user.id}/${raw}.${ext}?size=600`;
+	})();
+	// Profile visibility. true = private (hidden from strangers). Only meaningful
+	// once the user has a listed bot/server - normal accounts are never public.
+	let isPrivate = user.private ?? false;
 	let saving = false;
 	let saveSuccess = false;
 	let saveError = "";
@@ -214,7 +231,11 @@
 			const res = await fetch("/api/users/me", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ bio: bio.trim() || null, banner: banner.trim() || null })
+				body: JSON.stringify({
+					bio: bio.trim() || null,
+					banner: banner.trim() || null,
+					private: isPrivate
+				})
 			});
 			const resData = await res.json();
 			if (!res.ok || resData.err) {
@@ -495,7 +516,7 @@
 	<!-- ── Hero header ──────────────────────────────────────────────────────── -->
 	<div
 		class="relative overflow-hidden border-b border-border bg-card pt-32 -mt-28"
-		style={`background-image: url(${user.banner ? user.banner : "/assets/img/bot/dashboard-banner-placeholder.jpg"}); background-size: cover; background-position: center;`}
+		style={`background-image: url(${bannerBgUrl}); background-size: cover; background-position: center;`}
 	>
 		<!-- Dark gradient scrim so text is always readable over the banner -->
 		<div
@@ -935,22 +956,55 @@
 							{:else}
 								<div class="flex flex-wrap gap-4">
 									{#each bots as bot}
-										<BotCard
-											bot={{
-												id: bot.id,
-												slug: bot.slug ?? bot.id,
-												username: bot.username,
-												discriminator: bot.discriminator ?? "0000",
-												avatar: bot.avatar ?? "0",
-												short: bot.short ?? "",
-												votes: bot.votes ?? 0,
-												servers: bot.servers ?? 0,
-												invite: bot.invite ?? "",
-												bg: bot.bg ?? null,
-												status: (bot.status as any) ?? "online"
-											}}
-											edit={true}
-										/>
+										<div class="relative">
+											{#if bot.blacklisted}
+												<!-- Pending-deletion overlay badge + restore hint -->
+												<div
+													class="absolute top-2 right-2 z-20 inline-flex items-center gap-1.5 rounded-full bg-destructive text-white text-xs font-semibold px-2.5 py-1 shadow-lg"
+												>
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														class="w-3.5 h-3.5"
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke="currentColor"
+														stroke-width="2"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														aria-hidden="true"
+													>
+														<path d="M3 6h18" /><path
+															d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
+														/>
+													</svg>
+													Pending deletion
+												</div>
+												<a
+													href="/dashboard/bots/edit/{bot.slug ?? bot.id}"
+													class="absolute bottom-2 inset-x-2 z-20 text-center rounded-md bg-background/95 border border-destructive/40 text-destructive text-xs font-semibold py-1.5 hover:bg-destructive/10 transition-colors"
+												>
+													Scheduled for deletion - manage or restore
+												</a>
+											{/if}
+											<div class:opacity-60={bot.blacklisted} class:pointer-events-none={bot.blacklisted}>
+												<BotCard
+													bot={{
+														id: bot.id,
+														slug: bot.slug ?? bot.id,
+														username: bot.username,
+														discriminator: bot.discriminator ?? "0000",
+														avatar: bot.avatar ?? "0",
+														short: bot.short ?? "",
+														votes: bot.votes ?? 0,
+														servers: bot.servers ?? 0,
+														invite: bot.invite ?? "",
+														bg: bot.bg ?? null,
+														status: (bot.status as any) ?? "online"
+													}}
+													edit={true}
+												/>
+											</div>
+										</div>
 									{/each}
 								</div>
 							{/if}
@@ -1444,6 +1498,71 @@
 								<p class="text-xs text-muted-foreground">
 									A direct image URL shown at the top of your profile. Leave blank to remove.
 								</p>
+							</div>
+
+							<!-- Profile visibility -->
+							<div class="border-t border-border pt-5 space-y-3">
+								<div class="flex items-start justify-between gap-4">
+									<div class="min-w-0">
+										<p class="text-sm font-semibold text-foreground flex items-center gap-2">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="w-4 h-4 text-muted-foreground"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+												<path d="M7 11V7a5 5 0 0 1 10 0v4" />
+											</svg>
+											Private profile
+										</p>
+										<p class="text-xs text-muted-foreground mt-1 leading-relaxed">
+											When on, your <code class="font-mono">/users</code> page is hidden from everyone
+											but you. Your profile is only ever public if you have a listed bot or server -
+											accounts with nothing listed are always private.
+										</p>
+									</div>
+									<button
+										type="button"
+										role="switch"
+										aria-checked={isPrivate}
+										aria-label="Toggle private profile"
+										on:click={() => (isPrivate = !isPrivate)}
+										class="relative shrink-0 inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 {isPrivate
+											? 'bg-primary'
+											: 'bg-muted border border-border'}"
+									>
+										<span
+											class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 {isPrivate
+												? 'translate-x-6'
+												: 'translate-x-1'}"
+										></span>
+									</button>
+								</div>
+								{#if !isPrivate}
+									<a
+										href="/users/{user.id}"
+										class="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline underline-offset-2"
+									>
+										View your public profile
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-3.5 h-3.5"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<path d="M7 17 17 7M7 7h10v10" />
+										</svg>
+									</a>
+								{/if}
 							</div>
 
 							<!-- Status messages -->

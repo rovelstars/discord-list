@@ -16,11 +16,13 @@ import { env } from "$env/dynamic/private";
  *   - Accepts access token in query `key`, Authorization header, RDL-key header, or `key` cookie.
  *
  * Body (all fields optional):
- *   { bio?: string, banner?: string | null }
+ *   { bio?: string, banner?: string | null, private?: boolean }
  *
  * Constraints:
  *   - bio: max 200 characters, stripped of leading/trailing whitespace
  *   - banner: must be a valid http/https URL if provided, or null/empty to clear
+ *   - private: profile visibility. true = private (hidden from strangers),
+ *     false = public (visible at /users/[id] when the user has listings)
  *
  * Response:
  *   200  { success: true }
@@ -82,7 +84,7 @@ export const PATCH: RequestHandler = async ({ request, cookies }) => {
 		// ------------------------------------------------------------------
 		// Validate fields
 		// ------------------------------------------------------------------
-		const updates: { bio?: string; banner?: string | null } = {};
+		const updates: { bio?: string; banner?: string | null; private?: boolean } = {};
 
 		if ("bio" in body) {
 			const bio = body.bio == null ? "" : String(body.bio).trim();
@@ -106,6 +108,11 @@ export const PATCH: RequestHandler = async ({ request, cookies }) => {
 				}
 			}
 			updates.banner = banner || null;
+		}
+
+		if ("private" in body) {
+			// Accept booleans or 0/1 (the toggle sends a boolean).
+			updates.private = body.private === true || body.private === 1 || body.private === "true";
 		}
 
 		// Nothing to update - treat as success

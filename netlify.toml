@@ -6,6 +6,8 @@
 #   scheduled-cdn-refresh - runs every 12 hours to refresh stale Discord CDN
 #   attachment URLs stored in the Bots.bg column of the database.
 #   settle-rewards        - runs daily at 02:00 UTC to pay out referral rewards.
+#   scheduled-purge-blacklisted - runs daily at 03:00 UTC; permanently deletes
+#   bots blacklisted for 7+ days (owner-requested deletion grace period).
 #   scheduled-reindex     - runs daily at 04:00 UTC; submits a rolling batch of
 #   canonical URLs to IndexNow to keep search engines re-crawling the site.
 #
@@ -69,4 +71,10 @@
 # Usually finishes in well under a minute — the 300s ceiling is a safety
 # margin against IndexNow endpoint slowness on large catalogs.
 [functions."scheduled-reindex"]
+  timeout = 300
+
+# Purge blacklisted bots. Daily run; endpoint deletes bots past the 7-day
+# grace period plus their comments/reactions. Usually finishes in seconds —
+# the 300s ceiling is a safety margin against large backlogs or slow DB.
+[functions."scheduled-purge-blacklisted"]
   timeout = 300

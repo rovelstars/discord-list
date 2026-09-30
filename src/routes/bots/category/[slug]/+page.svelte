@@ -125,7 +125,7 @@
 	<p
 		class="text-gray-600 dark:text-gray-300 text-xl mb-8 md:mx-32 mx-4 md:text-left text-center font-semibold"
 	>
-		Ranked by server count - the most widely used {meta.name.toLowerCase()} in the Discord community.
+		The most-loved {meta.name.toLowerCase()} right now, with the most popular at the top.
 	</p>
 
 	{#if bots.length > 0}

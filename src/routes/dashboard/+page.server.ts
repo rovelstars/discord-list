@@ -60,7 +60,8 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 				votes: Users.votes,
 				badges: Users.badges,
 				nitro: Users.nitro,
-				globalname: Users.globalname
+				globalname: Users.globalname,
+				private: Users.private
 			})
 			.from(Users)
 			.where(eq(Users.id, discordUser.id))
@@ -87,6 +88,8 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		invite: string | null;
 		bg: string | null;
 		status: string;
+		blacklisted: boolean;
+		blacklisted_at: string | null;
 	}> = [];
 
 	try {
@@ -102,7 +105,9 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 					votes: Bots.votes,
 					servers: Bots.servers,
 					invite: Bots.invite,
-					bg: Bots.bg
+					bg: Bots.bg,
+					blacklisted: Bots.blacklisted,
+					blacklisted_at: Bots.blacklisted_at
 				})
 				.from(Bots)
 				.where(like(Bots.owners, `%${discordUser.id}%`))
@@ -120,7 +125,9 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			servers: typeof b.servers === "number" ? b.servers : Number(b.servers) || 0,
 			invite: b.invite ?? null,
 			bg: b.bg ?? null,
-			status: "online"
+			status: "online",
+			blacklisted: Boolean(b.blacklisted),
+			blacklisted_at: b.blacklisted_at ?? null
 		}));
 	} catch {
 		// non-fatal - show empty bot list
@@ -479,7 +486,8 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 			bal: typeof dbUser.bal === "number" ? dbUser.bal : Number(dbUser.bal) || 0,
 			added_at: dbUser.added_at != null ? String(dbUser.added_at) : null,
 			nitro: Boolean(dbUser.nitro),
-			globalname: dbUser.globalname ?? null
+			globalname: dbUser.globalname ?? null,
+			private: Boolean(dbUser.private)
 		},
 		// Fresh Discord OAuth data (display name, avatar, email)
 		discordUser: {

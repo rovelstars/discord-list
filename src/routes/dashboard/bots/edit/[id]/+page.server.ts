@@ -58,7 +58,9 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 				donate: Bots.donate,
 				owners: Bots.owners,
 				code: Bots.code,
-				opted_coins: Bots.opted_coins
+				opted_coins: Bots.opted_coins,
+				blacklisted: Bots.blacklisted,
+				blacklisted_at: Bots.blacklisted_at
 			})
 			.from(Bots)
 			.where(or(eq(Bots.id, idOrSlug), eq(Bots.slug, idOrSlug)))
@@ -120,7 +122,9 @@ export const load: PageServerLoad = async ({ params, cookies, url }) => {
 			donate: bot.donate ?? "",
 			owners,
 			code: bot.code ?? "",
-			opted_coins: Boolean(bot.opted_coins)
+			opted_coins: Boolean(bot.opted_coins),
+			blacklisted: Boolean(bot.blacklisted),
+			blacklisted_at: bot.blacklisted_at ?? null
 		}
 	};
 };
