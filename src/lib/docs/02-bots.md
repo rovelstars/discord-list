@@ -112,6 +112,64 @@ GET /api/bots/my-cool-bot
 
 ---
 
+## Update Server Count
+
+```http
+POST /api/bots/:id/servers
+```
+
+Updates the `servers` (guild) count displayed on a bot's listing. Used by bot developers to keep their server count in sync. The `:id` segment must be the bot's **Discord snowflake ID** (not a slug).
+
+Authentication is done with the bot's private `code` (see the dashboard "Bot Code"). Supply it in any of:
+
+- Query parameter `?code=YOUR_CODE`
+- `Authorization: YOUR_CODE` (or `Authorization: Bearer YOUR_CODE`)
+- `RDL-code: YOUR_CODE` header
+
+### Request Body
+
+```json
+{ "count": 150 }
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `count` | number | Yes | New server/guild count. Must be a finite number. |
+
+### Example Request
+
+```http
+POST /api/bots/123456789012345678/servers
+Authorization: Bearer YOUR_CODE
+Content-Type: application/json
+
+{ "count": 150 }
+```
+
+### Example Response
+
+```json
+{ "success": true }
+```
+
+### Notes
+
+- Use the URL **without a trailing slash** (`/servers`, not `/servers/`). A trailing slash makes the server reply with a `308` redirect and some HTTP clients drop the POST body on redirect.
+- This endpoint accepts only `POST`; a `GET` (e.g. opening the URL in a browser) returns `405 Method Not Allowed`.
+
+### Error Codes
+
+| Code | Status | Meaning |
+|------|--------|---------|
+| `missing_bot_id` | 400 | No bot ID in the URL |
+| `no_code` | 400 | No bot code supplied |
+| `invalid_code` | 400 | Code does not match the bot (or bot does not exist) |
+| `invalid_body` | 400 | Request body is not valid JSON |
+| `NaN` | 400 | `count` is missing or not a number |
+| `server_error` | 500 | An unexpected internal error occurred |
+
+---
+
 ## Vote for a Bot
 
 ```http

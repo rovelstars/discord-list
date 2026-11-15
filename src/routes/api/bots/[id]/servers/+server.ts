@@ -10,9 +10,12 @@ import { eq, and } from "drizzle-orm";
  * Expected:
  *  - Authorization via bot `code` provided in:
  *      - query param `code`
- *      - `Authorization` header
- *      - `RDL-code` header
+ *      - `Authorization` header (raw code or `Bearer <code>`)
+ *      - `RDL-code` / `RDL-Code` header
  *  - JSON body: { count: number }
+ *
+ * Note: use the URL without a trailing slash. A trailing slash makes the
+ * server answer 308 and some HTTP clients drop the POST body on redirect.
  *
  * Behavior:
  *  - Validates code and bot id match a row
@@ -27,9 +30,25 @@ export const POST: RequestHandler = async ({ params, request }) => {
 		}
 
 		const url = new URL(request.url);
-		const codeFromQuery = url.searchParams.get("code");
-		const authHeader = request.headers.get("authorization") ?? request.headers.get("RDL-code");
-		const code = codeFromQuery ?? authHeader ?? null;
+		let code = url.searchParams.get("code");
+
+		if (!code) {
+			const headerAuth =
+				request.headers.get("authorization") ??
+				request.headers.get("RDL-code") ??
+				request.headers.get("RDL-Code");
+			code = headerAuth;
+		}
+
+		if (!code) {
+			return json({ err: "no_code" }, { status: 400 });
+		}
+
+		// Support `Bearer <token>` style headers (matches /api/bots/info).
+		if (typeof code === "string" && code.toLowerCase().startsWith("bearer ")) {
+			code = code.slice(7).trim();
+		}
+		code = String(code).trim();
 
 		if (!code) {
 			return json({ err: "no_code" }, { status: 400 });
